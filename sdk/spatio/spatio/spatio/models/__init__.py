@@ -14,6 +14,9 @@ from ._models import Bounds
 from ._models import DefaultLocation
 from ._models import FeaturePolygonDictStrRioTilerModelsInfo
 from ._models import GeoCatalogCollection
+from ._models import GeoTemplate
+from ._models import GeoTemplateCreation
+from ._models import GeoTemplateSummary
 from ._models import Geojson
 from ._models import ImageRequest
 from ._models import ImageResponse
@@ -21,7 +24,7 @@ from ._models import IngestionDefinition
 from ._models import IngestionDefinitionCreation
 from ._models import IngestionRun
 from ._models import IngestionRunSummary
-from ._models import InmaLink
+from ._models import IngestionSourceSummary
 from ._models import LegendConfig
 from ._models import Link
 from ._models import Metadata
@@ -48,12 +51,15 @@ from ._models import STACItem
 from ._models import STACItemCollection
 from ._models import STACPostOrPutItem
 from ._models import STACPostOrPutItemCollection
+from ._models import SasTokenConnection
+from ._models import SasTokenConnectionCreation
+from ._models import SasTokenIngestionSourceCreation
+from ._models import SasTokenIngestionSourceSummary
 from ._models import Search
 from ._models import SearchPostRequest
 from ._models import SearchPostRequestFields
 from ._models import SearchPostRequestIntersects
 from ._models import SortExtension
-from ._models import SourceDataType
 from ._models import TMSBoundingBox
 from ._models import TileJson
 from ._models import TileMatrix
@@ -68,10 +74,13 @@ from ._models import VectorTileOptions
 
 from ._enums import Algorithm
 from ._enums import ColorMapNames
+from ._enums import CrawlingStrategy
 from ._enums import FeaturePolygonDictStrRioTilerModelsInfoType
 from ._enums import GeoCatalogCollectionType
+from ._enums import GeoTemplateKind
 from ._enums import ImageRequestFormat
 from ._enums import ImageType
+from ._enums import IngestionSourceType
 from ._enums import IngestionType
 from ._enums import LegendConfigType
 from ._enums import LinkType
@@ -90,7 +99,7 @@ from ._enums import SortDirections
 from ._enums import TileJsonScheme
 from ._enums import TileMatrixCornerOfOrigin
 from ._enums import Tilematrixsetid
-from ._enums import Version
+from ._enums import Versions
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -104,6 +113,9 @@ __all__ = [
     "DefaultLocation",
     "FeaturePolygonDictStrRioTilerModelsInfo",
     "GeoCatalogCollection",
+    "GeoTemplate",
+    "GeoTemplateCreation",
+    "GeoTemplateSummary",
     "Geojson",
     "ImageRequest",
     "ImageResponse",
@@ -111,7 +123,7 @@ __all__ = [
     "IngestionDefinitionCreation",
     "IngestionRun",
     "IngestionRunSummary",
-    "InmaLink",
+    "IngestionSourceSummary",
     "LegendConfig",
     "Link",
     "Metadata",
@@ -138,12 +150,15 @@ __all__ = [
     "STACItemCollection",
     "STACPostOrPutItem",
     "STACPostOrPutItemCollection",
+    "SasTokenConnection",
+    "SasTokenConnectionCreation",
+    "SasTokenIngestionSourceCreation",
+    "SasTokenIngestionSourceSummary",
     "Search",
     "SearchPostRequest",
     "SearchPostRequestFields",
     "SearchPostRequestIntersects",
     "SortExtension",
-    "SourceDataType",
     "TMSBoundingBox",
     "TileJson",
     "TileMatrix",
@@ -157,10 +172,13 @@ __all__ = [
     "VectorTileOptions",
     "Algorithm",
     "ColorMapNames",
+    "CrawlingStrategy",
     "FeaturePolygonDictStrRioTilerModelsInfoType",
     "GeoCatalogCollectionType",
+    "GeoTemplateKind",
     "ImageRequestFormat",
     "ImageType",
+    "IngestionSourceType",
     "IngestionType",
     "LegendConfigType",
     "LinkType",
@@ -179,7 +197,7 @@ __all__ = [
     "TileJsonScheme",
     "TileMatrixCornerOfOrigin",
     "Tilematrixsetid",
-    "Version",
+    "Versions",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

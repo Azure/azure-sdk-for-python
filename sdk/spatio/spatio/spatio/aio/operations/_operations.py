@@ -72,6 +72,16 @@ from ...operations._operations import (
     build_info_operations_api_collections_collection_id_items_item_id_info_get_request,
     build_info_operations_geojson_api_collections_collection_id_items_item_id_info_geojson_get_request,
     build_info_operations_search_api_mosaic_searchid_info_get_request,
+    build_ingestion_geo_templates_create_request,
+    build_ingestion_geo_templates_delete_request,
+    build_ingestion_geo_templates_list_request,
+    build_ingestion_geo_templates_read_request,
+    build_ingestion_geo_templates_update_request,
+    build_ingestion_sources_create_request,
+    build_ingestion_sources_delete_request,
+    build_ingestion_sources_list_request,
+    build_ingestion_sources_read_request,
+    build_ingestion_sources_update_request,
     build_ingestions_create_request,
     build_ingestions_list_request,
     build_ingestions_read_request,
@@ -105,7 +115,6 @@ from ...operations._operations import (
     build_search_operations_api_search_post_request,
     build_set_operations_collection_queryables_api_collections_collection_id_queryables_post_request,
     build_signed_operations_href_api_sign_get_request,
-    build_source_data_types_list_request,
     build_statistics_operations_api_collections_collection_id_items_item_id_statistics_get_request,
     build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile_matrix_set_id_z_x_y_format_get_request,
     build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile_matrix_set_id_z_x_y_get_request,
@@ -143,93 +152,10 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
-
-
-class SourceDataTypesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
-        :attr:`source_data_types` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def list(self, **kwargs: Any) -> List[_models.SourceDataType]:
-        """Get source data types in system library.
-
-        :return: list of SourceDataType
-        :rtype: list[~spatio.models.SourceDataType]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "name": "str",
-                        "title": "str"
-                    }
-                ]
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.SourceDataType]] = kwargs.pop("cls", None)
-
-        _request = build_source_data_types_list_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.SourceDataType], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class IngestionsOperations:
@@ -272,8 +198,8 @@ class IngestionsOperations:
                         "importType": "str",
                         "keepOriginalAssets": bool,
                         "skipExistingItems": bool,
-                        "sourceCatalogUrl": "str",
-                        "sourceDataType": "str"
+                        "geoTemplateId": "str",
+                        "sourceCatalogUrl": "str"
                     }
                 ]
         """
@@ -346,8 +272,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -435,8 +361,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
 
                 # response body for status code(s): 201
@@ -446,8 +372,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
         """
 
@@ -478,8 +404,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
         """
 
@@ -510,8 +436,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
         """
 
@@ -538,8 +464,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
 
                 # response body for status code(s): 201
@@ -549,8 +475,8 @@ class IngestionsOperations:
                     "importType": "str",
                     "keepOriginalAssets": bool,
                     "skipExistingItems": bool,
-                    "sourceCatalogUrl": "str",
-                    "sourceDataType": "str"
+                    "geoTemplateId": "str",
+                    "sourceCatalogUrl": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -733,6 +659,8 @@ class ItemsOperations:
                             "links": [
                                 {
                                     "href": "str",
+                                    "hreflang": "str",
+                                    "length": 0,
                                     "rel": "str",
                                     "title": "str",
                                     "type": "str"
@@ -751,6 +679,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -852,6 +782,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -965,6 +897,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1040,6 +974,8 @@ class ItemsOperations:
                             "links": [
                                 {
                                     "href": "str",
+                                    "hreflang": "str",
+                                    "length": 0,
                                     "rel": "str",
                                     "title": "str",
                                     "type": "str"
@@ -1059,6 +995,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1123,6 +1061,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1271,6 +1211,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1431,6 +1373,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1577,6 +1521,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1737,6 +1683,8 @@ class ItemsOperations:
                     "links": [
                         {
                             "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
                             "rel": "str",
                             "title": "str",
                             "type": "str"
@@ -1938,6 +1886,1294 @@ class ItemsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class IngestionSourcesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :attr:`ingestion_sources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def list(self, **kwargs: Any) -> List[_models.IngestionSourceSummary]:
+        """Get ingestion sources in a geo-catalog.
+
+        :return: list of IngestionSourceSummary
+        :rtype: list[~spatio.models.IngestionSourceSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "created": "2020-02-20 00:00:00",
+                        "id": "str",
+                        "sourceType": "str"
+                    }
+                ]
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.IngestionSourceSummary]] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_sources_list_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.IngestionSourceSummary], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def read(self, id: str, **kwargs: Any) -> _models.SasTokenIngestionSourceSummary:
+        """Get an ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SasTokenIngestionSourceSummary] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_sources_read_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SasTokenIngestionSourceSummary, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self,
+        ingestion_source: _models.SasTokenIngestionSourceCreation,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                ingestion_source = {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "sasToken": "str"
+                    },
+                    "sourceType": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @overload
+    async def create(
+        self, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @overload
+    async def create(
+        self, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @distributed_trace_async
+    async def create(
+        self, ingestion_source: Union[_models.SasTokenIngestionSourceCreation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+         SasTokenIngestionSourceCreation, JSON, IO[bytes] Required.
+        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation or JSON or IO[bytes]
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                ingestion_source = {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "sasToken": "str"
+                    },
+                    "sourceType": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=_deserialize(_models.BadRequest, response.json())
+                ),
+            ),
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SasTokenIngestionSourceSummary] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ingestion_source, (IOBase, bytes)):
+            _content = ingestion_source
+        else:
+            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_sources_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SasTokenIngestionSourceSummary, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        id: str,
+        ingestion_source: _models.SasTokenIngestionSourceCreation,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                ingestion_source = {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "sasToken": "str"
+                    },
+                    "sourceType": "str"
+                }
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @overload
+    async def update(
+        self, id: str, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @overload
+    async def update(
+        self, id: str, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+
+    @distributed_trace_async
+    async def update(
+        self, id: str, ingestion_source: Union[_models.SasTokenIngestionSourceCreation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.SasTokenIngestionSourceSummary:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+         SasTokenIngestionSourceCreation, JSON, IO[bytes] Required.
+        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation or JSON or IO[bytes]
+        :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                ingestion_source = {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "sasToken": "str"
+                    },
+                    "sourceType": "str"
+                }
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "connectionInfo": {
+                        "containerUrl": "str",
+                        "expiration": "2020-02-20 00:00:00"
+                    },
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "sourceType": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=_deserialize(_models.BadRequest, response.json())
+                ),
+            ),
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SasTokenIngestionSourceSummary] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ingestion_source, (IOBase, bytes)):
+            _content = ingestion_source
+        else:
+            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_sources_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201, 404]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.SasTokenIngestionSourceSummary, response.json())
+
+        if response.status_code == 404:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.SasTokenIngestionSourceSummary, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an ingestion source from a geo-catalog.
+
+        :param id: Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_sources_delete_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class IngestionGeoTemplatesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :attr:`ingestion_geo_templates` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def list(self, **kwargs: Any) -> List[_models.GeoTemplateSummary]:
+        """Get ingestion templates in a geo-catalog.
+
+        :return: list of GeoTemplateSummary
+        :rtype: list[~spatio.models.GeoTemplateSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "created": "2020-02-20 00:00:00",
+                        "displayName": "str",
+                        "id": "str",
+                        "kind": "str",
+                        "version": 0
+                    }
+                ]
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.GeoTemplateSummary]] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_geo_templates_list_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.GeoTemplateSummary], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def read(self, id: str, **kwargs: Any) -> _models.GeoTemplate:
+        """Get an ingestion template in a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 404
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.GeoTemplate] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_geo_templates_read_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.GeoTemplate, response.json())
+
+        if response.status_code == 404:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.GeoTemplate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self, geo_template: _models.GeoTemplateCreation, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Create a new ingestion template in a geo-catalog.
+
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: ~spatio.models.GeoTemplateCreation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                geo_template = {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "description": "str",
+                    "displayName": "str",
+                    "versionComment": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @overload
+    async def create(
+        self, geo_template: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Create a new ingestion template in a geo-catalog.
+
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @overload
+    async def create(
+        self, geo_template: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Create a new ingestion template in a geo-catalog.
+
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @distributed_trace_async
+    async def create(
+        self, geo_template: Union[_models.GeoTemplateCreation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Create a new ingestion template in a geo-catalog.
+
+        :param geo_template: Definition of the ingestion template. Is one of the following types:
+         GeoTemplateCreation, JSON, IO[bytes] Required.
+        :type geo_template: ~spatio.models.GeoTemplateCreation or JSON or IO[bytes]
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                geo_template = {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "description": "str",
+                    "displayName": "str",
+                    "versionComment": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=_deserialize(_models.BadRequest, response.json())
+                ),
+            ),
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GeoTemplate] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(geo_template, (IOBase, bytes)):
+            _content = geo_template
+        else:
+            _content = json.dumps(geo_template, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_geo_templates_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.GeoTemplate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        id: str,
+        geo_template: _models.GeoTemplateCreation,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Update an existing ingestion template in a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: ~spatio.models.GeoTemplateCreation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                geo_template = {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "description": "str",
+                    "displayName": "str",
+                    "versionComment": "str"
+                }
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @overload
+    async def update(
+        self, id: str, geo_template: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Update an existing ingestion template in a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @overload
+    async def update(
+        self, id: str, geo_template: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Update an existing ingestion template in a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :param geo_template: Definition of the ingestion template. Required.
+        :type geo_template: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+
+    @distributed_trace_async
+    async def update(
+        self, id: str, geo_template: Union[_models.GeoTemplateCreation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.GeoTemplate:
+        """Update an existing ingestion template in a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :param geo_template: Definition of the ingestion template. Is one of the following types:
+         GeoTemplateCreation, JSON, IO[bytes] Required.
+        :type geo_template: ~spatio.models.GeoTemplateCreation or JSON or IO[bytes]
+        :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoTemplate
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                geo_template = {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "description": "str",
+                    "displayName": "str",
+                    "versionComment": "str"
+                }
+
+                # response body for status code(s): 201, 404
+                response == {
+                    "content": "str",
+                    "crawlingStrategy": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "displayName": "str",
+                    "id": "str",
+                    "kind": "str",
+                    "version": 0,
+                    "versionComment": "str"
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=_deserialize(_models.BadRequest, response.json())
+                ),
+            ),
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GeoTemplate] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(geo_template, (IOBase, bytes)):
+            _content = geo_template
+        else:
+            _content = json.dumps(geo_template, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_geo_templates_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201, 404]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.GeoTemplate, response.json())
+
+        if response.status_code == 404:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.GeoTemplate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an ingestion template from a geo-catalog.
+
+        :param id: Ingestion template id. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_geo_templates_delete_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class Operations:
@@ -17937,18 +19173,13 @@ class IngestionsRunsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def create(
-        self, ingestion_id: str, collection_id: str, import_file: Optional[bytes] = None, **kwargs: Any
-    ) -> _models.IngestionRun:
+    async def create(self, ingestion_id: str, collection_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Create a new run of an ingestion.
 
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param import_file: Ingestion import file. *Required for ImportFile ingestion type. Default
-         value is None.
-        :type import_file: bytes
         :return: IngestionRun. The IngestionRun is compatible with MutableMapping
         :rtype: ~spatio.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17994,23 +19225,15 @@ class IngestionsRunsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
-
-        if import_file is not None:
-            _content = json.dumps(import_file, cls=SdkJSONEncoder, exclude_readonly=True, format="base64")  # type: ignore
-        else:
-            _content = None
 
         _request = build_ingestions_runs_create_request(
             ingestion_id=ingestion_id,
             collection_id=collection_id,
             api_version=self._config.api_version,
-            content_type=content_type,
-            content=_content,
             headers=_headers,
             params=_params,
         )

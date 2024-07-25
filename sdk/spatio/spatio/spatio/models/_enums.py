@@ -241,6 +241,17 @@ class ColorMapNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     YLORRD_R = "ylorrd_r"
 
 
+class CrawlingStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CrawlingStrategy."""
+
+    ONE_SCENE_PER_FILE = "oneScenePerFile"
+    """All the scene data is contained in a single file"""
+    ONE_SCENE_PER_FOLDER = "oneScenePerFolder"
+    """The scene data is contained in a folder"""
+    INDEX_FILE = "indexFile"
+    """An index file contains the URLs of the scenes"""
+
+
 class FeaturePolygonDictStrRioTilerModelsInfoType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type."""
 
@@ -251,6 +262,15 @@ class GeoCatalogCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type."""
 
     COLLECTION = "Collection"
+
+
+class GeoTemplateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GeoTemplateKind."""
+
+    USER = "user"
+    """User defined template"""
+    SYSTEM = "system"
+    """System defined template"""
 
 
 class ImageRequestFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -273,13 +293,20 @@ class ImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PNGRAW = "pngraw"
 
 
+class IngestionSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IngestionSourceType."""
+
+    SAS_TOKEN = "SasToken"
+    """Azure Blob Storage SAS token"""
+
+
 class IngestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IngestionType."""
 
     STATIC_CATALOG = "StaticCatalog"
     """Static STAC Catalog"""
-    IMPORT_FILE = "ImportFile"
-    """Import file"""
+    GEO_TEMPLATE = "GeoTemplate"
+    """Ingestion Geo-template"""
 
 
 class LegendConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -455,7 +482,8 @@ class Tilematrixsetid(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WORLD_MERCATOR_W_G_S84_QUAD = "WorldMercatorWGS84Quad"
 
 
-class Version(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Version."""
+class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Versions info."""
 
-    V2024_01_31 = "2024-01-31-preview"
+    V2024_01_31_PREVIEW = "2024-01-31-preview"
+    """The 2024-01-31-preview version."""

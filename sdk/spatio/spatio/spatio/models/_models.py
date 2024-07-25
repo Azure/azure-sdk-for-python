@@ -374,6 +374,168 @@ class Geojson(_model_base.Model):
     """GeoJSON Feature or FeatureCollection."""
 
 
+class GeoTemplateSummary(_model_base.Model):
+    """GeoTemplateSummary.
+
+
+    :ivar id: Ingestion template id. Required.
+    :vartype id: str
+    :ivar display_name: Ingestion template display name. Required.
+    :vartype display_name: str
+    :ivar created: Ingestion template created time in UTC format. Required.
+    :vartype created: ~datetime.datetime
+    :ivar version: Ingestion template version. Required.
+    :vartype version: int
+    :ivar kind: Ingestion template kind. Required. Known values are: "user" and "system".
+    :vartype kind: str or ~spatio.models.GeoTemplateKind
+    """
+
+    id: str = rest_field()
+    """Ingestion template id. Required."""
+    display_name: str = rest_field(name="displayName")
+    """Ingestion template display name. Required."""
+    created: datetime.datetime = rest_field(format="rfc3339")
+    """Ingestion template created time in UTC format. Required."""
+    version: int = rest_field()
+    """Ingestion template version. Required."""
+    kind: Union[str, "_models.GeoTemplateKind"] = rest_field()
+    """Ingestion template kind. Required. Known values are: \"user\" and \"system\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_name: str,
+        created: datetime.datetime,
+        version: int,
+        kind: Union[str, "_models.GeoTemplateKind"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class GeoTemplate(GeoTemplateSummary):
+    """GeoTemplate.
+
+
+    :ivar id: Ingestion template id. Required.
+    :vartype id: str
+    :ivar display_name: Ingestion template display name. Required.
+    :vartype display_name: str
+    :ivar created: Ingestion template created time in UTC format. Required.
+    :vartype created: ~datetime.datetime
+    :ivar version: Ingestion template version. Required.
+    :vartype version: int
+    :ivar kind: Ingestion template kind. Required. Known values are: "user" and "system".
+    :vartype kind: str or ~spatio.models.GeoTemplateKind
+    :ivar description: Ingestion template description. Required.
+    :vartype description: str
+    :ivar version_comment: Ingestion template version comment. Required.
+    :vartype version_comment: str
+    :ivar crawling_strategy: Ingestion template crawling strategy. Required. Known values are:
+     "oneScenePerFile", "oneScenePerFolder", and "indexFile".
+    :vartype crawling_strategy: str or ~spatio.models.CrawlingStrategy
+    :ivar content: Ingestion template content. Required.
+    :vartype content: str
+    """
+
+    description: str = rest_field()
+    """Ingestion template description. Required."""
+    version_comment: str = rest_field(name="versionComment")
+    """Ingestion template version comment. Required."""
+    crawling_strategy: Union[str, "_models.CrawlingStrategy"] = rest_field(name="crawlingStrategy")
+    """Ingestion template crawling strategy. Required. Known values are: \"oneScenePerFile\",
+     \"oneScenePerFolder\", and \"indexFile\"."""
+    content: str = rest_field()
+    """Ingestion template content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_name: str,
+        created: datetime.datetime,
+        version: int,
+        kind: Union[str, "_models.GeoTemplateKind"],
+        description: str,
+        version_comment: str,
+        crawling_strategy: Union[str, "_models.CrawlingStrategy"],
+        content: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class GeoTemplateCreation(_model_base.Model):
+    """GeoTemplateCreation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar display_name: Ingestion template display name. Required.
+    :vartype display_name: str
+    :ivar description: Ingestion template description. Required.
+    :vartype description: str
+    :ivar crawling_strategy: Ingestion template crawling strategy. Required. Known values are:
+     "oneScenePerFile", "oneScenePerFolder", and "indexFile".
+    :vartype crawling_strategy: str or ~spatio.models.CrawlingStrategy
+    :ivar content: Ingestion template content. Required.
+    :vartype content: str
+    :ivar version_comment: Ingestion template version comment. Required.
+    :vartype version_comment: str
+    """
+
+    display_name: str = rest_field(name="displayName")
+    """Ingestion template display name. Required."""
+    description: str = rest_field()
+    """Ingestion template description. Required."""
+    crawling_strategy: Union[str, "_models.CrawlingStrategy"] = rest_field(name="crawlingStrategy")
+    """Ingestion template crawling strategy. Required. Known values are: \"oneScenePerFile\",
+     \"oneScenePerFolder\", and \"indexFile\"."""
+    content: str = rest_field()
+    """Ingestion template content. Required."""
+    version_comment: str = rest_field(name="versionComment")
+    """Ingestion template version comment. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        description: str,
+        crawling_strategy: Union[str, "_models.CrawlingStrategy"],
+        content: str,
+        version_comment: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ImageRequest(_model_base.Model):
     """ImageRequest.
 
@@ -474,12 +636,13 @@ class IngestionDefinitionCreation(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
-     "ImportFile".
+     "GeoTemplate".
     :vartype import_type: str or ~spatio.models.IngestionType
     :ivar source_catalog_url: Source catalog URL. *Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
-    :ivar source_data_type: Source catalog data type. *Required for ImportFile ingestion type.
-    :vartype source_data_type: str
+    :ivar geo_template_id: Geo-template used for crawl and transform items. *Required for
+     GeoTemplate ingestion type.
+    :vartype geo_template_id: str
     :ivar skip_existing_items: Skip processing existing items in the catalog. Required.
     :vartype skip_existing_items: bool
     :ivar keep_original_assets: Keep original source assets. Required.
@@ -487,11 +650,11 @@ class IngestionDefinitionCreation(_model_base.Model):
     """
 
     import_type: Union[str, "_models.IngestionType"] = rest_field(name="importType")
-    """Ingestion type. Required. Known values are: \"StaticCatalog\" and \"ImportFile\"."""
+    """Ingestion type. Required. Known values are: \"StaticCatalog\" and \"GeoTemplate\"."""
     source_catalog_url: Optional[str] = rest_field(name="sourceCatalogUrl")
     """Source catalog URL. *Required for StaticCatalog ingestion type."""
-    source_data_type: Optional[str] = rest_field(name="sourceDataType")
-    """Source catalog data type. *Required for ImportFile ingestion type."""
+    geo_template_id: Optional[str] = rest_field(name="geoTemplateId")
+    """Geo-template used for crawl and transform items. *Required for GeoTemplate ingestion type."""
     skip_existing_items: bool = rest_field(name="skipExistingItems")
     """Skip processing existing items in the catalog. Required."""
     keep_original_assets: bool = rest_field(name="keepOriginalAssets")
@@ -505,7 +668,7 @@ class IngestionDefinitionCreation(_model_base.Model):
         skip_existing_items: bool,
         keep_original_assets: bool,
         source_catalog_url: Optional[str] = None,
-        source_data_type: Optional[str] = None,
+        geo_template_id: Optional[str] = None,
     ): ...
 
     @overload
@@ -524,12 +687,13 @@ class IngestionDefinition(IngestionDefinitionCreation):
 
 
     :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
-     "ImportFile".
+     "GeoTemplate".
     :vartype import_type: str or ~spatio.models.IngestionType
     :ivar source_catalog_url: Source catalog URL. *Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
-    :ivar source_data_type: Source catalog data type. *Required for ImportFile ingestion type.
-    :vartype source_data_type: str
+    :ivar geo_template_id: Geo-template used for crawl and transform items. *Required for
+     GeoTemplate ingestion type.
+    :vartype geo_template_id: str
     :ivar skip_existing_items: Skip processing existing items in the catalog. Required.
     :vartype skip_existing_items: bool
     :ivar keep_original_assets: Keep original source assets. Required.
@@ -555,7 +719,7 @@ class IngestionDefinition(IngestionDefinitionCreation):
         id: str,  # pylint: disable=redefined-builtin
         creation_time: datetime.datetime,
         source_catalog_url: Optional[str] = None,
-        source_data_type: Optional[str] = None,
+        geo_template_id: Optional[str] = None,
     ): ...
 
     @overload
@@ -642,38 +806,32 @@ class IngestionRunSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InmaLink(_model_base.Model):
-    """InmaLink.
+class IngestionSourceSummary(_model_base.Model):
+    """IngestionSourceSummary.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar rel: Required.
-    :vartype rel: str
-    :ivar href: Required.
-    :vartype href: str
-    :ivar type: Required.
-    :vartype type: str
-    :ivar title: Required.
-    :vartype title: str
+    :ivar id: Ingestion source id. Required.
+    :vartype id: str
+    :ivar source_type: Ingestion source type. Required. "SasToken"
+    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :ivar created: Created time in UTC format. Required.
+    :vartype created: ~datetime.datetime
     """
 
-    rel: str = rest_field()
-    """Required."""
-    href: str = rest_field()
-    """Required."""
-    type: str = rest_field()
-    """Required."""
-    title: str = rest_field()
-    """Required."""
+    id: str = rest_field()
+    """Ingestion source id. Required."""
+    source_type: Union[str, "_models.IngestionSourceType"] = rest_field(name="sourceType")
+    """Ingestion source type. Required. \"SasToken\""""
+    created: datetime.datetime = rest_field(format="rfc3339")
+    """Created time in UTC format. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        rel: str,
-        href: str,
-        type: str,
-        title: str,
+        id: str,  # pylint: disable=redefined-builtin
+        source_type: Union[str, "_models.IngestionSourceType"],
+        created: datetime.datetime,
     ): ...
 
     @overload
@@ -755,6 +913,7 @@ class Link(_model_base.Model):
     Ref:
     http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/link.yaml.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar rel: Rel.
     :vartype rel: str
@@ -1776,6 +1935,148 @@ class SASToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class SasTokenConnection(_model_base.Model):
+    """SasTokenConnection.
+
+
+    :ivar container_url: Azure Blob Storage container URL. Required.
+    :vartype container_url: str
+    :ivar expiration: Azure Blob Storage SAS token expiration in UTC format. Required.
+    :vartype expiration: ~datetime.datetime
+    """
+
+    container_url: str = rest_field(name="containerUrl")
+    """Azure Blob Storage container URL. Required."""
+    expiration: datetime.datetime = rest_field(format="rfc3339")
+    """Azure Blob Storage SAS token expiration in UTC format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container_url: str,
+        expiration: datetime.datetime,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SasTokenConnectionCreation(_model_base.Model):
+    """SasTokenConnectionCreation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar container_url: Azure Blob Storage container URL. Required.
+    :vartype container_url: str
+    :ivar sas_token: Azure Blob Storage SAS token SAS token. Required.
+    :vartype sas_token: str
+    """
+
+    container_url: str = rest_field(name="containerUrl")
+    """Azure Blob Storage container URL. Required."""
+    sas_token: str = rest_field(name="sasToken")
+    """Azure Blob Storage SAS token SAS token. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container_url: str,
+        sas_token: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SasTokenIngestionSourceCreation(_model_base.Model):
+    """SasTokenIngestionSourceCreation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_type: Ingestion source type. Required. "SasToken"
+    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :ivar connection_info: SAS token connection information. Required.
+    :vartype connection_info: ~spatio.models.SasTokenConnectionCreation
+    """
+
+    source_type: Union[str, "_models.IngestionSourceType"] = rest_field(name="sourceType")
+    """Ingestion source type. Required. \"SasToken\""""
+    connection_info: "_models.SasTokenConnectionCreation" = rest_field(name="connectionInfo")
+    """SAS token connection information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_type: Union[str, "_models.IngestionSourceType"],
+        connection_info: "_models.SasTokenConnectionCreation",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SasTokenIngestionSourceSummary(IngestionSourceSummary):
+    """SasTokenIngestionSourceSummary.
+
+
+    :ivar id: Ingestion source id. Required.
+    :vartype id: str
+    :ivar source_type: Ingestion source type. Required. "SasToken"
+    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :ivar created: Created time in UTC format. Required.
+    :vartype created: ~datetime.datetime
+    :ivar connection_info: SAS token connection information. Required.
+    :vartype connection_info: ~spatio.models.SasTokenConnection
+    """
+
+    connection_info: "_models.SasTokenConnection" = rest_field(name="connectionInfo")
+    """SAS token connection information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source_type: Union[str, "_models.IngestionSourceType"],
+        created: datetime.datetime,
+        connection_info: "_models.SasTokenConnection",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class Search(_model_base.Model):
     """PgSTAC Search entry.
 
@@ -2010,40 +2311,6 @@ class SortExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceDataType(_model_base.Model):
-    """SourceDataType.
-
-
-    :ivar name: Source data type name. Required.
-    :vartype name: str
-    :ivar title: Source data type title. Required.
-    :vartype title: str
-    """
-
-    name: str = rest_field()
-    """Source data type name. Required."""
-    title: str = rest_field()
-    """Source data type title. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        title: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class STACItem(_model_base.Model):
     """STACItem.
 
@@ -2066,7 +2333,7 @@ class STACItem(_model_base.Model):
     :ivar assets: Required.
     :vartype assets: any
     :ivar links: Required.
-    :vartype links: list[~spatio.models.InmaLink]
+    :vartype links: list[~spatio.models.Link]
     :ivar collection: Required.
     :vartype collection: str
     """
@@ -2087,7 +2354,7 @@ class STACItem(_model_base.Model):
     """Required."""
     assets: Any = rest_field()
     """Required."""
-    links: List["_models.InmaLink"] = rest_field()
+    links: List["_models.Link"] = rest_field()
     """Required."""
     collection: str = rest_field()
     """Required."""
@@ -2104,7 +2371,7 @@ class STACItem(_model_base.Model):
         bbox: List[int],
         properties: "_models.Properties",
         assets: Any,
-        links: List["_models.InmaLink"],
+        links: List["_models.Link"],
         collection: str,
     ): ...
 
@@ -2128,7 +2395,7 @@ class STACItemCollection(_model_base.Model):
     :ivar features: Required.
     :vartype features: list[~spatio.models.STACItem]
     :ivar links: Required.
-    :vartype links: list[~spatio.models.InmaLink]
+    :vartype links: list[~spatio.models.Link]
     :ivar stac_version:
     :vartype stac_version: str
     :ivar number_matched:
@@ -2141,7 +2408,7 @@ class STACItemCollection(_model_base.Model):
     """Required."""
     features: List["_models.STACItem"] = rest_field()
     """Required."""
-    links: List["_models.InmaLink"] = rest_field()
+    links: List["_models.Link"] = rest_field()
     """Required."""
     stac_version: Optional[str] = rest_field()
     number_matched: Optional[int] = rest_field(name="numberMatched")
@@ -2153,7 +2420,7 @@ class STACItemCollection(_model_base.Model):
         *,
         type: str,
         features: List["_models.STACItem"],
-        links: List["_models.InmaLink"],
+        links: List["_models.Link"],
         stac_version: Optional[str] = None,
         number_matched: Optional[int] = None,
         number_returned: Optional[int] = None,
@@ -2192,7 +2459,7 @@ class STACPostOrPutItem(_model_base.Model):
     :ivar assets: Required.
     :vartype assets: any
     :ivar links: Required.
-    :vartype links: list[~spatio.models.InmaLink]
+    :vartype links: list[~spatio.models.Link]
     :ivar collection: Required.
     :vartype collection: str
     """
@@ -2213,7 +2480,7 @@ class STACPostOrPutItem(_model_base.Model):
     """Required."""
     assets: Any = rest_field()
     """Required."""
-    links: List["_models.InmaLink"] = rest_field()
+    links: List["_models.Link"] = rest_field()
     """Required."""
     collection: str = rest_field()
     """Required."""
@@ -2230,7 +2497,7 @@ class STACPostOrPutItem(_model_base.Model):
         bbox: List[int],
         properties: "_models.Properties",
         assets: Any,
-        links: List["_models.InmaLink"],
+        links: List["_models.Link"],
         collection: str,
     ): ...
 
@@ -2255,7 +2522,7 @@ class STACPostOrPutItemCollection(_model_base.Model):
     :ivar features: Required.
     :vartype features: list[~spatio.models.STACItem]
     :ivar links:
-    :vartype links: list[~spatio.models.InmaLink]
+    :vartype links: list[~spatio.models.Link]
     :ivar stac_version:
     :vartype stac_version: str
     :ivar number_matched:
@@ -2268,7 +2535,7 @@ class STACPostOrPutItemCollection(_model_base.Model):
     """Required."""
     features: List["_models.STACItem"] = rest_field()
     """Required."""
-    links: Optional[List["_models.InmaLink"]] = rest_field()
+    links: Optional[List["_models.Link"]] = rest_field()
     stac_version: Optional[str] = rest_field()
     number_matched: Optional[int] = rest_field(name="numberMatched")
     number_returned: Optional[int] = rest_field(name="numberReturned")
@@ -2279,7 +2546,7 @@ class STACPostOrPutItemCollection(_model_base.Model):
         *,
         type: str,
         features: List["_models.STACItem"],
-        links: Optional[List["_models.InmaLink"]] = None,
+        links: Optional[List["_models.Link"]] = None,
         stac_version: Optional[str] = None,
         number_matched: Optional[int] = None,
         number_returned: Optional[int] = None,

@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -21,13 +22,14 @@ from .operations import (
     ConformanceOperationsOperations,
     CreateOperationsOperations,
     GetOperationsOperations,
+    IngestionGeoTemplatesOperations,
+    IngestionSourcesOperations,
     IngestionsOperations,
     ItemsOperations,
     LandingOperationsOperations,
     Operations,
     QueryablesOperationsOperations,
     SearchOperationsOperations,
-    SourceDataTypesOperations,
     addOperationsOperations,
     assetOperationsOperations,
     assetsOperationsOperations,
@@ -54,20 +56,18 @@ from .operations import (
     wmtsOperationsOperations,
 )
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
-
 
 class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """AzureOrbitalPlanetaryComputerClient.
 
-    :ivar source_data_types: SourceDataTypesOperations operations
-    :vartype source_data_types: spatio.aio.operations.SourceDataTypesOperations
     :ivar ingestions: IngestionsOperations operations
     :vartype ingestions: spatio.aio.operations.IngestionsOperations
     :ivar items: ItemsOperations operations
     :vartype items: spatio.aio.operations.ItemsOperations
+    :ivar ingestion_sources: IngestionSourcesOperations operations
+    :vartype ingestion_sources: spatio.aio.operations.IngestionSourcesOperations
+    :ivar ingestion_geo_templates: IngestionGeoTemplatesOperations operations
+    :vartype ingestion_geo_templates: spatio.aio.operations.IngestionGeoTemplatesOperations
     :ivar operations: Operations operations
     :vartype operations: spatio.aio.operations.Operations
     :ivar container_operations: containerOperationsOperations operations
@@ -135,14 +135,14 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureOrbitalPlanetaryComputerClientConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
@@ -169,11 +169,14 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.source_data_types = SourceDataTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.ingestions = IngestionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.items = ItemsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ingestion_sources = IngestionSourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ingestion_geo_templates = IngestionGeoTemplatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.container_operations = containerOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize

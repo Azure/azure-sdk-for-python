@@ -6,9 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import SourceDataTypesOperations
 from ._operations import IngestionsOperations
 from ._operations import ItemsOperations
+from ._operations import IngestionSourcesOperations
+from ._operations import IngestionGeoTemplatesOperations
 from ._operations import Operations
 from ._operations import containerOperationsOperations
 from ._operations import revokeOperationsOperations
@@ -47,9 +48,10 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "SourceDataTypesOperations",
     "IngestionsOperations",
     "ItemsOperations",
+    "IngestionSourcesOperations",
+    "IngestionGeoTemplatesOperations",
     "Operations",
     "containerOperationsOperations",
     "revokeOperationsOperations",
