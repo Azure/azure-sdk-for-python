@@ -12,8 +12,9 @@ Example to show scheduling messages to and cancelling messages from a Service Bu
 import os
 import datetime
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
@@ -33,8 +34,8 @@ def schedule_multiple_messages(sender):
     sequence_numbers = sender.schedule_messages(messages_to_schedule, scheduled_time_utc)
     return sequence_numbers
 
-
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
+credential = DefaultAzureCredential()
+servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:

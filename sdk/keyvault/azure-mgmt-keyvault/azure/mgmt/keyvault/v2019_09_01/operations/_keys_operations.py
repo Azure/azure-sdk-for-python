@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -20,16 +21,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -245,7 +248,6 @@ class KeysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -257,7 +259,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -274,11 +276,10 @@ class KeysOperations:
         :param key_name: The name of the key to be created. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -290,7 +291,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: Union[_models.KeyCreateParameters, IO],
+        parameters: Union[_models.KeyCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Key:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
@@ -305,17 +306,13 @@ class KeysOperations:
         :param key_name: The name of the key to be created. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Is either a
-         KeyCreateParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.keyvault.v2019_09_01.models.KeyCreateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         KeyCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.v2019_09_01.models.KeyCreateParameters or IO[bytes]
         :return: Key or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -338,7 +335,7 @@ class KeysOperations:
         else:
             _json = self._serialize.body(parameters, "KeyCreateParameters")
 
-        request = build_create_if_not_exist_request(
+        _request = build_create_if_not_exist_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             key_name=key_name,
@@ -347,16 +344,14 @@ class KeysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_if_not_exist.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -365,16 +360,12 @@ class KeysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Key", pipeline_response)
+        deserialized = self._deserialize("Key", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_if_not_exist.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/keys/{keyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, vault_name: str, key_name: str, **kwargs: Any) -> _models.Key:
@@ -387,12 +378,11 @@ class KeysOperations:
         :type vault_name: str
         :param key_name: The name of the key to be retrieved. Required.
         :type key_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -406,22 +396,20 @@ class KeysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-09-01"))
         cls: ClsType[_models.Key] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             key_name=key_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -430,16 +418,12 @@ class KeysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Key", pipeline_response)
+        deserialized = self._deserialize("Key", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/keys/{keyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> Iterable["_models.Key"]:
@@ -450,7 +434,6 @@ class KeysOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault which contains the keys to be retrieved. Required.
         :type vault_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Key or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2019_09_01.models.Key]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -461,7 +444,7 @@ class KeysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-09-01"))
         cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -472,17 +455,15 @@ class KeysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     vault_name=vault_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -493,14 +474,13 @@ class KeysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("KeyListResult", pipeline_response)
@@ -510,11 +490,11 @@ class KeysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -525,10 +505,6 @@ class KeysOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/keys"
-    }
 
     @distributed_trace
     def get_version(
@@ -546,12 +522,11 @@ class KeysOperations:
         :type key_name: str
         :param key_version: The version of the key to be retrieved. Required.
         :type key_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -565,23 +540,21 @@ class KeysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-09-01"))
         cls: ClsType[_models.Key] = kwargs.pop("cls", None)
 
-        request = build_get_version_request(
+        _request = build_get_version_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             key_name=key_name,
             key_version=key_version,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_version.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -590,16 +563,12 @@ class KeysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Key", pipeline_response)
+        deserialized = self._deserialize("Key", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_version.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/keys/{keyName}/versions/{keyVersion}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_versions(
@@ -615,7 +584,6 @@ class KeysOperations:
         :type vault_name: str
         :param key_name: The name of the key versions to be retrieved. Required.
         :type key_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Key or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2019_09_01.models.Key]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -626,7 +594,7 @@ class KeysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-09-01"))
         cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -637,18 +605,16 @@ class KeysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_versions_request(
+                _request = build_list_versions_request(
                     resource_group_name=resource_group_name,
                     vault_name=vault_name,
                     key_name=key_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_versions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -659,14 +625,13 @@ class KeysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("KeyListResult", pipeline_response)
@@ -676,11 +641,11 @@ class KeysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -691,7 +656,3 @@ class KeysOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_versions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/keys/{keyName}/versions"
-    }

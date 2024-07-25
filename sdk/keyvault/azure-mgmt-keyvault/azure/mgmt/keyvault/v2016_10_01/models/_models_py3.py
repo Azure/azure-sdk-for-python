@@ -20,7 +20,7 @@ class AccessPolicyEntry(_serialization.Model):
     """An identity that have access to the key vault. All identities in the array must use the same
     tenant ID as the key vault's tenant ID.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -438,7 +438,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The Azure Resource Manager resource ID for the key vault.
     :vartype id: str
@@ -534,7 +534,7 @@ class ServiceSpecification(_serialization.Model):
 class Sku(_serialization.Model):
     """SKU details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar family: SKU family name. "A"
     :vartype family: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuFamily
@@ -573,7 +573,7 @@ class Vault(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The Azure Resource Manager resource ID for the key vault.
     :vartype id: str
@@ -632,7 +632,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the access policy.
     :vartype id: str
@@ -678,7 +678,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 class VaultAccessPolicyProperties(_serialization.Model):
     """Properties of the vault access policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. Required.
@@ -708,7 +708,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The vault name. Required.
     :vartype name: str
@@ -741,7 +741,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 class VaultCreateOrUpdateParameters(_serialization.Model):
     """Parameters for creating or updating a vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The supported Azure location where the key vault should be created. Required.
     :vartype location: str
@@ -947,7 +947,7 @@ class VaultPatchProperties(_serialization.Model):
 class VaultProperties(_serialization.Model):
     """Properties of the vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -956,7 +956,7 @@ class VaultProperties(_serialization.Model):
     :vartype sku: ~azure.mgmt.keyvault.v2016_10_01.models.Sku
     :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. When
-     ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+     ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
      policies are required.
     :vartype access_policies: list[~azure.mgmt.keyvault.v2016_10_01.models.AccessPolicyEntry]
     :ivar vault_uri: The URI of the vault for performing operations on keys and secrets.
@@ -1027,7 +1027,7 @@ class VaultProperties(_serialization.Model):
         :paramtype sku: ~azure.mgmt.keyvault.v2016_10_01.models.Sku
         :keyword access_policies: An array of 0 to 16 identities that have access to the key vault. All
          identities in the array must use the same tenant ID as the key vault's tenant ID. When
-         ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+         ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
          policies are required.
         :paramtype access_policies: list[~azure.mgmt.keyvault.v2016_10_01.models.AccessPolicyEntry]
         :keyword vault_uri: The URI of the vault for performing operations on keys and secrets.

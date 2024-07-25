@@ -198,7 +198,6 @@
     "contosodataset",
     "centralus",
     "centraluseuap",
-    "corehttp",
     "creds",
     "ctoring",
     "ctxt",
@@ -245,6 +244,7 @@
     "guids",
     "hanaonazure",
     "hdinsight",
+    "healthdataaiservices",
     "heapq",
     "hexlify",
     "himds",
@@ -403,6 +403,7 @@
     "unpad",
     "unpadder",
     "unpartial",
+    "uniquifier",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -441,6 +442,7 @@
     "BUILDID",
     "documentdb",
     "chdir",
+    "radiculopathy",
     "reqs",
     "rgpy",
     "swaggertosdk",
@@ -1840,6 +1842,17 @@
       "filename": "sdk/face/azure-ai-vision-face/tests/**",
       "words": [
         "dcid"
+      ]
+    },
+    {
+      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
+      "words": [
+        "deid",
+        "deidservices",
+        "deidentification",
+        "healthdataaiservices",
+        "deidentify",
+        "deidentified"
       ]
     }
   ],

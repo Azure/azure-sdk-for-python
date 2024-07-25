@@ -2,47 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
 import os
 import sys
-from typing import Any, Dict, Optional
+from typing import Dict
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
-from .._constants import EnvironmentVariables
-from .._internal.managed_identity_base import ManagedIdentityBase
-from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
-class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
-        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-        imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
-        if url and imds:
-            return ManagedIdentityClient(
-                _per_retry_policies=[ArcChallengeAuthPolicy()],
-                request_factory=functools.partial(_get_request, url),
-                **kwargs,
-            )
-        return None
-
-    def __enter__(self) -> "AzureArcCredential":
-        if self._client:
-            self._client.__enter__()
-        return self
-
-    def __exit__(self, *args: Any) -> None:
-        if self._client:
-            self._client.__exit__(*args)
-
-    def close(self) -> None:
-        self.__exit__()
-
-    def get_unavailable_message(self) -> str:
-        return "Azure Arc managed identity configuration not found in environment"
+class AzureArcCredential(MsalManagedIdentityClient):
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Azure Arc managed identity configuration not found in environment. {desc}"
 
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
@@ -54,7 +28,7 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
         )
 
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2019-11-01", "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2020-06-01", "resource": scope}, **identity_config))
     return request
 
 
