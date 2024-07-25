@@ -37,6 +37,7 @@ extends:
     ServiceDirectory: core
     BuildTargetingString: "*"
     ValidateFormatting: true
+    TestProxy: false
     Artifacts:
     - name: azure-core
       safeName: azurecore

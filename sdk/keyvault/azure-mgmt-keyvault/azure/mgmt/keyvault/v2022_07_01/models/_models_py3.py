@@ -21,7 +21,7 @@ class AccessPolicyEntry(_serialization.Model):
     """An identity that have access to the key vault. All identities in the array must use the same
     tenant ID as the key vault's tenant ID.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -160,7 +160,7 @@ class Attributes(_serialization.Model):
 class CheckMhsmNameAvailabilityParameters(_serialization.Model):
     """The parameters used to check the availability of the managed hsm name.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The managed hsm name. Required.
     :vartype name: str
@@ -596,7 +596,7 @@ class Error(_serialization.Model):
 class IPRule(_serialization.Model):
     """A rule governing the accessibility of a vault from a specific ip address or ip range.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
      or '124.56.78.0/24' (all addresses that start with 124.56.78). Required.
@@ -847,7 +847,7 @@ class KeyAttributes(_serialization.Model):
 class KeyCreateParameters(_serialization.Model):
     """The parameters used to create a key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags that will be assigned to the key.
     :vartype tags: dict[str, str]
@@ -1483,7 +1483,7 @@ class ManagedHSMSecurityDomainProperties(_serialization.Model):
 class ManagedHsmSku(_serialization.Model):
     """SKU details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar family: SKU Family of the managed HSM Pool. "B"
     :vartype family: str or ~azure.mgmt.keyvault.v2022_07_01.models.ManagedHsmSkuFamily
@@ -1622,7 +1622,7 @@ class MHSMIPRule(_serialization.Model):
     """A rule governing the accessibility of a managed hsm pool from a specific ip address or ip
     range.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
      or '124.56.78.0/24' (all addresses that start with 124.56.78). Required.
@@ -2058,7 +2058,7 @@ class MHSMPrivateLinkServiceConnectionState(_serialization.Model):
 class MHSMVirtualNetworkRule(_serialization.Model):
     """A rule governing the accessibility of a managed hsm pool from a specific virtual network.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
@@ -2077,7 +2077,7 @@ class MHSMVirtualNetworkRule(_serialization.Model):
     def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Full resource id of a vnet subnet, such as
-         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         """
@@ -2699,7 +2699,7 @@ class Secret(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the key vault resource.
     :vartype id: str
@@ -2759,42 +2759,11 @@ class SecretAttributes(Attributes):
     :vartype updated: ~datetime.datetime
     """
 
-    _validation = {
-        "created": {"readonly": True},
-        "updated": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "not_before": {"key": "nbf", "type": "unix-time"},
-        "expires": {"key": "exp", "type": "unix-time"},
-        "created": {"key": "created", "type": "unix-time"},
-        "updated": {"key": "updated", "type": "unix-time"},
-    }
-
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        not_before: Optional[datetime.datetime] = None,
-        expires: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword enabled: Determines whether the object is enabled.
-        :paramtype enabled: bool
-        :keyword not_before: Not before date in seconds since 1970-01-01T00:00:00Z.
-        :paramtype not_before: ~datetime.datetime
-        :keyword expires: Expiry date in seconds since 1970-01-01T00:00:00Z.
-        :paramtype expires: ~datetime.datetime
-        """
-        super().__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
-
 
 class SecretCreateOrUpdateParameters(_serialization.Model):
     """Parameters for creating or updating a secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags that will be assigned to the secret.
     :vartype tags: dict[str, str]
@@ -3019,7 +2988,7 @@ class ServiceSpecification(_serialization.Model):
 class Sku(_serialization.Model):
     """SKU details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar family: SKU family name. "A"
     :vartype family: str or ~azure.mgmt.keyvault.v2022_07_01.models.SkuFamily
@@ -3154,7 +3123,7 @@ class Vault(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the key vault resource.
     :vartype id: str
@@ -3221,7 +3190,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the access policy.
     :vartype id: str
@@ -3267,7 +3236,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 class VaultAccessPolicyProperties(_serialization.Model):
     """Properties of the vault access policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. Required.
@@ -3297,7 +3266,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The vault name. Required.
     :vartype name: str
@@ -3330,7 +3299,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 class VaultCreateOrUpdateParameters(_serialization.Model):
     """Parameters for creating or updating a vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The supported Azure location where the key vault should be created. Required.
     :vartype location: str
@@ -3589,7 +3558,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -3598,7 +3567,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype sku: ~azure.mgmt.keyvault.v2022_07_01.models.Sku
     :ivar access_policies: An array of 0 to 1024 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. When
-     ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+     ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
      policies are required.
     :vartype access_policies: list[~azure.mgmt.keyvault.v2022_07_01.models.AccessPolicyEntry]
     :ivar vault_uri: The URI of the vault for performing operations on keys and secrets.
@@ -3712,7 +3681,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype sku: ~azure.mgmt.keyvault.v2022_07_01.models.Sku
         :keyword access_policies: An array of 0 to 1024 identities that have access to the key vault.
          All identities in the array must use the same tenant ID as the key vault's tenant ID. When
-         ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+         ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
          policies are required.
         :paramtype access_policies: list[~azure.mgmt.keyvault.v2022_07_01.models.AccessPolicyEntry]
         :keyword vault_uri: The URI of the vault for performing operations on keys and secrets.
@@ -3785,7 +3754,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
 class VirtualNetworkRule(_serialization.Model):
     """A rule governing the accessibility of a vault from a specific virtual network.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
@@ -3814,7 +3783,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword id: Full resource id of a vnet subnet, such as
-         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         :keyword ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the

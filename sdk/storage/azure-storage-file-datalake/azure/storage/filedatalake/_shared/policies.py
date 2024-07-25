@@ -14,10 +14,10 @@ from io import SEEK_SET, UnsupportedOperation
 from time import time
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
-        parse_qsl,
-        urlencode,
-        urlparse,
-        urlunparse,
+    parse_qsl,
+    urlencode,
+    urlparse,
+    urlunparse,
 )
 from wsgiref.handlers import format_date_time
 
@@ -28,7 +28,7 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     NetworkTraceLoggingPolicy,
     RequestHistory,
-    SansIOHTTPPolicy,
+    SansIOHTTPPolicy
 )
 
 from .authentication import StorageHttpChallenge

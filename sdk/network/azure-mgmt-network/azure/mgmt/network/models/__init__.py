@@ -1021,6 +1021,7 @@ from ._enums import (
     NicTypeInRequest,
     NicTypeInResponse,
     SharingScope,
+    ProbeNoHealthyBackendsBehavior,
 )
 
 from ._patch import __all__ as _patch_all
@@ -2040,6 +2041,7 @@ __all__ = [
     "NicTypeInRequest",
     "NicTypeInResponse",
     "SharingScope",
+    "ProbeNoHealthyBackendsBehavior",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
