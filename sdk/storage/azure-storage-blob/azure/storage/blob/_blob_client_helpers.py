@@ -8,7 +8,7 @@
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
-    Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote, urlparse
@@ -146,7 +146,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
     encryption_options: Dict[str, Any],
-    validate_content: Any,
+    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -1281,7 +1281,6 @@ def _upload_page_options(
     )
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
-    validate_content = kwargs.pop('validate_content', False)
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -1469,7 +1468,6 @@ def _append_block_options(
 
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     maxsize_condition = kwargs.pop('maxsize_condition', None)
-    validate_content = kwargs.pop('validate_content', False)
     append_conditions = None
     if maxsize_condition or appendpos_condition is not None:
         append_conditions = AppendPositionAccessConditions(
