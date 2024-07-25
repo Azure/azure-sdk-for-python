@@ -11,11 +11,11 @@ from typing import Dict, Iterable, Optional, cast
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_07_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SecretExpiry
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -37,25 +37,29 @@ class DatastoreOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param serviceclient_2022_10_01: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources.
-    :type serviceclient_2022_10_01: ~azure.ai.ml._restclient.v2022_10_01._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces
+    :param serviceclient_2024_01_01_preview: Service client to allow end users to operate on Azure Machine Learning
+        Workspace resources.
+    :type serviceclient_2024_01_01_preview: ~azure.ai.ml._restclient.v2023_01_01_preview.
+        _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :param serviceclient_2024_07_01_preview: Service client to allow end users to operate on Azure Machine Learning
+        Workspace resources.
+    :type serviceclient_2024_07_01_preview: ~azure.ai.ml._restclient.v2024_07_01_preview.
+        _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2023_04_01_preview: ServiceClient042023Preview,
         serviceclient_2024_01_01_preview: ServiceClient012024Preview,
+        serviceclient_2024_07_01_preview: ServiceClient072024Preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2023_04_01_preview.datastores
+        self._operation = serviceclient_2024_07_01_preview.datastores
         self._compute_operation = serviceclient_2024_01_01_preview.compute
-        self._credential = serviceclient_2023_04_01_preview._config.credential
+        self._credential = serviceclient_2024_07_01_preview._config.credential
         self._init_kwargs = kwargs
 
     @monitor_with_activity(ops_logger, "Datastore.List", ActivityType.PUBLICAPI)
@@ -93,9 +97,10 @@ class DatastoreOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
-    def _list_secrets(self, name: str) -> DatastoreSecrets:
+    def _list_secrets(self, name: str, expirable_secret: bool = False) -> DatastoreSecrets:
         return self._operation.list_secrets(
             name=name,
+            body=SecretExpiry(expirable_secret=expirable_secret),
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._init_kwargs,
@@ -163,7 +168,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         if datastore_resource.name and not isinstance(
             datastore_resource.properties.credentials, NoneDatastoreCredentials
         ):
-            secrets = self._list_secrets(datastore_resource.name)
+            secrets = self._list_secrets(name=datastore_resource.name, expirable_secret=True)
             datastore_resource.properties.credentials.secrets = secrets
 
     @monitor_with_activity(ops_logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
