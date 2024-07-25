@@ -302,9 +302,9 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
 
     remove_json_files(pkg_dir)
 
-    print("===== report changes begin =====")
+    print("===== changelog start =====")
     print(checker.report_changes())
-    print("===== report changes end =====")
+    print("===== changelog end =====")
     if not changelog and checker.breaking_changes:
         exit(1)
 
