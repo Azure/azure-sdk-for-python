@@ -132,7 +132,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
+         and "pass-through". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
@@ -495,7 +495,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
+         and "pass-through". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
@@ -759,7 +759,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
+         and "pass-through". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.

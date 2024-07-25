@@ -330,7 +330,7 @@ In the above example, this will be the JSON payload in the HTTP request:
 }
 ```
 
-Note that by default, the service will reject any request payload that includes extra parameters. In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra-parameters": "pass_through"`.
+Note that by default, the service will reject any request payload that includes extra parameters. In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra-parameters": "pass-through"`.
 
 ### Text Embeddings example
 

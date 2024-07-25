@@ -800,7 +800,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     # transport of the parent client.
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
-    async def test_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
+    async def test_async_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
         transport = AioHttpTransport()
         async with self._create_async_chat_client(transport=transport, **kwargs) as client1:
             # assert transport.session is None  # Why is this not None here?

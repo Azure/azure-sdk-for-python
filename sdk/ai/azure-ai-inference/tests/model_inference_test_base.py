@@ -248,7 +248,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
         assert headers["Content-Type"] == "application/json"
         assert headers["Content-Length"] == "311"
-        assert headers["extra-parameters"] == "pass_through"
+        assert headers["extra-parameters"] == "pass-through"
         assert headers["Accept"] == "application/json"
         assert headers["some_header"] == "some_header_value"
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
@@ -262,7 +262,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         headers = self.pipeline_request.http_request.headers
         assert headers["Content-Type"] == "application/json"
         assert headers["Content-Length"] == "1790"
-        assert headers["extra-parameters"] == "pass_through"
+        assert headers["extra-parameters"] == "pass-through"
         assert headers["Accept"] == "application/json"
         assert headers["some_header"] == "some_header_value"
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
@@ -301,7 +301,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _validate_model_extras(body: str, headers: Dict[str, str]):
         assert headers is not None
-        assert headers["extra-parameters"] == "pass_through"
+        assert headers["extra-parameters"] == "pass-through"
         assert body is not None
         try:
             body_json = json.loads(body)
