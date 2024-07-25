@@ -18,7 +18,7 @@ USAGE:
     pip install openai
 
     Set the environment variables with your own values:
-    1) AZURE_OPENAI_API_KEY - your Azure OpenAI API key.
+    1) AZURE_OPENAI_KEY - your Azure OpenAI API key.
     2) AZURE_OPENAI_ENDPOINT - the endpoint to your Azure OpenAI resource.
 """
 
@@ -32,7 +32,7 @@ def completions_aoai_quickstart() -> None:
     from openai import AzureOpenAI
 
     client = AzureOpenAI(
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+        api_key=os.getenv("AZURE_OPENAI_KEY"),
         api_version=os.getenv("API_VERSION_GA"),
         azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
         )

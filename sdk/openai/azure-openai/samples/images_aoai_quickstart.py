@@ -20,7 +20,7 @@ USAGE:
     pip install pillow
 
     Set the environment variables with your own values:
-    1) AZURE_OPENAI_API_KEY - your Azure OpenAI API key.
+    1) AZURE_OPENAI_KEY - your Azure OpenAI API key.
     2) AZURE_OPENAI_ENDPOINT - the endpoint to your Azure OpenAI resource.
     3) AZURE_OPENAI_IMAGE_DEPLOYMENT - the deployment name you chose when deploying your model.
 """
@@ -38,7 +38,7 @@ def images_aoai_quickstart() -> None:
 
     client = AzureOpenAI(
         api_version=os.environ["API_VERSION_GA"],
-        api_key=os.environ["AZURE_OPENAI_API_KEY"],
+        api_key=os.environ["AZURE_OPENAI_KEY"],
         azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"]
     )
 
