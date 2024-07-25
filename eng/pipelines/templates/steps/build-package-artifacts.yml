@@ -21,14 +21,6 @@ parameters:
     type: string
     default: '*'
 
-
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked wherever
-# package targeting needs to be resolved prior to doing any actual work, whether it be build, static analysis, or test.
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`. This variable
-# will be updated by PR diff detection as well.
-
-# In addition, the variable ENABLE_EXTENSION_BUILD is honored to enable builds on windows and mac if necessary.
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -61,6 +53,7 @@ steps:
     - pwsh: |
         mkdir -p $(Build.ArtifactStagingDirectory)/diff
       displayName: Create PR Diff Folder
+
     - task: PowerShell@2
       inputs:
         filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
@@ -72,6 +65,7 @@ steps:
         Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
         cat $(Build.ArtifactStagingDirectory)/diff/diff.json
       displayName: Dump PR Diff
+
     - task: Powershell@2
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
@@ -81,9 +75,10 @@ steps:
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
       displayName: Save package properties filtered for PR
+
   - ${{ else }}:
-    # todo add a variable to make -AddDevVersion optionally show up, versus calling this twice.
     - task: Powershell@2
+      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
         arguments: >
@@ -92,7 +87,9 @@ steps:
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
         displayName: Save package properties for service
+
     - task: Powershell@2
+      condition: and(succeeded(), eq(variables['SetDevVersion'],'true'))
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
         arguments: >
@@ -101,9 +98,7 @@ steps:
           -AddDevVersion
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
-      displayName: Update package properties with dev version
-      condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
-
+        displayName: Update package properties with dev version
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:

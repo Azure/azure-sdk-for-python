@@ -19,8 +19,10 @@ from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
     BLOB_DATASTORE_IS_HDI_FOLDER_KEY,
     FILE_SIZE_WARNING,
+    KEY_AUTHENTICATION_ERROR_CODE,
     LEGACY_ARTIFACT_DIRECTORY,
     MAX_CONCURRENCY,
+    SAS_KEY_AUTHENTICATION_ERROR_MSG,
     UPLOAD_CONFIRMATION,
 )
 from azure.ai.ml._azure_environments import _get_cloud_details
@@ -35,7 +37,7 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
 if TYPE_CHECKING:
@@ -169,7 +171,18 @@ class BlobStorageClient:
             blob_client = self.container_client.get_blob_client(blob=self.indicator_file)
             legacy_blob_client = self.container_client.get_blob_client(blob=legacy_indicator_file)
 
-            properties = blob_client.get_blob_properties()
+            try:
+                properties = blob_client.get_blob_properties()
+            except HttpResponseError as e:
+                if e.error_code == KEY_AUTHENTICATION_ERROR_CODE:  # pylint: disable=no-member
+                    formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(
+                        e.error_code, e.exc_value
+                    )  # pylint: disable=no-member
+                    exception_with_documentation = Exception(formatted_msg)
+                    exception_with_documentation.__traceback__ = e.exc_traceback
+                    raise exception_with_documentation from e
+                raise e
+
             metadata = properties.get("metadata")
 
             # first check legacy folder's metadata to see if artifact is stored there

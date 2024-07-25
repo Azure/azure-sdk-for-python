@@ -72,14 +72,14 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: linux
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -90,14 +90,14 @@ jobs:
       os: windows
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: windows
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -108,14 +108,14 @@ jobs:
       os: macOS
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: mac
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
