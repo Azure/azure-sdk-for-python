@@ -54,10 +54,17 @@ steps:
         mkdir -p $(Build.ArtifactStagingDirectory)/diff
       displayName: Create PR Diff Folder
 
+    - pwsh: |
+        $location = Join-Path "$(Build.ArtifactStagingDirectory)" "diff"
+
+        Write-Host "./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath `"$(Build.SourcesDirectory)`" -ArtifactPath `"$location`""
+        ./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath "$(Build.SourcesDirectory)" -ArtifactPath "$location"
+      displayName: Generate PR Diff
+
     - task: PowerShell@2
       inputs:
         filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
-        arguments: '-TargetPath "$(Build.SourcesDirectory)" -ArtifactPath $(Build.ArtifactStagingDirectory)/diff'
+        arguments: ''
       displayName: 'Generate PR Diff'
 
     - pwsh: |
