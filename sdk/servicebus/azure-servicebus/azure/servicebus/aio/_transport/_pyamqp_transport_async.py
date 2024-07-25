@@ -22,6 +22,7 @@ from ..._pyamqp.error import (
     AMQPException,
     MessageException,
     ErrorCondition,
+    AMQPLinkError
 )
 
 from ._base_async import AmqpTransportAsync
