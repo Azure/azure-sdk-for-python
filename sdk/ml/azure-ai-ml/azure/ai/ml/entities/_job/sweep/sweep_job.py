@@ -71,7 +71,7 @@ module_logger = logging.getLogger(__name__)
 class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
-    .. admonition:: Note
+    .. note::
         For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix AZUREML_SWEEP_.
         Example: If you have a parameter named learning_rate, you can access it as 'AZUREML_SWEEP_learning_rate'.
 
@@ -85,7 +85,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype tags: dict[str, str]
     :keyword properties: The asset property dictionary.
     :paramtype properties: dict[str, str]
-    :keyword experiment_name: Name of the experiment the job will be created under. If None is provided, the job will be created under experiment 'Default'.
+    :keyword experiment_name: Name of the experiment the job will be created under. If None is provided,
+        the job will be created under experiment 'Default'.
     :paramtype experiment_name: str
     :keyword identity: Identity that the training job will use while running on compute.
     :paramtype identity: Union[
@@ -97,20 +98,24 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
     :paramtype outputs: dict[str, ~azure.ai.ml.Output]
-    :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to "random".
+    :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to
+        "random".
     :paramtype sampling_algorithm: str
-    :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter and the value is the parameter expression.
+    :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter
+        and the value is the parameter expression.
     :paramtype search_space: Dict
     :keyword objective: Metric to optimize for.
     :paramtype objective: Objective
     :keyword compute: The compute target the job runs on.
     :paramtype compute: str
-    :keyword trial: The job configuration for each trial. Each trial will be provided with a different combination of hyperparameter values that the system samples from the search_space.
+    :keyword trial: The job configuration for each trial. Each trial will be provided with a different combination
+        of hyperparameter values that the system samples from the search_space.
     :paramtype trial: Union[
         ~azure.ai.ml.entities.CommandJob,
         ~azure.ai.ml.entities.CommandComponent
     ]
-    :keyword early_termination: The early termination policy to use. A trial job is canceled when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
+    :keyword early_termination: The early termination policy to use. A trial job is canceled
+        when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :paramtype early_termination: Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
@@ -134,6 +139,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             :dedent: 8
             :caption: Creating a SweepJob
     """
+
 
     def __init__(
         self,
