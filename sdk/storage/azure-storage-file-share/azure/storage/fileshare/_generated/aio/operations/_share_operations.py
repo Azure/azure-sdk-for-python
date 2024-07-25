@@ -152,6 +152,7 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -230,6 +231,7 @@ class ShareOperations:
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -356,6 +358,7 @@ class ShareOperations:
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -444,6 +447,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -532,6 +536,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -625,6 +630,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -713,6 +719,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -815,6 +822,7 @@ class ShareOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             sharesnapshot=sharesnapshot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -889,6 +897,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1056,12 +1065,23 @@ class ShareOperations:
 
     @distributed_trace_async
     async def get_permission(
-        self, file_permission_key: str, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        file_permission_key: str,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.SharePermission:
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
         :type file_permission_key: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1089,6 +1109,7 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -1202,6 +1223,7 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1281,6 +1303,7 @@ class ShareOperations:
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1355,6 +1378,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1444,6 +1468,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -1520,6 +1545,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1606,6 +1632,7 @@ class ShareOperations:
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
             deleted_share_version=deleted_share_version,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
