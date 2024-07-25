@@ -1170,16 +1170,13 @@
         },
         "properties": {
           "message_encode_policy": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           },
           "message_decode_policy": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           },
           "version": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           }
         }
       },
@@ -1483,8 +1480,7 @@
         },
         "properties": {
           "version": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           }
         }
       },
@@ -2241,8 +2237,7 @@
         },
         "properties": {
           "version": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           }
         }
       },
@@ -2430,8 +2425,7 @@
         },
         "properties": {
           "version": {
-            "attr_type": null,
-            "default": null
+            "attr_type": null
           }
         }
       }

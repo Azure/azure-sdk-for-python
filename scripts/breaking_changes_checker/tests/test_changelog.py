@@ -327,8 +327,7 @@ def test_added_operation_group():
                     "methods": {},
                     "properties": {
                         "bar": {
-                            "attr_type": "str",
-                            "default": None
+                            "attr_type": "str"
                         }
                     }
                 }
@@ -343,16 +342,13 @@ def test_added_operation_group():
                     "methods": {},
                     "properties": {
                         "bar": {
-                            "attr_type": "str",
-                            "default": None
+                            "attr_type": "str"
                         },
                         "foo": {
-                            "attr_type": "DeviceGroupsOperations",
-                            "default": None
+                            "attr_type": "DeviceGroupsOperations"
                         },
                         "zip": {
-                            "attr_type": "bool",
-                            "default": None
+                            "attr_type": "bool"
                         }
                     }
                 }
