@@ -111,7 +111,7 @@ def sample_chat_completions_with_tools():
 
             tool_call = response.choices[0].message.tool_calls[0]
 
-            if isinstance(tool_call, ChatCompletionsFunctionToolCall):
+            if type(tool_call) is ChatCompletionsFunctionToolCall:
 
                 function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
                 print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
