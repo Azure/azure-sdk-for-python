@@ -23,7 +23,9 @@ USAGE:
     3) AZURE_OPENAI_SEARCH_ENDPOINT - the endpoint to your Azure Search resource.
     4) AZURE_OPENAI_SEARCH_INDEX - the index name you chose when creating your Azure Search index.
 """
-from ..tests.conftest import GA
+
+import os
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
 
 def chat_completion_oyd_studio_viewcode() -> None:
     import os
@@ -40,7 +42,7 @@ def chat_completion_oyd_studio_viewcode() -> None:
     client = AzureOpenAI(
         azure_endpoint=endpoint,
         azure_ad_token_provider=token_provider,
-        api_version=GA,
+        api_version=os.getenv("API_VERSION_GA"),
     )
 
     completion = client.chat.completions.create(

@@ -21,8 +21,8 @@ USAGE:
     1) AZURE_OPENAI_ENDPOINT - the endpoint to your Azure OpenAI resource.
     2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
 """
-from tests.conftest import GA
-AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
+import os
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
 
 def chat_completion_quickstart() -> None:
     #[START chat_completion_quickstart]
@@ -35,9 +35,9 @@ def chat_completion_quickstart() -> None:
     )
 
     client = AzureOpenAI(
-        azure_endpoint=os.environ[AZURE_OPENAI_ENDPOINT],
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
         azure_ad_token_provider=token_provider,
-        api_version=GA,
+        api_version=os.environ["API_VERSION_GA"],
     )
 
     response = client.chat.completions.create(
