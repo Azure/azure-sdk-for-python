@@ -26,8 +26,8 @@ USAGE:
 """
 
 import os
-os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
-AZURE_OPENAI_IMAGE_DEPLOYMENT = "dall-e-3"
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT")
+os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
 
 def images_aoai_quickstart() -> None:
     import os
@@ -43,7 +43,7 @@ def images_aoai_quickstart() -> None:
     )
 
     result = client.images.generate(
-        model=os.environ[AZURE_OPENAI_IMAGE_DEPLOYMENT],
+        model=os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"],
         prompt="a close-up of a bear walking throughthe forest",
         n=1
     )
