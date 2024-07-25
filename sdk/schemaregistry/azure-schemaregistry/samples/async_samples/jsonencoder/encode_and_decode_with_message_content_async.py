@@ -30,8 +30,8 @@ DESCRIPTION:
      - Authenticating an async SchemaRegistryClient to be used by the JsonSchemaEncoder.
      - Passing in content and schema to the JsonSchemaEncoder, which will return a TypedDict containing
       encoded and validated content and corresponding content type.
-     - Manually setting the content and content type on a MessageType object, specifically EventData.
-     - Manually retrieving the content and content type from a MessageType object, and passing it to the
+     - Manually setting the content and content type on a OutboundMessageContent object, specifically EventData.
+     - Manually retrieving the content and content type from a InboundMessageContent object, and passing it to the
       JsonSchemaEncoder, which will return the decoded and validated content.
 USAGE:
     python encode_and_decode_with_message_content_async.py
@@ -55,7 +55,6 @@ from typing import cast, List
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry import MessageContent
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 from azure.eventhub import EventData
 
@@ -116,7 +115,7 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+        client=schema_registry, group_name=GROUP_NAME, validate=cast(str, SCHEMA_JSON["$schema"])
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

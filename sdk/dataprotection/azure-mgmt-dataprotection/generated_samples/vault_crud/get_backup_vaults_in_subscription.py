@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.dataprotection import DataProtectionMgmtClient
 
 """
@@ -34,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-11-01/examples/VaultCRUD/GetBackupVaultsInSubscription.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2024-04-01/examples/VaultCRUD/GetBackupVaultsInSubscription.json
 if __name__ == "__main__":
     main()

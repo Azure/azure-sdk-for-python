@@ -10,19 +10,26 @@ urlFragment: image-analysis-samples
 
 # Samples for Image Analysis client library for Python
 
-These are runnable console Python programs that show how to use the Image Analysis client library. They cover all the supported visual features. Most use the a synchronous client to analyze an image file or image URL. Two samples use the asynchronous client. The concepts are similar, you can easily modify any of the samples to your needs.
+These are runnable console Python programs that show how to use the Image Analysis client library.
+
+- They cover all the supported visual features.
+- Most use the synchronous client to analyze an image file or image URL. Three samples (located in the `async_samples` folder) use the asynchronous client.
+- Most use API key authentication. Two samples (having `_entra_id_auth` in their name) use Entra ID authentication.
+
+The concepts are similar, you can easily modify any of the samples to your needs.
 
 ## Synchronous client samples
 
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_analyze_all_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_analyze_all_image_file.py) | Extract all 7 visual features from an image file, using a synchronous client. Logging turned on.|
-|[sample_caption_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_caption_image_file.py) and [sample_caption_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_caption_image_url.py)| Generate a human-readable sentence that describes the content of an image file or image URL, using a synchronous client. |
+|[sample_caption_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_caption_image_file.py) and [sample_caption_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_caption_image_url.py)| Generate a human-readable sentence that describes the content of an image file or image URL, using a synchronous client.|
+|[sample_caption_image_file_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_caption_image_file_entra_id_auth.py) | Generate a human-readable sentence that describes the content of an image file, using a synchronous client and Entra ID authentication.|
 |[sample_dense_captions_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_dense_captions_image_file.py) | Generating a human-readable caption for up to 10 different regions in the image, including one for the whole image, using a synchronous client.|
-|[sample_ocr_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_ocr_image_file.py) and [sample_ocr_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_ocr_image_url.py)|  Extract printed or handwritten text from an image file or image URL, using a synchronous client. |
-|[sample_tags_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_tags_image_file.py) | Extract content tags for thousands of recognizable objects, living beings, scenery, and actions that appear in an image file, using a synchronous client. |
+|[sample_ocr_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_ocr_image_file.py) and [sample_ocr_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_ocr_image_url.py)|  Extract printed or handwritten text from an image file or image URL, using a synchronous client.|
+|[sample_tags_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_tags_image_file.py) | Extract content tags for thousands of recognizable objects, living beings, scenery, and actions that appear in an image file, using a synchronous client.|
 |[sample_objects_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_objects_image_file.py) | Detect physical objects in an image file and return their location, using a synchronous client. |
-|[sample_smart_crops_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_smart_crops_image_file.py) | Find a representative sub-region of the image for thumbnail generation, using a synchronous client .| 
+|[sample_smart_crops_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_smart_crops_image_file.py) | Find a representative sub-region of the image for thumbnail generation, using a synchronous client.|
 |[sample_people_image_file.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample_people_image_file.py) | Locate people in the image and return their location, using a synchronous client.|
 
 ## Asynchronous client samples
@@ -31,6 +38,8 @@ These are runnable console Python programs that show how to use the Image Analys
 |----------------|-------------|
 |[sample_caption_image_file_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/async_samples/sample_caption_image_file_async.py) | Generate a human-readable sentence that describes the content of an image file, using an asynchronous client. |
 |[sample_ocr_image_url_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/async_samples/sample_ocr_image_url_async.py) | Extract printed or handwritten text from an image URL, using an asynchronous client. |
+|[sample_ocr_image_url_entra_id_auth_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/async_samples/sample_ocr_image_url_entra_id_auth_async.py) | Extract printed or handwritten text from an image URL, using an asynchronous client and Entra ID authentication |
+
 ## Prerequisites
 
 See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/README.md#prerequisites) here.

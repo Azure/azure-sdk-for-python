@@ -93,7 +93,7 @@ def load_client(
     :return: The appropriate synchronous client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient
-    :raises ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
     """
 
     with ChatCompletionsClient(
@@ -309,7 +309,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype model: str
         :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -333,7 +333,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -357,7 +357,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -388,7 +388,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        back to the client. Iterate over the resulting :class:`~azure.ai.inference.models.StreamingChatCompletions`
         object to get content updates as they arrive.
 
         :param body: Is either a MutableMapping[str, Any] type (like a dictionary) or a IO[bytes] type
@@ -470,7 +470,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype model: str
         :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -555,7 +555,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
             self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
@@ -634,7 +634,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -656,7 +656,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -677,7 +677,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -724,7 +724,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -800,7 +800,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
             self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
@@ -879,7 +879,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -901,7 +901,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -922,7 +922,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -969,7 +969,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1045,7 +1045,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
             self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init

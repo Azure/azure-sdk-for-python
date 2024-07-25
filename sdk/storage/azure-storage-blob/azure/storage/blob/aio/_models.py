@@ -6,35 +6,47 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from typing import Callable, List, Optional, TYPE_CHECKING
+
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
+
 from .._deserialize import parse_tags
-
-from .._models import ContainerProperties, FilteredBlob, parse_page_list
-from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
-
 from .._generated.models import FilterBlobItem
+from .._models import ContainerProperties, FilteredBlob, parse_page_list
+from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
+
+if TYPE_CHECKING:
+    from .._models import BlobProperties
 
 
 class ContainerPropertiesPaged(AsyncPageIterator):
     """An Iterable of Container properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A container name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.ContainerProperties)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only containers whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only containers whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of container names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of container names to retrieve per
         call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[str] continuation_token: An opaque continuation token.
     """
+
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: Optional[str]
+    """A container name prefix being used to filter the list."""
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int]
+    """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str]
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
+    current_page: List[ContainerProperties]
+    """The current page of listed results."""
+
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(ContainerPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
@@ -77,31 +89,41 @@ class ContainerPropertiesPaged(AsyncPageIterator):
 class FilteredBlobPaged(AsyncPageIterator):
     """An Iterable of Blob properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param int results_per_page: The maximum number of blobs to retrieve per
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] container: The name of the container.
+    :param Optional[int] results_per_page: The maximum number of blobs to retrieve per
         call.
-    :param str continuation_token: An opaque continuation token.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
+    :param Optional[str] continuation_token: An opaque continuation token.
+    :param Optional[str] location_mode:
+    Specifies the location the request should be sent to. This mode only applies for RA-GRS accounts
+        which allow secondary read access. Options include 'primary' or 'secondary'.
     """
+
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: Optional[str]
+    """A blob name prefix being used to filter the list."""
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int]
+    """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str]
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
+    current_page: Optional[List["BlobProperties"]]
+    """The current page of listed results."""
+    container: Optional[str]
+    """The container that the blobs are listed from."""
+
     def __init__(
-            self, command,
-            container=None,
-            results_per_page=None,
-            continuation_token=None,
-            location_mode=None):
+        self, command: Callable,
+        container: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        location_mode: Optional[str] = None
+    ) -> None:
         super(FilteredBlobPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,

@@ -37,7 +37,10 @@ def main():
     copied_blob.start_copy_from_url(source_blob)
     for i in range(10):
         props = copied_blob.get_blob_properties()
-        status = props.copy.status
+        if props.copy.status is not None:
+            status = props.copy.status
+        else:
+            status = "None"
         print("Copy status: " + status)
         if status == "success":
             # Copy finished
@@ -49,7 +52,11 @@ def main():
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
         copy_id = props.copy.id
-        copied_blob.abort_copy(copy_id)
+        if copy_id is not None:
+            copied_blob.abort_copy(copy_id)
+        else:
+            print("copy_id was unexpectedly None, check if the operation completed successfully.")
+            sys.exit(1)
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
 
