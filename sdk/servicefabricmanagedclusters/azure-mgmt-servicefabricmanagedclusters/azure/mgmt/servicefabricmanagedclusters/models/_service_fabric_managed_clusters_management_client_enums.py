@@ -22,13 +22,13 @@ class ClusterState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WAITING_FOR_NODES = "WaitingForNodes"
     """Indicates that the cluster resource is created and the resource provider is waiting for Service
-    #: Fabric VM extension to boot up and report to it."""
+    Fabric VM extension to boot up and report to it."""
     DEPLOYING = "Deploying"
     """Indicates that the Service Fabric runtime is being installed on the VMs. Cluster resource will
-    #: be in this state until the cluster boots up and system services are up."""
+    be in this state until the cluster boots up and system services are up."""
     BASELINE_UPGRADE = "BaselineUpgrade"
     """Indicates that the cluster is upgrading to establishes the cluster version. This upgrade is
-    #: automatically initiated when the cluster boots up for the first time."""
+    automatically initiated when the cluster boots up for the first time."""
     UPGRADING = "Upgrading"
     """Indicates that the cluster is being upgraded with the user provided configuration."""
     UPGRADE_FAILED = "UpgradeFailed"
@@ -44,13 +44,13 @@ class ClusterUpgradeCadence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WAVE0 = "Wave0"
     """Cluster upgrade starts immediately after a new version is rolled out. Recommended for Test/Dev
-    #: clusters."""
+    clusters."""
     WAVE1 = "Wave1"
     """Cluster upgrade starts 7 days after a new version is rolled out. Recommended for Pre-prod
-    #: clusters."""
+    clusters."""
     WAVE2 = "Wave2"
     """Cluster upgrade starts 14 days after a new version is rolled out. Recommended for Production
-    #: clusters."""
+    clusters."""
 
 
 class ClusterUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -58,11 +58,11 @@ class ClusterUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTOMATIC = "Automatic"
     """The cluster will be automatically upgraded to the latest Service Fabric runtime version,
-    #: **clusterUpgradeCadence** will determine when the upgrade starts after the new version becomes
-    #: available."""
+    **clusterUpgradeCadence** will determine when the upgrade starts after the new version becomes
+    available."""
     MANUAL = "Manual"
     """The cluster will not be automatically upgraded to the latest Service Fabric runtime version.
-    #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource."""
+    The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource."""
 
 
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -81,7 +81,7 @@ class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     """Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
-    #: applications and dev/test."""
+    applications and dev/test."""
     PREMIUM_LRS = "Premium_LRS"
     """Premium SSD locally redundant storage. Best for production and performance sensitive workloads."""
 
@@ -146,7 +146,7 @@ class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that user assigned identity is associated with the resource."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     """Indicates that both system assigned and user assigned identity are associated with the
-    #: resource."""
+    resource."""
 
 
 class ManagedResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -212,13 +212,13 @@ class PartitionScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SINGLETON = "Singleton"
     """Indicates that the partition is based on string names, and is a SingletonPartitionScheme
-    #: object, The value is 0."""
+    object, The value is 0."""
     UNIFORM_INT64_RANGE = "UniformInt64Range"
     """Indicates that the partition is based on Int64 key ranges, and is a
-    #: UniformInt64RangePartitionScheme object. The value is 1."""
+    UniformInt64RangePartitionScheme object. The value is 1."""
     NAMED = "Named"
     """Indicates that the partition is based on string names, and is a NamedPartitionScheme object.
-    #: The value is 2."""
+    The value is 2."""
 
 
 class PrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -271,17 +271,21 @@ class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MONITORED = "Monitored"
     """The upgrade will stop after completing each upgrade domain and automatically monitor health
-    #: before proceeding. The value is 0."""
+    before proceeding. The value is 0."""
     UNMONITORED_AUTO = "UnmonitoredAuto"
     """The upgrade will proceed automatically without performing any health monitoring. The value is
-    #: 1."""
+    1."""
 
 
 class SecurityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the security type of the nodeType. Only TrustedLaunch is currently supported."""
+    """Specifies the security type of the nodeType. Only Standard and TrustedLaunch are currently
+    supported.
+    """
 
     TRUSTED_LAUNCH = "TrustedLaunch"
     """Trusted Launch is a security type that secures generation 2 virtual machines."""
+    STANDARD = "Standard"
+    """Standard is the default security type for all machines."""
 
 
 class ServiceCorrelationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -289,12 +293,12 @@ class ServiceCorrelationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ALIGNED_AFFINITY = "AlignedAffinity"
     """Aligned affinity ensures that the primaries of the partitions of the affinitized services are
-    #: collocated on the same nodes. This is the default and is the same as selecting the Affinity
-    #: scheme. The value is 0."""
+    collocated on the same nodes. This is the default and is the same as selecting the Affinity
+    scheme. The value is 0."""
     NON_ALIGNED_AFFINITY = "NonAlignedAffinity"
     """Non-Aligned affinity guarantees that all replicas of each service will be placed on the same
-    #: nodes. Unlike Aligned Affinity, this does not guarantee that replicas of particular role will
-    #: be collocated. The value is 1."""
+    nodes. Unlike Aligned Affinity, this does not guarantee that replicas of particular role will
+    be collocated. The value is 1."""
 
 
 class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -304,7 +308,7 @@ class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Does not use Service Fabric to make its state highly available or reliable. The value is 0."""
     STATEFUL = "Stateful"
     """Uses Service Fabric to make its state or part of its state highly available and reliable. The
-    #: value is 1."""
+    value is 1."""
 
 
 class ServiceLoadMetricWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -337,26 +341,26 @@ class ServicePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID_DOMAIN = "InvalidDomain"
     """Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementInvalidDomainPolicyDescription, which indicates that a particular fault or
-    #: upgrade domain cannot be used for placement of this service. The value is 0."""
+    ServicePlacementInvalidDomainPolicyDescription, which indicates that a particular fault or
+    upgrade domain cannot be used for placement of this service. The value is 0."""
     REQUIRED_DOMAIN = "RequiredDomain"
     """Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementRequireDomainDistributionPolicyDescription indicating that the replicas of the
-    #: service must be placed in a specific domain. The value is 1."""
+    ServicePlacementRequireDomainDistributionPolicyDescription indicating that the replicas of the
+    service must be placed in a specific domain. The value is 1."""
     PREFERRED_PRIMARY_DOMAIN = "PreferredPrimaryDomain"
     """Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementPreferPrimaryDomainPolicyDescription, which indicates that if possible the
-    #: Primary replica for the partitions of the service should be located in a particular domain as
-    #: an optimization. The value is 2."""
+    ServicePlacementPreferPrimaryDomainPolicyDescription, which indicates that if possible the
+    Primary replica for the partitions of the service should be located in a particular domain as
+    an optimization. The value is 2."""
     REQUIRED_DOMAIN_DISTRIBUTION = "RequiredDomainDistribution"
     """Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementRequireDomainDistributionPolicyDescription, indicating that the system will
-    #: disallow placement of any two replicas from the same partition in the same domain at any time.
-    #: The value is 3."""
+    ServicePlacementRequireDomainDistributionPolicyDescription, indicating that the system will
+    disallow placement of any two replicas from the same partition in the same domain at any time.
+    The value is 3."""
     NON_PARTIALLY_PLACE_SERVICE = "NonPartiallyPlaceService"
     """Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all
-    #: replicas of a particular partition of the service should be placed atomically. The value is 4."""
+    ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all
+    replicas of a particular partition of the service should be placed atomically. The value is 4."""
 
 
 class ServiceScalingMechanismKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -364,10 +368,10 @@ class ServiceScalingMechanismKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SCALE_PARTITION_INSTANCE_COUNT = "ScalePartitionInstanceCount"
     """Represents a scaling mechanism for adding or removing instances of stateless service partition.
-    #: The value is 0."""
+    The value is 0."""
     ADD_REMOVE_INCREMENTAL_NAMED_PARTITION = "AddRemoveIncrementalNamedPartition"
     """Represents a scaling mechanism for adding or removing named partitions of a stateless service.
-    #: The value is 1."""
+    The value is 1."""
 
 
 class ServiceScalingTriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -375,10 +379,10 @@ class ServiceScalingTriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AVERAGE_PARTITION_LOAD_TRIGGER = "AveragePartitionLoadTrigger"
     """Represents a scaling trigger related to an average load of a metric/resource of a partition.
-    #: The value is 0."""
+    The value is 0."""
     AVERAGE_SERVICE_LOAD_TRIGGER = "AverageServiceLoadTrigger"
     """Represents a scaling policy related to an average load of a metric/resource of a service. The
-    #: value is 1."""
+    value is 1."""
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -397,7 +401,7 @@ class UpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation will proceed in all specified nodes at the same time."""
     BY_UPGRADE_DOMAIN = "ByUpgradeDomain"
     """The operation will proceed one upgrade domain at a time, checking the health in between each to
-    #: continue."""
+    continue."""
 
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -409,10 +413,10 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The upgrade will proceed automatically without performing any health monitoring. The value is 0"""
     UNMONITORED_MANUAL = "UnmonitoredManual"
     """The upgrade will stop after completing each upgrade domain, giving the opportunity to manually
-    #: monitor health before proceeding. The value is 1"""
+    monitor health before proceeding. The value is 1"""
     MONITORED = "Monitored"
     """The upgrade will stop after completing each upgrade domain and automatically monitor health
-    #: before proceeding. The value is 2"""
+    before proceeding. The value is 2"""
 
 
 class VmSetupAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -438,4 +442,4 @@ class ZonalUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cluster will use 5 upgrade domains for Cross Az Node types."""
     FAST = "Fast"
     """The cluster will use a maximum of 3 upgrade domains per zone instead of 5 for Cross Az Node
-    #: types for faster deployments."""
+    types for faster deployments."""
