@@ -4,7 +4,7 @@ parameters:
     default: 'ml'
   - name: Artifacts
     type: object
-    default: 
+    default:
     - name: azure-ai-ml
       safeName: azureaiml
       skipVerifyChangeLog: true
@@ -24,7 +24,7 @@ jobs:
       vmImage: MMSUbuntu20.04
 
     steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
       parameters:
         BuildTargetingString: "azure-*"
 

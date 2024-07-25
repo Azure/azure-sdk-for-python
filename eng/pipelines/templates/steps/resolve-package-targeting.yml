@@ -2,15 +2,12 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
-  - name: TargetRepo
-    type: string
-    default: $(Build.SourcesDirectory)
   - name: PackagePropertiesFolder
     type: string
 
 steps:
   # if triggered for a PR, handle PR diff side
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), ne('${{ parameters.PackagePropertiesFolder }}','') }}:
     - pwsh: |
         $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
           | Where-Object { $_.Extension -eq '.json' } `

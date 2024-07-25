@@ -102,9 +102,8 @@ steps:
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
-      BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-      TargetRepo: $(Build.SourcesDirectory)
 
   - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
     parameters:

@@ -78,7 +78,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        ArtifactSuffix: linux
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Windows'
@@ -96,7 +96,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        ArtifactSuffix: windows
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_MacOS'
@@ -114,7 +114,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-        ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        ArtifactSuffix: mac
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Extended'
@@ -134,13 +134,9 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
       parameters:
-        BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
     - template: ../steps/build-extended-artifacts.yml
@@ -165,10 +161,6 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -188,6 +180,11 @@ jobs:
       inputs:
         artifactName: 'packages_extended'
         targetPath: $(Build.ArtifactStagingDirectory)
+
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
     - template: ../steps/analyze.yml
       parameters:
@@ -246,7 +243,7 @@ jobs:
         - pwsh: |
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
-        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
           parameters:
             BuildTargetingString: ${{ parameters.BuildTargetingString }}
         - task: PythonScript@0

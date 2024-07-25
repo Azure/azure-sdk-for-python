@@ -71,7 +71,7 @@ jobs:
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 

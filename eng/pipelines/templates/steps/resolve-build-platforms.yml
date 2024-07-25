@@ -5,7 +5,7 @@ parameters:
 
 steps:
     # when we merge pipeline v3, this check will change to examining the targeting string $(TargetingString)
-    # as the generate-pr-diff call + resolution will be present in targeting-string-resolve.yml.
+    # as the generate-pr-diff call + resolution will be present in resolve-package-targeting.yml.
     # until then, we simply check to see if we're targeting storage service directory
     - pwsh: |
         if ("${{ parameters.ServiceDirectory }}" -eq "storage") {
