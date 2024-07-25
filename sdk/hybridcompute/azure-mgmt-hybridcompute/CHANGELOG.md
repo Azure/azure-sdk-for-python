@@ -1,5 +1,25 @@
 # Release History
 
+## 9.0.0b4 (2024-07-23)
+
+### Features Added
+
+  - Added operation NetworkSecurityPerimeterConfigurationsOperations.begin_reconcile_for_private_link_scope
+  - Model LicenseProfile has a new parameter billing_end_date
+  - Model LicenseProfile has a new parameter error
+  - Model LicenseProfileMachineInstanceView has a new parameter billing_end_date
+  - Model LicenseProfileMachineInstanceView has a new parameter error
+  - Model OSProfileLinuxConfiguration has a new parameter enable_hotpatching
+  - Model OSProfileLinuxConfiguration has a new parameter status
+  - Model OSProfileWindowsConfiguration has a new parameter enable_hotpatching
+  - Model OSProfileWindowsConfiguration has a new parameter status
+  - Model ProductFeature has a new parameter billing_end_date
+  - Model ProductFeature has a new parameter error
+
+### Breaking Changes
+
+  - Removed operation MachineRunCommandsOperations.begin_update
+
 ## 9.0.0b3 (2024-05-30)
 
 ### Features Added

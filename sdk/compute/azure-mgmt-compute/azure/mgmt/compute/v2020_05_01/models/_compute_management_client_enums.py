@@ -28,7 +28,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference or
     galleryImageReference."""
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
     by storageAccountId."""
     COPY = "Copy"
@@ -39,6 +39,9 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
     the disk."""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    by storageAccountId."""
 
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

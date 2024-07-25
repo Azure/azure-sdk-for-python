@@ -1610,7 +1610,7 @@ class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar topology_manager_policy: Topology Manager policy to use.
     :vartype topology_manager_policy: str
     :ivar allowed_unsafe_sysctls: Allowlist of unsafe sysctls or unsafe sysctl patterns (ending in
-     ``*``\ ).
+     ``*``\\ ).
     :vartype allowed_unsafe_sysctls: list[str]
     :ivar fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled on
      the node.
@@ -1676,7 +1676,7 @@ class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword topology_manager_policy: Topology Manager policy to use.
         :paramtype topology_manager_policy: str
         :keyword allowed_unsafe_sysctls: Allowlist of unsafe sysctls or unsafe sysctl patterns (ending
-         in ``*``\ ).
+         in ``*``\\ ).
         :paramtype allowed_unsafe_sysctls: list[str]
         :keyword fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled
          on the node.
@@ -4003,7 +4003,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
      **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
      :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
@@ -4047,7 +4047,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
          :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
          **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
          conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
          :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str

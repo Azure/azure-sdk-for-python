@@ -10,7 +10,7 @@ refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 ### Prerequisites
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal][azure_portal] or the [Azure PowerShell][azure_powershell] to set it up.
 
@@ -32,11 +32,13 @@ pip install azure-communication-callautomation
 ## Examples
 ### Initialize CallAutomationClient
 ```Python
+from azure.identity import DefaultAzureCredential
 from azure.communication.callautomation import (CallAutomationClient)
 
 # Your unique Azure Communication service endpoint
 endpoint_url = '<ENDPOINT>'
-client = CallAutomationClient.from_connection_string(endpoint_url)
+credential = DefaultAzureCredential()
+client = CallAutomationClient(endpoint_url, credential)
 ```
 
 ### Create Call
@@ -55,7 +57,7 @@ callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 # send out the invitation, creating call
 result = client.create_call(
     target_participant=user,
-    callback_url=callback_uri
+    callback_url=callback_url
 )
 
 # this id can be used to do further actions in the call

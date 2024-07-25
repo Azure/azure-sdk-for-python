@@ -16,14 +16,15 @@ USAGE:
 from typing import List
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
+from azure.identity import DefaultAzureCredential
 import os
 import json
 
 # all types of CloudEvents below produce same DeserializedEvent
-connection_str = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 queue_name = os.environ["STORAGE_QUEUE_NAME"]
+queue_account_url = os.environ["STORAGE_QUEUE_ACCOUNT_URL"]
 
-with QueueServiceClient.from_connection_string(connection_str) as qsc:
+with QueueServiceClient(queue_account_url, DefaultAzureCredential()) as qsc:
     payload = qsc.get_queue_client(queue=queue_name, message_decode_policy=BinaryBase64DecodePolicy()).peek_messages(
         max_messages=32
     )

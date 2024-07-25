@@ -1,5 +1,6 @@
 from pathlib import Path
 from unittest.mock import Mock, patch
+
 import pytest
 
 from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
@@ -11,10 +12,10 @@ from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.entities._load_functions import load_model
 from azure.ai.ml.exceptions import ErrorTarget, UnsupportedOperationError
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._evaluator_operations import EvaluatorOperations
-from azure.ai.ml.entities._load_functions import load_model
 from azure.core.exceptions import ResourceNotFoundError
 
 
@@ -22,14 +23,14 @@ from azure.core.exceptions import ResourceNotFoundError
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_07_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
+        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
     )
 
 

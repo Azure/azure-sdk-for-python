@@ -58,6 +58,8 @@ from ._models_py3 import ClientDiscoveryForProperties
 from ._models_py3 import ClientDiscoveryForServiceSpecification
 from ._models_py3 import ClientDiscoveryResponse
 from ._models_py3 import ClientDiscoveryValueForSingleApi
+from ._models_py3 import CmkKekIdentity
+from ._models_py3 import CmkKeyVaultProperties
 from ._models_py3 import CopyOnExpiryOption
 from ._models_py3 import CopyOption
 from ._models_py3 import CrossRegionRestoreDetails
@@ -88,6 +90,7 @@ from ._models_py3 import DppResourceList
 from ._models_py3 import DppTrackedResource
 from ._models_py3 import DppTrackedResourceList
 from ._models_py3 import DppWorkerRequest
+from ._models_py3 import EncryptionSettings
 from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
@@ -149,8 +152,10 @@ from ._models_py3 import SecretStoreResource
 from ._models_py3 import SecuritySettings
 from ._models_py3 import SoftDeleteSettings
 from ._models_py3 import SourceLifeCycle
+from ._models_py3 import StopProtectionRequest
 from ._models_py3 import StorageSetting
 from ._models_py3 import SupportedFeature
+from ._models_py3 import SuspendBackupRequest
 from ._models_py3 import SyncBackupInstanceRequest
 from ._models_py3 import SystemData
 from ._models_py3 import TaggingCriteria
@@ -169,16 +174,20 @@ from ._models_py3 import ValidateRestoreRequestObject
 
 from ._data_protection_mgmt_client_enums import AbsoluteMarker
 from ._data_protection_mgmt_client_enums import AlertsState
+from ._data_protection_mgmt_client_enums import BCDRSecurityLevel
 from ._data_protection_mgmt_client_enums import CreatedByType
 from ._data_protection_mgmt_client_enums import CrossRegionRestoreState
 from ._data_protection_mgmt_client_enums import CrossSubscriptionRestoreState
 from ._data_protection_mgmt_client_enums import CurrentProtectionState
 from ._data_protection_mgmt_client_enums import DataStoreTypes
 from ._data_protection_mgmt_client_enums import DayOfWeek
+from ._data_protection_mgmt_client_enums import EncryptionState
 from ._data_protection_mgmt_client_enums import ExistingResourcePolicy
 from ._data_protection_mgmt_client_enums import FeatureSupportStatus
 from ._data_protection_mgmt_client_enums import FeatureType
+from ._data_protection_mgmt_client_enums import IdentityType
 from ._data_protection_mgmt_client_enums import ImmutabilityState
+from ._data_protection_mgmt_client_enums import InfrastructureEncryptionState
 from ._data_protection_mgmt_client_enums import Month
 from ._data_protection_mgmt_client_enums import PersistentVolumeRestoreMode
 from ._data_protection_mgmt_client_enums import ProvisioningState
@@ -257,6 +266,8 @@ __all__ = [
     "ClientDiscoveryForServiceSpecification",
     "ClientDiscoveryResponse",
     "ClientDiscoveryValueForSingleApi",
+    "CmkKekIdentity",
+    "CmkKeyVaultProperties",
     "CopyOnExpiryOption",
     "CopyOption",
     "CrossRegionRestoreDetails",
@@ -287,6 +298,7 @@ __all__ = [
     "DppTrackedResource",
     "DppTrackedResourceList",
     "DppWorkerRequest",
+    "EncryptionSettings",
     "Error",
     "ErrorAdditionalInfo",
     "ErrorDetail",
@@ -348,8 +360,10 @@ __all__ = [
     "SecuritySettings",
     "SoftDeleteSettings",
     "SourceLifeCycle",
+    "StopProtectionRequest",
     "StorageSetting",
     "SupportedFeature",
+    "SuspendBackupRequest",
     "SyncBackupInstanceRequest",
     "SystemData",
     "TaggingCriteria",
@@ -367,16 +381,20 @@ __all__ = [
     "ValidateRestoreRequestObject",
     "AbsoluteMarker",
     "AlertsState",
+    "BCDRSecurityLevel",
     "CreatedByType",
     "CrossRegionRestoreState",
     "CrossSubscriptionRestoreState",
     "CurrentProtectionState",
     "DataStoreTypes",
     "DayOfWeek",
+    "EncryptionState",
     "ExistingResourcePolicy",
     "FeatureSupportStatus",
     "FeatureType",
+    "IdentityType",
     "ImmutabilityState",
+    "InfrastructureEncryptionState",
     "Month",
     "PersistentVolumeRestoreMode",
     "ProvisioningState",

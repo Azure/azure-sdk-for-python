@@ -13,8 +13,9 @@ import os
 import asyncio
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 # The custom endpoint address to use for establishing a connection to the Event Hubs service,
 # allowing network requests to be routed through any application gateways
@@ -27,8 +28,9 @@ CUSTOM_CA_BUNDLE_PATH = '<your_custom_ca_bundle_file_path>'
 
 
 async def producer_connecting_to_custom_endpoint():
-    producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    producer_client = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        credential=DefaultAzureCredential(),
         eventhub_name=EVENTHUB_NAME,
         custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS,
         connection_verify=CUSTOM_CA_BUNDLE_PATH,
@@ -50,10 +52,11 @@ async def on_event(partition_context, event):
 
 
 async def consumer_connecting_to_custom_endpoint():
-    consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        consumer_group='$Default',
+    consumer_client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        credential=DefaultAzureCredential(),
         eventhub_name=EVENTHUB_NAME,
+        consumer_group='$Default',
         custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS,
         connection_verify=CUSTOM_CA_BUNDLE_PATH,
     )
