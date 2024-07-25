@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Iterable, Optional
 from unittest.mock import Mock, patch
+
 import pytest
 
 from azure.ai.ml import load_model
@@ -10,26 +11,26 @@ from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     ModelVersionData,
     ModelVersionDetails,
 )
-from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations import DatastoreOperations, ModelOperations
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.fixture
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_07_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
+        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
     )
 
 

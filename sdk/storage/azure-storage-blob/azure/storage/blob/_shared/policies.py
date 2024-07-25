@@ -14,10 +14,10 @@ from io import SEEK_SET, UnsupportedOperation
 from time import time
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
-        parse_qsl,
-        urlencode,
-        urlparse,
-        urlunparse,
+    parse_qsl,
+    urlencode,
+    urlparse,
+    urlunparse,
 )
 from wsgiref.handlers import format_date_time
 
@@ -28,10 +28,10 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     NetworkTraceLoggingPolicy,
     RequestHistory,
-    SansIOHTTPPolicy,
+    SansIOHTTPPolicy
 )
 
-from .authentication import StorageHttpChallenge
+from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
@@ -542,6 +542,8 @@ class StorageRetryPolicy(HTTPPolicy):
                         continue
                 break
             except AzureError as err:
+                if isinstance(err, AzureSigningError):
+                    raise
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:

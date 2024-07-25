@@ -21,14 +21,17 @@ import asyncio
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus.exceptions import ServiceBusError
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 SESSION_QUEUE_NAME = os.environ['SERVICEBUS_SESSION_QUEUE_NAME']
 
 
+
 async def renew_lock_on_message_received_from_non_sessionful_entity():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     async with servicebus_client:
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
@@ -57,7 +60,8 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
 
 
 async def renew_lock_on_session_of_the_sessionful_entity():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     async with servicebus_client:
 
@@ -86,7 +90,8 @@ async def renew_lock_on_session_of_the_sessionful_entity():
 
 
 async def renew_lock_with_lock_renewal_failure_callback():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     async with servicebus_client:
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:

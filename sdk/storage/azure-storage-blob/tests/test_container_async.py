@@ -101,6 +101,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert created
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_create_container_with_public_access_container(self, **kwargs):
@@ -117,6 +118,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert created
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_create_container_with_public_access_blob(self, **kwargs):
@@ -382,6 +384,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         assert containers[0].metadata == metadata
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_list_containers_with_public_access(self, **kwargs):
@@ -748,6 +751,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_set_container_acl_with_public_access(self, **kwargs):

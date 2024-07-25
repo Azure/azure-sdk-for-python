@@ -79,13 +79,10 @@ jobs:
         displayName: 'Use Python 3.9'
         inputs:
           versionSpec: '3.9'
-    
+
       - template: /eng/pipelines/templates/steps/use-venv.yml
 
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'packages'
-          targetPath: $(Build.ArtifactStagingDirectory)
+      - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
       - pwsh: |
           mkdir -p $(TEST_PROXY_FOLDER)

@@ -56,7 +56,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference or
     galleryImageReference."""
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
     by storageAccountId."""
     COPY = "Copy"
@@ -79,6 +79,9 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     disk and upload using write token in both disk and VM guest state"""
     COPY_FROM_SAN_SNAPSHOT = "CopyFromSanSnapshot"
     """Create a new disk by exporting from elastic san volume snapshot"""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    by storageAccountId."""
 
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
