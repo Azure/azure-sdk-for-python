@@ -121,28 +121,19 @@ class ChangelogTracker(BreakingChangesTracker):
                     for property_name, property_components in class_components.get("properties", {}).items():
                         if property_name not in stable_property_node and \
                                 not isinstance(property_name, jsondiff.Symbol):
-                            new_operation_group = False
-                            if self.class_name.endswith("Client"):
-                                new_operation_group = self.check_operation_groups_added(property_name, property_components)
-                            if not new_operation_group:
-                                fa = (
+                            fa = (
                                     self.ADDED_CLASS_PROPERTY_MSG,
                                     ChangeType.ADDED_CLASS_PROPERTY,
                                     self.module_name, class_name, property_name
                                 )
-                                self.features_added.append(fa)
-
-
-    def check_operation_groups_added(self, property_name: str, property_components: Dict) -> bool:
-        if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
-            fa = (
-                self.ADDED_OPERATION_GROUP_MSG,
-                ChangeType.ADDED_OPERATION_GROUP,
-                self.module_name, self.class_name, property_name
-            )
-            self.features_added.append(fa)
-            return True
-        return False
+                            if self.class_name.endswith("Client"):
+                                if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
+                                    fa = (
+                                        self.ADDED_OPERATION_GROUP_MSG,
+                                        ChangeType.ADDED_OPERATION_GROUP,
+                                        self.module_name, self.class_name, property_name
+                                    )
+                            self.features_added.append(fa)
 
 
     def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
