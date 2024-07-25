@@ -138,6 +138,11 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
     - template: ../steps/build-extended-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

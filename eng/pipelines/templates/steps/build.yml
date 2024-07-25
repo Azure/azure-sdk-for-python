@@ -19,14 +19,6 @@ parameters:
     default: []
 
 steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-    - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -34,3 +26,4 @@ steps:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: ${{ parameters.ArtifactSuffix }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

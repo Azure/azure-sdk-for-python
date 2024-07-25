@@ -26,7 +26,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-This script is the single point for all checks invoked by CI within this repo. It works in two phases. 
+This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `tox` environments for each package identified as in scope.
 
@@ -116,7 +116,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
-    if args.service:
+    if args.service and args.service != "auto":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(root_dir, service_dir)
     else:

@@ -17,6 +17,10 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: 'linux'
+  - name: BuildTargetingString
+    type: string
+    default: '*'
+
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked wherever
 # package targeting needs to be resolved prior to doing any actual work, whether it be build, static analysis, or test.
@@ -45,6 +49,72 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
+  # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
+  # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
+  - template: set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+
+  # now we need to call Save-Package-Properties so that we can filter on it
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - pwsh: |
+        mkdir -p $(Build.ArtifactStagingDirectory)/diff
+      displayName: Create PR Diff Folder
+    - task: PowerShell@2
+      inputs:
+        filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
+        arguments: '-TargetPath "$(Build.SourcesDirectory)" -ArtifactPath $(Build.ArtifactStagingDirectory)/diff'
+      displayName: 'Generate PR Diff'
+
+    - pwsh: |
+        Write-Host "We freshly generated the PR diff, and this is what it sees!"
+        Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
+        cat $(Build.ArtifactStagingDirectory)/diff/diff.json
+      displayName: Dump PR Diff
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -PrDiff $(Build.ArtifactStagingDirectory)/diff/diff.json
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Save package properties filtered for PR
+  - ${{ else }}:
+    # todo add a variable to make -AddDevVersion optionally show up, versus calling this twice.
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties for service
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+          -AddDevVersion
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Update package properties with dev version
+      condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
+
+
+  - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+    parameters:
+      BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+      TargetRepo: $(Build.SourcesDirectory)
+
+  - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
       VirtualEnvironmentName: "venv"
@@ -58,11 +128,6 @@ steps:
       python -m pip freeze --all
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
-  - template: set-dev-build.yml@self
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - task: Powershell@2
     inputs:

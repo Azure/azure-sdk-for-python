@@ -50,8 +50,6 @@ steps:
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: auth-dev-feed.yml

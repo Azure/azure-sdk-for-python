@@ -25,10 +25,6 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - pwsh: |
-      gci -r $(Build.ArtifactStagingDirectory)
-    displayName: Dump Artifact Directory
-
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
@@ -38,8 +34,6 @@ steps:
       Activate: false
 
   - template: set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
       if ($IsWindows) {

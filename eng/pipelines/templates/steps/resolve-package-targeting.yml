@@ -1,0 +1,38 @@
+parameters:
+  - name: BuildTargetingParameter
+    type: string
+    default: 'azure-*'
+  - name: TargetRepo
+    type: string
+    default: $(Build.SourcesDirectory)
+  - name: PackagePropertiesFolder
+    type: string
+
+steps:
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    # if we are in a PR, utilize the fact that the package properties folder will already be downloaded in the Packages folder
+    # any json file that exists within the PackagePropertiesFolder will be added to the targeting string
+    - pwsh: |
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
+          | Where-Object { $_.Extension -eq '.json' } `
+          | Foreach-Object { $_.Name } `
+          | ForEach-Object { $_.Replace(".json", "") }
+        $setting = $packageProperties -join ","
+        Write-Host "Setting TargetingString to $setting"
+        Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
+      displayName: Check override of targeting string by variable for PR builds
+  - ${{ else }}:
+    # if not triggered for a PR, simply use the targeting string from the parameter and the variable
+    - pwsh: |
+        $setting = "${{ parameters.BuildTargetingParameter }}"
+        # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+        if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+            Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
+            $setting = "$(BuildTargetingString)"
+        }
+        else {
+          Write-Host "We are falling back to the parameter value ${{ parameters.BuildTargetingParameter }}"
+        }
+        Write-Host "Setting TargetingString to $setting"
+        Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
+      displayName: Check override of targeting string by variable for individual build

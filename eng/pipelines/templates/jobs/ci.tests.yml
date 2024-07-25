@@ -79,9 +79,20 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
+    - template: ../steps/set-dev-build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
@@ -122,12 +133,6 @@ jobs:
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
-          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-
-          - template: ../steps/set-dev-build.yml
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
