@@ -740,7 +740,9 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def query_entities(self, *args: str, **kwargs: Any) -> ItemPaged[Union[EntityType, T]]:
-        query_filter = args[0]
+        query_filter = kwargs.pop("query_filter", None)
+        if query_filter is None:
+            query_filter = args[0]
         parameters = kwargs.pop("parameters", None)
         results_per_page = kwargs.pop("results_per_page", None)
         decoder = kwargs.pop("decoder", DEFAULT_DECODER)
@@ -829,8 +831,12 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def get_entity(self, *args: str, **kwargs: Any) -> Union[EntityType, T]:
-        partition_key = args[0]
-        row_key = args[1]
+        partition_key = kwargs.pop("partition_key", None)
+        if partition_key is None:
+            partition_key = args[0]
+        row_key = kwargs.pop("row_key", None)
+        if row_key is None:
+            row_key = args[1]
         select = kwargs.pop("select", None)
         encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         decoder = kwargs.pop("decoder", DEFAULT_DECODER)
