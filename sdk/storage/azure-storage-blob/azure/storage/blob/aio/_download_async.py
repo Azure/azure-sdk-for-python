@@ -870,4 +870,3 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._max_concurrency = max_concurrency
         await self.readinto(stream)
         return self.properties
-
