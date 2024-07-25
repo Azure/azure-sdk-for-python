@@ -317,3 +317,56 @@ def test_pass_custom_reports_changelog(capsys):
         assert "### Breaking Changes" in out
     except SystemExit as e:
         pytest.fail("test_compare_reports failed to report changelog when passing custom reports")
+
+
+def test_added_operation_group():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str",
+                            "default": None
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str",
+                            "default": None
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations",
+                            "default": None
+                        },
+                        "zip": {
+                            "attr_type": "bool",
+                            "default": None
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    diff = jsondiff.diff(stable, current)
+    bc = ChangelogTracker(stable, current, diff, "azure-contoso", changelog=True)
+    bc.run_checks()
+
+    assert len(bc.features_added) == 2
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
+    assert args == ['azure.contoso', 'ContosoClient', 'foo']
+    msg, _, *args = bc.features_added[1]
+    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
