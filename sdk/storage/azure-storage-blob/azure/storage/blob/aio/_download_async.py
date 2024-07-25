@@ -136,7 +136,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     ))
                 except HttpResponseError as error:
                     process_storage_error(error)
-                
+
                 try:
                     chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
@@ -408,7 +408,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self._file_size = 0
                 else:
                     process_storage_error(error)
-            
+
             try:
                 if self.size == 0:
                     self._current_content = b""
@@ -870,4 +870,4 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._max_concurrency = max_concurrency
         await self.readinto(stream)
         return self.properties
-        
+
