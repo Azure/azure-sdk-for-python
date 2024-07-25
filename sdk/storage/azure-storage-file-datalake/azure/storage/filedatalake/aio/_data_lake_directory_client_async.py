@@ -651,23 +651,20 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
         """
         timeout = kwargs.pop('timeout', None)
-        path_name = self.path_name
         hostname = self._hosts[self._location_mode]
-        file_system_name = self.file_system_name
-        if isinstance(file_system_name, str):
-            file_system_name = file_system_name.encode('UTF-8')
-        url = f"{self.scheme}://{hostname}/{quote(file_system_name)}"
+        url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
         client = AzureDataLakeStorageRESTAPI(
-            url=url, base_url=url, file_system=file_system_name,
-            path=path_name, pipeline=self._pipeline)
+            url=url, base_url=url, file_system=self.file_system_name,
+            path=self.path_name, pipeline=self._pipeline)
+        client._config.version = self._client._config.version
         command = functools.partial(
             client.file_system.list_paths,
-            path=path_name,
+            path=self.path_name,
             timeout=timeout,
             **kwargs
         )
         return AsyncItemPaged(
-            command, recursive, path=path_name, max_results=max_results,
+            command, recursive, path=self.path_name, max_results=max_results,
             upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
