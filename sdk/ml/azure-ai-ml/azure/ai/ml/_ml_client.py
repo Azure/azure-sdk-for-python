@@ -78,7 +78,6 @@ from azure.ai.ml.operations import (
     BatchEndpointOperations,
     ComponentOperations,
     ComputeOperations,
-    WorkspaceConnectionsOperations,
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
@@ -91,6 +90,7 @@ from azure.ai.ml.operations import (
     OnlineEndpointOperations,
     RegistryOperations,
     ServerlessEndpointOperations,
+    WorkspaceConnectionsOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -510,6 +510,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
+            self._service_client_04_2024_preview,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
