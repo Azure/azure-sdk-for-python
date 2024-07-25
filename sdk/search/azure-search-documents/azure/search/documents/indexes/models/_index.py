@@ -754,7 +754,7 @@ class SearchIndex(_serialization.Model):
             # pylint:disable=protected-access
             fields = [cast(SearchField, SearchField._from_generated(x)) for x in search_index.fields]
         else:
-            fields = None
+            fields = []
         try:
             normalizers = search_index.normalizers
         except AttributeError:
