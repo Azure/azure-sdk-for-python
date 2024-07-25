@@ -105,7 +105,6 @@ class ReceiverLink(Link):
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
-            self._received_messages.add(self._first_frame[2])
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
                 self._received_payload = bytearray()
@@ -117,7 +116,6 @@ class ReceiverLink(Link):
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
-                    delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -140,16 +138,12 @@ class ReceiverLink(Link):
         self,
         first: int,
         last: Optional[int],
-        delivery_tag: bytes,
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
         on_disposition: Optional[Callable] = None,
     ):
-        if delivery_tag not in self._received_messages:
-            raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
-
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
@@ -171,7 +165,6 @@ class ReceiverLink(Link):
             self._pending_receipts.append(delivery)
             
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
-        self._received_messages.remove(delivery_tag)
 
 
     def _incoming_disposition(self, frame):
@@ -204,7 +197,6 @@ class ReceiverLink(Link):
         wait: Union[bool, float] = False,
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
-        delivery_tag: bytes,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
@@ -215,7 +207,6 @@ class ReceiverLink(Link):
         self._outgoing_disposition(
             first_delivery_id,
             last_delivery_id,
-            delivery_tag,
             settled,
             delivery_state,
             batchable,
