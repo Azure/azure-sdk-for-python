@@ -20,6 +20,7 @@ from ..._pyamqp.error import (
     AMQPConnectionError,
     AMQPError,
     MessageException,
+    AMQPLinkError
 )
 
 from ._base_async import AmqpTransportAsync
