@@ -36,7 +36,6 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
-    AdvancedBuild: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
