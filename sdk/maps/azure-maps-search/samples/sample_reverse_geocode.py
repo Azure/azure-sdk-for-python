@@ -25,9 +25,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
         if result.get('features', False):

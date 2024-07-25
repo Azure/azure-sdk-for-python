@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
-from ._client import MapsSearchClient
-from ._patch import AzureMapsSearchClient
 from ._enums import (
     LocalizedMapView,
     BoundaryResultType,
@@ -32,8 +30,6 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "MapsSearchClient",
-    "AzureMapsSearchClient",
     "LocalizedMapView",
     "BoundaryResultType",
     "CalculationMethod",

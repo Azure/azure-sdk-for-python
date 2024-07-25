@@ -6,7 +6,7 @@
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search.aio import AzureMapsSearchClient
+from azure.maps.search.aio import MapsSearchClient
 from azure.maps.search import BoundaryResultType, Resolution
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, is_live
@@ -17,7 +17,7 @@ from search_preparer import MapsSearchPreparer
 # cSpell:disable
 class TestMapsSearchClientAsync(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = AzureMapsSearchClient(
+        self.client = MapsSearchClient(
             credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None

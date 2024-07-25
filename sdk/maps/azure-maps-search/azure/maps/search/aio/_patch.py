@@ -14,11 +14,11 @@ from typing import Union, Any, MutableMapping, List
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.maps.search.aio import MapsSearchClient
+from ._client import MapsSearchClient as MapsSearchClientGenerated
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["MapsSearchClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -47,7 +47,7 @@ def _authentication_policy(credential):
 
 
 # pylint: disable=C4748
-class AzureMapsSearchClient(MapsSearchClient):
+class MapsSearchClient(MapsSearchClientGenerated):
 
     def __init__(
         self,

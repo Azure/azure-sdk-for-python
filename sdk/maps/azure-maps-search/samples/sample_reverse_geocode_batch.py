@@ -20,12 +20,12 @@ USAGE:
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.maps.search import AzureMapsSearchClient
+from azure.maps.search import MapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode_batch():
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding_batch({
               "batchItems": [

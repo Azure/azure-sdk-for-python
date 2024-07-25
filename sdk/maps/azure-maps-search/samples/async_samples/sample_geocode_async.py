@@ -25,9 +25,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def geocode_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search.aio import AzureMapsSearchClient
+    from azure.maps.search.aio import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with maps_search_client:
             result = await maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")

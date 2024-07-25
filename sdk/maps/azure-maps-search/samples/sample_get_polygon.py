@@ -27,9 +27,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_polygon():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_polygon(
           coordinates=[-122.204141, 47.61256],

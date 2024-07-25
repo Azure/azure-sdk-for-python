@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
         if result.get('features', False):

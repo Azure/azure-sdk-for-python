@@ -27,9 +27,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_polygon_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search.aio import AzureMapsSearchClient
+    from azure.maps.search.aio import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     async with maps_search_client:
         try:
             result = await maps_search_client.get_polygon(

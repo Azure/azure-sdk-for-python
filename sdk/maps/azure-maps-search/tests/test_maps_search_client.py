@@ -6,7 +6,7 @@
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import AzureMapsSearchClient
+from azure.maps.search import MapsSearchClient
 from azure.maps.search import BoundaryResultType, Resolution
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 
@@ -16,7 +16,7 @@ from search_preparer import MapsSearchPreparer
 # cSpell:disable
 class TestMapsSearchClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = AzureMapsSearchClient(
+        self.client = MapsSearchClient(
             credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None

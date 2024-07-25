@@ -117,9 +117,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
         if result.get('features', False):
@@ -153,9 +153,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode_batch():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_geocoding_batch({
           "batchItems": [
@@ -202,9 +202,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_polygon():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_polygon(
           coordinates=[-122.204141, 47.61256],
@@ -239,9 +239,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
         if result.get('features', False):
@@ -270,12 +270,12 @@ This sample demonstrates how to perform reverse search by given coordinates in b
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.maps.search import AzureMapsSearchClient
+from azure.maps.search import MapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode_batch():
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding_batch({
               "batchItems": [
