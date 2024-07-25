@@ -82,7 +82,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
     raise_error = HttpResponseError
     serialized = False
     if isinstance(storage_error, AzureSigningError):
