@@ -71,12 +71,6 @@ result = client.create_or_update_test(
                 },
             }
         },
-        "secrets": {
-            "secret1": {
-                "value": "https://sdk-testing-keyvault.vault.azure.net/secrets/sdk-secret",
-                "type": "AKV_SECRET_URI",
-            }
-        },
         "environmentVariables": {"my-variable": "value"},
     },
 )

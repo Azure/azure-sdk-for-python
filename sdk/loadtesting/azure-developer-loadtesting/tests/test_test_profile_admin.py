@@ -16,10 +16,10 @@ DISPLAY_NAME = "TestingResourcePyTest"
 NON_EXISTING_RESOURCE = "nonexistingresource"
 
 
-class TestTestProfileAdministrationClientt(LoadtestingTest):
+class TestTestProfileAdministrationClient(LoadtestingTest):
 
     def setup_create_test_profile(self, endpoint, testId, targetResourceId):
-        self.setup_test_profile_id = "test-profile" + time.strftime("%Y-%m-%d-%H-%M-%S")
+        self.setup_test_profile_id = "test-profile-3"
         client = self.create_administration_client(endpoint)
 
         client.create_or_update_test_profile(
@@ -72,8 +72,7 @@ class TestTestProfileAdministrationClientt(LoadtestingTest):
             client.create_or_update_test_profile(
                 loadtesting_test_profile_id,
                 {
-                    "description": DISPLAY_NAME
-                    + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+                    "description": DISPLAY_NAME + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
                     "displayName": "",
                     "testId": loadtesting_test_id,
                     "targetResourceId": loadtesting_target_resource_id,
@@ -95,14 +94,10 @@ class TestTestProfileAdministrationClientt(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_test_profile(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-    ):
+    def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
         set_bodiless_matcher()
 
-        self.setup_create_test_profile(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-        )
+        self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
 
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.get_test_profile(self.setup_test_profile_id)
@@ -113,28 +108,20 @@ class TestTestProfileAdministrationClientt(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_delete_test_profile(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-    ):
+    def test_list_test_profiles(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
         set_bodiless_matcher()
-        self.setup_create_test_profile(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-        )
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = client.delete_test_profile(self.setup_test_profile_id)
-        assert result is None
-
-    @LoadtestingPowerShellPreparer()
-    @recorded_by_proxy
-    def test_list_test_profiles(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-    ):
-        set_bodiless_matcher()
-        self.setup_create_test_profile(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id
-        )
+        self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
 
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.list_test_profiles()
         assert result is not None
+
+    @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
+    def test_delete_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
+        set_bodiless_matcher()
+        self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
+
+        client = self.create_administration_client(loadtesting_endpoint)
+        result = client.delete_test_profile(self.setup_test_profile_id)
+        assert result is None

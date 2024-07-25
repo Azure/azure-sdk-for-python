@@ -32,7 +32,7 @@ class TestRunOps(LoadtestingTest):
             {
                 "description": "",
                 "displayName": DISPLAY_NAME,
-                "loadTestConfig": {
+                "loadTestConfiguration": {
                     "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,
@@ -69,9 +69,7 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_test_run_poller(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    def test_test_run_poller(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         self.setup_loadtest(loadtesting_endpoint, loadtesting_test_id)
@@ -107,14 +105,10 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_delete_test_run(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    def test_delete_test_run(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -126,14 +120,10 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_test_run_file(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    def test_get_test_run_file(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -148,14 +138,10 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_list_test_runs(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    def test_list_test_runs(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -191,14 +177,10 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_metrics(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    def test_get_metrics(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
         run_client = self.create_run_client(loadtesting_endpoint)
 
         test_run_response = run_client.get_test_run(loadtesting_test_run_id)
@@ -217,9 +199,7 @@ class TestRunOps(LoadtestingTest):
             test_run_id=loadtesting_test_run_id,
             metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            time_interval=test_run_response["startDateTime"]
-            + "/"
-            + test_run_response["endDateTime"],
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
         )
         assert metrics is not None
 
@@ -234,9 +214,7 @@ class TestRunOps(LoadtestingTest):
     ):
         set_bodiless_matcher()
 
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -280,9 +258,7 @@ class TestRunOps(LoadtestingTest):
         loadtesting_resource_id,
     ):
         set_bodiless_matcher()
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -299,9 +275,7 @@ class TestRunOps(LoadtestingTest):
         loadtesting_resource_id,
     ):
         set_bodiless_matcher()
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
@@ -333,9 +307,7 @@ class TestRunOps(LoadtestingTest):
         loadtesting_resource_id,
     ):
         set_bodiless_matcher()
-        self.setup_test_run(
-            loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-        )
+        self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
         run_client = self.create_run_client(loadtesting_endpoint)
 

@@ -36,9 +36,7 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestRunClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
 TEST_RUN_ID = "some-test-run-id"
@@ -50,9 +48,7 @@ metric_namespaces = client.get_metric_namespaces(TEST_RUN_ID)
 print(metric_namespaces)
 
 # get a list of metric definitions for a given test run and metric namespace
-metric_definitions = client.get_metric_definitions(
-    TEST_RUN_ID, metric_namespace=metric_namespaces["value"][0]["name"]
-)
+metric_definitions = client.get_metric_definitions(TEST_RUN_ID, metric_namespace=metric_namespaces["value"][0]["name"])
 print(metric_definitions)
 
 # fetch metrics for a test run using metric definition and namespace
@@ -60,9 +56,7 @@ metrics = client.list_metrics(
     TEST_RUN_ID,
     metric_name=metric_definitions["value"][0]["name"],
     metric_namespace=metric_namespaces["value"][0]["name"],
-    time_interval=test_run_response["startDateTime"]
-    + "/"
-    + test_run_response["endDateTime"],
+    time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
 )
 
 for page in metrics.by_page():

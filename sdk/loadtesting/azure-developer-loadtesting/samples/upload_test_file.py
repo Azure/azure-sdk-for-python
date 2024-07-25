@@ -32,17 +32,13 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-client = LoadTestAdministrationClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
 FILE_NAME = "my-file-id.jmx"
 
 # uploading .jmx file to a test
-resultPoller = client.begin_upload_test_file(
-    TEST_ID, FILE_NAME, open("sample.jmx", "rb")
-)
+resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
 
 # getting result of LRO poller with timeout of 600 secs
 

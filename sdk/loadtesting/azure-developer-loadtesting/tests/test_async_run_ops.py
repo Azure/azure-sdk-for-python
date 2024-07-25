@@ -29,7 +29,7 @@ class TestRunOps(LoadtestingAsyncTest):
             {
                 "description": "",
                 "displayName": DISPLAY_NAME,
-                "loadTestConfig": {
+                "loadTestConfiguration": {
                     "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,

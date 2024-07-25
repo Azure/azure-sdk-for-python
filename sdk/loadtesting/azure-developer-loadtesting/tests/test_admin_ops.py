@@ -33,7 +33,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
             {
                 "description": "",
                 "displayName": DISPLAY_NAME,
-                "loadTestConfig": {
+                "loadTestConfiguration": {
                     "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,
@@ -77,6 +77,12 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
     def test_create_or_update_load_test(
         self, loadtesting_endpoint, loadtesting_test_id
     ):
+
+        print("azure test run live")
+        print(os.environ["AZURE_TEST_RUN_LIVE"])
+        print("azure skip live")
+        print(os.environ["AZURE_SKIP_LIVE_RECORDING"])
+
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)

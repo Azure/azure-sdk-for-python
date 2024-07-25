@@ -35,9 +35,7 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 RESOURCE_ID = os.environ["RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestAdministrationClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
 APP_COMPONENT = "my-new-app-component"

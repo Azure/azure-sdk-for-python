@@ -83,7 +83,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
             {
                 "description": "",
                 "displayName": DISPLAY_NAME,
-                "loadTestConfig": {
+                "loadTestConfiguration": {
                     "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,
@@ -104,7 +104,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
                     "description": "",
                     "displayName": DISPLAY_NAME
                     + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-                    "loadTestConfig": {
+                    "loadTestConfiguration": {
                         "engineSize": "m",
                         "engineInstances": 1,
                         "splitAllCSVs": False,

@@ -16,8 +16,6 @@ from ._models import DimensionValueList
 from ._models import ErrorDetails
 from ._models import FunctionFlexConsumptionResourceConfiguration
 from ._models import FunctionFlexConsumptionTargetResourceConfigurations
-from ._models import GetTestFileResponse
-from ._models import GetTestRunFileResponse
 from ._models import LoadTestConfiguration
 from ._models import MetricAvailability
 from ._models import MetricDefinition
@@ -52,7 +50,6 @@ from ._models import TestRunServerMetricConfig
 from ._models import TestRunStatistics
 from ._models import TestServerMetricConfig
 from ._models import TimeSeriesElement
-from ._models import UploadTestFileResponse
 
 from ._enums import AggregationType
 from ._enums import CertificateType
@@ -87,8 +84,6 @@ __all__ = [
     "ErrorDetails",
     "FunctionFlexConsumptionResourceConfiguration",
     "FunctionFlexConsumptionTargetResourceConfigurations",
-    "GetTestFileResponse",
-    "GetTestRunFileResponse",
     "LoadTestConfiguration",
     "MetricAvailability",
     "MetricDefinition",
@@ -123,7 +118,6 @@ __all__ = [
     "TestRunStatistics",
     "TestServerMetricConfig",
     "TimeSeriesElement",
-    "UploadTestFileResponse",
     "AggregationType",
     "CertificateType",
     "FileStatus",

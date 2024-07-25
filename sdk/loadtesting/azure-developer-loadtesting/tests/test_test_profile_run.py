@@ -47,8 +47,7 @@ class TestTestProfileRunClient(LoadtestingTest):
             open(os.path.join(os.path.dirname(__file__), "sample.jmx"), "rb"),
         )
 
-        self.setup_test_profile_id = "test-profile" + time.strftime("%Y-%m-%d-%H-%M-%S")
-
+        self.setup_test_profile_id = "test-profile-15-07-2024-14-23"
         client.create_or_update_test_profile(
             self.setup_test_profile_id,
             {
@@ -71,7 +70,6 @@ class TestTestProfileRunClient(LoadtestingTest):
     def setup_test_profile_run(
         self,
         endpoint,
-        test_profile_id,
         test_profile_run_id,
         target_resource_id,
         test_id,
@@ -83,7 +81,7 @@ class TestTestProfileRunClient(LoadtestingTest):
         run_poller = run_client.begin_test_profile_run(
             test_profile_run_id,
             {
-                "testProfileId": test_profile_id,
+                "testProfileId": self.setup_test_profile_id,
                 "displayName": "My new profile run test from pytest",
             },
         )
@@ -94,7 +92,6 @@ class TestTestProfileRunClient(LoadtestingTest):
     def test_test_profile_run_poller(
         self,
         loadtesting_endpoint,
-        loadtesting_test_profile_id,
         loadtesting_test_profile_run_id,
         loadtesting_target_resource_id,
         loadtesting_test_id,
@@ -110,7 +107,7 @@ class TestTestProfileRunClient(LoadtestingTest):
         run_poller = run_client.begin_test_profile_run(
             loadtesting_test_profile_run_id,
             {
-                "testProfileId": loadtesting_test_profile_id,
+                "testProfileId": self.setup_test_profile_id,
                 "display name": "My new test profile run from Pytest",
             },
         )
@@ -141,7 +138,6 @@ class TestTestProfileRunClient(LoadtestingTest):
     def test_list_test_profile_runs(
         self,
         loadtesting_endpoint,
-        loadtesting_test_profile_id,
         loadtesting_test_profile_run_id,
         loadtesting_target_resource_id,
         loadtesting_test_id,
@@ -150,7 +146,6 @@ class TestTestProfileRunClient(LoadtestingTest):
 
         self.setup_test_profile_run(
             loadtesting_endpoint,
-            loadtesting_test_profile_id,
             loadtesting_test_profile_run_id,
             loadtesting_target_resource_id,
             loadtesting_test_id,
@@ -166,7 +161,6 @@ class TestTestProfileRunClient(LoadtestingTest):
     def test_delete_test_profile_run(
         self,
         loadtesting_endpoint,
-        loadtesting_test_profile_id,
         loadtesting_test_profile_run_id,
         loadtesting_target_resource_id,
         loadtesting_test_id,
@@ -175,7 +169,6 @@ class TestTestProfileRunClient(LoadtestingTest):
 
         self.setup_test_profile_run(
             loadtesting_endpoint,
-            loadtesting_test_profile_id,
             loadtesting_test_profile_run_id,
             loadtesting_target_resource_id,
             loadtesting_test_id,
@@ -189,30 +182,29 @@ class TestTestProfileRunClient(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_stop_test_profile_run(
-        self, loadtesting_endpoint, loadtesting_target_resource_id
+        self, loadtesting_endpoint, loadtesting_target_resource_id, loadtesting_test_id
     ):
         set_bodiless_matcher()
 
         self.setup_test_profile(
             loadtesting_endpoint,
             loadtesting_target_resource_id,
-            "new-test-profile-from-pytest-abc",
+            loadtesting_test_id,
         )
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        self.setup_test_profile_run_id = "test-profile" + time.strftime(
-            "%Y-%m-%d-%H-%M-%S"
-        )
         run_poller = run_client.begin_test_profile_run(
-            self.setup_test_profile_run_id,
+            "test-profile-run-id-15-07-2024-14-23",
             {
-                "testId": "new-test-profile-from-pytest-abc",
+                "testId": loadtesting_test_id,
                 "testProfileId": self.setup_test_profile_id,
-                "displayName": "My New Load Test Run from PyTest",
+                "displayName": "My New Test Profile Run from PyTest",
             },
         )
 
-        result = run_client.stop_test_profile_run(self.setup_test_profile_run_id)
+        result = run_client.stop_test_profile_run(
+            "test-profile-run-id-15-07-2024-14-23"
+        )
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):

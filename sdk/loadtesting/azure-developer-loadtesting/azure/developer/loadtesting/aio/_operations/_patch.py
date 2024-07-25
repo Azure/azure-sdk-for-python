@@ -96,19 +96,11 @@ class LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenera
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestAdministrationClientOperationsMixin, self).__init__(
-            *args, **kwargs
-        )
+        super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
 
     @distributed_trace
     async def begin_upload_test_file(
-        self,
-        test_id: str,
-        file_name: str,
-        body: IO,
-        *,
-        file_type: Optional[str] = None,
-        **kwargs: Any
+        self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Upload file to the test
 
@@ -130,18 +122,12 @@ class LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenera
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = await super().begin_upload_test_file(
-            test_id=test_id,
-            file_name=file_name,
-            body=body,
-            file_type=file_type,
-            **kwargs
+            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
-        create_validation_status_polling = AsyncValidationCheckPoller(
-            interval=polling_interval
-        )
+        create_validation_status_polling = AsyncValidationCheckPoller(interval=polling_interval)
         return AsyncLROPoller(
             command,
             upload_test_file_operation,
@@ -188,18 +174,12 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_profile_run_operation = (
-            await super().begin_test_profile_run(
-                test_profile_run_id, body, content_type=content_type, **kwargs
-            )
+        create_or_update_test_profile_run_operation = await super().begin_test_profile_run(
+            test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(
-            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
-        )
+        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
 
-        create_test_profile_run_polling = AsyncTestRunStatusPoller(
-            interval=polling_interval
-        )
+        create_test_profile_run_polling = AsyncTestRunStatusPoller(interval=polling_interval)
         return AsyncLROPoller(
             command,
             create_or_update_test_profile_run_operation,
@@ -209,12 +189,7 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
 
     @overload
     async def begin_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Create and start a new test profile run.
 
@@ -237,18 +212,12 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_profile_run_operation = (
-            await super().begin_test_profile_run(
-                test_profile_run_id, body, content_type=content_type, **kwargs
-            )
+        create_or_update_test_profile_run_operation = await super().begin_test_profile_run(
+            test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(
-            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
-        )
+        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
 
-        create_test_profile_run_polling = AsyncTestRunStatusPoller(
-            interval=polling_interval
-        )
+        create_test_profile_run_polling = AsyncTestRunStatusPoller(interval=polling_interval)
         return AsyncLROPoller(
             command,
             create_or_update_test_profile_run_operation,
@@ -286,18 +255,12 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_profile_run_operation = (
-            await super().begin_test_profile_run(
-                test_profile_run_id, body, content_type=content_type, **kwargs
-            )
+        create_or_update_test_profile_run_operation = await super().begin_test_profile_run(
+            test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(
-            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
-        )
+        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
 
-        create_test_profile_run_polling = AsyncTestRunStatusPoller(
-            interval=polling_interval
-        )
+        create_test_profile_run_polling = AsyncTestRunStatusPoller(interval=polling_interval)
         return AsyncLROPoller(
             command,
             create_or_update_test_profile_run_operation,
@@ -335,18 +298,12 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_profile_run_operation = (
-            await super().begin_test_profile_run(
-                test_profile_run_id, body, content_type=content_type, **kwargs
-            )
+        create_or_update_test_profile_run_operation = await super().begin_test_profile_run(
+            test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(
-            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
-        )
+        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
 
-        create_test_profile_run_polling = AsyncTestRunStatusPoller(
-            interval=polling_interval
-        )
+        create_test_profile_run_polling = AsyncTestRunStatusPoller(interval=polling_interval)
         return AsyncLROPoller(
             command,
             create_or_update_test_profile_run_operation,
@@ -356,12 +313,7 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
 
     @overload
     async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: _models.TestRun,
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+        self, test_run_id: str, body: _models.TestRun, *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -404,12 +356,7 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
 
     @overload
     async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+        self, test_run_id: str, body: JSON, *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -452,12 +399,7 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
 
     @overload
     async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: IO[bytes],
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+        self, test_run_id: str, body: IO[bytes], *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 

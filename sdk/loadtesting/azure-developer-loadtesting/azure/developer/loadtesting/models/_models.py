@@ -365,7 +365,7 @@ class TargetResourceConfigurations(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    # python bug - have to comment visibility=["read", "create"]
+    #python bug - visibility=["read", "create"]
     kind: str = rest_discriminator(name="kind")
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 
@@ -426,82 +426,6 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=ResourceKind.FUNCTIONS_FLEX_CONSUMPTION, **kwargs)
-
-
-class GetTestFileResponse(_model_base.Model):
-    """GetTestFileResponse.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar url: File URL.
-    :vartype url: str
-    :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
-    :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
-    :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
-    :vartype expire_date_time: ~datetime.datetime
-    :ivar validation_status: Validation status of the file. Known values are: "NOT_VALIDATED",
-     "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-     "VALIDATION_NOT_REQUIRED".
-    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileStatus
-    :ivar validation_failure_details: Validation failure error details.
-    :vartype validation_failure_details: str
-    """
-
-    url: Optional[str] = rest_field(visibility=["read"])
-    """File URL."""
-    file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
-    """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
-    expire_date_time: Optional[datetime.datetime] = rest_field(
-        name="expireDateTime", visibility=["read"], format="rfc3339"
-    )
-    """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
-        name="validationStatus", visibility=["read"]
-    )
-    """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
-     \"VALIDATION_FAILURE\", \"VALIDATION_INITIATED\", and \"VALIDATION_NOT_REQUIRED\"."""
-    validation_failure_details: Optional[str] = rest_field(name="validationFailureDetails", visibility=["read"])
-    """Validation failure error details."""
-
-
-class GetTestRunFileResponse(_model_base.Model):
-    """GetTestRunFileResponse.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar url: File URL.
-    :vartype url: str
-    :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
-    :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
-    :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
-    :vartype expire_date_time: ~datetime.datetime
-    :ivar validation_status: Validation status of the file. Known values are: "NOT_VALIDATED",
-     "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-     "VALIDATION_NOT_REQUIRED".
-    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileStatus
-    :ivar validation_failure_details: Validation failure error details.
-    :vartype validation_failure_details: str
-    """
-
-    url: Optional[str] = rest_field(visibility=["read"])
-    """File URL."""
-    file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
-    """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
-    expire_date_time: Optional[datetime.datetime] = rest_field(
-        name="expireDateTime", visibility=["read"], format="rfc3339"
-    )
-    """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
-        name="validationStatus", visibility=["read"]
-    )
-    """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
-     \"VALIDATION_FAILURE\", \"VALIDATION_INITIATED\", and \"VALIDATION_NOT_REQUIRED\"."""
-    validation_failure_details: Optional[str] = rest_field(name="validationFailureDetails", visibility=["read"])
-    """Validation failure error details."""
 
 
 class LoadTestConfiguration(_model_base.Model):
@@ -2499,41 +2423,3 @@ class TimeSeriesElement(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class UploadTestFileResponse(_model_base.Model):
-    """UploadTestFileResponse.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar url: File URL.
-    :vartype url: str
-    :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
-    :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
-    :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
-    :vartype expire_date_time: ~datetime.datetime
-    :ivar validation_status: Validation status of the file. Known values are: "NOT_VALIDATED",
-     "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-     "VALIDATION_NOT_REQUIRED".
-    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileStatus
-    :ivar validation_failure_details: Validation failure error details.
-    :vartype validation_failure_details: str
-    """
-
-    url: Optional[str] = rest_field(visibility=["read"])
-    """File URL."""
-    file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
-    """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
-    expire_date_time: Optional[datetime.datetime] = rest_field(
-        name="expireDateTime", visibility=["read"], format="rfc3339"
-    )
-    """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
-        name="validationStatus", visibility=["read"]
-    )
-    """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
-     \"VALIDATION_FAILURE\", \"VALIDATION_INITIATED\", and \"VALIDATION_NOT_REQUIRED\"."""
-    validation_failure_details: Optional[str] = rest_field(name="validationFailureDetails", visibility=["read"])
-    """Validation failure error details."""

@@ -35,9 +35,7 @@ TEST_RUN_ID = "some-test-run-id"
 TEST_ID = "my-sdk-test-id"
 
 # Build a client through AAD and resource endpoint
-client = LoadTestRunClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 testRunPoller = client.begin_test_run(
     TEST_RUN_ID,
