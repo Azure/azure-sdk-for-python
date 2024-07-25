@@ -17,6 +17,9 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: ''
+  - name: UseVirtualEnvironment
+    type: boolean
+    default: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -31,6 +34,11 @@ parameters:
 # However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
 # to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
 steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+      versionSpec: $(PythonVersion)
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
       PackageName: "azure-template"
@@ -44,30 +52,24 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    inputs:
-      versionSpec: $(PythonVersion)
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      VirtualEnvironmentName: "venv"
+      Activate: false
 
   - bash: |
-      python -m venv $(Build.SourcesDirectory)/venv
-      source $(Build.SourcesDirectory)/venv/bin/activate
+      source $(VENV_LOCATION)/bin/activate
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-      echo "##vso[task.setvariable variable=PATH]$PATH"
     displayName: 'Prep Environment Linux/Mac'
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
   - pwsh: |
-      python -m venv $(Build.SourcesDirectory)/venv
-      ./venv/Scripts/Activate.ps1
+      . $(VENV_LOCATION)/Scripts/Activate.ps1
       which python
-      python -m pip install --force -r eng\ci_tools.txt
+      python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-
-      $path = $env:PATH
-      Write-Host "##vso[task.setvariable variable=PATH]$path"
     displayName: 'Prep Environment Windows'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
@@ -95,7 +97,7 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - bash: |
-      source $(Build.SourcesDirectory)/venv/bin/activate
+      source $(VENV_LOCATION)/bin/activate
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages Linux/Mac'
@@ -105,7 +107,7 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - pwsh: |
-      ./venv/Scripts/Activate.ps1
+      . $(VENV_LOCATION)/Scripts/Activate.ps1
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages Windows'
@@ -115,11 +117,11 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pip install twine==4.0.2 importlib-metadata==7.2.1
+      python -m pip install -r eng/release_requirements.txt
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 

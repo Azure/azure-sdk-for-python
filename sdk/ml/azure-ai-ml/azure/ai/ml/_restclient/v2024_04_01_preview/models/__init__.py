@@ -594,6 +594,7 @@ try:
     from ._models_py3 import SpeechEndpointDeploymentResourceProperties
     from ._models_py3 import SpeechEndpointResourceProperties
     from ._models_py3 import SslConfiguration
+    from ._models_py3 import SsoSetting
     from ._models_py3 import StackEnsembleSettings
     from ._models_py3 import StaticInputData
     from ._models_py3 import StatusMessage
@@ -1265,6 +1266,7 @@ except (SyntaxError, ImportError):
     from ._models import SpeechEndpointDeploymentResourceProperties  # type: ignore
     from ._models import SpeechEndpointResourceProperties  # type: ignore
     from ._models import SslConfiguration  # type: ignore
+    from ._models import SsoSetting  # type: ignore
     from ._models import StackEnsembleSettings  # type: ignore
     from ._models import StaticInputData  # type: ignore
     from ._models import StatusMessage  # type: ignore
@@ -2151,6 +2153,7 @@ __all__ = [
     'SpeechEndpointDeploymentResourceProperties',
     'SpeechEndpointResourceProperties',
     'SslConfiguration',
+    'SsoSetting',
     'StackEnsembleSettings',
     'StaticInputData',
     'StatusMessage',

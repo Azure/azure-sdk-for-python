@@ -15,7 +15,7 @@ from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyC
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
+from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync, DefaultAzureCredential as DefaultAzureCredentialAsync
 
 from logger import get_logger
 from process_monitor import ProcessMonitor
@@ -195,9 +195,10 @@ class StressTestRunner:
             }
         if self.args.buffered_mode:
             if is_async:
-                client = client_class.from_connection_string(
-                    self.args.conn_str,
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
                     eventhub_name=self.args.eventhub,
+                    credential=DefaultAzureCredentialAsync(),
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
@@ -209,9 +210,10 @@ class StressTestRunner:
                 **retry_options
                 )
             else:
-                client = client_class.from_connection_string(
-                    self.args.conn_str,
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
                     eventhub_name=self.args.eventhub,
+                    credential=DefaultAzureCredential(),
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
@@ -222,60 +224,31 @@ class StressTestRunner:
                     uamqp_transport=self.args.uamqp_mode,
                 **retry_options
                 )
-        elif self.args.azure_identity:
-            print("Using Azure Identity")
-            client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                credential=DefaultAzureCredential(),
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
-                uamqp_transport=self.args.uamqp_mode,
-                **retry_options 
-            )
-        elif self.args.conn_str:
-            client = client_class.from_connection_string(
-                self.args.conn_str,
-                eventhub_name=self.args.eventhub,
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
-                uamqp_transport=self.args.uamqp_mode,
-                **retry_options
-            )
-        elif self.args.hostname:
-            client = client_class(
+        else:
+            if is_async:
+                client = client_class(
                     fully_qualified_namespace=self.args.hostname,
                     eventhub_name=self.args.eventhub,
-                    credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
+                    credential=DefaultAzureCredentialAsync(),
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
                     logging_enable=self.args.pyamqp_logging_enable,
                     uamqp_transport=self.args.uamqp_mode,
-                    **retry_options
+                    **retry_options 
                 )
-        elif self.args.aad_client_id:
-            if is_async:
-                credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
             else:
-                credential = ClientSecretCredential(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
-            client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                auth_timeout=self.args.auth_timeout,
-                credential=credential,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
-                uamqp_transport=self.args.uamqp_mode,
-                **retry_options
-            )
-        else:
-            raise ValueError("Argument error. Must have one of connection string, sas and aad credentials")
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=DefaultAzureCredential(),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    uamqp_transport=self.args.uamqp_mode,
+                    **retry_options 
+                )
 
         return client
 

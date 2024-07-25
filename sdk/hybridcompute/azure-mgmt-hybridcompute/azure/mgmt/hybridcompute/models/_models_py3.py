@@ -1752,18 +1752,22 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
      and "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.hybridcompute.models.ProvisioningState
     :ivar subscription_status: Indicates the subscription status of the product. Known values are:
-     "Unknown", "Enabling", "Enabled", and "Disabled".
+     "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
     :vartype subscription_status: str or
      ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
     :ivar product_type: Indicates the product type of the license. Known values are:
      "WindowsServer" and "WindowsIoTEnterprise".
     :vartype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
-    :ivar billing_start_date: The timestamp in UTC when the billing starts.
-    :vartype billing_start_date: ~datetime.datetime
     :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
     :vartype enrollment_date: ~datetime.datetime
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
     :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
     :vartype disenrollment_date: ~datetime.datetime
+    :ivar billing_end_date: The timestamp in UTC when the billing ends.
+    :vartype billing_end_date: ~datetime.datetime
+    :ivar error: The errors that were encountered during the feature enrollment or disenrollment.
+    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
     :ivar product_features: The list of product features.
     :vartype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
     :ivar assigned_license_immutable_id: The guid id of the license.
@@ -1792,9 +1796,11 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
-        "billing_start_date": {"readonly": True},
         "enrollment_date": {"readonly": True},
+        "billing_start_date": {"readonly": True},
         "disenrollment_date": {"readonly": True},
+        "billing_end_date": {"readonly": True},
+        "error": {"readonly": True},
         "assigned_license_immutable_id": {"readonly": True},
         "esu_keys": {"readonly": True},
         "server_type": {"readonly": True},
@@ -1812,9 +1818,11 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "subscription_status": {"key": "properties.productProfile.subscriptionStatus", "type": "str"},
         "product_type": {"key": "properties.productProfile.productType", "type": "str"},
-        "billing_start_date": {"key": "properties.productProfile.billingStartDate", "type": "iso-8601"},
         "enrollment_date": {"key": "properties.productProfile.enrollmentDate", "type": "iso-8601"},
+        "billing_start_date": {"key": "properties.productProfile.billingStartDate", "type": "iso-8601"},
         "disenrollment_date": {"key": "properties.productProfile.disenrollmentDate", "type": "iso-8601"},
+        "billing_end_date": {"key": "properties.productProfile.billingEndDate", "type": "iso-8601"},
+        "error": {"key": "properties.productProfile.error", "type": "ErrorDetail"},
         "product_features": {"key": "properties.productProfile.productFeatures", "type": "[ProductFeature]"},
         "assigned_license_immutable_id": {"key": "properties.esuProfile.assignedLicenseImmutableId", "type": "str"},
         "esu_keys": {"key": "properties.esuProfile.esuKeys", "type": "[EsuKey]"},
@@ -1846,7 +1854,7 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword subscription_status: Indicates the subscription status of the product. Known values
-         are: "Unknown", "Enabling", "Enabled", and "Disabled".
+         are: "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
         :paramtype subscription_status: str or
          ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
         :keyword product_type: Indicates the product type of the license. Known values are:
@@ -1864,9 +1872,11 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
         self.subscription_status = subscription_status
         self.product_type = product_type
-        self.billing_start_date = None
         self.enrollment_date = None
+        self.billing_start_date = None
         self.disenrollment_date = None
+        self.billing_end_date = None
+        self.error = None
         self.product_features = product_features
         self.assigned_license_immutable_id = None
         self.esu_keys = None
@@ -1997,7 +2007,7 @@ class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssign
         self.assigned_license = assigned_license
 
 
-class LicenseProfileMachineInstanceView(_serialization.Model):
+class LicenseProfileMachineInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """License Profile Instance View in Machine Properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2011,18 +2021,22 @@ class LicenseProfileMachineInstanceView(_serialization.Model):
     :vartype esu_profile:
      ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceViewEsuProperties
     :ivar subscription_status: Indicates the subscription status of the product. Known values are:
-     "Unknown", "Enabling", "Enabled", and "Disabled".
+     "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
     :vartype subscription_status: str or
      ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
     :ivar product_type: Indicates the product type of the license. Known values are:
      "WindowsServer" and "WindowsIoTEnterprise".
     :vartype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
-    :ivar billing_start_date: The timestamp in UTC when the billing starts.
-    :vartype billing_start_date: ~datetime.datetime
     :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
     :vartype enrollment_date: ~datetime.datetime
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
     :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
     :vartype disenrollment_date: ~datetime.datetime
+    :ivar billing_end_date: The timestamp in UTC when the billing ends.
+    :vartype billing_end_date: ~datetime.datetime
+    :ivar error: The errors that were encountered during the feature enrollment or disenrollment.
+    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
     :ivar product_features: The list of product features.
     :vartype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
     :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
@@ -2033,9 +2047,11 @@ class LicenseProfileMachineInstanceView(_serialization.Model):
     _validation = {
         "license_status": {"readonly": True},
         "license_channel": {"readonly": True},
-        "billing_start_date": {"readonly": True},
         "enrollment_date": {"readonly": True},
+        "billing_start_date": {"readonly": True},
         "disenrollment_date": {"readonly": True},
+        "billing_end_date": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2044,9 +2060,11 @@ class LicenseProfileMachineInstanceView(_serialization.Model):
         "esu_profile": {"key": "esuProfile", "type": "LicenseProfileMachineInstanceViewEsuProperties"},
         "subscription_status": {"key": "productProfile.subscriptionStatus", "type": "str"},
         "product_type": {"key": "productProfile.productType", "type": "str"},
-        "billing_start_date": {"key": "productProfile.billingStartDate", "type": "iso-8601"},
         "enrollment_date": {"key": "productProfile.enrollmentDate", "type": "iso-8601"},
+        "billing_start_date": {"key": "productProfile.billingStartDate", "type": "iso-8601"},
         "disenrollment_date": {"key": "productProfile.disenrollmentDate", "type": "iso-8601"},
+        "billing_end_date": {"key": "productProfile.billingEndDate", "type": "iso-8601"},
+        "error": {"key": "productProfile.error", "type": "ErrorDetail"},
         "product_features": {"key": "productProfile.productFeatures", "type": "[ProductFeature]"},
         "software_assurance_customer": {"key": "softwareAssurance.softwareAssuranceCustomer", "type": "bool"},
     }
@@ -2066,7 +2084,7 @@ class LicenseProfileMachineInstanceView(_serialization.Model):
         :paramtype esu_profile:
          ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceViewEsuProperties
         :keyword subscription_status: Indicates the subscription status of the product. Known values
-         are: "Unknown", "Enabling", "Enabled", and "Disabled".
+         are: "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
         :paramtype subscription_status: str or
          ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
         :keyword product_type: Indicates the product type of the license. Known values are:
@@ -2084,9 +2102,11 @@ class LicenseProfileMachineInstanceView(_serialization.Model):
         self.esu_profile = esu_profile
         self.subscription_status = subscription_status
         self.product_type = product_type
-        self.billing_start_date = None
         self.enrollment_date = None
+        self.billing_start_date = None
         self.disenrollment_date = None
+        self.billing_end_date = None
+        self.error = None
         self.product_features = product_features
         self.software_assurance_customer = software_assurance_customer
 
@@ -4338,17 +4358,30 @@ class OSProfile(_serialization.Model):
 class OSProfileLinuxConfiguration(_serialization.Model):
     """Specifies the linux configuration for update management.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
      "AutomaticByPlatform".
     :vartype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
     :ivar patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
      "AutomaticByPlatform", "AutomaticByOS", and "Manual".
     :vartype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+    :ivar enable_hotpatching: Captures the hotpatch capability enrollment intent of the customers,
+     which enables customers to patch their Windows machines without requiring a reboot.
+    :vartype enable_hotpatching: bool
+    :ivar status: Status of the hotpatch capability enrollment or disenrollment.
+    :vartype status: ~azure.mgmt.hybridcompute.models.PatchSettingsStatus
     """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
 
     _attribute_map = {
         "assessment_mode": {"key": "patchSettings.assessmentMode", "type": "str"},
         "patch_mode": {"key": "patchSettings.patchMode", "type": "str"},
+        "enable_hotpatching": {"key": "patchSettings.enableHotpatching", "type": "bool"},
+        "status": {"key": "patchSettings.status", "type": "PatchSettingsStatus"},
     }
 
     def __init__(
@@ -4356,6 +4389,7 @@ class OSProfileLinuxConfiguration(_serialization.Model):
         *,
         assessment_mode: Optional[Union[str, "_models.AssessmentModeTypes"]] = None,
         patch_mode: Optional[Union[str, "_models.PatchModeTypes"]] = None,
+        enable_hotpatching: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4365,26 +4399,44 @@ class OSProfileLinuxConfiguration(_serialization.Model):
         :keyword patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
          "AutomaticByPlatform", "AutomaticByOS", and "Manual".
         :paramtype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+        :keyword enable_hotpatching: Captures the hotpatch capability enrollment intent of the
+         customers, which enables customers to patch their Windows machines without requiring a reboot.
+        :paramtype enable_hotpatching: bool
         """
         super().__init__(**kwargs)
         self.assessment_mode = assessment_mode
         self.patch_mode = patch_mode
+        self.enable_hotpatching = enable_hotpatching
+        self.status = None
 
 
 class OSProfileWindowsConfiguration(_serialization.Model):
     """Specifies the windows configuration for update management.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
      "AutomaticByPlatform".
     :vartype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
     :ivar patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
      "AutomaticByPlatform", "AutomaticByOS", and "Manual".
     :vartype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+    :ivar enable_hotpatching: Captures the hotpatch capability enrollment intent of the customers,
+     which enables customers to patch their Windows machines without requiring a reboot.
+    :vartype enable_hotpatching: bool
+    :ivar status: Status of the hotpatch capability enrollment or disenrollment.
+    :vartype status: ~azure.mgmt.hybridcompute.models.PatchSettingsStatus
     """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
 
     _attribute_map = {
         "assessment_mode": {"key": "patchSettings.assessmentMode", "type": "str"},
         "patch_mode": {"key": "patchSettings.patchMode", "type": "str"},
+        "enable_hotpatching": {"key": "patchSettings.enableHotpatching", "type": "bool"},
+        "status": {"key": "patchSettings.status", "type": "PatchSettingsStatus"},
     }
 
     def __init__(
@@ -4392,6 +4444,7 @@ class OSProfileWindowsConfiguration(_serialization.Model):
         *,
         assessment_mode: Optional[Union[str, "_models.AssessmentModeTypes"]] = None,
         patch_mode: Optional[Union[str, "_models.PatchModeTypes"]] = None,
+        enable_hotpatching: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4401,10 +4454,57 @@ class OSProfileWindowsConfiguration(_serialization.Model):
         :keyword patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
          "AutomaticByPlatform", "AutomaticByOS", and "Manual".
         :paramtype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+        :keyword enable_hotpatching: Captures the hotpatch capability enrollment intent of the
+         customers, which enables customers to patch their Windows machines without requiring a reboot.
+        :paramtype enable_hotpatching: bool
         """
         super().__init__(**kwargs)
         self.assessment_mode = assessment_mode
         self.patch_mode = patch_mode
+        self.enable_hotpatching = enable_hotpatching
+        self.status = None
+
+
+class PatchSettingsStatus(_serialization.Model):
+    """Status of the hotpatch capability enrollment or disenrollment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hotpatch_enablement_status: Indicates the current status of the hotpatch being enabled or
+     disabled. Known values are: "Unknown", "PendingEvaluation", "Disabled", "ActionRequired", and
+     "Enabled".
+    :vartype hotpatch_enablement_status: str or
+     ~azure.mgmt.hybridcompute.models.HotpatchEnablementStatus
+    :ivar error: The errors that were encountered during the hotpatch capability enrollment or
+     disenrollment.
+    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
+    """
+
+    _validation = {
+        "error": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "hotpatch_enablement_status": {"key": "hotpatchEnablementStatus", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        hotpatch_enablement_status: Optional[Union[str, "_models.HotpatchEnablementStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword hotpatch_enablement_status: Indicates the current status of the hotpatch being enabled
+         or disabled. Known values are: "Unknown", "PendingEvaluation", "Disabled", "ActionRequired",
+         and "Enabled".
+        :paramtype hotpatch_enablement_status: str or
+         ~azure.mgmt.hybridcompute.models.HotpatchEnablementStatus
+        """
+        super().__init__(**kwargs)
+        self.hotpatch_enablement_status = hotpatch_enablement_status
+        self.error = None
 
 
 class PrivateEndpointConnection(ProxyResourceAutoGenerated):
@@ -4797,29 +4897,37 @@ class ProductFeature(_serialization.Model):
     :ivar name: Product feature name.
     :vartype name: str
     :ivar subscription_status: Indicates the current status of the product features. Known values
-     are: "Unknown", "Enabling", "Enabled", and "Disabled".
+     are: "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
     :vartype subscription_status: str or
      ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
-    :ivar billing_start_date: The timestamp in UTC when the billing starts.
-    :vartype billing_start_date: ~datetime.datetime
     :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
     :vartype enrollment_date: ~datetime.datetime
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
     :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
     :vartype disenrollment_date: ~datetime.datetime
+    :ivar billing_end_date: The timestamp in UTC when the billing ends.
+    :vartype billing_end_date: ~datetime.datetime
+    :ivar error: The errors that were encountered during the feature enrollment or disenrollment.
+    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
     """
 
     _validation = {
-        "billing_start_date": {"readonly": True},
         "enrollment_date": {"readonly": True},
+        "billing_start_date": {"readonly": True},
         "disenrollment_date": {"readonly": True},
+        "billing_end_date": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "subscription_status": {"key": "subscriptionStatus", "type": "str"},
-        "billing_start_date": {"key": "billingStartDate", "type": "iso-8601"},
         "enrollment_date": {"key": "enrollmentDate", "type": "iso-8601"},
+        "billing_start_date": {"key": "billingStartDate", "type": "iso-8601"},
         "disenrollment_date": {"key": "disenrollmentDate", "type": "iso-8601"},
+        "billing_end_date": {"key": "billingEndDate", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
@@ -4833,16 +4941,18 @@ class ProductFeature(_serialization.Model):
         :keyword name: Product feature name.
         :paramtype name: str
         :keyword subscription_status: Indicates the current status of the product features. Known
-         values are: "Unknown", "Enabling", "Enabled", and "Disabled".
+         values are: "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
         :paramtype subscription_status: str or
          ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
         """
         super().__init__(**kwargs)
         self.name = name
         self.subscription_status = subscription_status
-        self.billing_start_date = None
         self.enrollment_date = None
+        self.billing_start_date = None
         self.disenrollment_date = None
+        self.billing_end_date = None
+        self.error = None
 
 
 class ProductFeatureUpdate(_serialization.Model):

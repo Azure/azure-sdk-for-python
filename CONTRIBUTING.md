@@ -47,7 +47,7 @@ sdist            -> Builds a source distribution and runs tests
 additional environments:
 pylint           -> Lints a package with a pinned version of pylint
 next-pylint      -> Lints a package with pylint (version 2.15.8)
-mypy             -> Typechecks a package with mypy (version 1.0.0)
+mypy             -> Typechecks a package with mypy (version 1.9.0)
 next-mypy        -> Typechecks a package with the latest version of mypy
 pyright          -> Typechecks a package with pyright (version 1.1.287)
 next-pyright     -> Typechecks a package with the latest version of static type-checker pyright

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional, TypeVar
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 
@@ -12,7 +12,6 @@ from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import, ungrouped-imports
-    from typing import TypeVar
     from ._models import (
         QueueProperties,
         TopicProperties,
