@@ -954,7 +954,7 @@ class SynonymMap(_serialization.Model):
         self,
         *,
         name: str,
-        synonyms: str,
+        synonyms: List[str],
         encryption_key: Optional[SearchResourceEncryptionKey] = None,
         e_tag: Optional[str] = None,
         **kwargs
