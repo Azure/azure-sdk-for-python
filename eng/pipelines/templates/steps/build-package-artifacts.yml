@@ -78,17 +78,6 @@ steps:
 
   - ${{ else }}:
     - task: Powershell@2
-      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-        displayName: Save package properties for service
-
-    - task: Powershell@2
       condition: and(succeeded(), eq(variables['SetDevVersion'],'true'))
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
@@ -98,7 +87,17 @@ steps:
           -AddDevVersion
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
-        displayName: Update package properties with dev version
+        displayName: Save package properties with dev version
+    - task: Powershell@2
+      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties for service
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
