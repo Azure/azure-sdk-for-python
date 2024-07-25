@@ -656,7 +656,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         client = AzureDataLakeStorageRESTAPI(
             url=url, base_url=url, file_system=self.file_system_name,
             path=self.path_name, pipeline=self._pipeline)
-        client._config.version = self._client._config.version
+        client._config.version = self._client._config.version  # pylint: disable=protected-access
         command = functools.partial(
             client.file_system.list_paths,
             path=self.path_name,
