@@ -3,3 +3,4 @@
 httpx
 aiohttp
 openai
+PIL
