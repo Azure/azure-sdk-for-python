@@ -36,7 +36,7 @@ def sample_chat_completions_with_defaults():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    # Create a client with defaults chat completions settings
+    # Create a client with default chat completions settings
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),

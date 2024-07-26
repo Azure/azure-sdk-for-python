@@ -42,6 +42,7 @@ def sample_image_embeddings_with_defaults():
     with open("sample2.png", "rb") as f:
         image2: str = base64.b64encode(f.read()).decode("utf-8")
 
+    # Create a client with default embeddings settings
     client = ImageEmbeddingsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
@@ -49,6 +50,7 @@ def sample_image_embeddings_with_defaults():
         input_type=EmbeddingInputType.QUERY
     )
 
+    # Call the service with the defaults specified above
     response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
     for item in response.data:

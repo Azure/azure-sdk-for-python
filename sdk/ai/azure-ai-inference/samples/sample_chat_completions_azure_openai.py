@@ -71,7 +71,7 @@ def sample_chat_completions_azure_openai():
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
-        ],
+        ]
     )
 
     print(response.choices[0].message.content)

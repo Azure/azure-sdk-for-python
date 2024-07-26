@@ -36,6 +36,7 @@ def sample_embeddings_with_defaults():
     from azure.ai.inference.models import EmbeddingInputType
     from azure.core.credentials import AzureKeyCredential
 
+    # Create a client with default embeddings settings
     client = EmbeddingsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
@@ -43,6 +44,7 @@ def sample_embeddings_with_defaults():
         input_type=EmbeddingInputType.QUERY,
     )
 
+    # Call the service with the defaults specified above
     response = client.embed(input=["first phrase", "second phrase", "third phrase"])
 
     for item in response.data:

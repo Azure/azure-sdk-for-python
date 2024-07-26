@@ -40,7 +40,7 @@ class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
+    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
     #
     # **********************************************************************************
 
@@ -206,7 +206,7 @@ class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
+    #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
     #
     # **********************************************************************************
 
