@@ -105,7 +105,7 @@ During application development, you would typically set up the environment for a
 
 ### Defining default settings while creating the clients
 
-You can define default chat completions or embeddings configurations while constructing the relevent client. These configuration will be applied to all all future service calls.
+You can define default chat completions or embeddings configurations while constructing the relevant client. These configurations will be applied to all future service calls.
 
 For example, here we create a `ChatCompletionsClient` using API key authentication, and apply two settings, `temperature` and `max_tokens`:
 
