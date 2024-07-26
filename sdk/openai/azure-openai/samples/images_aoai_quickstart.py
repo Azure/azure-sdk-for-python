@@ -35,11 +35,16 @@ def images_aoai_quickstart() -> None:
     import requests
     from PIL import Image
     import json
+    from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+
+    token_provider = get_bearer_token_provider(
+        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+    )
 
     client = AzureOpenAI(
-        api_version=os.environ["API_VERSION_GA"],
-        api_key=os.environ["AZURE_OPENAI_KEY"],
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"]
+        azure_ad_token_provider=token_provider,
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+        api_version=os.environ["API_VERSION_GA"]
     )
 
     result = client.images.generate(
