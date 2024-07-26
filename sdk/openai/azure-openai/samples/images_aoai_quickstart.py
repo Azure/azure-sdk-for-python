@@ -16,7 +16,6 @@ USAGE:
     Before running the sample:
 
     pip install openai
-    pip install requests
     pip install pillow
 
     Set the environment variables with your own values:
@@ -31,7 +30,7 @@ os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
 
 def images_aoai_quickstart() -> None:
     import os
-    import json
+    import httpx
     from openai import AzureOpenAI
     from PIL import Image
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -52,8 +51,6 @@ def images_aoai_quickstart() -> None:
         n=1
     )
 
-    json_response = json.loads(result.model_dump_json())
-
     # Set the directory for the stored image
     image_dir = os.path.join(os.curdir, 'images')
 
@@ -65,8 +62,10 @@ def images_aoai_quickstart() -> None:
     image_path = os.path.join(image_dir, 'generated_image.png')
 
     # Retrieve the generated image
-    image_url = json_response["data"][0]["url"]  # extract image URL from response
+
+    image_url = result.data[0]["url"]  # extract image URL from response
     generated_image = httpx.get(image_url).content  # download the image
+
     with open(image_path, "wb") as image_file:
         image_file.write(generated_image)
 
