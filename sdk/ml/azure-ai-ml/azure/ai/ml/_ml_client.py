@@ -38,6 +38,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -78,7 +79,6 @@ from azure.ai.ml.operations import (
     BatchEndpointOperations,
     ComponentOperations,
     ComputeOperations,
-    WorkspaceConnectionsOperations,
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
@@ -91,6 +91,7 @@ from azure.ai.ml.operations import (
     OnlineEndpointOperations,
     RegistryOperations,
     ServerlessEndpointOperations,
+    WorkspaceConnectionsOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -369,6 +370,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_07_2024_preview = ServiceClient072024Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -516,7 +524,7 @@ class MLClient:
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
+            serviceclient_2024_07_01_preview=self._service_client_07_2024_preview,
             serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )

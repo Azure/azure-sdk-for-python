@@ -26,6 +26,7 @@ USAGE:
 """
 
 import os
+import sys
 
 class AuthSamples(object):
     url = "https://{}.blob.core.windows.net".format(
@@ -42,6 +43,10 @@ class AuthSamples(object):
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     def auth_connection_string(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_connection_string")
+            sys.exit(1)
         # [START auth_from_connection_string]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -63,6 +68,10 @@ class AuthSamples(object):
         account_info = blob_service_client.get_account_information()
 
     def auth_shared_key(self):
+        if self.shared_access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: auth_shared_key")
+            sys.exit(1)
         # [START create_blob_service_client]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
@@ -85,6 +94,10 @@ class AuthSamples(object):
         # [END create_blob_client_sas_url]
 
     def auth_active_directory(self):
+        if self.active_directory_tenant_id is None or self.active_directory_application_id is None or self.active_directory_application_secret is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: auth_active_directory")
+            sys.exit(1)
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
@@ -103,6 +116,10 @@ class AuthSamples(object):
         account_info = blob_service_client.get_service_properties()
 
     def auth_shared_access_signature(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_shared_access_signature")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
