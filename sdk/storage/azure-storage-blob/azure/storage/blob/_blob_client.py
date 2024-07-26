@@ -2315,7 +2315,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
-            return parse_tags(tags)
+            return cast(Dict[str, str], parse_tags(tags))
         except HttpResponseError as error:
             process_storage_error(error)
 

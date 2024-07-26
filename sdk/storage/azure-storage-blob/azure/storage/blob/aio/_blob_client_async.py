@@ -2216,7 +2216,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
-            return parse_tags(tags)  # pylint: disable=protected-access
+            return cast(Dict[str, str], parse_tags(tags))  # pylint: disable=protected-access
         except HttpResponseError as error:
             process_storage_error(error)
 
