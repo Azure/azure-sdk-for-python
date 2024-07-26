@@ -4,6 +4,8 @@
 
 import time
 import unittest
+from unittest.mock import patch
+import uuid
 from urllib.parse import urlparse
 import pytest
 
@@ -11,7 +13,7 @@ import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
-    _synchronized_request, _endpoint_discovery_retry_policy
+    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.core.exceptions import ServiceRequestError
 
@@ -421,18 +423,18 @@ class TestGlobalDB(unittest.TestCase):
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)
         database = client.get_database_client(self.configs.TEST_DATABASE_ID)
-        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        container = database.create_container_if_not_exists("TEST" + str(uuid.uuid4()), PartitionKey(path="/pk"))
 
         # Replace GetDatabaseAccount method
-        try:
-            self.OriginalGetDatabaseAccount = client.client_connection.GetDatabaseAccount
-            cc_copy = client.client_connection
-            cc_copy.GetDatabaseAccount = _mock_get_database_account
-            client.client_connection = cc_copy
+        original_get_database_account = client.client_connection.GetDatabaseAccount
+        cc_copy = client.client_connection
+        cc_copy.GetDatabaseAccount = _mock_get_database_account
+        client.client_connection = cc_copy
 
-            # Replace _PipelineRunFunction to send a 403/3
-            self.original_pipeline_function = _synchronized_request._PipelineRunFunction
-            _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function_error
+        # Replace _PipelineRunFunction to send a 403/3
+        with patch.object(_synchronized_request, '_PipelineRunFunction', new=_mock_pipeline_run_function_error):
+            # original_pipeline_function = _synchronized_request._PipelineRunFunction
+            # _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function_error
 
             document_definition = {'id': 'doc7',
                                    'pk': 'pk',
@@ -451,13 +453,12 @@ class TestGlobalDB(unittest.TestCase):
                 container.create_item,
                 document_definition)
 
+        with patch.object(_synchronized_request, '_PipelineRunFunction', new=_mock_pipeline_run_function):
             # Verify next outgoing requests have the new updated regions from the 403 retry
             _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function
             container.create_item(document_definition)
-        finally:
-            _synchronized_request._PipelineRunFunction = self.original_pipeline_function
-            cc_copy.GetDatabaseAccount = self.OriginalGetDatabaseAccount
-            client.client_connection = cc_copy
+        cc_copy.GetDatabaseAccount = original_get_database_account
+        client.client_connection = cc_copy
 
     def test_global_db_service_request_errors(self):
         connection_policy = documents.ConnectionPolicy()
