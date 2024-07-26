@@ -1521,9 +1521,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         server_returned_permission = await share_client.get_permission_for_share(
             props.permission_key,
-            file_permission_format="sddl"
+            file_permission_format="binary"
         )
-        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_BINARY
 
         new_directory_client = await directory_client.rename_directory(
             'dir2',

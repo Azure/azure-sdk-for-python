@@ -3895,8 +3895,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         source_file = share_client.get_file_client('file1')
         await source_file.create_file(
             1024,
-            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
-            file_permission_format="sddl"
+            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
+            file_permission_format="binary"
         )
         props = await source_file.get_file_properties()
         assert props is not None
@@ -3929,8 +3929,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
         await new_file.set_http_headers(
             content_settings=content_settings,
-            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
-            file_permission_format="sddl"
+            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
+            file_permission_format="binary"
         )
 
         props = await new_file.get_file_properties()
@@ -3941,8 +3941,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         
         server_returned_permission = share_client.get_permission_for_share(
             props.permission_key,
-            file_permission_format="binary"
+            file_permission_format="sddl"
         )
-        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_BINARY
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
         await new_file.delete_file()

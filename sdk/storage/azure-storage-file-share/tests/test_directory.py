@@ -1410,8 +1410,8 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = share_client.create_directory('dir1')
 
         directory_client.set_http_headers(
-            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
-            file_permission_format="sddl"
+            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
+            file_permission_format="binary"
         )
 
         props = directory_client.get_directory_properties()
