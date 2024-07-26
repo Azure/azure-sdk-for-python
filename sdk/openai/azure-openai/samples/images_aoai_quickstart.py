@@ -31,10 +31,9 @@ os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
 
 def images_aoai_quickstart() -> None:
     import os
-    from openai import AzureOpenAI
-    import requests
-    from PIL import Image
     import json
+    from openai import AzureOpenAI
+    from PIL import Image
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
     token_provider = get_bearer_token_provider(
@@ -67,7 +66,7 @@ def images_aoai_quickstart() -> None:
 
     # Retrieve the generated image
     image_url = json_response["data"][0]["url"]  # extract image URL from response
-    generated_image = requests.get(image_url).content  # download the image
+    generated_image = httpx.get(image_url).content  # download the image
     with open(image_path, "wb") as image_file:
         image_file.write(generated_image)
 
