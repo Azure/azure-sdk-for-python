@@ -67,9 +67,9 @@ async def load_client(
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+     AzureKeyCredential type or a AsyncTokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -120,9 +120,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+     AzureKeyCredential type or a AsyncTokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword frequency_penalty: A value that influences the probability of generated tokens
         appearing based on their cumulative frequency in generated text.
         Positive values will make tokens less likely to appear as their frequency increases and
@@ -194,9 +194,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     """
 
     def __init__(
-        self, 
-        endpoint: str, 
-        credential: Union[AzureKeyCredential, "TokenCredential"], 
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -659,9 +659,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+     AzureKeyCredential type or a AsyncTokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
         have.
         Passing null causes the model to use its default value.
@@ -693,7 +693,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -955,9 +955,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+     AzureKeyCredential type or a AsyncTokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
         have.
         Passing null causes the model to use its default value.
@@ -989,7 +989,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,

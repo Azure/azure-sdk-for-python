@@ -211,9 +211,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     """
 
     def __init__(
-        self, 
-        endpoint: str, 
-        credential: Union[AzureKeyCredential, "TokenCredential"], 
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
         *,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
