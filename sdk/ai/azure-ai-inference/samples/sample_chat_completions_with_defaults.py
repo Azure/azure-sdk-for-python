@@ -37,15 +37,13 @@ def sample_chat_completions_with_defaults():
     from azure.core.credentials import AzureKeyCredential
 
     # Create a client with defaults chat completions settings
-    # [START chat_completions_with_defaults]
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
         temperature=0.5,
         max_tokens=1000
     )
-    # [END chat_completions_with_defaults]
-
+    
     # Call the service with the defaults specified above
     response = client.complete(
         messages=[
