@@ -1569,6 +1569,38 @@ class TestStorageShare(StorageRecordedTestCase):
         # server returned permission
         assert permission_key == permission_key2
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_get_permission_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self._create_share()
+        user_given_permission_sddl = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
+                                      "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
+                                      "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+        user_given_permission_binary = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                        "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                        "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
+
+        permission_key = share_client.create_permission_for_share(user_given_permission_sddl)
+        assert permission_key is not None
+
+        server_returned_permission = share_client.get_permission_for_share(
+            permission_key,
+            file_permission_format="sddl"
+        )
+        assert server_returned_permission == user_given_permission_sddl
+
+        server_returned_permission = share_client.get_permission_for_share(
+            permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == user_given_permission_binary
+
+        self._delete_shares(share_client.share_name)
+
     @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_transport_closed_only_once(self, **kwargs):
