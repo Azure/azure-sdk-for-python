@@ -407,22 +407,22 @@ def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
             config_results.append(False)
             break
 
-        # install any packages that are added in the optional config
-        additional_installs = config.get("install", [])
-        install_result = pip_install(additional_installs, python_executable=environment_exe)
-        if not install_result:
-            logging.error(
-                f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above."
-            )
-            config_results.append(False)
-            break
-
         # uninstall any configured packages from the optional config
         additional_uninstalls = config.get("uninstall", [])
         uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
         if not uninstall_result:
             logging.error(
                 f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {parsed_package.name}, check command output above."
+            )
+            config_results.append(False)
+            break
+
+        # install any packages that are added in the optional config
+        additional_installs = config.get("install", [])
+        install_result = pip_install(additional_installs, python_executable=environment_exe)
+        if not install_result:
+            logging.error(
+                f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above."
             )
             config_results.append(False)
             break
