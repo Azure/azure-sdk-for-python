@@ -17,15 +17,15 @@ from ._deserialize import TablesEntityDatetime
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    value = value.split(".")
-    if len(value) == 2:
-        ms = value[-1].replace("Z", "")
+    value_list = value.split(".")
+    if len(value_list) == 2:
+        ms = value_list[-1].replace("Z", "")
         if len(ms) > 6:
             ms = ms[:6]
         ms = ms + "Z"
-        cleaned_value = ".".join([value[0], ms])
+        cleaned_value = ".".join([value_list[0], ms])
     else:
-        cleaned_value = value[0]
+        cleaned_value = value_list[0]
 
     try:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
