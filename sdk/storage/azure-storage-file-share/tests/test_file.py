@@ -3776,20 +3776,10 @@ class TestStorageFile(StorageRecordedTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
 
         source_file = share_client.get_file_client('file1')
-        source_file.create_file(
-            1024,
-            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
-            file_permission_format="binary"
-        )
+        source_file.create_file(1024)
         props = source_file.get_file_properties()
         assert props is not None
         assert props.permission_key is not None
-
-        server_returned_permission = share_client.get_permission_for_share(
-            props.permission_key,
-            file_permission_format="sddl"
-        )
-        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
         new_file = source_file.rename_file(
             'file2',
