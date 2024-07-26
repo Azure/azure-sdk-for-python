@@ -19,9 +19,9 @@ extends:
               Write-Host "##vso[task.setvariable variable=ARM_OIDC_TOKEN;issecret=true]$($env:idToken)"
       ServiceDirectory: identity
       EnvVars:
-        AZURE_CLIENT_ID: $(IDENTITY_SP_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(IDENTITY_SP_CLIENT_SECRET)
-        AZURE_TENANT_ID: $(IDENTITY_SP_TENANT_ID)
+        # AZURE_CLIENT_ID: $(IDENTITY_SP_CLIENT_ID)
+        # AZURE_CLIENT_SECRET: $(IDENTITY_SP_CLIENT_SECRET)
+        # AZURE_TENANT_ID: $(IDENTITY_SP_TENANT_ID)
         PEM_CONTENT: $(python-identity-certificate)
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'

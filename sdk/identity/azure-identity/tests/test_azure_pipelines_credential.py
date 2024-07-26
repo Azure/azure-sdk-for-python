@@ -11,6 +11,8 @@ from azure.core.rest import HttpRequest
 from azure.identity import (
     AzurePipelinesCredential,
     ChainedTokenCredential,
+    ManagedIdentityCredential,
+    DefaultAzureCredential,
     ClientAssertionCredential,
     CredentialUnavailableError,
 )
@@ -129,3 +131,69 @@ def test_azure_pipelines_credential_authentication():
     token = credential.get_token(scope)
     assert token.token
     assert isinstance(token.expires_on, int)
+
+
+@pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
+def test_azure_pipelines_in_chain_with_managed_identity():
+    credential = ChainedTokenCredential(
+        ManagedIdentityCredential(),
+        AzurePipelinesCredential(
+            system_access_token=os.environ.get("SYSTEM_ACCESSTOKEN", ""),
+            tenant_id=os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", ""),
+            client_id=os.environ.get("AZURE_SERVICE_CONNECTION_CLIENT_ID", ""),
+            service_connection_id=os.environ.get("AZURE_SERVICE_CONNECTION_ID", ""),
+        ),
+    )
+
+    token = credential.get_token("https://vault.azure.net/.default")
+    assert isinstance(credential._successful_credential, AzurePipelinesCredential)
+    assert token.token
+
+
+@pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
+def test_azure_pipelines_in_chain_with_default_credential():
+    default_auth = DefaultAzureCredential(
+        exclude_managed_identity_credential=True, exclude_powershell_credential=True)
+
+    credential = ChainedTokenCredential(
+        *default_auth.credentials,
+        AzurePipelinesCredential(
+            system_access_token=os.environ.get("SYSTEM_ACCESSTOKEN", ""),
+            tenant_id=os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", ""),
+            client_id=os.environ.get("AZURE_SERVICE_CONNECTION_CLIENT_ID", ""),
+            service_connection_id=os.environ.get("AZURE_SERVICE_CONNECTION_ID", ""),
+        ),
+    )
+
+    token = credential.get_token("https://vault.azure.net/.default")
+    assert isinstance(credential._successful_credential, AzurePipelinesCredential)
+    assert token.token
+
+
+@pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
+def test_azure_pipelines_in_chain_with_default_credential_again():
+    default_auth = DefaultAzureCredential(
+        exclude_managed_identity_credential=True, exclude_powershell_credential=True
+    )
+
+    credential_list = list(default_auth.credentials)
+    pipelines_envvars = (
+        "SYSTEM_ACCESSTOKEN",
+        "AZURE_SERVICE_CONNECTION_TENANT_ID",
+        "AZURE_SERVICE_CONNECTION_CLIENT_ID",
+        "AZURE_SERVICE_CONNECTION_ID"
+    )
+    if all(os.environ.get(var) for var in pipelines_envvars):
+        credential_list.append(AzurePipelinesCredential(
+            system_access_token=os.environ["SYSTEM_ACCESSTOKEN"],
+            tenant_id=os.environ["AZURE_SERVICE_CONNECTION_TENANT_ID"],
+            client_id=os.environ["AZURE_SERVICE_CONNECTION_CLIENT_ID"],
+            service_connection_id=os.environ["AZURE_SERVICE_CONNECTION_ID"],
+        ))
+
+    credential_list.append(ManagedIdentityCredential())
+    credential = ChainedTokenCredential(*credential_list)
+
+    token = credential.get_token("https://vault.azure.net/.default")
+    assert isinstance(credential._successful_credential, AzurePipelinesCredential)
+    assert token.token
