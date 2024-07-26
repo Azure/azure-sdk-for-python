@@ -8,7 +8,7 @@
 FILE: images_aoai_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started generating images with the Azure OpenAI SDK for Python.
+    This sample demonstrates how to get started generating images with the OpenAI SDK for Python.
 
 USAGE:
     python images_aoai_quickstart.py
