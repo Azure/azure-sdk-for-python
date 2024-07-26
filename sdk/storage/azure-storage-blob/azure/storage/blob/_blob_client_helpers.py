@@ -7,8 +7,8 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
-    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO,
+    Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote, urlparse
