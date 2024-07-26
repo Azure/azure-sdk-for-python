@@ -344,7 +344,6 @@ class ShareProperties(DictMixin):
     :ivar bool enable_snapshot_virtual_directory_access:
         Specifies whether the snapshot virtual directory should be accessible at the root of the share
         mount point when NFS is enabled. If not specified, it will be accessible.
-        mount point when NFS is enabled. if not specified, the default is True.
     :ivar bool paid_bursting_enabled: This property enables paid bursting.
     :ivar int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
     :ivar int paid_bursting_max_iops: The maximum IOPS the file share can support.
