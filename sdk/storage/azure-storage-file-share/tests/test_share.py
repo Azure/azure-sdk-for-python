@@ -22,7 +22,9 @@ from azure.storage.fileshare import (
     AccountSasPermissions,
     generate_account_sas,
     generate_share_sas,
+    Metrics,
     ResourceTypes,
+    RetentionPolicy,
     ShareAccessTier,
     ShareClient,
     ShareFileClient,
@@ -1653,6 +1655,91 @@ class TestStorageShare(StorageRecordedTestCase):
         assert shares[0].paid_bursting_max_iops == max_iops
 
         self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_share_client_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.get_credential(ShareClient)
+
+        self._setup(storage_account_name, storage_account_key)
+        first_share = self._create_share('test1')
+        second_share = self._create_share('test2')
+
+        share_names = {share.name for share in self.fsc.list_shares()}
+        assert first_share.share_name in share_names
+        assert second_share.share_name in share_names
+
+        first_share_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=first_share.share_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+        second_share_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=second_share.share_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+
+        first_share_props = first_share_client.get_share_properties()
+        second_share_props = second_share_client.get_share_properties()
+        assert first_share_props is not None
+        assert first_share_props.name == first_share.share_name
+        assert first_share_props.access_tier == 'TransactionOptimized'
+        assert second_share_props is not None
+        assert second_share_props.name == second_share.share_name
+        assert second_share_props.access_tier == 'TransactionOptimized'
+
+        first_share_client.set_share_properties(access_tier='Hot')
+        first_share_props = first_share_client.get_share_properties()
+        assert first_share_props is not None
+        assert first_share_props.name == first_share.share_name
+        assert first_share_props.access_tier == 'Hot'
+
+        share_names = {share.name for share in self.fsc.list_shares()}
+        assert first_share.share_name in share_names
+        assert second_share.share_name in share_names
+
+        first_share_client.delete_share()
+        second_share_client.delete_share()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_share_lease_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.get_credential(ShareClient)
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        share = self._create_share('test')
+        share_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=share.share_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+
+        # Act / Assert
+        lease_duration = 60
+        lease_id = '00000000-1111-2222-3333-444444444444'
+        lease = share_client.acquire_lease(
+            lease_id=lease_id,
+            lease_duration=lease_duration
+        )
+        props = share_client.get_share_properties(lease=lease)
+        assert props.lease.duration == 'fixed'
+        assert props.lease.state == 'leased'
+        assert props.lease.status == 'locked'
+
+        lease.renew()
+        assert lease.id == lease_id
+
+        lease.release()
+        share_client.delete_share()
 
 
 # ------------------------------------------------------------------------------
