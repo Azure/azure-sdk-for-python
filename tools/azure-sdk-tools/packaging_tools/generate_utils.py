@@ -396,7 +396,7 @@ def format_samples_and_tests(sdk_code_path) -> None:
                 with open(path, "w") as fw:
                     fw.write(file_content)
             except Exception as e:
-                _LOGGER.warning(f"Failed to format {item}: {e}")
+                _LOGGER.warning(f"Failed to format {path}: {e}")
 
         _LOGGER.info(f"format {generate_path} successfully")
 
