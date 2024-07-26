@@ -11,11 +11,13 @@ Example to show receiving dead-lettered messages from a Service Bus Queue.
 
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusSubQueue
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+credential = DefaultAzureCredential()
+servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)

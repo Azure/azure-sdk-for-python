@@ -1,5 +1,18 @@
 # Release History
 
+## 32.0.0 (2024-07-22)
+
+### Features Added
+
+  - Model DiskRestorePoint has a new parameter logical_sector_size
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model SecurityPostureReference has a new parameter is_overridable
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter security_posture_reference
+
+### Breaking Changes
+
+  - Parameter id of model SecurityPostureReference is now required
+
 ## 31.0.0 (2024-04-22)
 
 ### Features Added

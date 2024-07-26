@@ -14,7 +14,7 @@ from typing import AnyStr, cast, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
-from . import encode_base64, url_quote
+from .import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
 from .streams import IterStreamer, StructuredMessageEncodeStream, StructuredMessageProperties
