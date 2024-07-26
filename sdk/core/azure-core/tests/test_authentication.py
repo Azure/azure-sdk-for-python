@@ -36,7 +36,7 @@ def test_bearer_policy_adds_header(http_request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
         return Mock()
 
-    fake_credential = Mock(get_token=Mock(return_value=expected_token))
+    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
@@ -63,7 +63,7 @@ def test_bearer_policy_send(http_request):
     def get_token(*_, **__):
         return AccessToken("***", 42)
 
-    fake_credential = Mock(get_token=get_token)
+    fake_credential = Mock(spec_set=["get_token"], get_token=get_token)
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = Pipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -73,7 +73,7 @@ def test_bearer_policy_send(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_token_caching(http_request):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
-    credential = Mock(get_token=Mock(return_value=good_for_one_hour))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=good_for_one_hour))
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(http_request("GET", "https://spam.eggs"))
@@ -105,7 +105,7 @@ def test_bearer_policy_optionally_enforces_https(http_request):
     def get_token(*_, **__):
         return AccessToken("***", 42)
 
-    credential = Mock(get_token=get_token)
+    credential = Mock(spec_set=["get_token"], get_token=get_token)
     pipeline = Pipeline(
         transport=Mock(send=assert_option_popped), policies=[BearerTokenCredentialPolicy(credential, "scope")]
     )
@@ -134,7 +134,7 @@ def test_bearer_policy_preserves_enforce_https_opt_out(http_request):
             assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
             return Mock()
 
-    credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
@@ -146,7 +146,7 @@ def test_bearer_policy_default_context(http_request):
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
     expected_scope = "scope"
     token = AccessToken("", 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     policy = BearerTokenCredentialPolicy(credential, expected_scope)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
@@ -160,7 +160,7 @@ def test_bearer_policy_enable_cae(http_request):
     """The policy should set enable_cae to True in the get_token request if it is set in constructor."""
     expected_scope = "scope"
     token = AccessToken("", 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     policy = BearerTokenCredentialPolicy(credential, expected_scope, enable_cae=True)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
@@ -177,7 +177,7 @@ def test_bearer_policy_context_unmodified_by_default(http_request):
         def on_request(self, request):
             assert not any(request.context), "the policy shouldn't add to the request's context"
 
-    credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
@@ -195,7 +195,7 @@ def test_bearer_policy_calls_on_challenge(http_request):
             self.__class__.called = True
             return False
 
-    credential = Mock(get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
     policies = [TestPolicy(credential, "scope")]
     response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=response))
@@ -212,7 +212,7 @@ def test_bearer_policy_cannot_complete_challenge(http_request):
 
     expected_scope = "scope"
     expected_token = AccessToken("***", int(time.time()) + 3600)
-    credential = Mock(get_token=Mock(return_value=expected_token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
     expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=expected_response))
     policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
@@ -241,7 +241,7 @@ def test_bearer_policy_calls_sansio_methods(http_request):
             self.response = super(TestPolicy, self).send(request)
             return self.response
 
-    credential = Mock(get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
@@ -495,7 +495,7 @@ def test_bearer_policy_redirect_same_domain():
     auth_headder = "token"
     expected_scope = "scope"
     token = AccessToken(auth_headder, 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = RedirectPolicy()
     header_clean_up_policy = SensitiveHeaderCleanupPolicy()
@@ -534,7 +534,7 @@ def test_bearer_policy_redirect_different_domain():
     auth_headder = "token"
     expected_scope = "scope"
     token = AccessToken(auth_headder, 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = RedirectPolicy()
     header_clean_up_policy = SensitiveHeaderCleanupPolicy()
@@ -573,7 +573,7 @@ def test_bearer_policy_redirect_opt_out_clean_up():
     auth_headder = "token"
     expected_scope = "scope"
     token = AccessToken(auth_headder, 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = RedirectPolicy()
     header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
@@ -612,7 +612,7 @@ def test_bearer_policy_redirect_customize_sensitive_headers():
     auth_headder = "token"
     expected_scope = "scope"
     token = AccessToken(auth_headder, 0)
-    credential = Mock(get_token=Mock(return_value=token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
     auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = RedirectPolicy()
     header_clean_up_policy = SensitiveHeaderCleanupPolicy(blocked_redirect_headers=["x-ms-authorization-auxiliary"])
