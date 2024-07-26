@@ -63,7 +63,7 @@ def images_aoai_quickstart() -> None:
 
     # Retrieve the generated image
 
-    image_url = result.data[0]["url"]  # extract image URL from response
+    image_url = result.data[0].url  # extract image URL from response
     generated_image = httpx.get(image_url).content  # download the image
 
     with open(image_path, "wb") as image_file:
