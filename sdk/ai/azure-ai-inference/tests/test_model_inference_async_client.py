@@ -148,7 +148,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
     #
     # **********************************************************************************
-    """live test with recording fails for this... why?
+
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_async_load_embeddings_client(self, **kwargs):
@@ -161,7 +161,6 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         await client.close()
-    """
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
