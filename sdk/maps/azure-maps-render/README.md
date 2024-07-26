@@ -31,7 +31,7 @@ Install the Azure Maps Service Render SDK.
 pip install azure-maps-render
 ```
 
-### Create and Authenticate the AzureMapsRenderClient
+### Create and Authenticate the MapsRenderClient
 
 To create a client object to access the Azure Maps Render API, you will need a **credential** object. Azure Maps Render client also support two ways to authenticate.
 
@@ -43,11 +43,11 @@ Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an inst
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-render_client = AzureMapsRenderClient(
+render_client = MapsRenderClient(
     credential=credential,
 )
 ```
@@ -71,11 +71,11 @@ Next, set the values of the client ID, tenant ID, and client secret of the AAD a
 You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
 
 ```python
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-render_client = AzureMapsRenderClient(
+render_client = MapsRenderClient(
     client_id="<Azure Maps Client ID>",
     credential=credential
 )
@@ -87,8 +87,8 @@ The Azure Maps Render client library for Python allows you to interact with each
 
 ### Sync Clients
 
-`AzureMapsRenderClient` is the primary client for developers using the Azure Maps Render client library for Python.
-Once you initialized a `AzureMapsRenderClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Render service that you can access.
+`MapsRenderClient` is the primary client for developers using the Azure Maps Render client library for Python.
+Once you initialized a `MapsRenderClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Render service that you can access.
 
 ### Async Clients
 
@@ -115,10 +115,10 @@ section of a tileset.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 from azure.maps.render import TilesetID
 
-maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_attribution(
     tileset_id=TilesetID.MICROSOFT_BASE,
@@ -136,10 +136,10 @@ control (Web SDK) and Android SDK.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 from azure.maps.render import TilesetID
 
-maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tile(
     tileset_id=TilesetID.MICROSOFT_BASE,
@@ -156,10 +156,10 @@ This request will give metadata for a tileset.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 from azure.maps.render import TilesetID
 
-maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 ```
@@ -173,9 +173,9 @@ rectangular image containing a map section using a zoom level from 0 to 20.
 And also save the result to file as png.
 
 ```python
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 
-maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_static_image(
     zoom=10,
@@ -189,9 +189,9 @@ This request will serve copyright information for Render Tile service.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 
-maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_copyright_for_world()
 ```
@@ -214,7 +214,7 @@ Detailed DEBUG level logging, including request/response bodies and unredacted h
 ```python
 import sys
 import logging
-from azure.maps.render import AzureMapsRenderClient
+from azure.maps.render import MapsRenderClient
 
 # Create a logger for the 'azure.maps.render' SDK
 logger = logging.getLogger('azure.maps.render')

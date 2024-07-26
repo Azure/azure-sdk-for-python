@@ -14,10 +14,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
-from ._client import MapsRenderClient
+from ._client import MapsRenderClient as MapsRenderClientGenerated
 from .._version import API_VERSION
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["MapsRenderClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -45,7 +45,7 @@ def _authentication_policy(credential):
 
 
 # pylint: disable=C4748
-class AzureMapsRenderClient(MapsRenderClient):
+class MapsRenderClient(MapsRenderClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],

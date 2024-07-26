@@ -27,11 +27,11 @@ import os
 def authentication_maps_service_client_with_subscription_key_credential():
     # [START create_maps_render_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.render import AzureMapsRenderClient
+    from azure.maps.render import MapsRenderClient
 
     subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-    maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
+    maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_render_service_client_with_key]
 
     result = maps_render_client.get_copyright_caption()
@@ -45,12 +45,12 @@ def authentication_maps_service_client_with_aad_credential():
     """
     # [START create_maps_render_service_client_with_aad]
     from azure.identity import DefaultAzureCredential
-    from azure.maps.render import AzureMapsRenderClient
+    from azure.maps.render import MapsRenderClient
 
     credential = DefaultAzureCredential()
     maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
-    maps_render_client = AzureMapsRenderClient(client_id=maps_client_id, credential=credential)
+    maps_render_client = MapsRenderClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_render_service_client_with_aad]
 
     result = maps_render_client.get_copyright_caption()

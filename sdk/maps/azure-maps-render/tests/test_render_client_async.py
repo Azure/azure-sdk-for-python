@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.render.aio import AzureMapsRenderClient
+from azure.maps.render.aio import MapsRenderClient
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from render_preparer import MapsRenderPreparer
@@ -13,7 +13,7 @@ from azure.maps.render import TilesetID
 
 class TestMapsRenderClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = AzureMapsRenderClient(
+        self.client = MapsRenderClient(
             credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
         )
         assert self.client is not None
