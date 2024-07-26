@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import SEEK_SET, UnsupportedOperation
-from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
+from typing import Any, cast, Dict, IO, Literal, Optional, TypeVar, TYPE_CHECKING, Union
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
@@ -72,7 +72,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    validate_content: bool,
+    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
     max_concurrency: Optional[int],
     length: Optional[int] = None,
     **kwargs: Any
@@ -219,7 +219,7 @@ def upload_page_blob(
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -297,7 +297,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:

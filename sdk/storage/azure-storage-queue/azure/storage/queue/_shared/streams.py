@@ -26,10 +26,6 @@ class IterStreamer(IOBase):
         self.leftover = bytearray()
         self.encoding = encoding
 
-    def __len__(self):
-        # Not part of the ABC, but here in case the iterable also has a len
-        return len(self.iterable)  # type: ignore
-
     def __iter__(self):
         return self.iterator
 

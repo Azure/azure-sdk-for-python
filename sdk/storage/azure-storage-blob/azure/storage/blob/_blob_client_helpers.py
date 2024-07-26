@@ -7,8 +7,8 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
-    Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO,
+    Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote, urlparse
@@ -48,12 +48,12 @@ from ._shared.base_client import parse_query
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
-    read_length,
     validate_and_format_range_headers
 )
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
-from ._shared.uploads import IterStreamer, prepare_upload_data
-from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.streams import IterStreamer
+from ._shared.streams_async import AsyncIterStreamer
+from ._shared.uploads import prepare_upload_data
 from ._shared.validation import (
     calculate_md5,
     calculate_crc64_bytes,
@@ -113,7 +113,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
     encryption_options: Dict[str, Any],
-    validate_content: Any,
+    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -133,9 +133,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     elif hasattr(data, 'read'):
         stream = data
     elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
-        stream = IterStreamer(data, encoding=encoding)
+        stream = IterStreamer(cast(Iterable, data), encoding=encoding)
     elif hasattr(data, '__aiter__'):
-        stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
+        stream = AsyncIterStreamer(cast(AsyncIterable, data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
@@ -945,7 +945,7 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     return options
 
 def _upload_page_options(
-    page: bytes,
+    page: Union[bytes, str],
     offset: int,
     length: int,
     **kwargs: Any
@@ -968,13 +968,12 @@ def _upload_page_options(
     )
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
-    validate_content = kwargs.pop('validate_content', False)
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
-        
+
     validate_content = parse_validation_option(kwargs.pop('validate_content', None))
     content_md5, content_crc64 = None, None
     if validate_content == ChecksumAlgorithm.MD5:
@@ -1110,7 +1109,6 @@ def _append_block_options(
 
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     maxsize_condition = kwargs.pop('maxsize_condition', None)
-    validate_content = kwargs.pop('validate_content', False)
     append_conditions = None
     if maxsize_condition or appendpos_condition is not None:
         append_conditions = AppendPositionAccessConditions(

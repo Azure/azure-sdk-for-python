@@ -239,6 +239,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -255,6 +256,9 @@ class FileOperations:
          Range header, the service returns the MD5 hash for the range, as long as the range is less than
          or equal to 4 MB in size. Default value is None.
         :type range_get_content_md5: bool
+        :param structured_body_type: Specifies the response content should be returned as a structured
+         message and specifies the message schema version and properties. Default value is None.
+        :type structured_body_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: AsyncIterator[bytes] or the result of cls(response)
@@ -283,6 +287,7 @@ class FileOperations:
             timeout=timeout,
             range=range,
             range_get_content_md5=range_get_content_md5,
+            structured_body_type=structured_body_type,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
@@ -366,6 +371,12 @@ class FileOperations:
             )
             response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
             response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -429,6 +440,12 @@ class FileOperations:
             )
             response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
             response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -1219,6 +1236,8 @@ class FileOperations:
         file_range_write: Union[str, _models.FileRangeWriteType] = "update",
         content_md5: Optional[bytes] = None,
         file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
@@ -1255,6 +1274,13 @@ class FileOperations:
         :param file_last_written_mode: If the file last write time should be preserved or overwritten.
          Known values are: "Now" and "Preserve". Default value is None.
         :type file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :param optionalbody: Initial data. Default value is None.
@@ -1292,6 +1318,8 @@ class FileOperations:
             content_md5=content_md5,
             lease_id=_lease_id,
             file_last_written_mode=file_last_written_mode,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
@@ -1328,6 +1356,9 @@ class FileOperations:
         )
         response_headers["x-ms-file-last-write-time"] = self._deserialize(
             "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
         )
 
         if cls:
@@ -1475,7 +1506,6 @@ class FileOperations:
         prevsharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
-        support_rename: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
@@ -1495,13 +1525,6 @@ class FileOperations:
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
          value is None.
         :type range: str
-        :param support_rename: This header is allowed only when PrevShareSnapshot query parameter is
-         set. Determines whether the changed ranges for a file that has been renamed or moved between
-         the target snapshot (or the live file) and the previous snapshot should be listed. If the value
-         is true, the valid changed ranges for the file will be returned. If the value is false, the
-         operation will result in a failure with 409 (Conflict) response. The default value is false.
-         Default value is None.
-        :type support_rename: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: ShareFileRangeList or the result of cls(response)
@@ -1533,7 +1556,6 @@ class FileOperations:
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
-            support_rename=support_rename,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,

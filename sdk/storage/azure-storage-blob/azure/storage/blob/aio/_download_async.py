@@ -15,7 +15,7 @@ from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable,
     Generator, Callable, cast, Dict,
-    Generic, IO, Optional, overload,
+    Generic, IO, Literal, Optional, overload,
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
@@ -50,7 +50,7 @@ async def process_content(
         start_offset: int,
         end_offset: int,
         encryption: Dict[str, Any],
-        validate_content: Any) -> bytes:
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]) -> bytes:
     if download is None:
         raise ValueError("Response cannot be None.")
 
@@ -60,7 +60,7 @@ async def process_content(
         stream = StructuredMessageDecodeStream(content, download.content_length)
         content = await stream.read()
     else:
-        content = download.response.body()
+        content = cast(bytes, download.response.body())
 
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
@@ -246,7 +246,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: bool = None,  # type: ignore [assignment]
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         max_concurrency: int = 1,
         name: str = None,  # type: ignore [assignment]

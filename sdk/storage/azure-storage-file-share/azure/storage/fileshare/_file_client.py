@@ -23,12 +23,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
-from ._shared.uploads import FileChunkUploader, upload_data_chunks
+from ._shared.uploads import FileChunkUploader, prepare_upload_data, upload_data_chunks
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.streams import IterStreamer
 from ._shared.parser import _str
+from ._shared.validation import ChecksumAlgorithm, parse_validation_option, SM_HEADER_V1_CRC64
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
 from ._serialize import (
@@ -504,15 +505,15 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            file_attributes: Union[str, "NTFSAttributes"] = "none",
-            file_creation_time: Optional[Union[str, datetime]] = "now",
-            file_last_write_time: Optional[Union[str, datetime]] = "now",
-            file_permission: Optional[str] = None,
-            permission_key: Optional[str] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        file_attributes: Union[str, "NTFSAttributes"] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "now",
+        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
         """Uploads a new file.
 
         :param data:
@@ -557,13 +558,27 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each range of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the file.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
         :keyword lease:
@@ -601,7 +616,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         content_settings = kwargs.pop('content_settings', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
-        validate_content = kwargs.pop('validate_content', False)
+        validate_content = kwargs.pop('validate_content', None)
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
@@ -1234,30 +1249,44 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def upload_range(  # type: ignore
-            self, data,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+    def upload_range(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
-        :param bytes data:
+        :param data:
             The data to upload.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param int offset:
             Start of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
         :param int length:
             Number of bytes to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the file.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
@@ -1286,25 +1315,32 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
-        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if isinstance(data, str):
-            data = data.encode(encoding)
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
 
+        structured_type, structured_length = None, None
+        if validate_content == ChecksumAlgorithm.CRC64:
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
+
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        md5_validation = True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None
         try:
             return self._client.file.upload_range( # type: ignore
                 range=content_range,
-                content_length=length,
+                content_length=content_length,
                 optionalbody=data,
                 timeout=timeout,
-                validate_content=validate_content,
+                validate_content=md5_validation,
                 file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
+                structured_body_type=structured_type,
+                structured_content_length=structured_length,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:

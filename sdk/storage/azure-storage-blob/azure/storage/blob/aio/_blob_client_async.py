@@ -74,6 +74,7 @@ from .._serialize import get_access_conditions, get_api_version, get_modify_cond
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
+from .._shared.validation import ChecksumAlgorithm, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -581,6 +582,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+            raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _upload_blob_options(
             data=data,
             blob_type=blob_type,
@@ -592,6 +596,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 'key': self.key_encryption_key,
                 'resolver': self.key_resolver_function
             },
+            validate_content=validate_content,
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
