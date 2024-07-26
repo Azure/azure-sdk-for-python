@@ -20,7 +20,7 @@ from ci_tools.variables import in_ci
 
 
 # for pytest.parametrize
-GA = "API_VERSION_GA"
+GA = "2024-02-01"
 PREVIEW = "2024-05-01-preview"
 LATEST = PREVIEW
 
@@ -67,8 +67,8 @@ def skip_openai_test(api_type) -> bool:
 
 @pytest.fixture
 def client(api_type, api_version):
-    #if skip_openai_test(api_type):
-    pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
 
     if api_type == "azure":
         client = openai.AzureOpenAI(
@@ -103,8 +103,8 @@ def client(api_type, api_version):
 
 @pytest.fixture
 def client_async(api_type, api_version):
-    #if skip_openai_test(api_type):
-    pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
 
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
