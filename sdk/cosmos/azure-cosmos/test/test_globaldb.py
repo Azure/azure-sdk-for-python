@@ -433,7 +433,8 @@ class TestGlobalDB(unittest.TestCase):
         )
         connection_policy.ConnectionRetryConfiguration = retry_policy
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
+            client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
+            client.get_database_client("test_db").read()
             pytest.fail("client initialization should have received ServiceRequestError")
         except ServiceRequestError:
             assert retry_policy.count == 3
