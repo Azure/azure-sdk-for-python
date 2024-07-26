@@ -424,7 +424,7 @@ class ComputeOperations(_ScopeDependentOperations):
     @distributed_trace
     @monitor_with_activity(ops_logger, "Compute.enablesso", ActivityType.PUBLICAPI)
     @experimental
-    def enable_sso(self, *, name: str, enable_sso: Optional[bool] = True):
+    def enable_sso(self, *, name: str, enable_sso: bool = True):
         """enable sso for a compute instance.
 
         :keyword name: Name of the compute instance.
