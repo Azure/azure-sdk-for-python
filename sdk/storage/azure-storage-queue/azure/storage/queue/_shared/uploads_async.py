@@ -12,7 +12,7 @@ from collections import namedtuple
 from itertools import islice
 from math import ceil
 
-from . import encode_base64, url_quote
+from .import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 from .uploads import ChunkInfo, SubStream

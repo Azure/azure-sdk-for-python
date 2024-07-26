@@ -12,9 +12,9 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 import os
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
+from azure.identity import DefaultAzureCredential
 
-
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 def send_data_message(producer):
@@ -91,9 +91,10 @@ def receive_and_parse_message(consumer):
             print('Stopped receiving.')
 
 
-producer = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    eventhub_name=EVENTHUB_NAME
+producer = EventHubProducerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
 )
 with producer:
     send_data_message(producer)
@@ -101,9 +102,10 @@ with producer:
     send_value_message(producer)
 
 
-consumer = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    consumer_group='$Default',
+consumer = EventHubConsumerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
+    consumer_group="$Default",
 )
 receive_and_parse_message(consumer)

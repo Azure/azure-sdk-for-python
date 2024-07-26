@@ -8,6 +8,7 @@ import azure.ai.vision.imageanalysis as sdk
 from image_analysis_test_base import ImageAnalysisTestBase, ServicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
 
@@ -68,6 +69,17 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
         await self._do_async_analysis(
             image_source=self.IMAGE_URL, visual_features=[sdk.models.VisualFeatures.PEOPLE], **kwargs
         )
+
+        await self.async_client.close()
+
+    # Test a single visual feature from an image url, using Entra ID authentication
+    @ServicePreparer()
+    @recorded_by_proxy_async
+    async def test_analyze_async_single_feature_from_file_entra_id_auth(self, **kwargs):
+
+        self._create_client_for_standard_analysis_with_entra_id_auth(sync=False, **kwargs)
+
+        await self._do_async_analysis(image_source=self.IMAGE_FILE,visual_features=[sdk.models.VisualFeatures.SMART_CROPS], **kwargs)
 
         await self.async_client.close()
 
