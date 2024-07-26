@@ -143,19 +143,19 @@ class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation._operation_2023_02_preview.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
 
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_list_private_preview(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation._operation_2023_02_preview.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
 
     @patch.object(Job, "_from_rest_object")
     def test_get(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("randon_name")
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
 
     # use mock_component_hash to avoid passing a Mock object as client key
     @pytest.mark.usefixtures("mock_component_hash")
@@ -190,7 +190,7 @@ class TestJobOperations:
     def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("random_name")
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
 
     def test_stream_command_job(self, mock_job_operation: JobOperations) -> None:
         # setup
@@ -201,7 +201,7 @@ class TestJobOperations:
         mock_job_operation.stream("random_name")
 
         # check
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
@@ -255,14 +255,14 @@ class TestJobOperations:
     def test_archive(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
     def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @pytest.mark.parametrize(

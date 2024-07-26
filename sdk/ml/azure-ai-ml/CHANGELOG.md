@@ -4,6 +4,7 @@
 
 ### Bugs Fixed
 - Workspace update no longer broken for older workspaces due to deprecated tags.
+- Support credential-less fileshare datastore
 
 ## 1.18.0 (2024-07-09)
 

@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +19,10 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import ImageAnalysisClientConfiguration
 from ._operations import ImageAnalysisClientOperationsMixin
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ImageAnalysisClient.
@@ -25,14 +30,18 @@ class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disabl
     :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-10-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}/computervision"
         self._config = ImageAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -89,7 +98,7 @@ class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disabl
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ImageAnalysisClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

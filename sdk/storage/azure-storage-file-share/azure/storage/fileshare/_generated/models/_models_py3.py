@@ -1175,8 +1175,8 @@ class SharePermission(_serialization.Model):
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
      Required.
     :vartype permission: str
-    :ivar format: Known values are: "SDDL" and "binary".
-    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionKeyFormat
+    :ivar format: Known values are: "Sddl" and "Binary".
+    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
     """
 
     _validation = {
@@ -1189,14 +1189,14 @@ class SharePermission(_serialization.Model):
     }
 
     def __init__(
-        self, *, permission: str, format: Optional[Union[str, "_models.FilePermissionKeyFormat"]] = None, **kwargs: Any
+        self, *, permission: str, format: Optional[Union[str, "_models.FilePermissionFormat"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
          Required.
         :paramtype permission: str
-        :keyword format: Known values are: "SDDL" and "binary".
-        :paramtype format: str or ~azure.storage.fileshare.models.FilePermissionKeyFormat
+        :keyword format: Known values are: "Sddl" and "Binary".
+        :paramtype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         """
         super().__init__(**kwargs)
         self.permission = permission

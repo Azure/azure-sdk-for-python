@@ -5,10 +5,10 @@
 ### Features Added
 
 
-## 12.16.0 (Unreleased)
+## 12.16.0 (2024-07-18)
 
 ### Features Added
-
+- Stable release of features from 12.16.0b1
 
 ## 12.16.0b1 (2024-06-11)
 

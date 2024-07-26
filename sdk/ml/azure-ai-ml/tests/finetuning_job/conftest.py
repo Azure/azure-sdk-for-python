@@ -14,8 +14,16 @@ TEXT_COMPLETION_VALIDATION_DATASET = TEST_DATASETS_PATH + "/" + "text_completion
 
 @pytest.fixture
 def text_completion_dataset() -> Tuple[Input, Input]:
-    training_data = Input(type=AssetTypes.URI_FILE, path=TEXT_COMPLETION_TRAIN_DATASET)
-    validation_data = Input(type=AssetTypes.URI_FILE, path=TEXT_COMPLETION_VALIDATION_DATASET)
+    training_data = Input(
+        type=AssetTypes.URI_FILE,
+        path=TEXT_COMPLETION_TRAIN_DATASET,
+        # "azureml://locations/westus3/workspaces/a7cd11a2-80c5-41ab-b56d-161c57f62fbd/data/samsum-train-data-small/versions/3",
+    )
+    validation_data = Input(
+        type=AssetTypes.URI_FILE,
+        path=TEXT_COMPLETION_VALIDATION_DATASET,
+        # "azureml://locations/westus3/workspaces/a7cd11a2-80c5-41ab-b56d-161c57f62fbd/data/samsum-train-data-small/versions/3",
+    )
     return training_data, validation_data
 
 

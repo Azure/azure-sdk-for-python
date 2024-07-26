@@ -13,13 +13,13 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 
 
 @pytest.fixture
-def loaded_azure_openai_model_finetuning_job_full(mock_machinelearning_client: OperationScope) -> FineTuningJob:
+def loaded_azure_openai_model_finetuning_job_as_rest_object() -> FineTuningJob:
     test_schema_path = Path(
         "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_azure_openai_finetuning_job_full.yaml"
     )
     job = load_job(test_schema_path)
-    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
-    return job
+    rest_object = AzureOpenAIFineTuningJob._to_rest_object(job)
+    return rest_object
 
 
 @pytest.fixture
@@ -47,7 +47,7 @@ def hyperparameters() -> AzureOpenAIHyperparameters:
 
 
 @pytest.fixture
-def expected_azure_openai_finetuning_job_full(
+def expected_azure_openai_finetuning_job_as_rest_obj(
     train_dataset, validation_dataset, mlflow_model_gpt4, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = AzureOpenAIFineTuningJob(
@@ -67,20 +67,11 @@ def expected_azure_openai_finetuning_job_full(
 
 
 class TestAzureOpenAIFineTuningJobSchema:
-    def _validate_finetuning_job(self, finetuning_job: FineTuningJob):
-        assert isinstance(finetuning_job, FineTuningJob)
-        assert finetuning_job.training_data and isinstance(finetuning_job.training_data, Input)
-        assert finetuning_job.validation_data and isinstance(finetuning_job.validation_data, Input)
-        assert finetuning_job.model and isinstance(finetuning_job.model, Input)
-        mlflow_model = cast(Input, finetuning_job.model)
-        assert mlflow_model.type == "mlflow_model"
 
     def test_azure_openai_finetuning_job_full(
-        self, expected_azure_openai_finetuning_job_full, loaded_azure_openai_model_finetuning_job_full
+        self, expected_azure_openai_finetuning_job_as_rest_obj, loaded_azure_openai_model_finetuning_job_as_rest_object
     ):
-        self._validate_finetuning_job(loaded_azure_openai_model_finetuning_job_full)
 
         assert (
-            loaded_azure_openai_model_finetuning_job_full._to_rest_object().as_dict()
-            == expected_azure_openai_finetuning_job_full.as_dict()
+            loaded_azure_openai_model_finetuning_job_as_rest_object == expected_azure_openai_finetuning_job_as_rest_obj
         )

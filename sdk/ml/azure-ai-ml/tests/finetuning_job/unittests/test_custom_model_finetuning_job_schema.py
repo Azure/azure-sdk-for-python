@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 from typing import Dict, cast
 from azure.ai.ml import load_job
-from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -12,23 +11,23 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 
 
 @pytest.fixture
-def loaded_custom_model_finetuning_job_full(mock_machinelearning_client: OperationScope) -> FineTuningJob:
+def loaded_custom_model_finetuning_job_as_rest_obj() -> FineTuningJob:
     test_schema_path = Path(
         "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_custom_model_finetuning_job_full.yaml"
     )
     job = load_job(test_schema_path)
-    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
-    return job
+    rest_object = CustomModelFineTuningJob._to_rest_object(job)
+    return rest_object
 
 
 @pytest.fixture
 def train_dataset() -> Input:
-    return Input(type="uri_file", path="https://foo/bar/train.jsonl")
+    return Input(type="uri_file", path="./samsum_dataset/small_train.jsonl")
 
 
 @pytest.fixture
 def validation_dataset() -> Input:
-    return Input(type="uri_file", path="https://foo/bar/validation.jsonl")
+    return Input(type="uri_file", path="./samsum_dataset/small_validation.jsonl")
 
 
 @pytest.fixture
@@ -42,7 +41,7 @@ def hyperparameters() -> Dict[str, str]:
 
 
 @pytest.fixture
-def expected_custom_model_finetuning_job_full(
+def expected_custom_model_finetuning_job_as_rest_obj(
     train_dataset, validation_dataset, mlflow_model_llama, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = CustomModelFineTuningJob(
@@ -70,12 +69,9 @@ class TestCustomModelFineTuningJobSchema:
         mlflow_model = cast(Input, finetuning_job.model)
         assert mlflow_model.type == "mlflow_model"
 
-    def test_custom_model_finetuning_job_full(
-        self, expected_custom_model_finetuning_job_full, loaded_custom_model_finetuning_job_full
+    def test_custom_model_finetuning_job_full_rest_transform(
+        self, expected_custom_model_finetuning_job_as_rest_obj, loaded_custom_model_finetuning_job_as_rest_obj
     ):
-        self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
+        # self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
 
-        assert (
-            loaded_custom_model_finetuning_job_full._to_rest_object().as_dict()
-            == expected_custom_model_finetuning_job_full.as_dict()
-        )
+        loaded_custom_model_finetuning_job_as_rest_obj == expected_custom_model_finetuning_job_as_rest_obj

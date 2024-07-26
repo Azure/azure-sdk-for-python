@@ -10,7 +10,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 import queue
-from typing import TYPE_CHECKING, Union, Optional, Any
+from typing import TYPE_CHECKING, Union, Optional, Any, Callable
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
@@ -19,7 +19,6 @@ from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusEr
 from .utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
 
 if TYPE_CHECKING:
-    from typing import Callable
 
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]

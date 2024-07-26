@@ -133,9 +133,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
+    #  - AZSDK3436: $..resourceGroup
     #  - AZSDK3493: $..name
     #  - AZSDK2003: Location
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003", "AZSDK3436"])
 
 
 def pytest_addoption(parser):

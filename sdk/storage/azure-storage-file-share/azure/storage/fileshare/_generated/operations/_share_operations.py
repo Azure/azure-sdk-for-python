@@ -534,7 +534,7 @@ def build_get_permission_request(
     url: str,
     *,
     file_permission_key: str,
-    file_permission_key_format: Optional[Union[str, _models.FilePermissionKeyFormat]] = None,
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     timeout: Optional[int] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -563,9 +563,9 @@ def build_get_permission_request(
 
     # Construct headers
     _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    if file_permission_key_format is not None:
+    if file_permission_format is not None:
         _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
-            "file_permission_key_format", file_permission_key_format, "str"
+            "file_permission_format", file_permission_format, "str"
         )
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if file_request_intent is not None:
@@ -1878,7 +1878,7 @@ class ShareOperations:
     def get_permission(
         self,
         file_permission_key: str,
-        file_permission_key_format: Optional[Union[str, _models.FilePermissionKeyFormat]] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.SharePermission:
@@ -1886,14 +1886,13 @@ class ShareOperations:
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
         :type file_permission_key: str
-        :param file_permission_key_format: Optional. Available for version 2023-06-01 and later.
-         Specifies the format in which the permission is returned. Acceptable values are SDDL or binary.
-         If x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
          returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
          permission is returned as a base64 string representing the binary encoding of the permission.
-         Known values are: "SDDL" and "binary". Default value is None.
-        :type file_permission_key_format: str or
-         ~azure.storage.fileshare.models.FilePermissionKeyFormat
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1921,7 +1920,7 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
-            file_permission_key_format=file_permission_key_format,
+            file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,

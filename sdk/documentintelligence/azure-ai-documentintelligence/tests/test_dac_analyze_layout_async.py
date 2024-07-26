@@ -6,8 +6,8 @@
 
 import pytest
 import functools
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
@@ -16,7 +16,7 @@ from azure.ai.documentintelligence.models import (
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 
 DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceClient)
@@ -228,14 +228,14 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
-    async def test_polling_interval(self, documentintelligence_endpoint, documentintelligence_api_key, **kwargs):
+    async def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         assert client._config.polling_interval == 1
 
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
+            documentintelligence_endpoint, get_credential(is_async=True), polling_interval=7
         )
         assert client._config.polling_interval == 7
         async with client:

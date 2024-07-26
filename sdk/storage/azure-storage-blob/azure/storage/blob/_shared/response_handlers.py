@@ -17,7 +17,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-from .models import StorageErrorCode, UserDelegationKey, get_enum_value
+from .models import get_enum_value, StorageErrorCode, UserDelegationKey
 from .parser import _to_utc_datetime
 
 

@@ -18,7 +18,7 @@ from github import Github, Auth
 
 logging.getLogger().setLevel(logging.INFO)
 
-CHECK_TYPE = Literal["mypy", "pylint", "pyright", "sphinx"]
+CHECK_TYPE = Literal["mypy", "pylint", "pyright"]
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
@@ -50,8 +50,6 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
         next_id = "c0edaab3-85d6-5e4b-81a8-d1190a6ee92b"
     if check_type == "pylint":
         next_id = "e1fa7d9e-8471-5a74-cd7d-e1c9a992e07e"
-    if check_type == "sphinx":
-        next_id = "0d206e13-b346-5d3f-79e6-d5bfba9e089e"
 
     return f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"    
 
@@ -104,43 +102,24 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
 
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
-    if check_type == "sphinx":
-        merge_date = "2024-04-15" # This is a one-time event
-        error_type = "docstring"
-        guide_link = "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
-        title = f"{package_name} needs {error_type} updates for {check_type}"
-        template = (
-            f"**ACTION NEEDED:** All {check_type} errors and warnings must be fixed by **{merge_date}**. "
-            f"The build will begin to fail for this library if errors are not fixed."
-            f"\n\nThis issue indicates that your library reference documentation is rendering with errors. To avoid customer issues, please ensure you take care of these errors and warnings ASAP."
-            f"\n\n**Library name:** {package_name}"
-            f"\n**{check_type.capitalize()} build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-            f"\n**How to fix:** Run the `strict-{check_type}` tox command at the library package-level and resolve "
-            f"the {error_type} errors and warnings.\n"
-            f"1) `../{package_name}>pip install \"tox<5\"`\n"
-            f"2) `../{package_name}>tox run -e strict-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
-            f"3) Once resolved, set `strict_sphinx = true` in the package's pyproject.toml file.\n\n"
-            f"See {guide_link} for more information."
-        )
-    else:
-        merge_date = get_date_for_version_bump(today)
-        error_type = "linting" if check_type == "pylint" else "typing"
-        guide_link = "[Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)" \
-            if check_type == "pylint" else "[Typing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md#run-mypy)"
+    merge_date = get_date_for_version_bump(today)
+    error_type = "linting" if check_type == "pylint" else "typing"
+    guide_link = "[Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)" \
+        if check_type == "pylint" else "[Typing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md#run-mypy)"
 
-        title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
-        template = (
-            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
-            f"The build will begin to fail for this library if errors are not fixed."
-            f"\n\n**Library name:** {package_name}"
-            f"\n**{check_type.capitalize()} version:** {version}"
-            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-            f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
-            f"the {error_type} errors.\n"
-            f"1) `../{package_name}>pip install \"tox<5\"`\n"
-            f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
-            f"See the {guide_link} for more information."
-        )
+    title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
+    template = (
+        f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+        f"The build will begin to fail for this library if errors are not fixed."
+        f"\n\n**Library name:** {package_name}"
+        f"\n**{check_type.capitalize()} version:** {version}"
+        f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+        f"the {error_type} errors.\n"
+        f"1) `../{package_name}>pip install \"tox<5\"`\n"
+        f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+        f"See the {guide_link} for more information."
+    )
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:

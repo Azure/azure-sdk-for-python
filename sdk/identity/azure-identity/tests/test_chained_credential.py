@@ -153,7 +153,7 @@ def test_managed_identity_imds_probe():
             ManagedIdentityCredential(transport=transport),
         ]
         token = ChainedTokenCredential(*credentials).get_token(scope)
-    assert token == expected_token
+    assert token.token == expected_token.token
 
 
 def test_managed_identity_failed_probe():
