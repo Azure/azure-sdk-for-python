@@ -34,7 +34,8 @@ def get_copyright_from_bounding_box():
     )
 
     print("Get copyright from bounding box result:")
-    print(result or "no copyright")
+    print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
+
 
 if __name__ == '__main__':
     get_copyright_from_bounding_box()

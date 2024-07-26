@@ -46,5 +46,6 @@ def get_map_tile():
         file.close()
     # [END get_map_tile]
 
+
 if __name__ == '__main__':
     get_map_tile()

@@ -39,5 +39,6 @@ def get_map_static_image():
         file.close()
     # [END get_map_static_image]
 
+
 if __name__ == '__main__':
     get_map_static_image()

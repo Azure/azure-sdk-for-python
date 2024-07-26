@@ -36,8 +36,9 @@ def get_map_attribution():
     )
 
     print("Get map attribution result:")
-    print(result or "no copyrights")
+    print(result["copyrights"][0] if len(result.get("copyrights", [])) > 0 else "no copyrights")
     # [END get_map_attribution]
+
 
 if __name__ == '__main__':
     get_map_attribution()

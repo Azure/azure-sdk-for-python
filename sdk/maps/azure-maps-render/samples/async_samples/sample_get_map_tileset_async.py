@@ -32,8 +32,9 @@ async def get_map_tileset_async():
         result = await maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 
     print("Get map tileset result:")
-    print(result)
+    print(result.get("tiles", "tileset"))
     # [END get_map_tileset_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_map_tileset_async())

@@ -31,8 +31,9 @@ def get_map_tileset():
     result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 
     print("Get map tileset result:")
-    print(result)
+    print(result.get("tiles", "empty tileset"))
     # [END get_map_tileset]
+
 
 if __name__ == '__main__':
     get_map_tileset()

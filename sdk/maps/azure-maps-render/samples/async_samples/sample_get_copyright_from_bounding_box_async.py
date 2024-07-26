@@ -36,8 +36,9 @@ async def get_copyright_from_bounding_box_async():
         )
 
     print("Get copyright from bounding box result:")
-    print(result)
+    print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
     # [END get_copyright_from_bounding_box_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_copyright_from_bounding_box_async())

@@ -37,8 +37,9 @@ async def get_map_attribution_async():
         )
 
     print("Get map attribution result:")
-    print(result or "no copyrights")
+    print(result["copyrights"][0] if len(result.get("copyrights", [])) > 0 else "no copyrights")
     # [END get_map_attribution_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_map_attribution_async())

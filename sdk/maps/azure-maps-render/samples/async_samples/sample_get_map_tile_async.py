@@ -41,5 +41,6 @@ async def get_map_tile_async():
         )
     # [END get_map_tile_async]
 
+
 if __name__ == '__main__':
     asyncio.run(get_map_tile_async())
