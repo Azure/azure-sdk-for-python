@@ -122,10 +122,7 @@ jobs:
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'packages'
-              targetPath: $(Build.ArtifactStagingDirectory)
+          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
           - template: ../steps/set-dev-build.yml
             parameters:

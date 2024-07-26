@@ -95,11 +95,25 @@ def get_parameter_default(param: inspect.Parameter) -> None:
             default_value = default_value.__name__
         elif inspect.isclass(default_value):
             default_value = default_value.__name__
-        elif hasattr(default_value, "__class__") and default_value.__class__ == object:
+        elif hasattr(default_value, "__class__"):
             # Some default values are objects, e.g. _UNSET = object()
             default_value = default_value.__class__.__name__
 
     return default_value
+
+
+def get_property_type(node: ast.AST) -> str:
+    if hasattr(node, "value"):
+        if isinstance(node.value, ast.Call):
+            if hasattr(node.value.func, "id"):
+                return node.value.func.id
+            elif hasattr(node.value.func, "attr"):
+                return node.value.func.attr
+        elif isinstance(node.value, ast.Name):
+            return node.value.id
+        elif isinstance(node.value, ast.Constant):
+            return node.value.value
+    return None
 
 
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
@@ -126,12 +140,17 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
         if assigns:
             for assign in assigns:
                 if hasattr(assign, "target"):
-                    attr = assign.target
-                    attribute_names.update({attr.attr: attr.attr})
+                    if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
+                        attr = assign.target
+                        attribute_names.update({attr.attr: {
+                                "attr_type": get_property_type(assign)
+                            }})
                 if hasattr(assign, "targets"):
-                    for attr in assign.targets:
-                        if hasattr(attr, "attr") and not attr.attr.startswith("_"):
-                            attribute_names.update({attr.attr: attr.attr})
+                    for target in assign.targets:
+                        if hasattr(target, "attr") and not target.attr.startswith("_"):
+                            attribute_names.update({target.attr: {
+                                "attr_type": get_property_type(assign)
+                            }})
 
 
 def check_base_classes(cls_node: ast.ClassDef) -> bool:

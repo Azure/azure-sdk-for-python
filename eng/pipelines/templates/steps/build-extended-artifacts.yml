@@ -24,11 +24,6 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifactName: 'packages'
-      targetPath: $(Build.ArtifactStagingDirectory)
-
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
     inputs:
