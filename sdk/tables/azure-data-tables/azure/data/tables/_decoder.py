@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import abc
-from typing import Any, Optional, Tuple, Mapping, Union, TypeVar, Generic, Dict
-from datetime import datetime, timezone
+from typing import Any, Mapping, Union, Generic, Dict
+from datetime import timezone
 from urllib.parse import quote
 from uuid import UUID
 
@@ -89,13 +89,14 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
 
         # prepare metadata
         timestamp = properties.pop("Timestamp", None)
+        odata.pop("metadata", None)
         etag = odata.pop("etag", None)
         if timestamp:
             if not etag:
                 etag = "W/\"datetime'" + quote(timestamp) + "'\""
             timestamp = _from_entity_datetime(timestamp)
-            decoded.metadata["etag"] = etag
-            decoded.metadata["timestamp"] = timestamp
+        odata.update({"etag": etag, "timestamp": timestamp})
+        decoded._metadata = odata  # pylint: disable=protected-access
 
         for name, value in properties.items():
             if name in ["PartitionKey", "RowKey"]:

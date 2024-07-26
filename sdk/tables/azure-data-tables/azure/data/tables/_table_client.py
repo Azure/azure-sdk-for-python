@@ -656,6 +656,8 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def list_entities(self, **kwargs: Any) -> ItemPaged[Union[EntityType, T]]:
+        results_per_page=kwargs.pop("results_per_page", None)
+        decoder=kwargs.pop("decoder", DEFAULT_DECODER)
         select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -664,9 +666,9 @@ class TableClient(TablesBaseClient):
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=kwargs.pop("results_per_page", None),
+            results_per_page=results_per_page,
             select=select,
-            decoder=kwargs.pop("decoder", DEFAULT_DECODER),
+            decoder=decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -743,8 +745,9 @@ class TableClient(TablesBaseClient):
         query_filter = kwargs.pop("query_filter", None)
         if query_filter is None:
             query_filter = args[0]
-        parameters = kwargs.pop("parameters", None)
         results_per_page = kwargs.pop("results_per_page", None)
+        select = kwargs.pop("select", None)
+        parameters = kwargs.pop("parameters", None)
         decoder = kwargs.pop("decoder", DEFAULT_DECODER)
 
         query_filter = _parameter_filter_substitution(parameters, query_filter)
