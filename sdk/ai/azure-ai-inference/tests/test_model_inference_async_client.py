@@ -23,157 +23,6 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #                               UNIT TESTS
-    #
-    # **********************************************************************************
-
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_chat_completions_with_defaults(self, **kwargs):
-        # pylint: disable=protected-access
-        client1 = async_sdk.ChatCompletionsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value",
-        )
-
-        client2 = client1.with_defaults(
-            model_extras={"key1": 1},
-            model="some-model-id",
-            frequency_penalty=0.123,
-            max_tokens=321,
-            presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
-            seed=654,
-            stop=["stop1", "stop2"],
-            temperature=8.976,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
-            tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
-            top_p=9.876,
-        )
-        assert client2 is not client1
-        assert client2._model_extras == {"key1": 1}
-        assert client2._model == "some-model-id"
-        assert client2._frequency_penalty == 0.123
-        assert client2._max_tokens == 321
-        assert client2._presence_penalty == 4.567
-        assert client2._response_format == sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT
-        assert client2._seed == 654
-        assert client2._stop == ["stop1", "stop2"]
-        assert client2._temperature == 8.976
-        assert client2._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.AUTO
-        assert client2._tools == [ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2]
-        assert client2._top_p == 9.876
-        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
-
-        client3 = client2.with_defaults(
-            model_extras={"key2": "value2"},
-            model="some-other-model-id",
-            frequency_penalty=0.456,
-            max_tokens=768,
-            presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
-            seed=987,
-            stop=["stop3"],
-            temperature=5.432,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
-            tools=[ModelClientTestBase.TOOL2],
-            top_p=3.456,
-        )
-        assert client3._model_extras == {"key2": "value2"}
-        assert client3._model == "some-other-model-id"
-        assert client3._frequency_penalty == 0.456
-        assert client3._max_tokens == 768
-        assert client3._presence_penalty == 1.234
-        assert client3._response_format == sdk.models.ChatCompletionsResponseFormat.TEXT
-        assert client3._seed == 987
-        assert client3._stop == ["stop3"]
-        assert client3._temperature == 5.432
-        assert client3._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED
-        assert client3._tools == [ModelClientTestBase.TOOL2]
-        assert client3._top_p == 3.456
-        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
-        # pylint: enable=protected-access
-
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_embeddings_with_defaults(self, **kwargs):
-        # pylint: disable=protected-access
-        client1 = async_sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value",
-        )
-
-        client2 = client1.with_defaults(
-            dimensions=2048,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-            input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={"key1": 1},
-            model="some-model-id",
-        )
-        assert client2 is not client1
-        assert client2._dimensions == 2048
-        assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
-        assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
-        assert client2._model_extras == {"key1": 1}
-        assert client2._model == "some-model-id"
-        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
-
-        client3 = client2.with_defaults(
-            dimensions=None,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
-            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={"key2": "value2"},
-            model="",
-        )
-        assert client3._dimensions == 2048
-        assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
-        assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
-        assert client3._model_extras == {"key2": "value2"}
-        assert client3._model == ""
-        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
-        # pylint: enable=protected-access
-
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_image_embeddings_with_defaults(self, **kwargs):
-        # pylint: disable=protected-access
-        client1 = async_sdk.ImageEmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value",
-        )
-
-        client2 = client1.with_defaults(
-            dimensions=2048,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-            input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={"key1": 1},
-            model="some-model-id",
-        )
-        assert client2 is not client1
-        assert client2._dimensions == 2048
-        assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
-        assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
-        assert client2._model_extras == {"key1": 1}
-        assert client2._model == "some-model-id"
-        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
-
-        client3 = client2.with_defaults(
-            dimensions=1024,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
-            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={"key2": "value2"},
-            model="some-other-model-id",
-        )
-        assert client3._dimensions == 1024
-        assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
-        assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
-        assert client3._model_extras == {"key2": "value2"}
-        assert client3._model == "some-other-model-id"
-        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
-        # pylint: enable=protected-access
-
-    # **********************************************************************************
-    #
     #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
     #
     # **********************************************************************************
@@ -213,8 +62,8 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert False
         await client.close()
 
-    # Regression test. Send a request that includes all supported types of input objects, with input arguments
-    # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
+    # Regression test. Send a request that includes all supported types of input objects, with embedding settings
+    # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
     @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_embeddings_request_payload_with_defaults(self, **kwargs):
@@ -223,7 +72,6 @@ class TestModelAsyncClient(ModelClientTestBase):
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
             user_agent="MyAppId",
-        ).with_defaults(
             dimensions=2048,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
             input_type=sdk.models.EmbeddingInputType.QUERY,
@@ -249,8 +97,8 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert False
         await client.close()
 
-    # Regression test. Send a request that includes all supported types of input objects, with input arguments
-    # specified via the `with_defaults` method, and all of them overwritten in the 'embed' call.
+    # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
+    # specified in the constructor and all of them overwritten in the 'embed' call.
     # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
     @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
@@ -259,7 +107,6 @@ class TestModelAsyncClient(ModelClientTestBase):
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
             user_agent="MyAppId",
-        ).with_defaults(
             dimensions=1024,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
             input_type=sdk.models.EmbeddingInputType.DOCUMENT,
@@ -345,21 +192,6 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._validate_embeddings_result(response)
         await client.close()
 
-    # Make sure that the child client you get from a with_defaults() call does not close the 
-    # transport of the parent client.
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy_async
-    async def test_async_embeddings_with_defaults_check_transport_not_closed(self, **kwargs):
-        transport = AioHttpTransport()
-        async with self._create_async_embeddings_client(transport=transport, **kwargs) as client1:
-            # assert transport.session is None # Why is it not None here?
-            response = await client1.embed(input=["first phrase", "second phrase", "third phrase"])
-            self._print_embeddings_result(response)
-            self._validate_embeddings_result(response)
-            assert transport.session is not None
-            async with client1.with_defaults() as client2:
-                assert transport.session is not None
-     
     # **********************************************************************************
     #
     #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
@@ -442,8 +274,8 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert False
         await client.close()
 
-    # Regression test. Send a request that includes all supported types of input objects, with input arguments
-    # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
+    # Regression test. Send a request that includes all supported types of input objects, with chat settings
+    # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
     @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_chat_completions_request_payload_with_defaults(self, **kwargs):
@@ -453,7 +285,6 @@ class TestModelAsyncClient(ModelClientTestBase):
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
             user_agent="MyAppId",
-        ).with_defaults(
             model_extras={
                 "key1": 1,
                 "key2": True,
@@ -520,8 +351,8 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert False
         await client.close()
 
-    # Regression test. Send a request that includes all supported types of input objects, with input arguments
-    # specified via the `with_defaults` method, and all of them overwritten in the 'complete' call.
+    # Regression test. Send a request that includes all supported types of input objects, with chat settings
+    # specified in the constructor and all of them overwritten in the 'complete' call.
     # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
     @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_chat_completions_request_payload_with_defaults_and_overrides(self, **kwargs):
@@ -531,7 +362,6 @@ class TestModelAsyncClient(ModelClientTestBase):
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
             user_agent="MyAppId",
-        ).with_defaults(
             model_extras={
                 "key1": 2,
                 "key3": False,
@@ -795,21 +625,6 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
         await client.close()
-
-    # Make sure that the child client you get from a with_defaults() call does not close the 
-    # transport of the parent client.
-    @ServicePreparerChatCompletions()
-    @recorded_by_proxy_async
-    async def test_async_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
-        transport = AioHttpTransport()
-        async with self._create_async_chat_client(transport=transport, **kwargs) as client1:
-            # assert transport.session is None  # Why is this not None here?
-            response = await client1.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
-            self._print_chat_completions_result(response)
-            self._validate_chat_completions_result(response, ["5280", "5,280"])
-            assert transport.session is not None
-            async with client1.with_defaults() as client2:
-                assert transport.session is not None
 
     # **********************************************************************************
     #

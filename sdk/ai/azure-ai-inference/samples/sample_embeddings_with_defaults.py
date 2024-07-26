@@ -5,8 +5,9 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get text embeddings for a list of sentences
-    using a synchronous client. The sample also shows how to set defaults 
-    on the client, which will be applied to all `embed` calls to the service.
+    using a synchronous client. The sample also shows how to set default embeddings
+    configuration in the client constructor, which will be applied to all `embed` calls
+    to the service.
 
 USAGE:
     python sample_embeddings_with_defaults.py
@@ -38,12 +39,24 @@ def sample_embeddings_with_defaults():
     client = EmbeddingsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
-    ).with_defaults(
         dimensions=1024,
-        input_type=EmbeddingInputType.QUERY
+        input_type=EmbeddingInputType.QUERY,
     )
 
     response = client.embed(input=["first phrase", "second phrase", "third phrase"])
+
+    for item in response.data:
+        length = len(item.embedding)
+        print(
+            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+            f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+        )
+
+    # You can always override one or more of the defaults for a specific call, as shown here
+    response = client.embed(
+        input=["some other phrase", "yet another phrase", "one more phrase"],
+        input_type=EmbeddingInputType.TEXT,
+    )
 
     for item in response.data:
         length = len(item.embedding)

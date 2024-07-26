@@ -4,7 +4,6 @@
 
 ### Features Added
 
-* Add method `with_defaults()` to `ChatCompletionsClient` and `EmbeddingsClient`, to set default options for all the following operations.
 * Add `model` as an optional input argument to the `embed` method of `EmbeddingsClient`.
 
 ## 1.0.0b2 (2024-06-24)

@@ -6,8 +6,8 @@
 DESCRIPTION:
     This sample demonstrates how to get image embeddings vectors for
     two input images, using a synchronous client. The sample also shows
-    how to set defaults on the client, which will be applied to all
-    `embed` calls to the service.
+    how to set default image embeddings configuration in the client constructor,
+    which will be applied to all `embed` calls to the service.
 
 USAGE:
     python sample_image_embeddings_with_defaults.py
@@ -44,13 +44,25 @@ def sample_image_embeddings_with_defaults():
 
     client = ImageEmbeddingsClient(
         endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    ).with_defaults(
+        credential=AzureKeyCredential(key),
         dimensions=1024,
         input_type=EmbeddingInputType.QUERY
     )
 
     response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+
+    for item in response.data:
+        length = len(item.embedding)
+        print(
+            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+            f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+        )
+
+    # You can always override one or more of the defaults for a specific call, as shown here
+    response = client.embed(
+        input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)],
+        input_type=EmbeddingInputType.TEXT,
+    )
 
     for item in response.data:
         length = len(item.embedding)

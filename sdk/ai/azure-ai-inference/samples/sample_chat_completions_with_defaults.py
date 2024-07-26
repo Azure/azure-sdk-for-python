@@ -6,8 +6,8 @@
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
     the service using a synchronous client. The sample also shows how to 
-    set defaults on the client, which will be applied to all `complete`
-    calls to the service.
+    set default chat compoletions configuration in the client constructor,
+    which will be applied to all `complete` calls to the service.
 
 USAGE:
     python sample_chat_completions_with_defaults.py
@@ -36,12 +36,11 @@ def sample_chat_completions_with_defaults():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    # Create a client with defaults
+    # Create a client with defaults chat completions settings
     # [START chat_completions_with_defaults]
     client = ChatCompletionsClient(
         endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    ).with_defaults(
+        credential=AzureKeyCredential(key),
         temperature=0.5,
         max_tokens=1000
     )
