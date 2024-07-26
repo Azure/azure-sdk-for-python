@@ -37,6 +37,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
+    REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
 
 
 class BreakingChangesTracker:
@@ -96,6 +97,8 @@ class BreakingChangesTracker:
     REMOVED_FUNCTION_KWARGS_MSG = \
         "The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
+    REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
+        "The '{}.{}' client had operation group '{}' deleted or renamed in the current version"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -476,11 +479,19 @@ class BreakingChangesTracker:
                 for property in deleted_props:
                     bc = None
                     if self.class_name.endswith("Client"):
-                        bc = (
-                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                            self.module_name, self.class_name, property
-                        )
+                        property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+                        if property_type is not None and property_type.lower().endswith("operations"):
+                            bc = (
+                                self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
+                                BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
+                                self.module_name, self.class_name, property
+                            )
+                        else:
+                            bc = (
+                                self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
+                                BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                                self.module_name, self.class_name, property
+                            )
                     elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
                         if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
                             and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
