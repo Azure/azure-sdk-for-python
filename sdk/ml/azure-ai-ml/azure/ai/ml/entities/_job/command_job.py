@@ -66,7 +66,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         
         are accessible as environment variables using the prefix ``AZUREML_PARAMETER_``. 
         
-        For example, if you have a parameter named "input_data", you can access it as ``AZUREML_PARAMETER_input_data``.
+        For example, if you have a parameter named "input_data", 
+        
+        you can access it as ``AZUREML_PARAMETER_input_data``.
 
     :keyword services: Read-only information on services associated with the job.
     :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
