@@ -13,7 +13,7 @@ import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
-    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey
+    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.core.exceptions import ServiceRequestError
 
@@ -422,7 +422,7 @@ class TestGlobalDB(unittest.TestCase):
 
     def test_global_db_service_request_errors(self):
         connection_policy = documents.ConnectionPolicy()
-        retry_policy = test_config.MockConnectionRetryPolicy(
+        retry_policy = MockConnectionRetryPolicy(
             retry_total=5,
             retry_connect=None,
             retry_read=None,
@@ -479,6 +479,41 @@ class TestGlobalDB(unittest.TestCase):
         cc_copy.GetDatabaseAccount = original_get_database_account
         client.client_connection = cc_copy
 
+
+class MockConnectionRetryPolicy(ConnectionRetryPolicy):
+    """Mocks the ConnectionRetryPolicy, adding a counter to see retries happening.
+    """
+    def __init__(self, **kwargs):
+        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        super(MockConnectionRetryPolicy, self).__init__(**clean_kwargs)
+        self.count = 0
+
+    def send(self, request):
+        """Mocks the response for the policy. ServiceRequestError handling logic was left in exactly as it is in
+        the SDK in order to test it.
+        """
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        while retry_active:
+            try:
+                response = self.mock_send()
+            except ServiceRequestError as err:
+                # the request ran into a socket timeout or failed to establish a new connection
+                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
+                if retry_settings['connect'] > 0:
+                    self.count += 1
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+
+        self.update_context(response.context, retry_settings)
+        return response
+
+    def mock_send(self):
+        raise ServiceRequestError("mock-service")
 
 if __name__ == '__main__':
     unittest.main()
