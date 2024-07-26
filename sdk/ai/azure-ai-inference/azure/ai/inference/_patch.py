@@ -681,17 +681,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-        have.
-        Passing null causes the model to use its default value.
-        Returns a 422 error if the model doesn't support the value or parameter. Default value is
-        None.
+        have. Default value is None.
     :paramtype dimensions: int
     :keyword encoding_format: Optional. The desired format for the returned embeddings.
         Known values are:
         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
     :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-    :keyword input_type: Optional. The type of the input.
-        Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+    :keyword input_type: Optional. The type of the input. Known values are:
         "text", "query", and "document". Default value is None.
     :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
     :keyword model: ID of the specific AI model to use, if more than one model is available on the
@@ -753,17 +749,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          of strings or array of token arrays. Required.
         :paramtype input: list[str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
+         have. Default value is None.
         :paramtype dimensions: int
         :keyword encoding_format: Optional. The desired format for the returned embeddings.
          Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword input_type: Optional. The type of the input. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
@@ -847,17 +839,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          of strings or array of token arrays. Required.
         :paramtype input: list[str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
+         have. Default value is None.
         :paramtype dimensions: int
         :keyword encoding_format: Optional. The desired format for the returned embeddings.
          Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword input_type: Optional. The type of the input. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
@@ -977,17 +965,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-        have.
-        Passing null causes the model to use its default value.
-        Returns a 422 error if the model doesn't support the value or parameter. Default value is
-        None.
+        have. Default value is None.
     :paramtype dimensions: int
     :keyword encoding_format: Optional. The desired format for the returned embeddings.
         Known values are:
         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
     :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-    :keyword input_type: Optional. The type of the input.
-        Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+    :keyword input_type: Optional. The type of the input. Known values are:
         "text", "query", and "document". Default value is None.
     :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
     :keyword model: ID of the specific AI model to use, if more than one model is available on the
@@ -1049,17 +1033,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          The input must not exceed the max input tokens for the model. Required.
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
+         have. Default value is None.
         :paramtype dimensions: int
         :keyword encoding_format: Optional. The desired format for the returned embeddings.
          Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword input_type: Optional. The type of the input. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
@@ -1143,17 +1123,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          The input must not exceed the max input tokens for the model. Required.
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
+         have. Default value is None.
         :paramtype dimensions: int
         :keyword encoding_format: Optional. The desired format for the returned embeddings.
          Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword input_type: Optional. The type of the input. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
