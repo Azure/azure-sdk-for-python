@@ -775,7 +775,7 @@ class BlobBlock(DictMixin):
     """Block id."""
     state: BlockState
     """Block state."""
-    size: Optional[int]
+    size: int  # type: ignore [assignment]
     """Block size."""
 
     def __init__(self, block_id: str, state: BlockState = BlockState.LATEST) -> None:
