@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import hashlib
 from enum import Enum
-from typing import Optional, Union
+from typing import cast, Literal, Optional, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -34,7 +34,9 @@ def _verify_extensions(module: str) -> None:
                          f"Please install this package and try again.") from exc
 
 
-def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Optional[Union[bool, str]]:
+def parse_validation_option(
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]
+) -> Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]:
     if validate_content is None:
         return None
 
@@ -65,11 +67,11 @@ def calculate_crc64(data: bytes, initial_crc: int) -> int:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute(data, initial_crc)
+    return cast(int, crc64.compute(data, initial_crc))
 
 
 def calculate_crc64_bytes(data: bytes) -> bytes:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute(data, 0).to_bytes(CRC64_LENGTH, 'little')
+    return cast(bytes, crc64.compute(data, 0).to_bytes(CRC64_LENGTH, 'little'))

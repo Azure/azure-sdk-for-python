@@ -60,7 +60,7 @@ async def process_content(
         stream = StructuredMessageDecodeStream(content, download.content_length)
         content = await stream.read()
     else:
-        content = download.response.body()
+        content = cast(bytes, download.response.body())
 
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:

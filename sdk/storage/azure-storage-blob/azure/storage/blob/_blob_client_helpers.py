@@ -133,9 +133,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     elif hasattr(data, 'read'):
         stream = data
     elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
-        stream = IterStreamer(data, encoding=encoding)
+        stream = IterStreamer(cast(Iterable, data), encoding=encoding)
     elif hasattr(data, '__aiter__'):
-        stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
+        stream = AsyncIterStreamer(cast(AsyncIterable, data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
@@ -945,7 +945,7 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     return options
 
 def _upload_page_options(
-    page: bytes,
+    page: Union[bytes, str],
     offset: int,
     length: int,
     **kwargs: Any
@@ -973,7 +973,7 @@ def _upload_page_options(
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
-        
+
     validate_content = parse_validation_option(kwargs.pop('validate_content', None))
     content_md5, content_crc64 = None, None
     if validate_content == ChecksumAlgorithm.MD5:
