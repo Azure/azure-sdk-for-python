@@ -49,7 +49,7 @@ def images_aoai_quickstart() -> None:
 
     result = client.images.generate(
         model=os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"],
-        prompt="a close-up of a bear walking throughthe forest",
+        prompt="a close-up of a bear walking through the forest",
         n=1
     )
 
