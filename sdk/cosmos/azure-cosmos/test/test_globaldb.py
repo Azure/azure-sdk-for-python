@@ -480,40 +480,5 @@ class TestGlobalDB(unittest.TestCase):
         client.client_connection = cc_copy
 
 
-class MockConnectionRetryPolicy(ConnectionRetryPolicy):
-    """Mocks the ConnectionRetryPolicy, adding a counter to see retries happening.
-    """
-    def __init__(self, **kwargs):
-        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        super(MockConnectionRetryPolicy, self).__init__(**clean_kwargs)
-        self.count = 0
-
-    def send(self, request):
-        """Mocks the response for the policy. ServiceRequestError handling logic was left in exactly as it is in
-        the SDK in order to test it.
-        """
-        retry_active = True
-        response = None
-        retry_settings = self.configure_retries(request.context.options)
-        while retry_active:
-            try:
-                response = self.mock_send()
-            except ServiceRequestError as err:
-                # the request ran into a socket timeout or failed to establish a new connection
-                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
-                if retry_settings['connect'] > 0:
-                    self.count += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-
-        self.update_context(response.context, retry_settings)
-        return response
-
-    def mock_send(self):
-        raise ServiceRequestError("mock-service")
-
 if __name__ == '__main__':
     unittest.main()
