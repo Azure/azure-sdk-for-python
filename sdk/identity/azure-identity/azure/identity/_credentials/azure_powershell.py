@@ -34,9 +34,20 @@ if (! $m) {{
     exit
 }}
 
-$token = Get-AzAccessToken -ResourceUrl '{}'{}
+$useSecureString = $m.Version -ge [version]"2.17.0"
 
-Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
+$command = "Get-AzAccessToken -ResourceUrl '{}'{}"
+
+if ($useSecureString) {{
+    $command += " -AsSecureString"
+}}
+
+$token = Invoke-Expression $command
+$tokenValue = $token.Token
+if ($useSecureString) {{
+    $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
+}}
+Write-Output "`nazsdk%$($tokenValue)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
 
 
