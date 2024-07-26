@@ -14,9 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 
 class FaceClientTestCase:
     def _set_up(self, endpoint, account_key) -> None:
-        self._client = FaceClient(
-            endpoint=endpoint, credential=AzureKeyCredential(account_key)
-        )
+        self._client = FaceClient(endpoint=endpoint, credential=AzureKeyCredential(account_key))
 
     def _tear_down(self) -> None:
         self._client.close()
@@ -24,9 +22,7 @@ class FaceClientTestCase:
 
 class FaceSessionClientTestCase:
     def _set_up(self, endpoint, account_key) -> None:
-        self._client = FaceSessionClient(
-            endpoint=endpoint, credential=AzureKeyCredential(account_key)
-        )
+        self._client = FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(account_key))
 
     def _tear_down(self) -> None:
         self._client.close()

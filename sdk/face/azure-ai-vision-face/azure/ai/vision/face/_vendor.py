@@ -9,7 +9,7 @@ from abc import ABC
 import json
 from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
-from ._configuration import FaceClientConfiguration, FaceSessionClientConfiguration
+from ._configuration import FaceClientConfiguration, FaceServiceClientConfiguration, FaceSessionClientConfiguration
 from ._model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:

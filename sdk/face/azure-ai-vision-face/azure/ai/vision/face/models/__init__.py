@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 from ._models import AccessoryItem
+from ._models import AddFaceResult
 from ._models import AuditLivenessResponseInfo
 from ._models import AuditRequestInfo
 from ._models import BlurProperties
 from ._models import CreateLivenessSessionContent
 from ._models import CreateLivenessSessionResult
 from ._models import CreateLivenessWithVerifySessionResult
+from ._models import CreatePersonResult
 from ._models import ExposureProperties
 from ._models import FaceAttributes
 from ._models import FaceDetectionResult
@@ -21,6 +23,9 @@ from ._models import FaceErrorResponse
 from ._models import FaceFindSimilarResult
 from ._models import FaceGroupingResult
 from ._models import FaceLandmarks
+from ._models import FaceList
+from ._models import FaceListFace
+from ._models import FaceListItem
 from ._models import FaceRectangle
 from ._models import FaceVerificationResult
 from ._models import FacialHair
@@ -28,6 +33,11 @@ from ._models import HairColor
 from ._models import HairProperties
 from ._models import HeadPose
 from ._models import LandmarkCoordinate
+from ._models import LargeFaceList
+from ._models import LargeFaceListFace
+from ._models import LargePersonGroup
+from ._models import LargePersonGroupPerson
+from ._models import LargePersonGroupPersonFace
 from ._models import LivenessOutputsTarget
 from ._models import LivenessResponseBody
 from ._models import LivenessSession
@@ -39,6 +49,10 @@ from ._models import LivenessWithVerifySession
 from ._models import MaskProperties
 from ._models import NoiseProperties
 from ._models import OcclusionProperties
+from ._models import PersonGroup
+from ._models import PersonGroupPerson
+from ._models import PersonGroupPersonFace
+from ._models import TrainingResult
 
 from ._enums import AccessoryType
 from ._enums import BlurLevel
@@ -56,27 +70,23 @@ from ._enums import LivenessModel
 from ._enums import LivenessOperationMode
 from ._enums import MaskType
 from ._enums import NoiseLevel
+from ._enums import OperationStatus
 from ._enums import QualityForRecognition
 from ._enums import Versions
-
-from ._patch import FaceAttributeTypeDetection01
-from ._patch import FaceAttributeTypeDetection03
-from ._patch import FaceAttributeTypeRecognition03
-from ._patch import FaceAttributeTypeRecognition04
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "FaceAttributeTypeDetection01",
-    "FaceAttributeTypeDetection03",
-    "FaceAttributeTypeRecognition03",
-    "FaceAttributeTypeRecognition04",
     "AccessoryItem",
+    "AddFaceResult",
     "AuditLivenessResponseInfo",
     "AuditRequestInfo",
     "BlurProperties",
     "CreateLivenessSessionContent",
     "CreateLivenessSessionResult",
     "CreateLivenessWithVerifySessionResult",
+    "CreatePersonResult",
     "ExposureProperties",
     "FaceAttributes",
     "FaceDetectionResult",
@@ -85,6 +95,9 @@ __all__ = [
     "FaceFindSimilarResult",
     "FaceGroupingResult",
     "FaceLandmarks",
+    "FaceList",
+    "FaceListFace",
+    "FaceListItem",
     "FaceRectangle",
     "FaceVerificationResult",
     "FacialHair",
@@ -92,6 +105,11 @@ __all__ = [
     "HairProperties",
     "HeadPose",
     "LandmarkCoordinate",
+    "LargeFaceList",
+    "LargeFaceListFace",
+    "LargePersonGroup",
+    "LargePersonGroupPerson",
+    "LargePersonGroupPersonFace",
     "LivenessOutputsTarget",
     "LivenessResponseBody",
     "LivenessSession",
@@ -103,6 +121,10 @@ __all__ = [
     "MaskProperties",
     "NoiseProperties",
     "OcclusionProperties",
+    "PersonGroup",
+    "PersonGroupPerson",
+    "PersonGroupPersonFace",
+    "TrainingResult",
     "AccessoryType",
     "BlurLevel",
     "ExposureLevel",
@@ -119,8 +141,9 @@ __all__ = [
     "LivenessOperationMode",
     "MaskType",
     "NoiseLevel",
+    "OperationStatus",
     "QualityForRecognition",
     "Versions",
 ]
-
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
