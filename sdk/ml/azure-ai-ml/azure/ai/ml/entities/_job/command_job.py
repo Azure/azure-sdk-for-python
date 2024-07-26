@@ -62,7 +62,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
     .. note::
-        For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix ``AZUREML_PARAMETER_``. 
+        For sweep jobs, inputs, outputs, and parameters 
+        
+        are accessible as environment variables using the prefix ``AZUREML_PARAMETER_``. 
         
         For example, if you have a parameter named "input_data", you can access it as ``AZUREML_PARAMETER_input_data``.
 
