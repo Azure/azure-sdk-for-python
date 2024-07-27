@@ -27,14 +27,20 @@ steps:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
-  - ${{ each artifact in parameters.Artifacts }}:
-    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-        parameters:
-          PackageName: ${{artifact.name}}
-          ServiceName: ${{parameters.ServiceDirectory}}
-          ForRelease: false
-          Condition: succeededOrFailed()
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: /eng/common/pipelines/templates/steps/verify-changelogs.yml
+      parameters:
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        Condition: succeededOrFailed()
+  - ${{ else }}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
+        - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+          parameters:
+            PackageName: ${{artifact.name}}
+            ServiceName: ${{parameters.ServiceDirectory}}
+            ForRelease: false
+            Condition: succeededOrFailed()
 
   - script: |
       python -m pip install "./tools/azure-sdk-tools[build]" -q -I
