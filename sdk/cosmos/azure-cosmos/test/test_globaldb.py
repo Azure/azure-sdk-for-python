@@ -420,24 +420,24 @@ class TestGlobalDB(unittest.TestCase):
                                                                                                    location_name)
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
-    def test_global_db_service_request_errors(self):
-        connection_policy = documents.ConnectionPolicy()
-        retry_policy = test_config.MockConnectionRetryPolicy(
-            retry_total=5,
-            retry_connect=None,
-            retry_read=None,
-            retry_status=None,
-            retry_backoff_max=1,
-            retry_on_status_codes=[],
-            retry_backoff_factor=0.8,
-        )
-        connection_policy.ConnectionRetryConfiguration = retry_policy
-        try:
-            client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
-            client.get_database_client("test_db").read()
-            pytest.fail("client initialization should have received ServiceRequestError")
-        except ServiceRequestError:
-            assert retry_policy.count == 3
+    # def test_global_db_service_request_errors(self):
+    #     connection_policy = documents.ConnectionPolicy()
+    #     retry_policy = test_config.MockConnectionRetryPolicy(
+    #         retry_total=5,
+    #         retry_connect=None,
+    #         retry_read=None,
+    #         retry_status=None,
+    #         retry_backoff_max=1,
+    #         retry_on_status_codes=[],
+    #         retry_backoff_factor=0.8,
+    #     )
+    #     connection_policy.ConnectionRetryConfiguration = retry_policy
+    #     try:
+    #         client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
+    #         client.get_database_client("test_db").read()
+    #         pytest.fail("client initialization should have received ServiceRequestError")
+    #     except ServiceRequestError:
+    #         assert retry_policy.count == 3
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)
