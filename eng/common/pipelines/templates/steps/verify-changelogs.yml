@@ -10,7 +10,7 @@ steps:
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLogs.ps1
       arguments: >
-        -PackageInfoDirectory '${{ parameters.PackageInfoDirectory }}'
+        -PackageInfoDirectory '${{ parameters.PackagePropertiesFolder }}'
       pwsh: true
     displayName: Verify ChangeLogEntry for ${{ parameters.PackageName }}
     condition: ${{ parameters.Condition }}
