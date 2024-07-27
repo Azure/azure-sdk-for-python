@@ -1,5 +1,5 @@
 parameters:
-- name: PackageInfoDirectory
+- name: PackagePropertiesFolder
   type: string
 - name: Condition
   type: string
