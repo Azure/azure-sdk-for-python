@@ -5,12 +5,12 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, while supplying additional
-    model-specific parameters as part of the request.
-    See setting of the optional `model_extras` in the `complete` method.
+    the service using a synchronous client. The sample also shows how to 
+    set default chat compoletions configuration in the client constructor,
+    which will be applied to all `complete` calls to the service.
 
 USAGE:
-    python sample_chat_completions_with_model_extras.py
+    python sample_chat_completions_with_defaults.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
@@ -21,7 +21,7 @@ USAGE:
 """
 
 
-def sample_chat_completions_with_model_extras():
+def sample_chat_completions_with_defaults():
     import os
 
     try:
@@ -36,20 +36,35 @@ def sample_chat_completions_with_model_extras():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-    # [START model_extras]
+    # Create a client with default chat completions settings
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        temperature=0.5,
+        max_tokens=1000
+    )
+    
+    # Call the service with the defaults specified above
     response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ],
-        model_extras={"key1": "value1", "key2": "value2"},  # Optional. Additional parameters to pass to the model.
     )
-    # [END chat_completions]
+
+    print(response.choices[0].message.content)
+
+    # You can always override one or more of the defaults for a specific call, as shown here
+    response = client.complete(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content="What's the distance from Earth to the Moon in miles?"),
+        ],
+        max_tokens=2000,
+    )
 
     print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":
-    sample_chat_completions_with_model_extras()
+    sample_chat_completions_with_defaults()
