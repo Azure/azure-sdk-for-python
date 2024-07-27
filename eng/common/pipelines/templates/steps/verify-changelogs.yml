@@ -12,6 +12,6 @@ steps:
       arguments: >
         -PackageInfoDirectory '${{ parameters.PackagePropertiesFolder }}'
       pwsh: true
-    displayName: Verify ChangeLogEntry for ${{ parameters.PackageName }}
+    displayName: Verify ChangeLogEntries
     condition: ${{ parameters.Condition }}
     continueOnError: false
