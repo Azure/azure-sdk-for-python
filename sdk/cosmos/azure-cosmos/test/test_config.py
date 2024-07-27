@@ -201,6 +201,7 @@ class FakeHttpResponse:
     def body(self):
         return None
 
+
 class MockConnectionRetryPolicy(ConnectionRetryPolicy):
     """Mocks the ConnectionRetryPolicy, adding a counter to see retries happening.
     """

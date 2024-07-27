@@ -422,7 +422,7 @@ class TestGlobalDB(unittest.TestCase):
 
     def test_global_db_service_request_errors(self):
         connection_policy = documents.ConnectionPolicy()
-        retry_policy = MockConnectionRetryPolicy(
+        retry_policy = test_config.MockConnectionRetryPolicy(
             retry_total=5,
             retry_connect=None,
             retry_read=None,
