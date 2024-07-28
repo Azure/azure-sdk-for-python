@@ -4,7 +4,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, Literal
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
@@ -16,18 +16,16 @@ from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_s
     PipelineComponentBatchDeploymentSchema,
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 
 
-@experimental
-class PipelineComponentBatchDeployment(Resource):
+class PipelineComponentBatchDeployment(BatchDeployment):
     """Pipeline Component Batch Deployment entity.
 
     :param type: Job definition type. Allowed value: "pipeline"
@@ -47,11 +45,12 @@ class PipelineComponentBatchDeployment(Resource):
     :param endpoint_name: Name of the Endpoint resource, defaults to None.
     :type endpoint_name: Optional[str]
     """
+    type: Literal["pipeline"] = "pipeline"
 
     def __init__(
         self,
         *,
-        name: Optional[str],
+        name: str,
         endpoint_name: Optional[str] = None,
         component: Optional[Union[Component, str]] = None,
         settings: Optional[Dict[str, str]] = None,
@@ -60,14 +59,20 @@ class PipelineComponentBatchDeployment(Resource):
         description: Optional[str] = None,
         **kwargs: Any,  # pylint: disable=unused-argument
     ):
-        self._type = kwargs.pop("type", None)
-        super().__init__(name=name, tags=tags, description=description, **kwargs)
+        super().__init__(
+            name=name,
+            _type=self.type,
+            endpoint_name=endpoint_name,
+            tags=tags,
+            description=description,
+            **kwargs
+        )
         self.component = component
-        self.endpoint_name = endpoint_name
         self.settings = settings
         self.job_definition = job_definition
 
-    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # type: ignore[override]
         if isinstance(self.component, PipelineComponent):
             id_asset_ref = IdAssetReference(asset_id=self.component.id)
 
@@ -111,13 +116,6 @@ class PipelineComponentBatchDeployment(Resource):
             PipelineComponentBatchDeploymentSchema, data, context, **kwargs
         )
         return res
-
-    @classmethod
-    def _update_params(cls, params_override: Any) -> None:
-        for param in params_override:
-            endpoint_name = param.get("endpoint_name")
-            if isinstance(endpoint_name, str):
-                param["endpoint_name"] = endpoint_name.lower()
 
     @classmethod
     def _from_rest_object(  # pylint: disable=arguments-renamed
