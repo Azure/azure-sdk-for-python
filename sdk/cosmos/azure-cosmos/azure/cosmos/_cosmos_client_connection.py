@@ -1083,7 +1083,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
-            return self.__QueryFeed(
+            return (
+                self.__QueryFeed(
                     path,
                     "docs",
                     collection_id,
@@ -1093,6 +1094,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     options,
                     response_hook=response_hook,
                     **kwargs)
+            )
 
         return ItemPaged(
             self,
@@ -1173,7 +1175,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
-            return self.__QueryFeed(
+            return (self.__QueryFeed(
                 path,
                 resource_key,
                 collection_id,
@@ -1183,7 +1185,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options,
                 partition_key_range_id,
                 response_hook=response_hook,
-                **kwargs)
+                **kwargs))
 
         return ItemPaged(
             self,
@@ -1241,9 +1243,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
-            return self.__QueryFeed(
+            return (
+                self.__QueryFeed(
                     path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
-                    lambda _, b: b, query, options, **kwargs)
+                    lambda _, b: b, query, options, **kwargs
+                ))
 
         return ItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
@@ -3009,21 +3013,35 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type,
                 documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
             )
-            headers = base.GetHeaders(
-                self,
-                initial_headers,
-                "get",
-                path,
-                resource_id,
-                resource_type,
-                options,
-                partition_key_range_id
-            )
-            result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
-            self.last_response_headers = last_response_headers
-            if response_hook:
-                response_hook(last_response_headers, result)
-            return __GetBodiesFromQueryResult(result), last_response_headers
+            # Check change feed in all partitions
+            pk_ranges_ids = []
+            if resource_type != 'pkranges' and not options.get("partitionKeyRangeId"):
+                pk_ranges_ids = list(self._ReadPartitionKeyRanges(resource_id))
+            if pk_ranges_ids and len(pk_ranges_ids) > 1:
+                results: Dict[str, Any] = {}
+                for pk_id in pk_ranges_ids:
+                    headers = base.GetHeaders(self, initial_headers, "get", path,
+                                              resource_id, resource_type, options,
+                                              pk_id['id'])
+                    result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+                    if results and result:
+                        # add up all the query results from all over lapping ranges
+                        results["Documents"].extend(result["Documents"])
+                    elif result:
+                        results = result
+                    if response_hook:
+                        response_hook(self.last_response_headers, result)
+                if results:
+                    return __GetBodiesFromQueryResult(results), self.last_response_headers
+                else:
+                    return __GetBodiesFromQueryResult(result), self.last_response_headers
+            else:
+                headers = base.GetHeaders(self, initial_headers, "get", path,
+                                          resource_id, resource_type, options, partition_key_range_id)
+                result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+                if response_hook:
+                    response_hook(self.last_response_headers, result)
+                return __GetBodiesFromQueryResult(result), self.last_response_headers
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
