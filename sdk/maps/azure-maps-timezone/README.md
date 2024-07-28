@@ -31,7 +31,7 @@ Install the Azure Maps Service Timezone SDK.
 pip install azure-maps-timezone
 ```
 
-### Create and Authenticate the AzureTimezoneClient
+### Create and Authenticate the TimezoneClient
 
 To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
 
@@ -45,11 +45,11 @@ Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an inst
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.timezone import AzureTimezoneClient
+from azure.maps.timezone import TimezoneClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-timezone_client = AzureTimezoneClient(
+timezone_client = TimezoneClient(
     credential=credential,
 )
 ```
@@ -74,11 +74,11 @@ You will also need to specify the Azure Maps resource you intend to use by speci
 
 ```python
 import os
-from azure.maps.timezone import AzureTimezoneClient
+from azure.maps.timezone import TimezoneClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-timezone_client = AzureTimezoneClient(credential=credential)
+timezone_client = TimezoneClient(credential=credential)
 ```
 
 ## Key concepts
@@ -87,8 +87,8 @@ The Azure Maps Timezone client library for Python allows you to interact with ea
 
 ### Sync Clients
 
-`AzureTimezoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
-Once you initialized a `AzureTimezoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
+`TimezoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
+Once you initialized a `TimezoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
 
 ### Async Clients
 
@@ -121,9 +121,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_timezone_by_id():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_timezone_by_id(timezone_id="sr-Latn-RS")
         print(result)
@@ -149,9 +149,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_timezone_by_coordinates():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
         print(result)
@@ -177,9 +177,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_iana_version():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_iana_version()
         print(result)
@@ -205,9 +205,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_iana_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_iana_timezone_ids()
         print(result)
@@ -233,9 +233,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_windows_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_windows_timezone_ids()
         print(result)
@@ -260,9 +260,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def convert_windows_timezone_to_iana():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
         print(result)

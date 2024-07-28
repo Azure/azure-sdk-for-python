@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_iana_version():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import AzureTimezoneClient
+    from azure.maps.timezone import TimezoneClient
 
-    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_iana_version()
         print(result)

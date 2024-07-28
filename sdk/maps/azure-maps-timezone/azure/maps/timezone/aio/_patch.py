@@ -12,7 +12,7 @@ from typing import Union, Any, List
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.maps.timezone.aio import TimezoneClient
+from ._client import TimezoneClient as TimezoneClientGenerated
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
@@ -43,7 +43,7 @@ def _authentication_policy(credential):
 
 
 # pylint: disable=C4748
-class AzureTimezoneClient(TimezoneClient):
+class TimezoneClient(TimezoneClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
