@@ -111,8 +111,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Creating the BlobServiceClient with account url and credential.
 
         .. literalinclude:: ../samples/blob_samples_authentication.py
-            :start-after: [START create_blob_service_client_oauth_default_credential]
-            :end-before: [END create_blob_service_client_oauth_default_credential]
+            :start-after: [START create_blob_service_client_oauth]
+            :end-before: [END create_blob_service_client_oauth]
             :language: python
             :dedent: 8
             :caption: Creating the BlobServiceClient with Default Azure Identity credentials.

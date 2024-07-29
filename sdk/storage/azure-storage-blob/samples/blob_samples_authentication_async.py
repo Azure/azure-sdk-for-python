@@ -107,7 +107,7 @@ class AuthSamplesAsync(object):
         # [END create_sas_token]
 
     async def auth_default_azure_credential(self):
-        # [START create_blob_service_client_oauth_default_credential]
+        # [START create_blob_service_client_oauth]
         # Get a credential for authentication
         # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
         # For example user (who must be an Azure Event Hubs Data Owner role) to be logged in can be specified by the environment variable AZURE_USERNAME
@@ -122,7 +122,7 @@ class AuthSamplesAsync(object):
             account_url=self.oauth_url,
             credential=default_credential
         )
-        # [END create_blob_service_client_oauth_default_credential]
+        # [END create_blob_service_client_oauth]
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_service_properties()
