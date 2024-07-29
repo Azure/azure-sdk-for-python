@@ -115,12 +115,22 @@ class BaseStreamingChatCompletions:
             # where the curly braces contain a valid JSON object.
             # Deserialize it into a StreamingChatCompletionsUpdate object
             # and add it to the queue.
-            self._queue.put(
-                # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.StreamingChatCompletionsUpdate._deserialize(
-                    json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
-                )
+            # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
+            update = _models.StreamingChatCompletionsUpdate._deserialize(
+                json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
             )
+
+            # We skip any update that has a None or empty choices list
+            # (this is what OpenAI Python SDK does)
+            if update.choices:
+
+                # We update all empty content strings to None
+                # (this is what OpenAI Python SDK does)
+                for choice in update.choices:
+                    if not choice.delta.content:
+                        choice.delta.content = None
+
+                self._queue.put(update)
 
             if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Added to queue]")
