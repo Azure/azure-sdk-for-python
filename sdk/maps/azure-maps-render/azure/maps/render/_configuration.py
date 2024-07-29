@@ -8,46 +8,58 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 VERSION = "unknown"
 
 
-class MapsRenderClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class MapsRenderClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for MapsRenderClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param client_id: Specifies which account is intended for usage in conjunction with the Azure
-     AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
-     from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
-     the following `articles <https://aka.ms/amauthdetails>`_ for guidance. Default value is None.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param accept: The Accept header field can be used to specify preferences regarding response
+     media types. Allowed media types include image/jpeg and image/png. Return image in image/png if
+     Accept header is not specified. Known values are: "image/png" and "image/jpeg". Default value
+     is None.
+    :type accept: str
+    :param client_id: Specifies which account is intended for usage in conjunction with the
+     Microsoft Entra ID security model.  It represents a unique ID for the Azure Maps account and
+     can be retrieved from the Azure Maps management  plane Account API. To use Microsoft Entra ID
+     security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for
+     guidance. Default value is None.
     :type client_id: str
-    :keyword api_version: Api Version. Default value is "2022-08-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", client_id: Optional[str] = None, **kwargs: Any) -> None:
-        super(MapsRenderClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-08-01")
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        accept: Optional[str] = None,
+        client_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2024-04-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
+        self.accept = accept
         self.client_id = client_id
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://atlas.microsoft.com/.default"])
         kwargs.setdefault("sdk_moniker", "maps-render/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -56,11 +68,11 @@ class MapsRenderClientConfiguration(Configuration):  # pylint: disable=too-many-
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
                 self.credential, *self.credential_scopes, **kwargs
             )
