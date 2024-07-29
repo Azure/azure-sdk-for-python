@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, Iterator, List, Optional, Type, TypeVar, cast
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,15 +19,17 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -36,21 +39,21 @@ _SERIALIZER.client_side_validation = False
 
 def build_render_get_map_tile_request(
     *,
-    tileset_id: Union[str, _models.TilesetID],
+    tileset_id: str,
     z: int,
     x: int,
     y: int,
     time_stamp: Optional[datetime.datetime] = None,
-    tile_size: Optional[Union[str, _models.MapTileSize]] = None,
+    tile_size: Optional[str] = None,
     language: Optional[str] = None,
-    localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
+    localized_map_view: Optional[str] = None,
     client_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop(
         "Accept", "application/json, image/jpeg, image/png, image/pbf, application/vnd.mapbox-vector-tile"
     )
@@ -82,12 +85,12 @@ def build_render_get_map_tile_request(
 
 
 def build_render_get_map_tileset_request(
-    *, tileset_id: Union[str, _models.TilesetID], client_id: Optional[str] = None, **kwargs: Any
+    *, tileset_id: str, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,17 +109,12 @@ def build_render_get_map_tileset_request(
 
 
 def build_render_get_map_attribution_request(
-    *,
-    tileset_id: Union[str, _models.TilesetID],
-    zoom: int,
-    bounds: List[float],
-    client_id: Optional[str] = None,
-    **kwargs: Any
+    *, tileset_id: str, zoom: int, bounds: List[float], client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -142,7 +140,7 @@ def build_render_get_map_state_tile_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/vnd.mapbox-vector-tile, application/json")
 
     # Construct URL
@@ -163,13 +161,13 @@ def build_render_get_map_state_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_render_get_copyright_caption_request(
-    format: Union[str, _models.ResponseFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
+def build_render_get_copyright_caption_request(  # pylint: disable=name-too-long
+    format: str = "json", *, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +176,7 @@ def build_render_get_copyright_caption_request(
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -191,18 +189,17 @@ def build_render_get_copyright_caption_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_render_get_map_static_image_request(
-    format: Union[str, _models.RasterTileFormat] = "png",
+def build_render_get_map_static_image_request(  # pylint: disable=name-too-long
     *,
-    layer: Optional[Union[str, _models.StaticMapLayer]] = None,
-    style: Optional[Union[str, _models.MapImageStyle]] = None,
+    tileset_id: Optional[str] = None,
+    traffic_layer: Optional[str] = None,
     zoom: Optional[int] = None,
     center: Optional[List[float]] = None,
     bounding_box_private: Optional[List[float]] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
     language: Optional[str] = None,
-    localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
+    localized_map_view: Optional[str] = None,
     pins: Optional[List[str]] = None,
     path: Optional[List[str]] = None,
     client_id: Optional[str] = None,
@@ -210,26 +207,20 @@ def build_render_get_map_static_image_request(
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
     accept = _headers.pop(
         "Accept", "application/json, image/jpeg, image/png, image/pbf, application/vnd.mapbox-vector-tile"
     )
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     # Construct URL
-    _url = "/map/static/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = "/map/static"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if layer is not None:
-        _params["layer"] = _SERIALIZER.query("layer", layer, "str")
-    if style is not None:
-        _params["style"] = _SERIALIZER.query("style", style, "str")
+    if tileset_id is not None:
+        _params["tilesetId"] = _SERIALIZER.query("tileset_id", tileset_id, "str")
+    if traffic_layer is not None:
+        _params["trafficLayer"] = _SERIALIZER.query("traffic_layer", traffic_layer, "str")
     if zoom is not None:
         _params["zoom"] = _SERIALIZER.query("zoom", zoom, "int", maximum=20, minimum=0)
     if center is not None:
@@ -237,9 +228,9 @@ def build_render_get_map_static_image_request(
     if bounding_box_private is not None:
         _params["bbox"] = _SERIALIZER.query("bounding_box_private", bounding_box_private, "[float]", div=",")
     if height is not None:
-        _params["height"] = _SERIALIZER.query("height", height, "int", maximum=8192, minimum=1)
+        _params["height"] = _SERIALIZER.query("height", height, "int", maximum=1500, minimum=80)
     if width is not None:
-        _params["width"] = _SERIALIZER.query("width", width, "int", maximum=8192, minimum=1)
+        _params["width"] = _SERIALIZER.query("width", width, "int", maximum=2000, minimum=80)
     if language is not None:
         _params["language"] = _SERIALIZER.query("language", language, "str")
     if localized_map_view is not None:
@@ -252,24 +243,25 @@ def build_render_get_map_static_image_request(
     # Construct headers
     if client_id is not None:
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_render_get_copyright_from_bounding_box_request(
-    format: Union[str, _models.ResponseFormat] = "json",
+def build_render_get_copyright_from_bounding_box_request(  # pylint: disable=name-too-long
+    format: str = "json",
     *,
     south_west: List[float],
     north_east: List[float],
-    include_text: Optional[Union[str, _models.IncludeText]] = None,
+    include_text: Optional[str] = None,
     client_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -278,7 +270,7 @@ def build_render_get_copyright_from_bounding_box_request(
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -295,20 +287,20 @@ def build_render_get_copyright_from_bounding_box_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_render_get_copyright_for_tile_request(
-    format: Union[str, _models.ResponseFormat] = "json",
+def build_render_get_copyright_for_tile_request(  # pylint: disable=name-too-long
+    format: str = "json",
     *,
     z: int,
     x: int,
     y: int,
-    include_text: Optional[Union[str, _models.IncludeText]] = None,
+    include_text: Optional[str] = None,
     client_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -317,7 +309,7 @@ def build_render_get_copyright_for_tile_request(
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -335,17 +327,13 @@ def build_render_get_copyright_for_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_render_get_copyright_for_world_request(
-    format: Union[str, _models.ResponseFormat] = "json",
-    *,
-    include_text: Optional[Union[str, _models.IncludeText]] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
+def build_render_get_copyright_for_world_request(  # pylint: disable=name-too-long
+    format: str = "json", *, include_text: Optional[str] = None, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,7 +342,7 @@ def build_render_get_copyright_for_world_request(
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -379,8 +367,6 @@ class RenderOperations:
         :attr:`render` attribute.
     """
 
-    models = _models
-
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -392,30 +378,32 @@ class RenderOperations:
     def get_map_tile(
         self,
         *,
-        tileset_id: Union[str, _models.TilesetID],
+        tileset_id: str,
         z: int,
         x: int,
         y: int,
         time_stamp: Optional[datetime.datetime] = None,
-        tile_size: Optional[Union[str, _models.MapTileSize]] = None,
+        tile_size: Optional[str] = None,
         language: Optional[str] = None,
-        localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
+        localized_map_view: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """Use to request map tiles in vector or raster format.
 
-        The Get Map Tiles API allows users to request map tiles in vector or raster formats typically
-        to be integrated  into a map control or SDK. Some example tiles that can be requested are Azure
-        Maps road tiles, real-time  Weather Radar tiles or the map tiles created using `Azure Maps
-        Creator <https://aka.ms/amcreator>`_. By default,  Azure Maps uses vector tiles for its web map
-        control (Web SDK) and Android SDK.
+        The ``Get Map Tiles`` API in an HTTP GET request that allows users to request map tiles in
+        vector or raster formats typically to be integrated  into a map control or SDK. Some example
+        tiles that can be requested are Azure Maps road tiles, real-time  Weather Radar tiles or the
+        map tiles created using `Azure Maps Creator <https://aka.ms/amcreator>`_. By default,  Azure
+        Maps uses vector tiles for its web map control (\\ `Web SDK
+        </azure/azure-maps/about-azure-maps#web-sdk>`_\\ ) and `Android SDK
+        </azure/azure-maps/about-azure-maps#android-sdk>`_.
 
         :keyword tileset_id: A tileset is a collection of raster or vector data broken up into a
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/en-us/rest/api/maps/tileset>`_. The ready-to-use tilesets supplied
-         by Azure Maps are listed below. For example, microsoft.base. Known values are:
+         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
@@ -425,25 +413,25 @@ class RenderOperations:
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
-        :paramtype tileset_id: str or ~azure.maps.render.models.TilesetID
+        :paramtype tileset_id: str
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/en-us/azure/location-based-services/zoom-levels-and-tile-grid>`_
-         for details. Required.
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword time_stamp: The desired date and time of the requested tile. This parameter must be
@@ -451,17 +439,19 @@ class RenderOperations:
          8601 <https://en.wikipedia.org/wiki/ISO_8601>`_. This parameter is only supported when
          tilesetId parameter is set to one of the values below.
 
+        * microsoft.weather.infrared.main: We provide tiles up to 3 hours in the past. Tiles are
+          available in 10-minute intervals. We round the timeStamp value to the nearest 10-minute time
+          frame.
 
-         * microsoft.weather.infrared.main: We provide tiles up to 3 hours in the past. Tiles are
-         available in 10-minute intervals. We round the timeStamp value to the nearest 10-minute time
-         frame.
-         * microsoft.weather.radar.main: We provide tiles up to 1.5 hours in the past and up to 2 hours
-         in the future. Tiles are available in 5-minute intervals. We round the timeStamp value to the
-         nearest 5-minute time frame. Default value is None.
+        * microsoft.weather.radar.main: We provide tiles up to 1.5 hours in the past and up to 2 hours
+          in the future. Tiles are available in 5-minute intervals. We round the timeStamp value to the
+          nearest 5-minute time frame. Default value is None.
+
+
         :paramtype time_stamp: ~datetime.datetime
         :keyword tile_size: The size of the returned map tile in pixels. Known values are: "256" and
          "512". Default value is None.
-        :paramtype tile_size: str or ~azure.maps.render.models.MapTileSize
+        :paramtype tile_size: str
         :keyword language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
          available for a specific field, default language is used.
@@ -486,12 +476,12 @@ class RenderOperations:
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Known values are: "AE", "AR", "BH", "IN", "IQ", "JO", "KW", "LB",
          "MA", "OM", "PK", "PS", "QA", "SA", "SY", "YE", "Auto", and "Unified". Default value is None.
-        :paramtype localized_map_view: str or ~azure.maps.render.models.LocalizedMapView
-        :return: Iterator of the response bytes
+        :paramtype localized_map_view: str
+        :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -504,7 +494,7 @@ class RenderOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_render_get_map_tile_request(
+        _request = build_render_get_map_tile_request(
             tileset_id=tileset_id,
             z=z,
             x=x,
@@ -518,19 +508,19 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
@@ -538,13 +528,13 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @distributed_trace
-    def get_map_tileset(self, *, tileset_id: Union[str, _models.TilesetID], **kwargs: Any) -> _models.MapTileset:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    def get_map_tileset(self, *, tileset_id: str, **kwargs: Any) -> JSON:
+        """Use to get metadata for a tileset.
 
         The Get Map Tileset API allows users to request metadata for a tileset.
 
@@ -552,8 +542,8 @@ class RenderOperations:
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/en-us/rest/api/maps/tileset>`_. The ready-to-use tilesets supplied
-         by Azure Maps are listed below. For example, microsoft.base. Known values are:
+         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
@@ -563,12 +553,44 @@ class RenderOperations:
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
-        :paramtype tileset_id: str or ~azure.maps.render.models.TilesetID
-        :return: MapTileset
-        :rtype: ~azure.maps.render.models.MapTileset
+        :paramtype tileset_id: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "attribution": "str",
+                    "bounds": [
+                        0.0
+                    ],
+                    "center": [
+                        0.0
+                    ],
+                    "data": [
+                        "str"
+                    ],
+                    "description": "str",
+                    "grids": [
+                        "str"
+                    ],
+                    "legend": "str",
+                    "maxzoom": 0,
+                    "minzoom": 0,
+                    "name": "str",
+                    "scheme": "str",
+                    "template": "str",
+                    "tilejson": "str",
+                    "tiles": [
+                        "str"
+                    ],
+                    "version": "str"
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -579,51 +601,51 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MapTileset] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_map_tileset_request(
+        _request = build_render_get_map_tileset_request(
             tileset_id=tileset_id,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("MapTileset", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_map_attribution(
-        self, *, tileset_id: Union[str, _models.TilesetID], zoom: int, bounds: List[float], **kwargs: Any
-    ) -> _models.MapAttribution:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    def get_map_attribution(self, *, tileset_id: str, zoom: int, bounds: List[float], **kwargs: Any) -> JSON:
+        """Use to get map copyright attribution information.
 
-        The Get Map Attribution API allows users to request map copyright attribution information for a
-        section of a tileset.
+        The ``Get Map Attribution`` API allows users to request map copyright attribution information
+        for a section of a tileset.
 
         :keyword tileset_id: A tileset is a collection of raster or vector data broken up into a
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/en-us/rest/api/maps/tileset>`_. The ready-to-use tilesets supplied
-         by Azure Maps are listed below. For example, microsoft.base. Known values are:
+         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
          "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
@@ -633,7 +655,7 @@ class RenderOperations:
          "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
          "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
          and "microsoft.traffic.incident". Required.
-        :paramtype tileset_id: str or ~azure.maps.render.models.TilesetID
+        :paramtype tileset_id: str
         :keyword zoom: Zoom level for the desired map attribution. Required.
         :paramtype zoom: int
         :keyword bounds: The string that represents the rectangular area of a bounding box. The bounds
@@ -642,11 +664,21 @@ class RenderOperations:
          string is presented in the following  format: ``[SouthwestCorner_Longitude,
          SouthwestCorner_Latitude, NortheastCorner_Longitude,  NortheastCorner_Latitude]``. Required.
         :paramtype bounds: list[float]
-        :return: MapAttribution
-        :rtype: ~azure.maps.render.models.MapAttribution
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "copyrights": [
+                        "str"
+                    ]
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -657,9 +689,9 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MapAttribution] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_map_attribution_request(
+        _request = build_render_get_map_attribution_request(
             tileset_id=tileset_id,
             zoom=zoom,
             bounds=bounds,
@@ -668,63 +700,67 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("MapAttribution", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_map_state_tile(self, *, z: int, x: int, y: int, stateset_id: str, **kwargs: Any) -> Iterator[bytes]:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """Use to get state tiles in vector format that can then be used to display feature state
+        information in an indoor map.
 
         Fetches state tiles in vector format typically to be integrated into indoor maps module of map
-        control or SDK. The map control will call this API after user turns on dynamic styling (see
-        `Zoom Levels and Tile Grid
-        <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_\ ).
+        control or SDK. The map control will call this API after user turns on dynamic styling. For
+        more information, see `Zoom Levels and Tile Grid
+        </azure/location-based-services/zoom-levels-and-tile-grid>`__.
 
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/en-us/azure/location-based-services/zoom-levels-and-tile-grid>`_
-         for details. Required.
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword stateset_id: The stateset id. Required.
         :paramtype stateset_id: str
-        :return: Iterator of the response bytes
+        :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -737,7 +773,7 @@ class RenderOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_render_get_map_state_tile_request(
+        _request = build_render_get_map_state_tile_request(
             z=z,
             x=x,
             y=y,
@@ -747,19 +783,19 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
@@ -767,31 +803,39 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @distributed_trace
-    def get_copyright_caption(
-        self, format: Union[str, _models.ResponseFormat] = "json", **kwargs: Any
-    ) -> _models.CopyrightCaption:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    def get_copyright_caption(self, format: str = "json", **kwargs: Any) -> JSON:
+        """Use to get copyright information to use when rendering a tile.
 
-        Copyrights API is designed to serve copyright information for Render Tile
-        service. In addition to basic copyright for the whole map, API is serving
-        specific groups of copyrights for some countries/regions.
+        The ``Get Copyright Caption`` API is an HTTP GET request designed to serve copyright
+        information to be used with tiles requested from the Render service. In addition to a basic
+        copyright for the whole map, it can serve specific groups of copyrights for some
+        countries/regions.
 
-        As an alternative to copyrights for map request, one can receive captions
-        for displaying the map provider information on the map.
+        As an alternative to copyrights for map request, it can also return captions for displaying
+        provider information on the map.
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
-        :type format: str or ~azure.maps.render.models.ResponseFormat
-        :return: CopyrightCaption
-        :rtype: ~azure.maps.render.models.CopyrightCaption
+        :type format: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "copyrightsCaption": "str",
+                    "formatVersion": "str"
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -802,188 +846,241 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.CopyrightCaption] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_copyright_caption_request(
+        _request = build_render_get_copyright_caption_request(
             format=format,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("CopyrightCaption", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_map_static_image(
         self,
-        format: Union[str, _models.RasterTileFormat] = "png",
         *,
-        layer: Optional[Union[str, _models.StaticMapLayer]] = None,
-        style: Optional[Union[str, _models.MapImageStyle]] = None,
+        tileset_id: Optional[str] = None,
+        traffic_layer: Optional[str] = None,
         zoom: Optional[int] = None,
         center: Optional[List[float]] = None,
         bounding_box_private: Optional[List[float]] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
         language: Optional[str] = None,
-        localized_map_view: Optional[Union[str, _models.LocalizedMapView]] = None,
+        localized_map_view: Optional[str] = None,
         pins: Optional[List[str]] = None,
         path: Optional[List[str]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """This rendering API produces static, rasterized map views of a user-defined area. It's suitable
+        for lightweight web applications, when the desired user experience doesn't require interactive
+        map controls, or when bandwidth is limited. This API is also useful for embedding maps in
+        applications outside of the browser, in backend services, report generation, or desktop
+        applications.
 
-        The static image service renders a user-defined, rectangular image containing a map section
-        using a zoom level from 0 to 20. The supported resolution range for the map image is from 1x1
-        to 8192x8192. If you are deciding when to use the static image service over the map tile
-        service, you may want to consider how you would like to interact with the rendered map. If the
-        map contents will be relatively unchanging, a static map is a good choice. If you want to
-        support a lot of zooming, panning and changing of the map content, the map tile service would
-        be a better choice.
-
-        Service also provides Image Composition functionality to get a static image back with
-        additional data like; pushpins and geometry overlays with following capabilities.
+         This API includes parameters for basic data visualization:
 
 
-        * Specify multiple pushpin styles
-        * Render circle, polyline and polygon geometry types.
+        * Labeled pushpins in multiple styles.
+        * Render circle, path, and polygon geometry types.
 
-        Please see `How-to-Guide <https://aka.ms/AzureMapsHowToGuideImageCompositor>`_ for detailed
-        examples.
-
-        *Note* : Either **center** or **bbox** parameter must be supplied to the
-        API.
+        For more information and detailed examples, see `Render custom data on a raster map
+        </azure/azure-maps/how-to-render-custom-data>`_.
         :code:`<br>`:code:`<br>`
-        The supported Lat and Lon ranges when using the **bbox** parameter, are as follows:
+        The dimensions of the bbox parameter are constrained, depending on the zoom level. This ensures
+        the resulting image has an appropriate level of detail.
         :code:`<br>`:code:`<br>`
 
         .. list-table::
            :header-rows: 1
 
            * - Zoom Level
+             - Min Lon Range
              - Max Lon Range
+             - Min Lat Range
              - Max Lat Range
            * - 0
+             - 56.25
              - 360.0
-             - 170.0
-           * - 1
-             - 360.0
-             - 170.0
-           * - 2
-             - 360.0
-             - 170.0
-           * - 3
-             - 360.0
-             - 170.0
-           * - 4
-             - 360.0
-             - 170.0
-           * - 5
+             - 30.1105585173
              - 180.0
-             - 85.0
+           * - 1
+             - 28.125
+             - 360.0
+             - 14.87468995
+             - 180.0
+           * - 2
+             - 14.063
+             - 351.5625
+             - 7.4130741851
+             - 137.9576312246
+           * - 3
+             - 7.03125
+             - 175.78125
+             - 3.7034501005
+             - 73.6354071932
+           * - 4
+             - 3.515625
+             - 87.890625
+             - 1.8513375155
+             - 35.4776115315
+           * - 5
+             - 1.7578125
+             - 43.9453125
+             - 0.925620264
+             - 17.4589959239
            * - 6
-             - 90.0
-             - 42.5
+             - 0.87890625
+             - 21.97265625
+             - 0.4628040687
+             - 8.6907788223
            * - 7
-             - 45.0
-             - 21.25
+             - 0.439453125
+             - 10.986328125
+             - 0.2314012764
+             - 4.3404320789
            * - 8
-             - 22.5
-             - 10.625
+             - 0.2197265625
+             - 5.4931640625
+             - 0.1157005434
+             - 2.1695927024
            * - 9
-             - 11.25
-             - 5.3125
+             - 0.1098632812
+             - 2.7465820312
+             - 0.0578502599
+             - 1.0847183194
            * - 10
-             - 5.625
-             - 2.62625
+             - 0.0549316406
+             - 1.3732910156
+             - 0.0289251285
+             - 0.5423494021
            * - 11
-             - 2.8125
-             - 1.328125
+             - 0.0274658203
+             - 0.6866455078
+             - 0.014462564
+             - 0.2711734813
            * - 12
-             - 1.40625
-             - 0.6640625
+             - 0.0137329102
+             - 0.3433227539
+             - 0.007231282
+             - 0.1355865882
            * - 13
-             - 0.703125
-             - 0.33203125
+             - 0.0068664551
+             - 0.171661377
+             - 0.003615641
+             - 0.067793275
            * - 14
-             - 0.3515625
-             - 0.166015625
+             - 0.0034332275
+             - 0.0858306885
+             - 0.0018078205
+             - 0.0338966351
            * - 15
-             - 0.17578125
-             - 0.0830078125
+             - 0.0017166138
+             - 0.0429153442
+             - 0.0009039102
+             - 0.0169483173
            * - 16
-             - 0.087890625
-             - 0.0415039063
+             - 0.0008583069
+             - 0.0214576721
+             - 0.0004519551
+             - 0.0084741586
            * - 17
-             - 0.0439453125
-             - 0.0207519531
+             - 0.0004291534
+             - 0.0107288361
+             - 0.0002259776
+             - 0.0042370793
            * - 18
-             - 0.0219726563
-             - 0.0103759766
+             - 0.0002145767
+             - 0.005364418
+             - 0.0001129888
+             - 0.0021185396
            * - 19
-             - 0.0109863281
-             - 0.0051879883
+             - 0.0001072884
+             - 0.002682209
+             - 5.64944E-05
+             - 0.0010592698
            * - 20
-             - 0.0054931641
-             - 0.0025939941.
+             - 5.36442E-05
+             - 0.0013411045
+             - 2.82472E-05
+             - 0.0005296349
 
-        :param format: Desired format of the response. Possible value: png. "png" Default value is
-         "png".
-        :type format: str or ~azure.maps.render.models.RasterTileFormat
-        :keyword layer: Map layer requested. If layer is set to labels or hybrid, the format should be
-         png. Known values are: "basic", "hybrid", and "labels". Default value is None.
-        :paramtype layer: str or ~azure.maps.render.models.StaticMapLayer
-        :keyword style: Map style to be returned. Possible values are main and dark. Known values are:
-         "main" and "dark". Default value is None.
-        :paramtype style: str or ~azure.maps.render.models.MapImageStyle
-        :keyword zoom: Desired zoom level of the map. Zoom value must be in the range: 0-20
-         (inclusive). Default value is 12.:code:`<br>`:code:`<br>`Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
-         details. Default value is None.
+
+        *Note* : Either **center** or **bbox** parameter must be supplied to the API.
+
+        :keyword tileset_id: Map style to be returned. Possible values are microsoft.base.road,
+         microsoft.base.darkgrey, and microsoft.imagery.  Default value is set to be
+         microsoft.base.road. For more information, see `Render TilesetId
+         <https://learn.microsoft.com/en-us/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
+         Known values are: "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid",
+         "microsoft.terra.main", "microsoft.base.road", "microsoft.base.darkgrey",
+         "microsoft.base.labels.road", "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
+         "microsoft.base.hybrid.darkgrey", "microsoft.imagery", "microsoft.weather.radar.main",
+         "microsoft.weather.infrared.main", "microsoft.traffic.absolute",
+         "microsoft.traffic.absolute.main", "microsoft.traffic.relative",
+         "microsoft.traffic.relative.main", "microsoft.traffic.relative.dark",
+         "microsoft.traffic.delay", "microsoft.traffic.delay.main", "microsoft.traffic.reduced.main",
+         and "microsoft.traffic.incident". Default value is None.
+        :paramtype tileset_id: str
+        :keyword traffic_layer: Optional Value, indicating no traffic flow overlaid on the image
+         result. Possible values are microsoft.traffic.relative.main and none. Default value is none,
+         indicating no traffic flow returned. If traffic related tilesetId is provided, will return map
+         image with corresponding traffic layer. For more information, see `Render TilesetId
+         <https://learn.microsoft.com/en-us/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
+         Known values are: "microsoft.traffic.relative.main" and "none". Default value is None.
+        :paramtype traffic_layer: str
+        :keyword zoom: Desired zoom level of the map. Support zoom value range from 0-20 (inclusive)
+         for tilesetId being microsoft.base.road or microsoft.base.darkgrey. Support zoom value range
+         from 0-19 (inclusive) for tilesetId being microsoft.imagery.
+         For more information, see `Zoom Levels and Tile Grid
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__. Default
+         value is None.
         :paramtype zoom: int
-        :keyword center: Coordinates of the center point. Format: 'lon,lat'. Projection used
-
-
-         * EPSG:3857. Longitude range: -180 to 180. Latitude range: -85 to 85.
+        :keyword center: Coordinates of the center point in double. Format: 'lon,lat'. Longitude range:
+         -180 to 180. Latitude range: -90 to 90.
 
          Note: Either center or bbox are required parameters. They are
          mutually exclusive. Default value is None.
         :paramtype center: list[float]
-        :keyword bounding_box_private: Bounding box. Projection used - EPSG:3857. Format : 'minLon,
-         minLat,
-         maxLon, maxLat'.
+        :keyword bounding_box_private: A bounding box is defined by two latitudes and two longitudes
+         that represent the four sides of a rectangular area on the Earth. Format : 'minLon, minLat,
+         maxLon, maxLat' (in double).
 
          Note: Either bbox or center are required
-         parameters. They are mutually exclusive. It shouldn’t be used with
+         parameters. They are mutually exclusive. bbox shouldn’t be used with
          height or width.
 
-         The maximum allowed ranges for Lat and Lon are defined for each zoom level
+         The maximum and minimum allowed ranges for Lat and Lon are defined for each zoom level
          in the table at the top of this page. Default value is None.
         :paramtype bounding_box_private: list[float]
-        :keyword height: Height of the resulting image in pixels. Range is 1 to 8192. Default
+        :keyword height: Height of the resulting image in pixels. Range from 80 to 1500. Default
          is 512. It shouldn’t be used with bbox. Default value is None.
         :paramtype height: int
-        :keyword width: Width of the resulting image in pixels. Range is 1 to 8192. Default is 512. It
-         shouldn’t be used with bbox. Default value is None.
+        :keyword width: Width of the resulting image in pixels. Range from 80 to 2000. Default is 512.
+         It should not be used with bbox. Default value is None.
         :paramtype width: int
         :keyword language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
@@ -1009,12 +1106,12 @@ class RenderOperations:
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Known values are: "AE", "AR", "BH", "IN", "IQ", "JO", "KW", "LB",
          "MA", "OM", "PK", "PS", "QA", "SA", "SY", "YE", "Auto", and "Unified". Default value is None.
-        :paramtype localized_map_view: str or ~azure.maps.render.models.LocalizedMapView
+        :paramtype localized_map_view: str
         :keyword pins: Pushpin style and instances. Use this parameter to optionally add pushpins to
          the image.
          The pushpin style describes the appearance of the pushpins, and the instances specify
-         the coordinates of the pushpins and optional labels for each pin. (Be sure to properly
-         URL-encode values of this
+         the coordinates of the pushpins (in double) and optional labels for each pin. (Be sure to
+         properly URL-encode values of this
          parameter since it will contain reserved characters such as pipes and punctuation.)
 
          The Azure Maps account S0 SKU only supports a single instance of the pins parameter. Other
@@ -1043,8 +1140,7 @@ class RenderOperations:
          The S0 Azure Maps account SKU only allows five pushpins. Other account SKUs do not have this
          limitation.
 
-         Style Modifiers
-         ^^^^^^^^^^^^^^^
+         **Style Modifiers**
 
          You can modify the appearance of the pins by adding style modifiers. These are added after the
          style but before
@@ -1060,16 +1156,15 @@ class RenderOperations:
 
          ``pins=default|coFF1493||-122 45``
 
-         Pushpin Labels
-         ^^^^^^^^^^^^^^
+         **Pushpin Labels**
 
-         To add a label to the pins, put the label in single quotes just before the coordinates. For
-         example, to label
+         To add a label to the pins, put the label in single quotes just before the coordinates. Avoid
+         using special character such as ``|`` or ``||`` in label. For example, to label
          three pins with the values '1', '2', and '3', use
 
          ``pins=default||'1'-122 45|'2'-119.5 43.2|'3'-121.67 47.12``
 
-         There is a built in pushpin style called 'none' that does not display a pushpin image. You can
+         There is a built-in pushpin style called 'none' that does not display a pushpin image. You can
          use this if
          you want to display labels without any pin image. For example,
 
@@ -1101,20 +1196,18 @@ class RenderOperations:
 
          ``pins=default|la10 -4||'A'-122 45|'B'-119 43``
 
-         Custom Pushpins
-         ^^^^^^^^^^^^^^^
+         **Custom Pushpins**
 
          To use a custom pushpin image, use the word 'custom' as the pin style name, and then specify a
          URL after the
-         location and label information. Use two pipe characters to indicate that you're done
-         specifying locations and are
+         location and label information. The maximum allowed size for a customized label image is
+         65,536 pixels. Use two pipe characters to indicate that you're done specifying locations and
+         are
          starting the URL. For example,
 
          ``pins=custom||-122 45||http://contoso.com/pushpins/red.png``
 
          After URL encoding, this would look like
-
-         ``pins=custom%7C%7C-122+45%7C%7Chttp%3A%2F%2Fcontoso.com%2Fpushpins%2Fred.png``
 
          By default, custom pushpin images are drawn centered at the pin coordinates. This usually
          isn't ideal as it obscures
@@ -1134,8 +1227,7 @@ class RenderOperations:
          would usually
          only be done with a solid-color custom image.
 
-         Scale, Rotation, and Opacity
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         **Scale, Rotation, and Opacity**
 
          You can make pushpins and their labels larger or smaller by using the 'sc' scale style
          modifier. This is a
@@ -1164,38 +1256,46 @@ class RenderOperations:
 
          ``pins=default|al.67||-122 45``
 
-         Style Modifier Summary
-         ^^^^^^^^^^^^^^^^^^^^^^
+         **Style Modifier Summary**
 
          .. list-table::
             :header-rows: 1
 
             * - Modifier
               - Description
+              - Type
               - Range
             * - al
               - Alpha (opacity)
+              - float
               - 0 to 1
             * - an
               - Pin anchor
+              - <int32, int32>
               - *
             * - co
               - Pin color
+              - string
               - 000000 to FFFFFF
             * - la
               - Label anchor
+              - <int32, int32>
               - *
             * - lc
               - Label color
+              - string
               - 000000 to FFFFFF
             * - ls
               - Label size
+              - float
               - Greater than 0
             * - ro
               - Rotation
+              - float
               - -360 to 360
             * - sc
               - Scale
+              - float
               - Greater than 0
 
 
@@ -1203,8 +1303,8 @@ class RenderOperations:
          * X and Y coordinates can be anywhere within pin image or a margin around it.
            The margin size is the minimum of the pin width and height. Default value is None.
         :paramtype pins: list[str]
-        :keyword path: Path style and locations. Use this parameter to optionally add lines, polygons
-         or circles to the image.
+        :keyword path: Path style and locations (in double). Use this parameter to optionally add
+         lines, polygons or circles to the image.
          The path style describes the appearance of the line and fill. (Be sure to properly URL-encode
          values of this
          parameter since it will contain reserved characters such as pipes and punctuation.)
@@ -1232,15 +1332,15 @@ class RenderOperations:
 
          ``path=||-122 45|-119.5 43.2|-121.67 47.12``
 
-         To render a polygon, last location must be equal to the start location. For example, use
+         A polygon is specified with a closed path, where the first and last points are equal. For
+         example, use
 
          ``path=||-122 45|-119.5 43.2|-121.67 47.12|-122 45``
 
-         Longitude and latitude values for locations of lines and polygons can be in the range from
-         -360 to 360 to allow for rendering of geometries crossing the anti-meridian.
+         Longitude value for locations of lines and polygons can be in the range from -360 to 360 to
+         allow for rendering of geometries crossing the anti-meridian.
 
-         Style Modifiers
-         ^^^^^^^^^^^^^^^
+         **Style Modifiers**
 
          You can modify the appearance of the path by adding style modifiers. These are added before
          the locations.
@@ -1256,43 +1356,49 @@ class RenderOperations:
 
          ``path=lcFF1493||-122 45|-119.5 43.2``
 
-         Multiple style modifiers may be combined together to create a more complex visual style.
+         Multiple style modifiers may be combined to create a more complex visual style.
 
          ``lc0000FF|lw3|la0.60|fa0.50||-122.2 47.6|-122.2 47.7|-122.3 47.7|-122.3 47.6|-122.2 47.6``
 
-         Style Modifier Summary
-         ^^^^^^^^^^^^^^^^^^^^^^
+         **Style Modifier Summary**
 
          .. list-table::
             :header-rows: 1
 
             * - Modifier
               - Description
+              - Type
               - Range
             * - lc
               - Line color
+              - string
               - 000000 to FFFFFF
             * - fc
               - Fill color
+              - string
               - 000000 to FFFFFF
             * - la
               - Line alpha (opacity)
+              - float
               - 0 to 1
             * - fa
               - Fill alpha (opacity)
+              - float
               - 0 to 1
             * - lw
               - Line width
-              - Greater than 0
+              - int32
+              - (0, 50]
             * - ra
               - Circle radius (meters)
+              - float
               - Greater than 0. Default value is None.
         :paramtype path: list[str]
-        :return: Iterator of the response bytes
+        :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1305,10 +1411,9 @@ class RenderOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_render_get_map_static_image_request(
-            format=format,
-            layer=layer,
-            style=style,
+        _request = build_render_get_map_static_image_request(
+            tileset_id=tileset_id,
+            traffic_layer=traffic_layer,
             zoom=zoom,
             center=center,
             bounding_box_private=bounding_box_private,
@@ -1323,19 +1428,19 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
@@ -1343,28 +1448,28 @@ class RenderOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @distributed_trace
     def get_copyright_from_bounding_box(
         self,
-        format: Union[str, _models.ResponseFormat] = "json",
+        format: str = "json",
         *,
         south_west: List[float],
         north_east: List[float],
-        include_text: Optional[Union[str, _models.IncludeText]] = None,
+        include_text: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.Copyright:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    ) -> JSON:
+        """Use to get copyright information for the specified bounding box.
 
         Returns copyright information for a given bounding box. Bounding-box requests should specify
         the minimum and maximum longitude and latitude (EPSG-3857) coordinates.
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
-        :type format: str or ~azure.maps.render.models.ResponseFormat
+        :type format: str
         :keyword south_west: Minimum coordinates (south-west point) of bounding box in latitude
          longitude coordinate system. E.g. 52.41064,4.84228. Required.
         :paramtype south_west: list[float]
@@ -1374,12 +1479,34 @@ class RenderOperations:
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
          country/region names will be in response. Known values are: "yes" and "no". Default value is
          None.
-        :paramtype include_text: str or ~azure.maps.render.models.IncludeText
-        :return: Copyright
-        :rtype: ~azure.maps.render.models.Copyright
+        :paramtype include_text: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "formatVersion": "str",
+                    "generalCopyrights": [
+                        "str"
+                    ],
+                    "regions": [
+                        {
+                            "copyrights": [
+                                "str"
+                            ],
+                            "country": {
+                                "ISO3": "str",
+                                "label": "str"
+                            }
+                        }
+                    ]
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1390,9 +1517,9 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_copyright_from_bounding_box_request(
+        _request = build_render_get_copyright_from_bounding_box_request(
             format=format,
             south_west=south_west,
             north_east=north_east,
@@ -1402,79 +1529,97 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("Copyright", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_copyright_for_tile(
-        self,
-        format: Union[str, _models.ResponseFormat] = "json",
-        *,
-        z: int,
-        x: int,
-        y: int,
-        include_text: Optional[Union[str, _models.IncludeText]] = None,
-        **kwargs: Any
-    ) -> _models.Copyright:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        self, format: str = "json", *, z: int, x: int, y: int, include_text: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        """Use to get copyright information.
 
-        Copyrights API is designed to serve copyright information for Render Tile  service. In addition
-        to basic copyright for the whole map, API is serving  specific groups of copyrights for some
+        To obtain the copyright information for a particular tile, the request should specify the
+        tile's zoom level and x and y coordinates. For more information, see `Zoom Levels and Tile Grid
+        </azure/azure-maps/zoom-levels-and-tile-grid>`__.
+
+        Copyrights API is designed to serve copyright information for Render service. In addition to
+        basic copyright for the whole map, API is serving specific groups of copyrights for some
         countries/regions.
-        Returns the copyright information for a given tile. To obtain the copyright information for a
-        particular tile, the request should specify the tile's zoom level and x and y coordinates (see:
-        Zoom Levels and Tile Grid).
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
-        :type format: str or ~azure.maps.render.models.ResponseFormat
+        :type format: str
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/en-us/azure/location-based-services/zoom-levels-and-tile-grid>`_
-         for details. Required.
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
          country/region names will be in response. Known values are: "yes" and "no". Default value is
          None.
-        :paramtype include_text: str or ~azure.maps.render.models.IncludeText
-        :return: Copyright
-        :rtype: ~azure.maps.render.models.Copyright
+        :paramtype include_text: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "formatVersion": "str",
+                    "generalCopyrights": [
+                        "str"
+                    ],
+                    "regions": [
+                        {
+                            "copyrights": [
+                                "str"
+                            ],
+                            "country": {
+                                "ISO3": "str",
+                                "label": "str"
+                            }
+                        }
+                    ]
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1485,9 +1630,9 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_copyright_for_tile_request(
+        _request = build_render_get_copyright_for_tile_request(
             format=format,
             z=z,
             x=x,
@@ -1498,55 +1643,76 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("Copyright", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_copyright_for_world(
-        self,
-        format: Union[str, _models.ResponseFormat] = "json",
-        *,
-        include_text: Optional[Union[str, _models.IncludeText]] = None,
-        **kwargs: Any
-    ) -> _models.Copyright:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        self, format: str = "json", *, include_text: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        """Use to get copyright information for for the world.
 
-        Copyrights API is designed to serve copyright information for Render Tile  service. In addition
-        to basic copyright for the whole map, API is serving  specific groups of copyrights for some
-        countries/regions.
         Returns the copyright information for the world. To obtain the default copyright information
-        for the whole world, do not specify a tile or bounding box.
+        for the whole world, don't specify a tile or bounding box.
+
+        Copyrights API is designed to serve copyright information for Render service. In addition to
+        basic copyright for the whole map, API is serving specific groups of copyrights for some
+        countries/regions.
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
-        :type format: str or ~azure.maps.render.models.ResponseFormat
+        :type format: str
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
          country/region names will be in response. Known values are: "yes" and "no". Default value is
          None.
-        :paramtype include_text: str or ~azure.maps.render.models.IncludeText
-        :return: Copyright
-        :rtype: ~azure.maps.render.models.Copyright
+        :paramtype include_text: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "formatVersion": "str",
+                    "generalCopyrights": [
+                        "str"
+                    ],
+                    "regions": [
+                        {
+                            "copyrights": [
+                                "str"
+                            ],
+                            "country": {
+                                "ISO3": "str",
+                                "label": "str"
+                            }
+                        }
+                    ]
+                }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1557,9 +1723,9 @@ class RenderOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Copyright] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_render_get_copyright_for_world_request(
+        _request = build_render_get_copyright_for_world_request(
             format=format,
             include_text=include_text,
             client_id=self._config.client_id,
@@ -1567,23 +1733,25 @@ class RenderOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("Copyright", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore

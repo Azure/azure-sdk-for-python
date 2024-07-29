@@ -83,7 +83,7 @@ class AzurePowerShellCredential:
     def close(self) -> None:
         """Calling this method is unnecessary."""
 
-    @log_get_token("AzurePowerShellCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,
