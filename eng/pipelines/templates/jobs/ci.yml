@@ -303,6 +303,9 @@ jobs:
             Selection: sparse
             GenerateVMJobs: true
       PreGenerationSteps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.12'
         - pwsh: |
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
