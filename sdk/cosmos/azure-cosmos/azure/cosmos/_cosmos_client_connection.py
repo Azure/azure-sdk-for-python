@@ -1173,6 +1173,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+            if collection_link in self.__container_properties_cache:
+                new_options = dict(options)
+                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                options = new_options
             return self.__QueryFeed(
                 path,
                 resource_key,

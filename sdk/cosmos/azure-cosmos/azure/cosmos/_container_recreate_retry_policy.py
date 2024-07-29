@@ -76,6 +76,8 @@ class ContainerRecreateRetryPolicy:
                 is_match = next((k for k, v in inner_dict.items() if v == rid), None)
                 if is_match:
                     return key
+        # If we cannot get the container link at all it might mean the cache was somehow deleted, this isn't
+        # a container request so this retry is not needed. Return None.
         return None
 
     def check_if_rid_different(self, container_link: str,

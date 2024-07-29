@@ -107,8 +107,11 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
-            # If container does not have throughput, results will return empty list, but to align with other SDKs
-            # we manually raise a 404. We raise it here, so we can handle it in retry utilities
+            # TODO: It is better to raise Exceptions manually in the method related to the request,
+            #  a rework of retry would be needed to be able to retry exceptions raised that way.
+            #  for now raising a manual exception here should allow it to be retried.
+            # If container does not have throughput, results will return empty list.
+            # We manually raise a 404. We raise it here, so we can handle it in retry utilities.
             if result and isinstance(result[0], dict) and 'Offers' in result[0] and \
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.

@@ -573,6 +573,58 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         await created_db.delete_container(container_name)
 
+    async def test_container_recreate_change_feed(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+
+        # Create the container
+        try:
+            created_container = await created_db.create_container(id=container_name,
+                                                                  partition_key=PartitionKey(path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container should not already exist.")
+
+        # Create initial items
+        try:
+            item_to_read = await created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            item_to_read2 = await created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Save old container cache and recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        await created_db.delete_container(created_container)
+        try:
+            created_container = await created_db.create_container(id=container_name,
+                                                                  partition_key=PartitionKey(path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container should not already exist.")
+
+        # Create new items in the recreated container
+        try:
+            new_item1 = await created_container.create_item(body={'id': 'item3', container_pk: 'newVal'})
+            new_item2 = await created_container.create_item(body={'id': 'item4', container_pk: 'newOtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+
+        # Query change feed for the new items
+        change_feed = [item async for item in created_container.query_items_change_feed()]
+        assert len(change_feed) == 2
+
+        # Verify that the change feed contains the new items
+        assert any(item['id'] == 'item3' and item[container_pk] == 'newVal' for item in change_feed)
+        assert any(item['id'] == 'item4' and item[container_pk] == 'newOtherValue' for item in change_feed)
+
+        # Verify that the change feed does not contain the old items
+        assert not any(item['id'] == 'item1' and item[container_pk] == 'val' for item in change_feed)
+        assert not any(item['id'] == 'item2' and item[container_pk] == 'OtherValue' for item in change_feed)
+
+        await created_db.delete_container(container_name)
+
 
 if __name__ == '__main__':
     unittest.main()

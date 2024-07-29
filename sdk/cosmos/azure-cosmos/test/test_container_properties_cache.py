@@ -560,6 +560,58 @@ class TestContainerPropertiesCache(unittest.TestCase):
 
         created_db.delete_container(container_name)
 
+    def test_container_recreate_change_feed(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+
+        # Create the container
+        try:
+            created_container = created_db.create_container(id=container_name,
+                                                            partition_key=PartitionKey(path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container should not already exist.")
+
+        # Create initial items
+        try:
+            item_to_read = created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            item_to_read2 = created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Save old container cache and recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name,
+                                                            partition_key=PartitionKey(path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container should not already exist.")
+
+        # Create new items in the recreated container
+        try:
+            new_item1 = created_container.create_item(body={'id': 'item3', container_pk: 'newVal'})
+            new_item2 = created_container.create_item(body={'id': 'item4', container_pk: 'newOtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+
+        # Query change feed for the new items
+        change_feed = list(created_container.query_items_change_feed())
+        self.assertEqual(len(change_feed), 2)
+
+        # Verify that the change feed contains the new items
+        self.assertTrue(any(item['id'] == 'item3' and item[container_pk] == 'newVal' for item in change_feed))
+        self.assertTrue(any(item['id'] == 'item4' and item[container_pk] == 'newOtherValue' for item in change_feed))
+
+        # Verify that the change feed does not contain the old items
+        self.assertFalse(any(item['id'] == 'item1' and item[container_pk] == 'val' for item in change_feed))
+        self.assertFalse(any(item['id'] == 'item2' and item[container_pk] == 'OtherValue' for item in change_feed))
+
+        created_db.delete_container(container_name)
+
 
 if __name__ == '__main__':
     try:
