@@ -407,3 +407,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param ~azure.eventhub._client_base.ClientBase base: ClientBase.
         :param Exception exception: Exception to check.
         """
+
+    @staticmethod
+    @abstractmethod
+    def is_non_retryable(exception: Exception) -> bool:
+        """
+        Checks if the exception is retryable, if the exception includes error condition information.
+        :param Exception exception: Exception to check.
+        """

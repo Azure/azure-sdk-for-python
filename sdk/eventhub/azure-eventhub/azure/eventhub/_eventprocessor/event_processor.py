@@ -116,6 +116,7 @@ class EventProcessor(
         self._prefetch: Optional[int] = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._id = str(uuid.uuid4())
+        print('in ep init')
         self._running = False
         self._lock = threading.RLock()
 
@@ -419,5 +420,6 @@ class EventProcessor(
             _LOGGER.info("EventProcessor %r has already been stopped.", self._id)
             return
 
+        print('in ep stop')
         self._running = False
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)

@@ -729,7 +729,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return error
 
     @staticmethod
-    def _is_non_retryable(exception: Exception) -> bool: 
+    def is_non_retryable(exception: Exception) -> bool:
         try:
             return exception.condition in NO_RETRY_ERRORS
         except AttributeError:

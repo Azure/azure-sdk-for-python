@@ -26,6 +26,7 @@ from ...exceptions import (
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
+    from .._consumer_async import EventHubConsumer
     from ..._pyamqp.message import Message
 
 _LOGGER = logging.getLogger(__name__)
@@ -233,7 +234,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
+    async def _callback_task(consumer: "EventHubConsumer", batch, max_batch_size, max_wait_time):
         while consumer._callback_task_run: # pylint: disable=protected-access
             async with consumer._message_buffer_lock: # pylint: disable=protected-access
                 events = [
@@ -253,7 +254,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await asyncio.sleep(0.05)
 
     @staticmethod
-    async def _receive_task(consumer):
+    async def _receive_task(consumer: "EventHubConsumer"):
         # pylint:disable=protected-access
         max_retries = consumer._client._config.max_retries
         retried_times = 0
@@ -274,10 +275,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
                     ):
                         raise await consumer._handle_exception(exception)
-                    if not consumer.running:  # exit by close
-                        return
+
                     if consumer._last_received_event:
                         consumer._offset = consumer._last_received_event.offset
+
+                    if consumer._is_non_retryable(exception):
+                        last_exception = await consumer._handle_exception(exception)
+                        _LOGGER.info(
+                            "% operation has encountered an exception: %r.",
+                            consumer._name,
+                            last_exception,
+                        )
+                        raise last_exception from None
+
+                    if not consumer.running:  # exit by close
+                        return
+
                     last_exception = await consumer._handle_exception(exception)
                     retried_times += 1
                     if retried_times > max_retries:
@@ -291,12 +304,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             consumer._callback_task_run = False
 
     @staticmethod
-    async def message_received_async(consumer, message: Message) -> None:
+    async def message_received_async(consumer: "EventHubConsumer", message: Message) -> None:
         async with consumer._message_buffer_lock: # pylint: disable=protected-access
             consumer._message_buffer.append(message) # pylint: disable=protected-access
 
     @staticmethod
-    async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
+    async def receive_messages_async(consumer: "EventHubConsumer", batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
         :param ~azure.eventhub.aio._consumer_async.EventHubConsumer consumer: The EventHubConsumer.

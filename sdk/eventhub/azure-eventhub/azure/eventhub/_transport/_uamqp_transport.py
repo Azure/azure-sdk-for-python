@@ -768,8 +768,8 @@ if uamqp_installed:
             return error
         
         @staticmethod
-        def _is_non_retryable(exception: Exception) -> bool:
-            # uamqp exceptions do not have a specific attribute to indicate whether the error is retryable
+        def is_non_retryable(exception: Exception) -> bool:
+            # uamqp exceptions do not have a specific condition attribute to check if they are retryable
             pass
 
         @staticmethod

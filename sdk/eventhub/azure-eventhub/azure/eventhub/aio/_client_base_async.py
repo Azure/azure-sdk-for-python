@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         uamqp_AMQPClientAsync = None
         JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
+    from ._transport._base_async import AmqpTransportAsync
 
     try:
         from typing_extensions import TypeAlias, Protocol
@@ -85,6 +86,14 @@ if TYPE_CHECKING:
 
         @_client.setter
         def _client(self, value):
+            pass
+
+        @property
+        def _amqp_transport(self) -> "AmqpTransportAsync":
+            """The instance of AmqpTransportAsync"""
+
+        @_client.setter
+        def _amqp_transport(self, value):
             pass
 
         @property
@@ -506,6 +515,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         return await self._client._amqp_transport._handle_exception_async(
             exception, self, is_consumer=is_consumer
         )
+
+    def _is_non_retryable(self, exception):
+        return self._amqp_transport.is_non_retryable(exception)
 
     async def _do_retryable_operation(
         self,

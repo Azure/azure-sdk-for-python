@@ -237,12 +237,23 @@ class EventHubConsumer(
                     if isinstance(exception, ImportError):
                         raise exception
                     self._amqp_transport.check_link_stolen(self, exception)
+                    if self._last_received_event:
+                        self._offset = self._last_received_event.offset
+
+                    if self._is_non_retryable(exception):
+                        last_exception = self._handle_exception(exception)
+                        _LOGGER.info(
+                            "% operation has encountered an exception: %r.",
+                            self._name,
+                            last_exception,
+                        )
+                        raise last_exception from None
+
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137
                     if not self.running:  # exit by close
                         return
-                    if self._last_received_event:
-                        self._offset = self._last_received_event.offset
+
                     last_exception = self._handle_exception(exception, is_consumer=True)
                     retried_times += 1
                     if retried_times > max_retries or self._is_non_retryable(exception):
