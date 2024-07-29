@@ -374,9 +374,6 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
-        :keyword bool enable_snapshot_virtual_directory_access:
-            Specifies whether the snapshot virtual directory should be accessible at the root of the share
-            mount point when NFS is enabled. Default value is True.
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
@@ -949,6 +946,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :returns: A file permission key
         :rtype: str
         """
@@ -977,6 +977,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :returns: A file permission (a portable SDDL)
         :rtype: str
         """
