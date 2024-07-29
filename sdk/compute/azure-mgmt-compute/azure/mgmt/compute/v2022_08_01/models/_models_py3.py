@@ -1517,8 +1517,8 @@ class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attri
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machine should be created. Possible values are:
-     **Attach** \u2013 This value is used when you are using a specialized disk to create the
-     virtual machine. **FromImage** \u2013 This value is used when you are using an image to create
+     **Attach** \\u2013 This value is used when you are using a specialized disk to create the
+     virtual machine. **FromImage** \\u2013 This value is used when you are using an image to create
      the virtual machine. If you are using a platform image, you also use the imageReference element
      described above. If you are using a marketplace image, you  also use the plan element
      previously described. Required. Known values are: "FromImage", "Empty", and "Attach".
@@ -1619,8 +1619,8 @@ class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attri
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword create_option: Specifies how the virtual machine should be created. Possible values
-         are: **Attach** \u2013 This value is used when you are using a specialized disk to create the
-         virtual machine. **FromImage** \u2013 This value is used when you are using an image to create
+         are: **Attach** \\u2013 This value is used when you are using a specialized disk to create the
+         virtual machine. **FromImage** \\u2013 This value is used when you are using an image to create
          the virtual machine. If you are using a platform image, you also use the imageReference element
          described above. If you are using a marketplace image, you  also use the plan element
          previously described. Required. Known values are: "FromImage", "Empty", and "Attach".
@@ -2393,7 +2393,7 @@ class DiagnosticsProfile(_serialization.Model):
     """Specifies the boot diagnostic settings state. Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-     Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+     Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
      specified then ensure that the storage account is in the same region and subscription as the
      VM.  You can easily view the output of your console log.  Azure also enables you to see a
      screenshot of the VM from the hypervisor.
@@ -2407,7 +2407,7 @@ class DiagnosticsProfile(_serialization.Model):
     def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs: Any) -> None:
         """
         :keyword boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-         Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+         Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
          specified then ensure that the storage account is in the same region and subscription as the
          VM.  You can easily view the output of your console log.  Azure also enables you to see a
          screenshot of the VM from the hypervisor.
@@ -4437,8 +4437,8 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
      used by the virtual machine.
     :vartype diff_disk_settings: ~azure.mgmt.compute.v2022_08_01.models.DiffDiskSettings
     :ivar create_option: Specifies how the virtual machine should be created. Possible values are:
-     **Attach** \u2013 This value is used when you are using a specialized disk to create the
-     virtual machine. **FromImage** \u2013 This value is used when you are using an image to create
+     **Attach** \\u2013 This value is used when you are using a specialized disk to create the
+     virtual machine. **FromImage** \\u2013 This value is used when you are using an image to create
      the virtual machine. If you are using a platform image, you also use the imageReference element
      described above. If you are using a marketplace image, you  also use the plan element
      previously described. Required. Known values are: "FromImage", "Empty", and "Attach".
@@ -4521,8 +4521,8 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
          disk used by the virtual machine.
         :paramtype diff_disk_settings: ~azure.mgmt.compute.v2022_08_01.models.DiffDiskSettings
         :keyword create_option: Specifies how the virtual machine should be created. Possible values
-         are: **Attach** \u2013 This value is used when you are using a specialized disk to create the
-         virtual machine. **FromImage** \u2013 This value is used when you are using an image to create
+         are: **Attach** \\u2013 This value is used when you are using a specialized disk to create the
+         virtual machine. **FromImage** \\u2013 This value is used when you are using an image to create
          the virtual machine. If you are using a platform image, you also use the imageReference element
          described above. If you are using a marketplace image, you  also use the plan element
          previously described. Required. Known values are: "FromImage", "Empty", and "Attach".
@@ -4606,7 +4606,7 @@ class OSProfile(_serialization.Model):
      (Windows):** 8 characters **Minimum-length (Linux):** 6 characters **Max-length (Windows):**
      123 characters **Max-length (Linux):** 72 characters **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled Has lower characters Has upper characters  Has a digit
-     Has a special character (Regex match [\W_])  **Disallowed values:** "abc@123", "P@$$w0rd",
+     Has a special character (Regex match [\\W_])  **Disallowed values:** "abc@123", "P@$$w0rd",
      "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22",
      "iloveyou!"  For resetting the password, see `How to reset the Remote Desktop service or its
      login password in a Windows VM
@@ -4692,7 +4692,7 @@ class OSProfile(_serialization.Model):
          (Windows):** 8 characters **Minimum-length (Linux):** 6 characters **Max-length (Windows):**
          123 characters **Max-length (Linux):** 72 characters **Complexity requirements:** 3 out of 4
          conditions below need to be fulfilled Has lower characters Has upper characters  Has a digit
-         Has a special character (Regex match [\W_])  **Disallowed values:** "abc@123", "P@$$w0rd",
+         Has a special character (Regex match [\\W_])  **Disallowed values:** "abc@123", "P@$$w0rd",
          "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22",
          "iloveyou!"  For resetting the password, see `How to reset the Remote Desktop service or its
          login password in a Windows VM
@@ -5196,7 +5196,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2022_08_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2022_08_01.models.PublicIPAddressSkuTier
     """
 
@@ -5215,7 +5215,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2022_08_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2022_08_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -6771,7 +6772,7 @@ class Sku(_serialization.Model):
     :ivar name: The sku name.
     :vartype name: str
     :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
      **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
@@ -6791,7 +6792,7 @@ class Sku(_serialization.Model):
         :keyword name: The sku name.
         :paramtype name: str
         :keyword tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br
-         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
          **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
@@ -11775,7 +11776,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):  # pylint: disable=too
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machines in the scale set should be
-     created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
+     created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \\u2013 This value is
      used when you are using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are using a marketplace
      image, you  also use the plan element previously described. Required. Known values are:
@@ -11859,7 +11860,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):  # pylint: disable=too
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword create_option: Specifies how the virtual machines in the scale set should be
-         created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
+         created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \\u2013 This value is
          used when you are using an image to create the virtual machine. If you are using a platform
          image, you also use the imageReference element described above. If you are using a marketplace
          image, you  also use the plan element previously described. Required. Known values are:
@@ -11931,7 +11932,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -12011,7 +12012,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a

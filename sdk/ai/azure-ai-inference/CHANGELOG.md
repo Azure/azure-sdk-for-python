@@ -1,14 +1,12 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2024-07-31)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+* Allow setting default chat completions configuration in the `ChatCompletionsClient` constructor.
+* Allow setting default embeddings configuration in the `EmbeddingsClient` constructor.
+* Add `model` as an optional input argument to the `embed` method of `EmbeddingsClient`.
 
 ## 1.0.0b2 (2024-06-24)
 
@@ -23,4 +21,4 @@ REST API and the service never returned this value.
 
 ## 1.0.0b1 (2024-06-11)
 
-- Initial beta version
+* Initial beta version
