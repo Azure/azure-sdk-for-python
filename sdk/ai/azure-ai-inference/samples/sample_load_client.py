@@ -42,7 +42,7 @@ def sample_load_client():
     # This should create a client of type `ChatCompletionsClient`
     print(f"Created client of type `{type(client).__name__}`.")
 
-    if isinstance(client, ChatCompletionsClient):
+    if type(client) is ChatCompletionsClient:
         response = client.complete(
             messages=[
                 SystemMessage(content="You are a helpful assistant."),

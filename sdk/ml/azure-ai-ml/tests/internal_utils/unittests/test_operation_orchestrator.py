@@ -12,8 +12,8 @@ from azure.ai.ml.constants._common import (
     VERSIONED_RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.operations import (
     ComponentOperations,
@@ -61,13 +61,13 @@ def component_operations(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_07_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
-        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
+        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
     )
 
 
