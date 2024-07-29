@@ -1,5 +1,11 @@
 # Release History
 
+## 11.5.0 (2024-07-30)
+
+### Other Changes
+
+- Improved type checks.
+
 ## 11.5.0 (2024-07-16)
 
 ### Breaking Changes

@@ -684,7 +684,7 @@ class SearchIndex(_serialization.Model):
                 for x in self.tokenizers
             ]
         else:
-            tokenizers = []
+            tokenizers = None
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
@@ -715,7 +715,7 @@ class SearchIndex(_serialization.Model):
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
-            analyzers = []
+            analyzers = None
         if search_index.tokenizers:
             tokenizers = [
                 (
@@ -726,7 +726,7 @@ class SearchIndex(_serialization.Model):
                 for x in search_index.tokenizers
             ]
         else:
-            tokenizers = []
+            tokenizers = None
         if search_index.fields:
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
