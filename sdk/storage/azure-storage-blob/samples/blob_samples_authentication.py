@@ -20,9 +20,6 @@ USAGE:
     2) OAUTH_STORAGE_ACCOUNT_NAME - the oauth storage account name
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
-    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
-    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
-    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
 """
 
 import os
