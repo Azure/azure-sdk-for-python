@@ -29,6 +29,9 @@ from .._generated.models import (
     CognitiveServicesAccount,
     SearchIndexerKnowledgeStore,
     SearchIndexerIndexProjection,
+    SearchIndexerDataContainer,
+    DataChangeDetectionPolicy,
+    DataDeletionDetectionPolicy,
 )
 
 DELIMITER = "|"
@@ -466,14 +469,24 @@ class AnalyzeTextOptions(_serialization.Model):
     :vartype char_filters: list[str]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        text: str,
+        analyzer_name: Optional[str] = None,
+        tokenizer_name: Optional[str] = None,
+        normalizer_name: Optional[str] = None,
+        token_filters: Optional[List[str]] = None,
+        char_filters: Optional[List[str]] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.text = kwargs["text"]
-        self.analyzer_name = kwargs.get("analyzer_name", None)
-        self.tokenizer_name = kwargs.get("tokenizer_name", None)
-        self.normalizer_name = kwargs.get("normalizer_name", None)
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
+        self.text = text
+        self.analyzer_name = analyzer_name
+        self.tokenizer_name = tokenizer_name
+        self.normalizer_name = normalizer_name
+        self.token_filters = token_filters
+        self.char_filters = char_filters
 
     def _to_analyze_request(self):
         return AnalyzeRequest(
@@ -795,13 +808,22 @@ class SearchResourceEncryptionKey(_serialization.Model):
     :vartype application_secret: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        key_name: str,
+        key_version: str,
+        vault_uri: str,
+        application_id: Optional[str] = None,
+        application_secret: Optional[str] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.key_name = kwargs["key_name"]
-        self.key_version = kwargs["key_version"]
-        self.vault_uri = kwargs["vault_uri"]
-        self.application_id = kwargs.get("application_id", None)
-        self.application_secret = kwargs.get("application_secret", None)
+        self.key_name = key_name
+        self.key_version = key_version
+        self.vault_uri = vault_uri
+        self.application_id = application_id
+        self.application_secret = application_secret
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
@@ -927,12 +949,20 @@ class SynonymMap(_serialization.Model):
 
     format = "solr"
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        synonyms: List[str],
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        e_tag: Optional[str] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.synonyms = kwargs["synonyms"]
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.e_tag = kwargs.get("e_tag", None)
+        self.name = name
+        self.synonyms = synonyms
+        self.encryption_key = encryption_key
+        self.e_tag = e_tag
 
     def _to_generated(self):
         return _SynonymMap(
@@ -1053,17 +1083,28 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 *,
+                 name: str,
+                 description: Optional[str] = None,
+                 type: str,
+                 connection_string: str,
+                 container: SearchIndexerDataContainer,
+                 data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
+                 data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
+                 e_tag: Optional[str] = None,
+                 encryption_key: Optional[SearchResourceEncryptionKey] = None,
+                 **kwargs):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.description = kwargs.get("description", None)
-        self.type = kwargs["type"]
-        self.connection_string = kwargs["connection_string"]
-        self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
-        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
-        self.e_tag = kwargs.get("e_tag", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
+        self.name = name
+        self.description = description
+        self.type = type
+        self.connection_string = connection_string
+        self.container = container
+        self.data_change_detection_policy = data_change_detection_policy
+        self.data_deletion_detection_policy = data_deletion_detection_policy
+        self.e_tag = e_tag
+        self.encryption_key = encryption_key
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":

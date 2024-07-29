@@ -12,6 +12,18 @@ from .._generated.models import (
     SearchIndex as _SearchIndex,
     PatternTokenizer as _PatternTokenizer,
     LexicalAnalyzerName,
+    VectorEncodingFormat,
+    SearchFieldDataType,
+    ScoringProfile,
+    CorsOptions,
+    SearchSuggester,
+    LexicalAnalyzer,
+    LexicalTokenizer,
+    TokenFilter,
+    CharFilter,
+    SimilarityAlgorithm,
+    SemanticSearch,
+    VectorSearch,
 )
 from ._models import (
     pack_analyzer,
@@ -171,25 +183,46 @@ class SearchField(_serialization.Model):
     :vartype vector_encoding_format: str or ~azure.search.documents.indexes.models.VectorEncodingFormat
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        type: Union[str, SearchFieldDataType],
+        key: Optional[bool] = None,
+        hidden: Optional[bool] = None,
+        stored: Optional[bool] = None,
+        searchable: Optional[bool] = None,
+        filterable: Optional[bool] = None,
+        sortable: Optional[bool] = None,
+        facetable: Optional[bool] = None,
+        analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        synonym_map_names: Optional[List[str]] = None,
+        fields: Optional[List["SearchField"]] = None,
+        vector_search_dimensions: Optional[int] = None,
+        vector_search_profile_name: Optional[str] = None,
+        vector_encoding_format: Optional[Union[str, VectorEncodingFormat]] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.type = kwargs["type"]
-        self.key = kwargs.get("key", None)
-        self.hidden = kwargs.get("hidden", None)
-        self.stored = kwargs.get("stored", None)
-        self.searchable = kwargs.get("searchable", None)
-        self.filterable = kwargs.get("filterable", None)
-        self.sortable = kwargs.get("sortable", None)
-        self.facetable = kwargs.get("facetable", None)
-        self.analyzer_name = kwargs.get("analyzer_name", None)
-        self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
-        self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
-        self.synonym_map_names = kwargs.get("synonym_map_names", None)
-        self.fields = kwargs.get("fields", None)
-        self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
-        self.vector_search_profile_name = kwargs.get("vector_search_profile_name", None)
-        self.vector_encoding_format = kwargs.get("vector_encoding_format", None)
+        self.name = name
+        self.type = type
+        self.key = key
+        self.hidden = hidden
+        self.stored = stored
+        self.searchable = searchable
+        self.filterable = filterable
+        self.sortable = sortable
+        self.facetable = facetable
+        self.analyzer_name = analyzer_name
+        self.search_analyzer_name = search_analyzer_name
+        self.index_analyzer_name = index_analyzer_name
+        self.synonym_map_names = synonym_map_names
+        self.fields = fields
+        self.vector_search_dimensions = vector_search_dimensions
+        self.vector_search_profile_name = vector_search_profile_name
+        self.vector_encoding_format = vector_encoding_format
 
     def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
@@ -603,23 +636,42 @@ class SearchIndex(_serialization.Model):
     :vartype e_tag: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        fields: List[SearchField],
+        scoring_profiles: Optional[List[ScoringProfile]] = None,
+        default_scoring_profile: Optional[str] = None,
+        cors_options: Optional[CorsOptions] = None,
+        suggesters: Optional[List[SearchSuggester]] = None,
+        analyzers: Optional[List[LexicalAnalyzer]] = None,
+        tokenizers: Optional[List[LexicalTokenizer]] = None,
+        token_filters: Optional[List[TokenFilter]] = None,
+        char_filters: Optional[List[CharFilter]] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        similarity: Optional[SimilarityAlgorithm] = None,
+        semantic_search: Optional[SemanticSearch] = None,
+        vector_search: Optional[VectorSearch] = None,
+        e_tag: Optional[str] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.fields = kwargs["fields"]
-        self.scoring_profiles = kwargs.get("scoring_profiles", None)
-        self.default_scoring_profile = kwargs.get("default_scoring_profile", None)
-        self.cors_options = kwargs.get("cors_options", None)
-        self.suggesters = kwargs.get("suggesters", None)
-        self.analyzers = kwargs.get("analyzers", None)
-        self.tokenizers = kwargs.get("tokenizers", None)
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.similarity = kwargs.get("similarity", None)
-        self.semantic_search = kwargs.get("semantic_search", None)
-        self.vector_search = kwargs.get("vector_search", None)
-        self.e_tag = kwargs.get("e_tag", None)
+        self.name = name
+        self.fields = fields
+        self.scoring_profiles = scoring_profiles
+        self.default_scoring_profile = default_scoring_profile
+        self.cors_options = cors_options
+        self.suggesters = suggesters
+        self.analyzers = analyzers
+        self.tokenizers = tokenizers
+        self.token_filters = token_filters
+        self.char_filters = char_filters
+        self.encryption_key = encryption_key
+        self.similarity = similarity
+        self.semantic_search = semantic_search
+        self.vector_search = vector_search
+        self.e_tag = e_tag
 
     def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
@@ -632,7 +684,7 @@ class SearchIndex(_serialization.Model):
                 for x in self.tokenizers
             ]
         else:
-            tokenizers = None
+            tokenizers = []
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
@@ -663,7 +715,7 @@ class SearchIndex(_serialization.Model):
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
-            analyzers = None
+            analyzers = []
         if search_index.tokenizers:
             tokenizers = [
                 (
@@ -674,11 +726,11 @@ class SearchIndex(_serialization.Model):
                 for x in search_index.tokenizers
             ]
         else:
-            tokenizers = None
+            tokenizers = []
         if search_index.fields:
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
-            fields = None
+            fields = []
         return cls(
             name=search_index.name,
             fields=fields,
