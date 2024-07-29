@@ -421,8 +421,8 @@ class TestGlobalDB(unittest.TestCase):
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
     def test_global_db_service_request_errors(self):
-        connection_policy = documents.ConnectionPolicy()
-        retry_policy = test_config.MockConnectionRetryPolicy(
+        mock_connection_policy = documents.ConnectionPolicy()
+        mock_retry_policy = test_config.MockConnectionRetryPolicy(
             retry_total=5,
             retry_connect=None,
             retry_read=None,
@@ -431,13 +431,13 @@ class TestGlobalDB(unittest.TestCase):
             retry_on_status_codes=[],
             retry_backoff_factor=0.8,
         )
-        connection_policy.ConnectionRetryConfiguration = retry_policy
+        mock_connection_policy.ConnectionRetryConfiguration = mock_retry_policy
         try:
-            client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
+            client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
             client.get_database_client("test_db").read()
             pytest.fail("client initialization should have received ServiceRequestError")
         except ServiceRequestError:
-            assert retry_policy.count == 3
+            assert mock_retry_policy.count == 3
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)
