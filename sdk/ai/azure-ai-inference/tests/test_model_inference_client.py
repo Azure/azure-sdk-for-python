@@ -660,8 +660,7 @@ class TestModelClient(ModelClientTestBase):
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_input_image_url(self, **kwargs):
-        # TODO: Update this to point to Main branch
-        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/tests/test_image1.png"
         client = self._create_aoai_chat_client(**kwargs)
         response = client.complete(
             messages=[
