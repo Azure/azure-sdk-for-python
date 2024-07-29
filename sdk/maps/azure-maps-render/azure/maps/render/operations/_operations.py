@@ -417,21 +417,21 @@ class RenderOperations:
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword time_stamp: The desired date and time of the requested tile. This parameter must be
@@ -439,13 +439,15 @@ class RenderOperations:
          8601 <https://en.wikipedia.org/wiki/ISO_8601>`_. This parameter is only supported when
          tilesetId parameter is set to one of the values below.
 
+        * microsoft.weather.infrared.main: We provide tiles up to 3 hours in the past. Tiles are
+          available in 10-minute intervals. We round the timeStamp value to the nearest 10-minute time
+          frame.
 
-         * microsoft.weather.infrared.main: We provide tiles up to 3 hours in the past. Tiles are
-         available in 10-minute intervals. We round the timeStamp value to the nearest 10-minute time
-         frame.
-         * microsoft.weather.radar.main: We provide tiles up to 1.5 hours in the past and up to 2 hours
-         in the future. Tiles are available in 5-minute intervals. We round the timeStamp value to the
-         nearest 5-minute time frame. Default value is None.
+        * microsoft.weather.radar.main: We provide tiles up to 1.5 hours in the past and up to 2 hours
+          in the future. Tiles are available in 5-minute intervals. We round the timeStamp value to the
+          nearest 5-minute time frame. Default value is None.
+
+
         :paramtype time_stamp: ~datetime.datetime
         :keyword tile_size: The size of the returned map tile in pixels. Known values are: "256" and
          "512". Default value is None.
@@ -729,26 +731,26 @@ class RenderOperations:
         Fetches state tiles in vector format typically to be integrated into indoor maps module of map
         control or SDK. The map control will call this API after user turns on dynamic styling. For
         more information, see `Zoom Levels and Tile Grid
-        </azure/location-based-services/zoom-levels-and-tile-grid>`_.
+        </azure/location-based-services/zoom-levels-and-tile-grid>`__.
 
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword stateset_id: The stateset id. Required.
@@ -1052,9 +1054,9 @@ class RenderOperations:
         :paramtype traffic_layer: str
         :keyword zoom: Desired zoom level of the map. Support zoom value range from 0-20 (inclusive)
          for tilesetId being microsoft.base.road or microsoft.base.darkgrey. Support zoom value range
-         from 0-19 (inclusive) for tilesetId being microsoft.imagery. Default value is
-         12.:code:`<br>`:code:`<br>`For more information, see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_. Default
+         from 0-19 (inclusive) for tilesetId being microsoft.imagery.
+         For more information, see `Zoom Levels and Tile Grid
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__. Default
          value is None.
         :paramtype zoom: int
         :keyword center: Coordinates of the center point in double. Format: 'lon,lat'. Longitude range:
@@ -1138,8 +1140,7 @@ class RenderOperations:
          The S0 Azure Maps account SKU only allows five pushpins. Other account SKUs do not have this
          limitation.
 
-         Style Modifiers
-         ^^^^^^^^^^^^^^^
+         **Style Modifiers**
 
          You can modify the appearance of the pins by adding style modifiers. These are added after the
          style but before
@@ -1155,8 +1156,7 @@ class RenderOperations:
 
          ``pins=default|coFF1493||-122 45``
 
-         Pushpin Labels
-         ^^^^^^^^^^^^^^
+         **Pushpin Labels**
 
          To add a label to the pins, put the label in single quotes just before the coordinates. Avoid
          using special character such as ``|`` or ``||`` in label. For example, to label
@@ -1196,8 +1196,7 @@ class RenderOperations:
 
          ``pins=default|la10 -4||'A'-122 45|'B'-119 43``
 
-         Custom Pushpins
-         ^^^^^^^^^^^^^^^
+         **Custom Pushpins**
 
          To use a custom pushpin image, use the word 'custom' as the pin style name, and then specify a
          URL after the
@@ -1228,8 +1227,7 @@ class RenderOperations:
          would usually
          only be done with a solid-color custom image.
 
-         Scale, Rotation, and Opacity
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         **Scale, Rotation, and Opacity**
 
          You can make pushpins and their labels larger or smaller by using the 'sc' scale style
          modifier. This is a
@@ -1258,8 +1256,7 @@ class RenderOperations:
 
          ``pins=default|al.67||-122 45``
 
-         Style Modifier Summary
-         ^^^^^^^^^^^^^^^^^^^^^^
+         **Style Modifier Summary**
 
          .. list-table::
             :header-rows: 1
@@ -1343,8 +1340,7 @@ class RenderOperations:
          Longitude value for locations of lines and polygons can be in the range from -360 to 360 to
          allow for rendering of geometries crossing the anti-meridian.
 
-         Style Modifiers
-         ^^^^^^^^^^^^^^^
+         **Style Modifiers**
 
          You can modify the appearance of the path by adding style modifiers. These are added before
          the locations.
@@ -1364,8 +1360,7 @@ class RenderOperations:
 
          ``lc0000FF|lw3|la0.60|fa0.50||-122.2 47.6|-122.2 47.7|-122.3 47.7|-122.3 47.6|-122.2 47.6``
 
-         Style Modifier Summary
-         ^^^^^^^^^^^^^^^^^^^^^^
+         **Style Modifier Summary**
 
          .. list-table::
             :header-rows: 1
@@ -1565,7 +1560,7 @@ class RenderOperations:
 
         To obtain the copyright information for a particular tile, the request should specify the
         tile's zoom level and x and y coordinates. For more information, see `Zoom Levels and Tile Grid
-        </azure/azure-maps/zoom-levels-and-tile-grid>`_.
+        </azure/azure-maps/zoom-levels-and-tile-grid>`__.
 
         Copyrights API is designed to serve copyright information for Render service. In addition to
         basic copyright for the whole map, API is serving specific groups of copyrights for some
@@ -1577,21 +1572,21 @@ class RenderOperations:
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and
