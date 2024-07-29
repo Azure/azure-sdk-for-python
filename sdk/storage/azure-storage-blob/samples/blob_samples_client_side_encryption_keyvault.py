@@ -89,12 +89,6 @@ class KeyWrapper:
 storage_url = get_env_var(STORAGE_URL)
 keyvault_url = get_env_var(KEYVAULT_URL)
 
-# Retrieve service principal values from environment variables
-# The service principal can be created using Azure CLI's `az ad sp create-for-rbac` command.
-tenant_id = get_env_var(TENANT_ID)
-client_id = get_env_var(CLIENT_ID)  # aka appId in AzureCLI
-client_secret = get_env_var(CLIENT_SECRET)  # aka password in AzureCLI
-
 # Construct a token credential for use by Storage and KeyVault clients.
 credential = DefaultAzureCredential()
 secret_client = SecretClient(keyvault_url, credential=credential)
