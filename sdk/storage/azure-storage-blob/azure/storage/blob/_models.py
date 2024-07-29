@@ -775,13 +775,13 @@ class BlobBlock(DictMixin):
     """Block id."""
     state: BlockState
     """Block state."""
-    size: Optional[int]
+    size: int
     """Block size."""
 
     def __init__(self, block_id: str, state: BlockState = BlockState.LATEST) -> None:
         self.id = block_id
         self.state = state
-        self.size = None
+        self.size = None  # type: ignore [assignment]
 
     @classmethod
     def _from_generated(cls, generated):

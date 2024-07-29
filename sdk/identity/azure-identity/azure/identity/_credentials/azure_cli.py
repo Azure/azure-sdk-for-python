@@ -68,7 +68,7 @@ class AzureCliCredential:
     def close(self) -> None:
         """Calling this method is unnecessary."""
 
-    @log_get_token("AzureCliCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,

@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b28 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b28 (2024-07-29)
 
 ### Other Changes
+
+- Support for Python 3.12
+    ([#36481](https://github.com/Azure/azure-sdk-for-python/pull/36481))
 
 ## 1.0.0b27 (2024-06-21)
 
