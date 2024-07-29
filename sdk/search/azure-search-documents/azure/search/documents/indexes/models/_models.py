@@ -1083,18 +1083,20 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(self,
-                 *,
-                 name: str,
-                 description: Optional[str] = None,
-                 type: str,
-                 connection_string: str,
-                 container: SearchIndexerDataContainer,
-                 data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
-                 data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
-                 e_tag: Optional[str] = None,
-                 encryption_key: Optional[SearchResourceEncryptionKey] = None,
-                 **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        type: str,
+        connection_string: str,
+        container: SearchIndexerDataContainer,
+        data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
+        data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.name = name
         self.description = description
