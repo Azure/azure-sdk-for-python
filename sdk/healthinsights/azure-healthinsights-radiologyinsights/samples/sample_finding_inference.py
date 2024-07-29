@@ -238,4 +238,4 @@ def display_finding(radiology_insights_result):
                                     )
 
 if __name__ == "__main__":
-    main()
+    radiology_insights_sync()

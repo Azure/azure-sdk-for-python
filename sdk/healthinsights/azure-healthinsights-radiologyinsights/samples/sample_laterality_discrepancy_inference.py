@@ -28,7 +28,7 @@ from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
-def radiology_insights_sync(self) -> None:
+def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
@@ -103,11 +103,11 @@ def radiology_insights_sync(self) -> None:
             resource=patient_data,
         )
         radiology_insights_result = poller.result()
-        self.display_laterality_discrepancy(radiology_insights_result)
+        display_laterality_discrepancy(radiology_insights_result)
     except Exception as ex:
         raise ex
 
-def display_laterality_discrepancy(self, radiology_insights_result):
+def display_laterality_discrepancy(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
             if ri_inference.kind == models.RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY:
@@ -120,4 +120,4 @@ def display_laterality_discrepancy(self, radiology_insights_result):
                 print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
 
 if __name__ == "__main__":
-    main()
+    radiology_insights_sync()
