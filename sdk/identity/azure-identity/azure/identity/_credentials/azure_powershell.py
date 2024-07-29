@@ -223,4 +223,6 @@ def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
     if stderr:
         # stderr is too noisy to include with an exception but may be useful for debugging
         _LOGGER.debug('%s received an error from Azure PowerShell: "%s"', AzurePowerShellCredential.__name__, stderr)
-    raise CredentialUnavailableError(message="Failed to invoke PowerShell")
+    raise CredentialUnavailableError(
+        message="Failed to invoke PowerShell. Enable debug logging for additional information."
+    )
