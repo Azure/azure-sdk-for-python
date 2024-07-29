@@ -29,6 +29,9 @@ from .._generated.models import (
     CognitiveServicesAccount,
     SearchIndexerKnowledgeStore,
     SearchIndexerIndexProjections,
+    SearchIndexerDataContainer,
+    DataChangeDetectionPolicy,
+    DataDeletionDetectionPolicy,
 )
 
 DELIMITER = "|"
@@ -1084,18 +1087,30 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        type: str,
+        connection_string: str,
+        container: SearchIndexerDataContainer,
+        data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
+        data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.description = kwargs.get("description", None)
-        self.type = kwargs["type"]
-        self.connection_string = kwargs["connection_string"]
-        self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
-        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
-        self.e_tag = kwargs.get("e_tag", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.identity = kwargs.get("identity", None)
+        self.name = name
+        self.description = description
+        self.type = type
+        self.connection_string = connection_string
+        self.container = container
+        self.data_change_detection_policy = data_change_detection_policy
+        self.data_deletion_detection_policy = data_deletion_detection_policy
+        self.e_tag = e_tag
+        self.encryption_key = encryption_key
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
