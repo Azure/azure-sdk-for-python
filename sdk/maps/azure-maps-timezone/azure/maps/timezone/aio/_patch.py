@@ -14,7 +14,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import TimezoneClient as TimezoneClientGenerated
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["TimezoneClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
