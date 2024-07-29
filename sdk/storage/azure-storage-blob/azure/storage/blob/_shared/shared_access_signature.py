@@ -108,7 +108,7 @@ class SharedAccessSignature(object):
         self.x_ms_version = x_ms_version
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None, **kwargs):
+                         ip=None, protocol=None, **kwargs) -> str:
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -230,5 +230,5 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
 
-    def get_token(self):
+    def get_token(self) -> str:
         return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

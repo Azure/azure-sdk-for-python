@@ -11,8 +11,9 @@ from typing import List
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, AutoLockRenewer, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import OperationTimeoutError
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 # Note: This must be a session-enabled queue.
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
@@ -46,11 +47,12 @@ def message_processing(sb_client, queue_name, messages):
             return
 
 
-def sample_session_send_receive_with_pool(connection_string, queue_name):
+def sample_session_send_receive_with_pool(fully_qualified_namespace, queue_name):
 
     concurrent_receivers = 5
     sessions = [str(uuid.uuid4()) for i in range(2 * concurrent_receivers)]
-    with ServiceBusClient.from_connection_string(connection_string) as client:
+    credential = DefaultAzureCredential()
+    with ServiceBusClient(fully_qualified_namespace, credential) as client:
     
         with client.get_queue_sender(queue_name) as sender:
             for session_id in sessions:
@@ -69,4 +71,4 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
 
 
 if __name__ == '__main__':
-    sample_session_send_receive_with_pool(CONNECTION_STR, SESSION_QUEUE_NAME)
+    sample_session_send_receive_with_pool(FULLY_QUALIFIED_NAMESPACE, SESSION_QUEUE_NAME)

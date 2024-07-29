@@ -37,9 +37,14 @@ extends:
               azurePowerShellVersion: LatestVersion 
               pwsh: true
               Inline: |
+                echo "azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true"
                 azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
-                echo "Copied files:"
-                dir '$(Artifacts)' -r | % { $_.FullName }
+                $copiedFiles = (dir '$(Artifacts)' -r | % { $_.FullName })
+                echo "Copied files: $copiedFiles"
+                if (!$copiedFiles) { 
+                  echo "Failed to copy any files from 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' please double check they exist"
+                  exit 1
+                }
             env: 
               AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
 

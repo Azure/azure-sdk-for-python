@@ -821,9 +821,9 @@ async def test_service_fabric_tenant_id():
 
 @pytest.mark.asyncio
 async def test_azure_arc(tmpdir):
-    """Azure Arc 2019-11-01"""
+    """Azure Arc 2020-06-01"""
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -877,7 +877,7 @@ async def test_azure_arc(tmpdir):
 @pytest.mark.asyncio
 async def test_azure_arc_tenant_id(tmpdir):
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -946,7 +946,7 @@ async def test_azure_arc_client_id():
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_too_large(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -981,7 +981,7 @@ async def test_azure_arc_key_too_large(tmp_path):
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_not_exist(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -1010,7 +1010,7 @@ async def test_azure_arc_key_not_exist(tmp_path):
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_invalid(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"

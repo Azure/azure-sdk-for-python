@@ -206,7 +206,6 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",

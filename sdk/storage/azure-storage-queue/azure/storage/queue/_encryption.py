@@ -836,7 +836,7 @@ def generate_blob_encryption_data(
 
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         require_encryption: bool,
-        key_encryption_key: KeyEncryptionKey,
+        key_encryption_key: Optional[KeyEncryptionKey],
         key_resolver: Optional[Callable[[str], KeyEncryptionKey]],
         content: bytes,
         start_offset: int,
@@ -848,7 +848,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
     :param bool require_encryption:
         Whether the calling blob service requires objects to be decrypted.
-    :param KeyEncryptionKey key_encryption_key:
+    :param Optional[KeyEncryptionKey] key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)
             - Wraps the specified key using an algorithm of the user's choice.
