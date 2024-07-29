@@ -114,17 +114,16 @@ This request allows users to request map copyright attribution information for a
 section of a tileset.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_attribution(
     tileset_id=TilesetID.MICROSOFT_BASE,
     zoom=6,
-    bounds=BoundingBox(
-        south=42.982261,
-        west=24.980233,
-        north=56.526017,
-        east=1.355233
-    )
+    bounds=[42.982261, 24.980233, 56.526017, 1.355233],
 )
 ```
 
@@ -136,7 +135,11 @@ Maps road tiles, real-time  Weather Radar tiles. By default, Azure Maps uses vec
 control (Web SDK) and Android SDK.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tile(
     tileset_id=TilesetID.MICROSOFT_BASE,
@@ -152,7 +155,11 @@ result = maps_render_client.get_map_tile(
 This request will give metadata for a tileset.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 ```
@@ -168,11 +175,12 @@ And also save the result to file as png.
 ```python
 from azure.maps.render import MapsRenderClient
 
-result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
-# Save result to file as png
-file = open('result.png', 'wb')
-file.write(next(result))
-file.close()
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
+
+result = maps_render_client.get_map_static_image(
+    zoom=10,
+    bounding_box_private=[13.228, 52.4559, 13.5794, 52.629]
+)
 ```
 
 ### Get Maps Copyright for World
@@ -180,7 +188,10 @@ file.close()
 This request will serve copyright information for Render Tile service.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_copyright_for_world()
 ```

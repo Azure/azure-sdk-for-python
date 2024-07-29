@@ -3,12 +3,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+
+from typing import Union, Any, List
+
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from .._generated.aio import MapsRenderClient as _MapsRenderClient
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+
+from ._client import MapsRenderClient as MapsRenderClientGenerated
 from .._version import API_VERSION
+
+__all__: List[str] = ["MapsRenderClient"]  # Add all objects you want publicly available to users at this package level
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -25,24 +43,18 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class AsyncMapsRenderClientBase:
+
+# pylint: disable=C4748
+class MapsRenderClient(MapsRenderClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
 
-        self._maps_client = _MapsRenderClient(
+        super().__init__(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", API_VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
-        self._render_client = self._maps_client.render
-
-    async def __aenter__(self):
-        await self._maps_client.__aenter__()  # pylint:disable=no-member
-        return self
-
-    async def __aexit__(self, *args):
-        return await self._maps_client.__aexit__(*args)  # pylint:disable=no-member
