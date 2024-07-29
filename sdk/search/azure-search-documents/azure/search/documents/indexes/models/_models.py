@@ -32,6 +32,7 @@ from .._generated.models import (
     SearchIndexerDataContainer,
     DataChangeDetectionPolicy,
     DataDeletionDetectionPolicy,
+    SearchIndexerDataIdentity,
 )
 
 DELIMITER = "|"
@@ -1068,6 +1069,11 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
     :vartype connection_string: str
     :ivar container: Required. The data container for the datasource connection.
     :vartype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
+    :ivar identity: An explicit managed identity to use for this datasource. If not specified and
+     the connection string is a managed identity, the system-assigned managed identity is used. If
+     not specified, the value remains unchanged. If "none" is specified, the value of this property
+     is cleared.
+    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
     :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
     :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
@@ -1095,6 +1101,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         type: str,
         connection_string: str,
         container: SearchIndexerDataContainer,
+        identity: Optional[SearchIndexerDataIdentity] = None,
         data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
         data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
         e_tag: Optional[str] = None,
@@ -1107,6 +1114,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.type = type
         self.connection_string = connection_string
         self.container = container
+        self.identity = identity
         self.data_change_detection_policy = data_change_detection_policy
         self.data_deletion_detection_policy = data_deletion_detection_policy
         self.e_tag = e_tag
