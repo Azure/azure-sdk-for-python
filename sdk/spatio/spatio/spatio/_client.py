@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import PipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -56,6 +55,10 @@ from .operations import (
     wmtsOperationsOperations,
 )
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
+
 
 class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """AzureOrbitalPlanetaryComputerClient.
@@ -82,10 +85,10 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
     :vartype conformance_operations: spatio.operations.ConformanceOperationsOperations
     :ivar search_operations: SearchOperationsOperations operations
     :vartype search_operations: spatio.operations.SearchOperationsOperations
-    :ivar get_operations: GetOperationsOperations operations
-    :vartype get_operations: spatio.operations.GetOperationsOperations
-    :ivar create_operations: createOperationsOperations operations
-    :vartype create_operations: spatio.operations.createOperationsOperations
+    :ivar get_operations_collections: GetOperationsOperations operations
+    :vartype get_operations_collections: spatio.operations.GetOperationsOperations
+    :ivar create_operations_collections: createOperationsOperations operations
+    :vartype create_operations_collections: spatio.operations.createOperationsOperations
     :ivar update_operations: updateOperationsOperations operations
     :vartype update_operations: spatio.operations.updateOperationsOperations
     :ivar delete_operations: deleteOperationsOperations operations
@@ -135,14 +138,14 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureOrbitalPlanetaryComputerClientConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
