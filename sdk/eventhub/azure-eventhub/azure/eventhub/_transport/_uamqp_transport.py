@@ -766,6 +766,11 @@ if uamqp_installed:
             else:
                 error = EventHubError(str(exception), exception)
             return error
+        
+        @staticmethod
+        def _is_non_retryable(exception: Exception) -> bool:
+            # uamqp exceptions do not have a specific attribute to indicate whether the error is retryable
+            pass
 
         @staticmethod
         def _handle_exception(
