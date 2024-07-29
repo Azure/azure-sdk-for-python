@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable
+from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
 from typing_extensions import Self
 from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
@@ -252,7 +252,11 @@ class SearchField(_serialization.Model):
         if not search_field:
             return None
         # pylint:disable=protected-access
-        fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
+        fields = (
+            [cast(SearchField, SearchField._from_generated(x)) for x in search_field.fields]
+            if search_field.fields
+            else None
+        )
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
         return cls(
             name=search_field.name,
@@ -728,7 +732,8 @@ class SearchIndex(_serialization.Model):
         else:
             tokenizers = None
         if search_index.fields:
-            fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            fields = [cast(SearchField, SearchField._from_generated(x)) for x in search_index.fields]
         else:
             fields = []
         return cls(
