@@ -172,7 +172,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
             response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
             response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             deserialized = _deserialize(
-                _models.RadiologyInsightsJob,
+                _models.RadiologyInsightsInferenceResult,
                 response.json().get("result")
             )
             if cls:
