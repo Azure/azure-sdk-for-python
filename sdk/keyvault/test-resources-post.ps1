@@ -87,6 +87,9 @@ $wrappingFiles = foreach ($i in 0..2) {
     Resolve-Path "$baseName.cer"
 }
 
+Log "Re-running Connect-AzAccount to ensure credentials haven't expired"
+Connect-AzAccount
+
 Log "Downloading security domain from '$hsmUrl'"
 
 $sdPath = "$PSScriptRoot\$hsmName-security-domain.key"
