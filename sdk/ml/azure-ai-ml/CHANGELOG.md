@@ -2,6 +2,10 @@
 
 ## 1.19.0 (unreleased)
 
+### Feature Added
+
+  - Added enable_sso operation under compute operation that will allow user to enable sso setting of a compute instance without any write permission set on compute.
+  
 ### Bugs Fixed
 - Workspace update no longer broken for older workspaces due to deprecated tags.
 - Support credential-less fileshare datastore

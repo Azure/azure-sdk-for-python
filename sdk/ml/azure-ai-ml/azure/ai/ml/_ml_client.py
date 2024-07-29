@@ -518,6 +518,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
+            self._service_client_04_2024_preview,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
