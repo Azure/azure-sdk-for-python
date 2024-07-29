@@ -73,6 +73,9 @@ if (!$DeploymentOutputs['AZURE_MANAGEDHSM_URL']) {
     exit
 }
 
+Log "Re-running Connect-AzAccount to ensure credentials haven't expired"
+Connect-AzAccount
+
 [Uri] $hsmUrl = $DeploymentOutputs['AZURE_MANAGEDHSM_URL']
 $hsmName = $hsmUrl.Host.Substring(0, $hsmUrl.Host.IndexOf('.'))
 
@@ -86,9 +89,6 @@ $wrappingFiles = foreach ($i in 0..2) {
 
     Resolve-Path "$baseName.cer"
 }
-
-Log "Re-running Connect-AzAccount to ensure credentials haven't expired"
-Connect-AzAccount
 
 Log "Downloading security domain from '$hsmUrl'"
 
