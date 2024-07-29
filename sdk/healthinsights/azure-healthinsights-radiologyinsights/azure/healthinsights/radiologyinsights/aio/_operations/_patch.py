@@ -163,7 +163,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
+            deserialized = _deserialize(_models.RadiologyInsightsJob, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers) # type: ignore
             return deserialized
