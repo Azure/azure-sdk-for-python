@@ -40,7 +40,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
     @overload
-    def begin_infer_radiology_insights(
+    def begin_infer_radiology_insights(  # type: ignore[override]
         self,
         id: str,
         resource: _models.RadiologyInsightsJob,
@@ -67,7 +67,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @overload
-    def begin_infer_radiology_insights(
+    def begin_infer_radiology_insights(  # type: ignore[override]
         self,
         id: str,
         resource: JSON,
@@ -94,7 +94,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @overload
-    def begin_infer_radiology_insights(
+    def begin_infer_radiology_insights(  # type: ignore[override]
         self,
         id: str,
         resource: IO[bytes],
@@ -121,7 +121,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @distributed_trace
-    def begin_infer_radiology_insights(
+    def begin_infer_radiology_insights(  # type: ignore[override]
         self,
         id: str,
         resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
