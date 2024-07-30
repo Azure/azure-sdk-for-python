@@ -577,8 +577,6 @@ def map_codeowners_to_label(
     for line in codeowners:
         if line.startswith("# PRLabel:"):
             label = line.split("# PRLabel: %")[1].strip()
-            if label == "Azure.Identity":
-                print()
         if label and line.startswith("/sdk/"):
             parts = line.split("@")[0].split("/")[2:-1]
             if len(parts) > 3:
