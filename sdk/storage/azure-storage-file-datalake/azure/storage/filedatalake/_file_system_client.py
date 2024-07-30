@@ -562,10 +562,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        :param str path:
+        :param Optional[str] path:
             Filters the results to return only paths under the specified path.
         :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
-        :param int max_results: An optional value that specifies the maximum
+        :param Optional[int] max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
         :keyword bool upn:
