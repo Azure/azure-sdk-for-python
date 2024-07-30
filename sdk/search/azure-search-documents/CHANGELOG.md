@@ -1,5 +1,15 @@
 # Release History
 
+## 11.5.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 11.5.1 (2024-07-30)
 
 ### Other Changes
