@@ -18,6 +18,8 @@
 # SDK
 ###########
 
+/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+
 # Catch all
 /sdk/ @lmazuel
 
