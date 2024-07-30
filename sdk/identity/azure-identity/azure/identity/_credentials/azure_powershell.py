@@ -37,7 +37,7 @@ if (! $m) {{
 $params = @{{ 'ResourceUrl' = '{}'; 'WarningAction' = 'Ignore' }}
 
 $tenantId = '{}'
-if (-not [string]::IsNullOrEmpty($tenantId)) {{
+if ($tenantId.Length -gt 0) {{
     $params['TenantId'] = $tenantId
 }}
 
