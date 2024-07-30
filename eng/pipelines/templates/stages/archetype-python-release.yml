@@ -34,6 +34,16 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+
+                    - task: UsePythonVersion@0
+                      inputs:
+                        versionSpec: '3.12'
+
+                    - script: |
+                        set -e
+                        python -m pip install -r eng/release_requirements.txt
+                      displayName: Install Release Dependencies
+
                     - template: /eng/common/pipelines/templates/steps/retain-run.yml
                     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                       parameters:
