@@ -34,15 +34,19 @@ if (! $m) {{
     exit
 }}
 
-$useSecureString = $m.Version -ge [version]"2.17.0"
+$params = @{{ 'ResourceUrl' = '{}'; 'WarningAction' = 'Ignore' }}
 
-$command = "Get-AzAccessToken -ResourceUrl '{}'{}"
-
-if ($useSecureString) {{
-    $command += " -AsSecureString"
+$tenantId = '{}'
+if (-not [string]::IsNullOrEmpty($tenantId)) {{
+    $params['TenantId'] = $tenantId
 }}
 
-$token = Invoke-Expression $command
+$useSecureString = $m.Version -ge [version]'2.17.0'
+if ($useSecureString) {{
+    $params['AsSecureString'] = $true
+}}
+
+$token = Get-AzAccessToken @params
 $tokenValue = $token.Token
 if ($useSecureString) {{
     $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
@@ -193,10 +197,7 @@ def parse_token(output: str) -> AccessToken:
 
 
 def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
-    if tenant_id:
-        tenant_argument = " -TenantId " + tenant_id
-    else:
-        tenant_argument = ""
+    tenant_argument = tenant_id if tenant_id else ""
     resource = _scopes_to_resource(*scopes)
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
