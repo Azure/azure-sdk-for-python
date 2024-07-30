@@ -74,7 +74,8 @@ if (!$DeploymentOutputs['AZURE_MANAGEDHSM_URL']) {
 }
 
 Log "Re-running Connect-AzAccount to ensure credentials haven't expired"
-Connect-AzAccount
+$context = Get-AzContext
+Connect-AzAccount -Credential $context.TokenCache.ReadItems().GetAt(0).ToUserCredential() -TenantId $context.Tenant.Id -SubscriptionId $context.Subscription.Id
 
 [Uri] $hsmUrl = $DeploymentOutputs['AZURE_MANAGEDHSM_URL']
 $hsmName = $hsmUrl.Host.Substring(0, $hsmUrl.Host.IndexOf('.'))
