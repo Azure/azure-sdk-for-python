@@ -14,11 +14,7 @@ steps:
     condition: succeededOrFailed()
 
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    - template: /eng/common/pipelines/templates/steps/verify-changelogs.yml
-      parameters:
-        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-        Condition: succeededOrFailed()
-    - template: /eng/common/pipelines/templates/steps/verify-readme.yml
+    - template: /eng/common/pipelines/templates/steps/verify-readmes.yml
       parameters:
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
         Condition: succeededOrFailed()
