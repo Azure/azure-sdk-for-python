@@ -54,9 +54,9 @@ timezone_client = TimezoneClient(
 )
 ```
 
-#### 2. Authenticate with an Azure Active Directory credential
+#### 2. Authenticate with an Microsoft Entra ID credential
 
-You can authenticate with [Azure Active Directory (AAD) token credential][maps_authentication_aad] using the [Azure Identity library][azure_identity].
+You can authenticate with [Microsoft Entra ID credential][maps_authentication_eid] using the [Azure Identity library][azure_identity].
 Authentication by using AAD requires some initial setup:
 
 - Install [azure-identity][azure-key-credential]
@@ -360,7 +360,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
-[maps_authentication_aad]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[maps_authentication_eid]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
 [manage_aad_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details
