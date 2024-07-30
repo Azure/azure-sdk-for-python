@@ -164,7 +164,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> LROPoller[_models.RadiologyInsightsJob]:
         # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
@@ -2316,7 +2316,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> LROPoller[_models.RadiologyInsightsJob]:
         # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
@@ -3409,7 +3409,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> LROPoller[_models.RadiologyInsightsJob]:
         # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
@@ -4501,7 +4501,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         *,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> LROPoller[_models.RadiologyInsightsJob]:
         # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
@@ -6689,12 +6689,12 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
+            return LROPoller[_models.RadiologyInsightsJob].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.RadiologyInsightsInferenceResult](
+        return LROPoller[_models.RadiologyInsightsJob](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
