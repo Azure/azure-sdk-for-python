@@ -15,16 +15,28 @@ from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from .._download import _ChunkDownloader
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from .._shared.streams import StructuredMessageDecodeStream
+from .._shared.validation import ChecksumAlgorithm, SM_HEADER_V1_CRC64
 
 
-async def process_content(data):
-    if data is None:
+async def process_content(download, validate_content):
+    if download is None:
         raise ValueError("Response cannot be None.")
 
     try:
-        return data.response.body()
+        if validate_content == ChecksumAlgorithm.CRC64:
+            # For async, the body is already in memory so wrap that in a stream
+            content = BytesIO(download.response.body())
+            stream = StructuredMessageDecodeStream(content, download.content_length)
+            content = stream.read()
+        else:
+            content = download.response.body()
+        return content
     except Exception as error:
-        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
+        raise HttpResponseError(
+            message="Download stream interrupted.",
+            response=download.response, error=error
+        ) from error
 
 
 class _AsyncChunkDownloader(_ChunkDownloader):
@@ -64,16 +76,20 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             self.stream.write(chunk_data)
 
     async def _download_chunk(self, chunk_start, chunk_end):
+        md5_validation = self.validate_content is True or self.validate_content == ChecksumAlgorithm.MD5
         range_header, range_validation = validate_and_format_range_headers(
             chunk_start,
             chunk_end,
-            check_content_md5=self.validate_content
+            check_content_md5=md5_validation
         )
+        structured_body_type = SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None
+
         try:
             _, response = await self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
-                validate_content=self.validate_content,
+                validate_content=True if md5_validation else None,
+                structured_body_type=structured_body_type,
                 data_stream_total=self.total_size,
                 download_stream_current=self.progress_total,
                 **self.request_options
@@ -83,7 +99,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         except HttpResponseError as error:
             process_storage_error(error)
 
-        chunk_data = await process_content(response)
+        chunk_data = await process_content(response, self.validate_content)
         return chunk_data
 
 
@@ -233,21 +249,24 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = await process_content(self._response)
+            self._current_content = await process_content(self._response, self._validate_content)
 
     async def _initial_request(self):
+        md5_validation = self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content)
+            check_content_md5=md5_validation)
+        structured_body_type = SM_HEADER_V1_CRC64 if self._validate_content == ChecksumAlgorithm.CRC64 else None
 
         try:
             location_mode, response = await self._client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
-                validate_content=self._validate_content,
+                validate_content=True if md5_validation else None,
+                structured_body_type=structured_body_type,
                 data_stream_total=None,
                 download_stream_current=0,
                 **self._request_options)
@@ -277,7 +296,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # any properties.
                 try:
                     _, response = await self._client.download(
-                        validate_content=self._validate_content,
+                        validate_content=True if md5_validation else None,
+                        structured_body_type=structured_body_type,
                         data_stream_total=0,
                         download_stream_current=0,
                         **self._request_options)
@@ -292,6 +312,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
+        # TODO: This probably needs to change
         if response.properties.size == self.size:
             self._download_complete = True
         self._etag = response.properties.etag
