@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import FaceClientConfiguration, FaceSessionClientConfiguration
+from ._configuration import FaceClientConfiguration, FaceServiceClientConfiguration, FaceSessionClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
