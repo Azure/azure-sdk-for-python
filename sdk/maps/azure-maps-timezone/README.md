@@ -56,18 +56,18 @@ timezone_client = TimezoneClient(
 
 #### 2. Authenticate with an Microsoft Entra ID credential
 
-You can authenticate with [Microsoft Entra ID credential][maps_authentication_eid] using the [Azure Identity library][azure_identity].
-Authentication by using AAD requires some initial setup:
+You can authenticate with [Microsoft Entra ID credential][maps_authentication_ms_entra_id] using the [Azure Identity library][azure_identity].
+Authentication by using Microsoft Entra ID requires some initial setup:
 
 - Install [azure-identity][azure-key-credential]
-- Register a [new AAD application][register_aad_app]
-- Grant access to Azure Maps by assigning the suitable role to your service principal. Please refer to the [Manage authentication page][manage_aad_auth_page].
+- Register a [new Microsoft Entra ID application][register_ms_entra_id_app]
+- Grant access to Azure Maps by assigning the suitable role to your service principal. Please refer to the [Manage authentication page][manage_ms_entra_id_auth_page].
 
 After setup, you can choose which type of [credential][azure-key-credential] from `azure.identity` to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
 can be used to authenticate the client:
 
-Next, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+Next, set the values of the client ID, tenant ID, and client secret of the Microsoft Entra ID application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
 You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
@@ -359,8 +359,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
-[maps_authentication_eid]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[register_ms_entra_id_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
+[maps_authentication_ms_entra_id]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
-[manage_aad_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[manage_ms_entra_id_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details
