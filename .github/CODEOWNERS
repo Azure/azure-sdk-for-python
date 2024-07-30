@@ -98,6 +98,10 @@
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
 
+# ServiceLabel: %Communication - Call Automation
+# PRLabel: %Communication - Call Automation
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
