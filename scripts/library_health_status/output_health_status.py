@@ -13,9 +13,11 @@ import json
 import glob
 import pathlib
 import argparse
+import datetime
 
 import requests
 import markdown
+from github import Github, Auth
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
@@ -42,12 +44,21 @@ DEVOPS_BUILD_STATUS = typing.Literal["succeeded", "failed", "canceled", "none", 
 LIST_BUILDS = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines?api-version=7.0"
 
 
-def get_build_url(pipeline_id):
+def get_build_url(pipeline_id: str) -> str:
     return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds?definitions={pipeline_id}&$top=1&queryOrder=finishTimeDescending&reasonFilter=schedule&api-version=7.0"
 
 
-def get_build_timeline_url(build_id):
+def get_build_timeline_url(build_id: str) -> str:
     return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/Timeline?api-version=7.0"
+
+
+def get_github_issue_link(label: str, kind: typing.Literal["bug", "question"], created: datetime.datetime.date) -> str:
+    label = label.replace(" ", "+")
+    if kind == "question":
+        minus = "bug"
+    else:
+        minus = "question"
+    return f"https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+-label%3Aissue-addressed+-label%3A{minus}+-label%3Aneeds-author-feedback+-label%3Afeature-request+label%3A%22{label}%22+created%3A%22%3C{created}%22"
 
 
 # Statuses for table
@@ -117,9 +128,23 @@ class CIPipelineResult(typing.TypedDict):
     ci: CheckStatus
 
 
+class SLAStatus(typing.TypedDict):
+    question: SLADetails
+    """open > 30 days"""
+    bug: SLADetails
+    """open > 90 days"""
+
+
+class SLADetails(typing.TypedDict):
+    num: int
+    link: str
+
+
 class LibraryStatus(typing.TypedDict):
     status: LIBRARY_STATUS
     path: pathlib.Path
+    label: str | None
+    sla: SLAStatus | None
     mypy: Status
     pyright: Status
     type_check_samples: typing.Literal["ENABLED", "DISABLED"]
@@ -133,17 +158,22 @@ PipelineResults = typing.Union[CIPipelineResult, TestsPipelineResult, TestsWeekl
 
 SDK_TEAM_OWNED = [
     "azure-ai-documentintelligence",
+    "azure-ai-formrecognizer",
     "azure-appconfiguration",
     "azure-containerregistry",
     "azure-core",
     "azure-mgmt-core",
     "azure-core-experimental",
     "azure-core-tracing-opencensus",
-    "azure-core-tracing-openetelemetry",
+    "azure-core-tracing-opentelemetry",
     "azure-data-tables",
     "azure-eventgrid",
     "azure-eventhub",
+    "azure-eventhub-checkpointstoreblob",
+    "azure-eventhub-checkpointstoreblob-aio",
+    "azure-eventhub-checkpointstoretable",
     "azure-identity",
+    "azure-identity-broker",
     "azure-keyvault-administration",
     "azure-keyvault-certificates",
     "azure-keyvault-keys",
@@ -151,16 +181,26 @@ SDK_TEAM_OWNED = [
     "azure-monitor-ingestion",
     "azure-monitor-query",
     "azure-schemaregistry",
+    "azure-schemaregistry-avroencoder",
     "azure-search-documents",
     "azure-servicebus",
     "corehttp",
     "azure-openai",
 ]
 
-# todos
-# 1. provide more granular results for muliple libaries under same service directory
-# 2. report legend and actions needed
-# 3. put in a webapp/powerbi with auto-refresh
+"""
+todos
+
+- provide more granular results for muliple libaries under same service directory
+- report legend and actions needed
+- put in a powerbi with auto-refresh, script outputs csv which is committed to protected branch on sdk for python repo
+- include links in csv report
+- report SLA
+   - https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+-label%3Aissue-addressed+-label%3Aneeds-author-feedback+
+   - should we report feature-request separately?
+   - SLA violation: 30 days for questions, 90 days for bugs
+- report number of community contrib PRs open
+"""
 
 
 def is_package_inactive(package_path: str) -> bool:
@@ -207,6 +247,8 @@ def get_pipelines(
 ) -> dict[ServiceDirectory, PipelineResults]:
 
     pipelines = requests.get(LIST_BUILDS, headers=AUTH_HEADERS)
+    if pipelines.status_code != 200:
+        raise Exception(f"Failed to get pipelines - {pipelines.reason}")
     pipelines_json = json.loads(pipelines.text)
     python_pipelines = [
         pipeline
@@ -521,6 +563,100 @@ def report_status(
             report_overall_status(details)
 
 
+def map_codeowners_to_label(
+    dataplane: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
+) -> dict[str, ServiceDirectory]:
+    codeowners_url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/.github/CODEOWNERS"
+    codeowners_response = requests.get(codeowners_url)
+    if codeowners_response.status_code != 200:
+        raise Exception("Failed to get CODEOWNERS file")
+    codeowners = codeowners_response.text.splitlines()
+
+    tracked_labels = {}
+    label = ""
+    for line in codeowners:
+        if line.startswith("# PRLabel:"):
+            label = line.split("# PRLabel: %")[1].strip()
+            if label == "Azure.Identity":
+                print()
+        if label and line.startswith("/sdk/"):
+            parts = line.split("@")[0].split("/")[2:-1]
+            if len(parts) > 3:
+                # we don't distinguish past package level for SLA
+                continue
+            service_directory = parts[0]
+            tracked_labels[label] = service_directory
+            try:
+                library = parts[1]
+            except IndexError:
+                library = None
+
+            if library:
+                try:
+                    service = dataplane[service_directory]
+                except KeyError:
+                    continue
+                try:
+                    service[library]["label"] = label
+                except KeyError:
+                    continue
+                continue
+            try:
+                service = dataplane[service_directory]
+                for _, details in service.items():
+                    if details.get("label") is None:
+                        details["label"] = label
+            except KeyError:
+                continue
+    return tracked_labels
+
+
+def record_sla_status(
+    libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]],
+    issue: object,
+    tracked_labels: dict[str, ServiceDirectory],
+    kind: typing.Literal["question", "bug"],
+    time_period: datetime.datetime,
+) -> None:
+    for lbl in issue.labels:
+        if lbl.name in tracked_labels:
+            service_directory = tracked_labels[lbl.name]
+            applicable = libraries.get(service_directory, None)
+            if not applicable:
+                return
+            for _, details in applicable.items():
+                if lbl.name == details["label"]:
+                    details.setdefault("sla", {})
+                    details["sla"].setdefault(
+                        kind,
+                        {"num": 0, "link": get_github_issue_link(lbl.name, kind, str(time_period.date()))},
+                    )
+                    details["sla"][kind]["num"] += 1
+
+
+def report_sla(
+    libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]],
+) -> None:
+
+    tracked_labels = map_codeowners_to_label(libraries)
+    auth = Auth.Token(os.environ["GH_TOKEN"])
+    g = Github(auth=auth)
+
+    today = datetime.datetime.now(datetime.UTC)
+    repo = g.get_repo("Azure/azure-sdk-for-python")
+    filter_labels = ["issue-addressed", "needs-author-feedback", "feature-request"]
+    issues = repo.get_issues(state="open", labels=["customer-reported", "Client"])
+    filtered = [issue for issue in issues if not any(label for label in issue.labels if label.name in filter_labels)]
+
+    thirty_days_ago = today - datetime.timedelta(days=30)
+    ninety_days_ago = today - datetime.timedelta(days=90)
+    for issue in filtered:
+        if "question" in (label.name for label in issue.labels) and issue.created_at < thirty_days_ago:
+            record_sla_status(libraries, issue, tracked_labels, "question", thirty_days_ago)
+        if "bug" in (label.name for label in issue.labels) and issue.created_at < ninety_days_ago:
+            record_sla_status(libraries, issue, tracked_labels, "bug", ninety_days_ago)
+
+
 def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]], omit_good: bool = False) -> None:
     with open("./health_report.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
@@ -535,17 +671,19 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx",
             "Tests - CI",
             "Tests - Live",
+            "SLA - Questions | Bugs",
         ]
         writer.writerow(column_names)
 
+        rows = []
         for _, libs in libraries.items():
             for library, details in libs.items():
                 if omit_good is True and details["status"] == "GOOD":
                     continue
                 if details["status"] == "DISABLED":
-                    writer.writerow([library, details["status"]])
+                    rows.append([library, details["status"]])
                 else:
-                    writer.writerow(
+                    rows.append(
                         [
                             library,
                             details["status"],
@@ -556,8 +694,11 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                             details["sphinx"]["status"],
                             details["ci"]["status"],
                             details["tests"]["status"],
+                            f"{details.get("sla", {}).get('question', {}).get('num', 0)} | {details.get("sla", {}).get('bug', {}).get('num', 0)}",
                         ]
                     )
+        sorted_rows = sorted(rows)
+        writer.writerows(sorted_rows)
 
 
 def write_to_markdown(
@@ -575,6 +716,7 @@ def write_to_markdown(
         "Sphinx",
         "Tests - CI",
         "Tests - Live",
+        "SLA - Questions / Bugs",
     ]
     for _, libs in libraries.items():
         for library, details in libs.items():
@@ -590,6 +732,22 @@ def write_to_markdown(
             if details["status"] == "DISABLED":
                 row = [library, status_colored] + [""] * (len(column_names) - 2)
             else:
+                sla = details.get("sla")
+                if sla:
+                    question_link = (
+                        f"([link]({sla.get("question", {}).get("link", None)}))"
+                        if sla.get("question", {}).get("link", None) is not None
+                        else ""
+                    )
+                    bug_link = (
+                        f"([link]({sla.get("bug", {}).get("link", None)}))"
+                        if sla.get("bug", {}).get("link", None) is not None
+                        else ""
+                    )
+                    sla_str = f"{sla.get('question', {}).get('num', 0)} {question_link} / {sla.get('bug', {}).get('num', 0)} {bug_link}"
+                else:
+                    sla_str = "0 / 0"
+
                 row = [
                     library,
                     status_colored,
@@ -606,6 +764,7 @@ def write_to_markdown(
                     + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
                     details["tests"]["status"]
                     + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
+                    sla_str,
                 ]
             rows.append(row)
 
@@ -663,6 +822,15 @@ if __name__ == "__main__":
         action="store_true",
     )
 
+    parser.add_argument(
+        "-f",
+        "--format",
+        dest="format",
+        help="Which format to output the result. Possible values: csv, md, html. Defaults to csv.",
+        type=str,
+        default="csv",
+    )
+
     args = parser.parse_args()
 
     libraries = get_dataplane(include_sdk_owned=args.include_sdk_owned)
@@ -673,6 +841,10 @@ if __name__ == "__main__":
         get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id", ""), pipelines)
 
     report_status(libraries, pipelines)
-    # write_to_markdown(libraries, args.omit_good)
-    # write_to_csv(libraries, args.omit_good)
-    write_to_html(libraries, args.omit_good)
+    report_sla(libraries)
+    if args.format == "csv":
+        write_to_csv(libraries, args.omit_good)
+    elif args.format == "md":
+        write_to_markdown(libraries, args.omit_good)
+    elif args.format == "html":
+        write_to_html(libraries, args.omit_good)
