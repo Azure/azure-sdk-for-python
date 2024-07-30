@@ -35,7 +35,6 @@ if TYPE_CHECKING:
     from .._pyamqp import types
 
     from ._consumer_client_async import EventHubConsumerClient
-    from ._transport._base_async import AmqpTransportAsync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,7 +90,7 @@ class EventHubConsumer(
         self.running = False
         self.closed = False
 
-        self._amqp_transport: "AmqpTransportAsync" = kwargs.pop("amqp_transport")
+        self._amqp_transport = kwargs.pop("amqp_transport")
         self._on_event_received: Callable[
             [Union[Optional[EventData], List[EventData]]], Awaitable[None]
         ] = kwargs["on_event_received"]

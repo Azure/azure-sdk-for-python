@@ -57,7 +57,6 @@ if TYPE_CHECKING:
         uamqp_AMQPClientAsync = None
         JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
-    from ._transport._base_async import AmqpTransportAsync
 
     try:
         from typing_extensions import TypeAlias, Protocol
@@ -86,14 +85,6 @@ if TYPE_CHECKING:
 
         @_client.setter
         def _client(self, value):
-            pass
-
-        @property
-        def _amqp_transport(self) -> "AmqpTransportAsync":
-            """The instance of AmqpTransportAsync"""
-
-        @_client.setter
-        def _amqp_transport(self, value):
             pass
 
         @property

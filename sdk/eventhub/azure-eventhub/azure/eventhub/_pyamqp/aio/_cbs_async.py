@@ -68,7 +68,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         self._token_status_code: Optional[int] = None
         self._token_status_description: Optional[str] = None
-        self._token_error_condition: Optional[bytes] = None
+        self._token_error_condition: Optional[str] = None
 
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE

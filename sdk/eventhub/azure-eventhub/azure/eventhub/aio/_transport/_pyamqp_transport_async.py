@@ -26,7 +26,6 @@ from ...exceptions import (
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
-    from .._consumer_async import EventHubConsumer
     from ..._pyamqp.message import Message
 
 _LOGGER = logging.getLogger(__name__)
@@ -234,7 +233,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def _callback_task(consumer: "EventHubConsumer", batch, max_batch_size, max_wait_time):
+    async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
         while consumer._callback_task_run: # pylint: disable=protected-access
             async with consumer._message_buffer_lock: # pylint: disable=protected-access
                 events = [
@@ -254,7 +253,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await asyncio.sleep(0.05)
 
     @staticmethod
-    async def _receive_task(consumer: "EventHubConsumer"):
+    async def _receive_task(consumer):
         # pylint:disable=protected-access
         max_retries = consumer._client._config.max_retries
         retried_times = 0
@@ -304,12 +303,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             consumer._callback_task_run = False
 
     @staticmethod
-    async def message_received_async(consumer: "EventHubConsumer", message: Message) -> None:
+    async def message_received_async(consumer, message: Message) -> None:
         async with consumer._message_buffer_lock: # pylint: disable=protected-access
             consumer._message_buffer.append(message) # pylint: disable=protected-access
 
     @staticmethod
-    async def receive_messages_async(consumer: "EventHubConsumer", batch, max_batch_size, max_wait_time):
+    async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
         :param ~azure.eventhub.aio._consumer_async.EventHubConsumer consumer: The EventHubConsumer.
