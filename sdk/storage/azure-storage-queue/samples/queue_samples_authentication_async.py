@@ -73,6 +73,11 @@ class QueueAuthSamplesAsync(object):
             properties = await queue_service.get_service_properties()
 
     async def authentication_by_oauth_async(self):
+        if self.account_url is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_oauth")
+            sys.exit(1)
+
         # [START async_create_queue_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import DefaultAzureCredential
