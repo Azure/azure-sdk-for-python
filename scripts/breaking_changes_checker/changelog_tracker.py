@@ -170,4 +170,6 @@ class ChangelogTracker(BreakingChangesTracker):
         if self.breaking_changes:
             _build_md(self.breaking_changes, "### Breaking Changes", buffer)
         content =  "\n".join(buffer).strip()
+
+        content = "===== changelog start =====\n" + content + "\n===== changelog end =====\n"
         return content
