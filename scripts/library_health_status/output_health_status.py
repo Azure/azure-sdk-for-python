@@ -810,7 +810,7 @@ if __name__ == "__main__":
         "-s",
         "--include-sdk-owned",
         dest="include_sdk_owned",
-        help="Include SDK team owned libraries in the report.",
+        help="Include SDK team owned libraries in the report. Defaults to False.",
         action="store_true",
     )
 
@@ -818,7 +818,7 @@ if __name__ == "__main__":
         "-o",
         "--omit-good",
         dest="omit_good",
-        help="Omit librares with GOOD status from the report.",
+        help="Omit librares with GOOD status from the report. Defaults to False.",
         action="store_true",
     )
 
