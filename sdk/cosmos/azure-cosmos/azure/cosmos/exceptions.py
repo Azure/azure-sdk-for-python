@@ -77,6 +77,7 @@ class CosmosBatchOperationError(HttpResponseError):
     :vartype message: str
     :ivar operation_responses: List of failed operations' responses.
     :vartype operation_responses: List[dict[str, Any]]
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/document_management.py

@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
 from azure.identity import AzureAuthorityHosts
 
-from testcase import ContainerRegistryTestClass, get_audience, get_authority
+from testcase import ContainerRegistryTestClass, get_audience, get_authority, get_credential
 
 logger = logging.getLogger()
 
@@ -32,14 +32,7 @@ class AsyncFakeTokenCredential(object):
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-                return ClientSecretCredential(
-                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-                    authority=authority,
-                )
-            return DefaultAzureCredential(**kwargs)
+            return get_credential(is_async=True, authority=authority, **kwargs)
         return AsyncFakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):

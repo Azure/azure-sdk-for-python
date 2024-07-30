@@ -11,7 +11,7 @@ FILE: sample_insert_delete_entities.py
 
 DESCRIPTION:
     These samples demonstrate the following: inserting entities into a table
-    and deleting tables from a table.
+    and deleting entities from a table.
 
 USAGE:
     python sample_insert_delete_entities.py

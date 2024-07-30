@@ -8,7 +8,9 @@
 import os
 import json
 import jsondiff
+import pytest
 from breaking_changes_checker.changelog_tracker import ChangelogTracker
+from breaking_changes_checker.detect_breaking_changes import main
 
 
 def test_changelog_flag():
@@ -303,3 +305,64 @@ def test_new_class_method_parameter_added():
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'bar', 'foo']
+
+
+def test_pass_custom_reports_changelog(capsys):
+    source_report = "test_stable.json"
+    target_report = "test_current.json"
+
+    try:
+        main(None, None, None, None, "tests", True, False, False, source_report, target_report)
+        out, _ = capsys.readouterr()
+        assert "### Breaking Changes" in out
+    except SystemExit as e:
+        pytest.fail("test_compare_reports failed to report changelog when passing custom reports")
+
+
+def test_added_operation_group():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations"
+                        },
+                        "zip": {
+                            "attr_type": "bool"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    diff = jsondiff.diff(stable, current)
+    bc = ChangelogTracker(stable, current, diff, "azure-contoso", changelog=True)
+    bc.run_checks()
+
+    assert len(bc.features_added) == 2
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
+    assert args == ['azure.contoso', 'ContosoClient', 'foo']
+    msg, _, *args = bc.features_added[1]
+    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG

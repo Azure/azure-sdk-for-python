@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that we missed ODATA header when using Entra ID auth.
+
 ### Other Changes
 
 ## 11.6.0b4 (2024-05-07)

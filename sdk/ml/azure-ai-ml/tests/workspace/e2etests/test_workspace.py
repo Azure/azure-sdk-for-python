@@ -9,7 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml.constants._common import PublicNetworkAccess, WORKSPACE_PATCH_REJECTED_KEYS
 from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities import Hub
@@ -125,11 +125,19 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
+        assert workspace.application_insights is not None
 
+        workspace.tags = {
+            WORKSPACE_PATCH_REJECTED_KEYS[0]: "should be removed",
+            WORKSPACE_PATCH_REJECTED_KEYS[1]: "should be removed",
+        }
         param_image_build_compute = "compute"
         param_display_name = "Test display name"
         param_description = "Test description"
-        param_tags = {"k1": "v1", "k2": "v2"}
+        param_tags = {
+            "k1": "v1",
+            "k2": "v2",
+        }
         workspace.enable_data_isolation = False
         workspace_poller = client.workspaces.begin_update(
             workspace,

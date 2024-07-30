@@ -227,7 +227,7 @@ def build_list_request(
     account_name: str,
     subscription_id: str,
     *,
-    maxpagesize: Optional[str] = None,
+    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -255,7 +255,7 @@ def build_list_request(
 
     # Construct parameters
     if maxpagesize is not None:
-        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "str")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -925,7 +925,7 @@ class StorageTaskAssignmentsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, account_name: str, maxpagesize: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, account_name: str, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.StorageTaskAssignment"]:
         """List all the storage task assignments in an account.
 
@@ -938,7 +938,7 @@ class StorageTaskAssignmentsOperations:
         :type account_name: str
         :param maxpagesize: Optional, specifies the maximum number of storage task assignment Ids to be
          included in the list response. Default value is None.
-        :type maxpagesize: str
+        :type maxpagesize: int
         :return: An iterator like instance of either StorageTaskAssignment or the result of
          cls(response)
         :rtype:

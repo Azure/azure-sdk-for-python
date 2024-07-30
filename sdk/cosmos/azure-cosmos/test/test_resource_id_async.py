@@ -7,7 +7,7 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, http_constants, exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
@@ -92,7 +92,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
             "ID_with_newline\n2",
-            "ID_with_more_than_255" + "_" * 255,
+            "ID_with_more_than_255" + "_added" * 255,
             "ID_with_trailing_spaces   "
         ]
 
@@ -103,23 +103,36 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
 
             try:
                 await created_database.create_container(id=resource_id, partition_key=partition_key)
                 self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
 
             try:
                 await created_container.create_item({"id": resource_id})
                 self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
+
             try:
                 await created_container.upsert_item({"id": resource_id})
                 self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
 
         await self.client.delete_database(created_database)
 

@@ -109,9 +109,11 @@ class KeyVaultClientBase(object):
             )
             self._models = _models
         except ValueError as exc:
+            # Ignore pyright error that comes from not identifying ApiVersion as an iterable enum
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "
-                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
+                + "Supported versions: "
+                + f"{', '.join(v.value for v in ApiVersion)}"  # pyright: ignore[reportGeneralTypeIssues]
             ) from exc
 
     @property

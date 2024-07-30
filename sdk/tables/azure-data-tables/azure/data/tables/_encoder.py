@@ -11,8 +11,8 @@ from datetime import datetime
 from math import isnan
 
 from ._entity import EdmType, TableEntity
-from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
+from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64
 
 _ODATA_SUFFIX = "@odata.type"
 T = TypeVar("T")
@@ -50,7 +50,11 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if isinstance(value, str):
             return None, value
         if isinstance(value, int):
-            return None, value  # TODO: Test what happens if the supplied value exceeds int32.
+            if MIN_INT32 <= value <= MAX_INT32:
+                return None, value
+            if MIN_INT64 <= value <= MAX_INT64:
+                return EdmType.INT64, str(value)
+            return None, value
         if isinstance(value, float):
             if isnan(value):
                 return EdmType.DOUBLE, "NaN"
@@ -133,9 +137,6 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         :rtype: dict
         """
 
-    @abc.abstractmethod
-    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
-
 
 class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, Any]]]):
     def encode_entity(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
@@ -168,18 +169,16 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, A
         for key, value in entity.items():
             edm_type, value = self.prepare_value(key, value)
             try:
-                if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
+                odata = f"{key}{_ODATA_SUFFIX}"
+                if _ODATA_SUFFIX in key or odata in entity:
                     encoded[key] = value
                     continue
                 # The edm type is decided by value
                 # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
                 # the type is string instead of Guid after encoded
                 if edm_type:
-                    encoded[key + _ODATA_SUFFIX] = edm_type.value if hasattr(edm_type, "value") else edm_type
+                    encoded[odata] = edm_type.value if hasattr(edm_type, "value") else edm_type
             except TypeError:
                 pass
             encoded[key] = value
         return encoded
-
-    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
-        return _convert_to_entity(entity)

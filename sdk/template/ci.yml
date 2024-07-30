@@ -46,6 +46,7 @@ extends:
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     ServiceDirectory: template
     ValidateFormatting: true
+    TestProxy: true
     Artifacts:
     - name: azure-template
       safeName: azuretemplate

@@ -22,7 +22,6 @@ USAGE:
     4) STORAGE_ACCOUNT_NAME - the blob storage account name
     5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
-import sys
 import json
 import os
 from azure.storage.blob import BlobServiceClient

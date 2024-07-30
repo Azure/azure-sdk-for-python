@@ -77,7 +77,7 @@ __all__ = [
     "add_uri_string_sanitizer",
     "add_uri_subscription_id_sanitizer",
     "get_credential",
-    "remove_batch_santizers",
+    "remove_batch_sanitizers",
     "AzureMgmtPreparer",
     "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",

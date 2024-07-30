@@ -8,8 +8,6 @@ DESCRIPTION:
     the service using a synchronous client, while supplying additional
     model-specific parameters as part of the request.
     See setting of the optional `model_extras` in the `complete` method.
-    Also see related setting of the optional `unknown-parameters`
-    parameter in the `complete` method.
 
 USAGE:
     python sample_chat_completions_with_model_extras.py
