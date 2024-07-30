@@ -148,6 +148,14 @@
 # PRLabel: %DevCenter
 /sdk/devcenter/                                                      @drielenr @leti367 @sebrenna
 
+# ServiceLabel: %Defender EASM
+# PRLabel: %Defender EASM
+/sdk/easm/                                                           @nathanfalke
+
+# ServiceLabel: %Face
+# PRLabel: %Face
+/sdk/face/                                                           @zihyunting
+
 # ServiceLabel: %Cognitive - Health Insights
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft
