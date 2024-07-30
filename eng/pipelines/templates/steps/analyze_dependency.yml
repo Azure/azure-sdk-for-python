@@ -9,15 +9,24 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - pwsh: |
-      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
-  - template: /eng/common/pipelines/templates/steps/verify-readme.yml
-    parameters:
-      ScanPath: ${{ parameters.ScanPath }}
-      Condition: succeededOrFailed()
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: /eng/common/pipelines/templates/steps/verify-changelogs.yml
+      parameters:
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        Condition: succeededOrFailed()
+    - template: /eng/common/pipelines/templates/steps/verify-readme.yml
+      parameters:
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        Condition: succeededOrFailed()
+  - ${{ else }}:
+    - template: /eng/common/pipelines/templates/steps/verify-readme.yml
+      parameters:
+        ScanPath: ${{ parameters.ScanPath }}
+        Condition: succeededOrFailed()
 
   - pwsh: |
       sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
