@@ -55,10 +55,13 @@ class CosmosHttpResponseError(HttpResponseError):
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
-    def __init__(self, status_code=None, message=None, response=None, sub_status=None, **kwargs):
-        if sub_status and not response:
+    def __init__(self, status_code=None, message=None, response=None, sub_status_code=None, **kwargs):
+        """
+        :param int sub_status_code: HTTP response sub code.
+        """
+        if sub_status_code and not response:
             self.http_error_message = message
-            self.sub_status = sub_status
+            self.sub_status = sub_status_code
             formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
             super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
             self.status_code = status_code

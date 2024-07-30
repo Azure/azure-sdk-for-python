@@ -118,7 +118,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 raise exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
-                    sub_status=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
+                    sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
 
             return result
         except exceptions.CosmosHttpResponseError as e:
