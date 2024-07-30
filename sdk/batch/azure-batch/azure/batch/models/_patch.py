@@ -6,11 +6,21 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import List, Any
+from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
+from .._model_base import rest_field
 
 __all__: List[str] = [
-    "CreateTasksErrorException"
+    "BatchPoolReplaceContent",
+    "CreateTasksErrorException",
 ]  # Add all objects you want publicly available to users at this package level
+
+class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
+    certificate_references: List[str] = rest_field(name="certificateReferences")
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+        self.certificate_references = []
 
 
 class CreateTasksErrorException(Exception):

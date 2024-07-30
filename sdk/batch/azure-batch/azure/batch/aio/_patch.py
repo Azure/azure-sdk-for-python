@@ -9,7 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from ._client import BatchClient as GenerateBatchClient
 from .._patch import BatchSharedKeyAuthPolicy
-from azure.identity import ClientSecretCredential
 from azure.core.credentials import TokenCredential
 
 
@@ -42,7 +41,7 @@ class BatchClient(GenerateBatchClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential],
+        credential: Union[AzureNamedKeyCredential, TokenCredential],
         **kwargs
     ):
         super().__init__(

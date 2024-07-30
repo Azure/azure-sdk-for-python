@@ -11,9 +11,13 @@ import azure.batch
 import azure.batch.models
 from azure.core.credentials import AzureNamedKeyCredential
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import (
+    AzureMgmtPreparer, 
+    AzureTestError, 
+    ResourceGroupPreparer, 
+    FakeResource, 
+    add_general_regex_sanitizer
+)
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
@@ -100,15 +104,11 @@ class AccountPreparer(AzureMgmtPreparer):
             credentials = AzureNamedKeyCredential(keys.account_name, keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-        # self.test_class_instance.scrubber.register_name_pair(
-        #     name,
-        #     self.resource_moniker
-        # )
+            add_general_regex_sanitizer(regex=name, value=self.moniker)
         else:
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com
             env_prefix = "" if self.batch_environment is None else ".{}".format(self.batch_environment)
-
             self.resource = FakeAccount(
                 name=name, account_endpoint="https://{}{}.{}.batch.azure.com".format(name, env_prefix, self.location)
             )
@@ -184,12 +184,7 @@ class PoolPreparer(AzureMgmtPreparer):
             )
             vm_size = "standard_d2_v2"
 
-            if self.config == "paas":
-                vm_size = "standard_d2_v3"
-                deployment = models.DeploymentConfiguration(
-                    cloud_service_configuration=models.CloudServiceConfiguration(os_family="6")
-                )
-            elif self.os == "Windows":
+            if self.os == "Windows":
                 deployment = models.DeploymentConfiguration(
                     virtual_machine_configuration=models.VirtualMachineConfiguration(
                         image_reference=models.ImageReference(
@@ -283,22 +278,27 @@ class JobPreparer(AzureMgmtPreparer):
     def _get_batch_pool_id(self, **kwargs):
         try:
             pool_id = kwargs[self.batch_pool_parameter_name].name
-            return azure.batch.models.PoolInformation(pool_id=pool_id)
+            return azure.batch.models.BatchPoolInfo(pool_id=pool_id)
         except KeyError:
-            auto_pool = azure.batch.models.AutoPoolSpecification(
-                pool_lifetime_option=azure.batch.models.PoolLifetimeOption.job,
-                pool=azure.batch.models.PoolSpecification(
-                    vm_size="small",
-                    cloud_service_configuration=azure.batch.models.CloudServiceConfiguration(os_family="5"),
+            auto_pool = azure.batch.models.BatchAutoPoolSpecification(
+                pool_lifetime_option=azure.batch.models.BatchPoolLifetimeOption.job,
+                pool=azure.batch.models.BatchPoolSpecification(
+                    vm_size="standard_d2_v2",
+                    virtual_machine_configuration=azure.batch.models.VirtualMachineConfiguration(
+                        image_reference=azure.batch.models.ImageReference(
+                            publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"
+                        ),
+                        node_agent_sku_id="batch.node.ubuntu 18.04",
+                    ),
                 ),
             )
-            return azure.batch.models.PoolInformation(auto_pool_specification=auto_pool)
+            return azure.batch.models.BatchPoolInfo(auto_pool_specification=auto_pool)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.BatchJobCreateOptions(id=name, pool_info=pool, **self.extra_args)
+            self.resource = azure.batch.models.BatchJobCreateContent(id=name, pool_info=pool, **self.extra_args)
             try:
                 self.client.create_job(self.resource)
             except azure.core.exceptions.HttpResponseError as e:
