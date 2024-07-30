@@ -17,7 +17,7 @@ These sample programs show common scenarios for using Azure OpenAI offerings.
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[chat_completions_quickstart.py][chat_completions_quickstart]|Use Chat Completions with Azure OpenAI|
+|[chat_completions_aoai_quickstart.py][chat_completions_aoai_quickstart]|Use Chat Completions with Azure OpenAI|
 |[chat_completions_oyd.py][chat_completions_oyd]|Use Chat Completions with Azure OpenAI on your data|
 
 ## Prerequisites
@@ -61,7 +61,7 @@ what you can do with Azure OpenAI.
 
 [versioning_history]: https://github.com/openai/openai-python/releases
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[chat_completions_quickstart]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/openai/azure-openai/samples/chat_completions_quickstart.py
+[chat_completions_aoai_quickstart]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/openai/azure-openai/samples/chat_completions_aoai_quickstart.py
 [chat_completions_oyd]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/openai/azure-openai/samples/chat_completions_oyd.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
