@@ -52,4 +52,11 @@ class _DocumentIngressDocumentType(Enum):
     Event = "Event"
     Trace = "Trace"
 
+# Response Headers
+
+_QUICKPULSE_ETAG_HEADER_NAME = "x-ms-qps-configuration-etag"
+_QUICKPULSE_POLLING_HEADER_NAME = "x-ms-qps-service-polling-interval-hint"
+_QUICKPULSE_REDIRECT_HEADER_NAME = "x-ms-qps-service-endpoint-redirect-v2"
+_QUICKPULSE_SUBSCRIBED_HEADER_NAME = "x-ms-qps-subscribed"
+
 # cSpell:enable

@@ -1,5 +1,14 @@
 # Release History
 
+## 1.4.0 (2024-06-17)
+
+### Features Added
+
+  - Model ImageTemplate has a new parameter auto_run
+  - Model ImageTemplate has a new parameter managed_resource_tags
+  - Model ImageTemplateUpdateParametersProperties has a new parameter vm_profile
+  - Model VirtualNetworkConfig has a new parameter container_instance_subnet_id
+
 ## 1.3.0 (2023-12-18)
 
 ### Features Added

@@ -61,8 +61,8 @@ def create_package_and_install(
     if not os.path.exists(tmp_dl_folder):
         os.mkdir(tmp_dl_folder)
 
-    # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if os.getenv("SetDevVersion", "false") == "true":
+    # preview version is enabled when installing dev build so pip will install dev build version from devops feed
+    if os.getenv("SETDEVVERSION", "false") == "true":
         commands_options.append("--pre")
 
     if cache_dir:

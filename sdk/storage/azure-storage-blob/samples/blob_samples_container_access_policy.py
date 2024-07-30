@@ -56,7 +56,7 @@ def get_and_set_container_access_policy():
     identifiers = {'read': access_policy}
 
     # Specifies full public read access for container and blob data.
-    public_access = PublicAccess.Container
+    public_access = PublicAccess.CONTAINER
 
     # Set the access policy on the container
     container_client.set_container_access_policy(signed_identifiers=identifiers, public_access=public_access)
@@ -70,9 +70,9 @@ def get_and_set_container_access_policy():
 
     # Get the access policy on the container
     print("\n..Getting container access policy")
-    access_policy = container_client.get_container_access_policy()
-    print(f"Blob Access Type: {access_policy['public_access']}")
-    for identifier in access_policy['signed_identifiers']:
+    access_policy_dict = container_client.get_container_access_policy()
+    print(f"Blob Access Type: {access_policy_dict['public_access']}")
+    for identifier in access_policy_dict['signed_identifiers']:
         print(f"Identifier '{identifier.id}' has permissions '{identifier.access_policy.permission}''")
 
 

@@ -68,11 +68,8 @@ parameters:
     default: false
   - name: TestProxy
     type: boolean
-    default: false
+    default: true
   - name: GenerateApiReviewForManualOnly
-    type: boolean
-    default: false
-  - name: AdvancedBuild
     type: boolean
     default: false
   - name: oneESTemplateTag
@@ -113,7 +110,6 @@ extends:
               ValidateFormatting: ${{ parameters.ValidateFormatting }}
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
-              AdvancedBuild: ${{ parameters.AdvancedBuild }}
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml

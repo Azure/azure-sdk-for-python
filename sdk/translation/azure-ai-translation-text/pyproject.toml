@@ -3,7 +3,6 @@ pylint = true
 type_check_samples = true
 verifytypes = true
 pyright = true
-strict_sphinx = true
 
 [tool.generate]
 autorest-post-process = true

@@ -49,6 +49,8 @@ test:
     - azure.communication.rooms.aio
     - azure.communication.callautomation
     - azure.communication.callautomation.aio
+    - azure.communication.messages
+    - azure.communication.messages.aio
 
 
 about:

@@ -20,7 +20,6 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the Tables storage account name
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the Tables storage account access key
 """
-import sys
 import asyncio
 import os
 from datetime import datetime

@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,7 +72,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -175,7 +180,7 @@ def build_append_block_request(
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -271,7 +276,7 @@ def build_append_block_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -369,7 +374,7 @@ def build_seal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -489,7 +494,7 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -665,7 +670,7 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -854,7 +859,7 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1016,7 +1021,7 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

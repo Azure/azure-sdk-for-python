@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Iterable, Optional, Union
+from typing import Iterable, Optional, Union, Dict, Any
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
@@ -57,7 +57,11 @@ class AadClient(AadClientBase):
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_refresh_token_on_behalf_of(  # pylint: disable=name-too-long
-        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], refresh_token: str, **kwargs
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
+        refresh_token: str,
+        **kwargs
     ) -> AccessToken:
         request = self._get_refresh_token_on_behalf_of_request(
             scopes, client_credential=client_credential, refresh_token=refresh_token, **kwargs
@@ -65,7 +69,11 @@ class AadClient(AadClientBase):
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_on_behalf_of(
-        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], user_assertion: str, **kwargs
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
+        user_assertion: str,
+        **kwargs
     ) -> AccessToken:
         request = self._get_on_behalf_of_request(
             scopes=scopes, client_credential=client_credential, user_assertion=user_assertion, **kwargs

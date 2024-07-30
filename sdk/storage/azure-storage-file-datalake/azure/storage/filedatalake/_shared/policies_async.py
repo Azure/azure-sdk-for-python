@@ -13,7 +13,7 @@ from typing import Any, Dict, TYPE_CHECKING
 from azure.core.exceptions import AzureError
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
-from .authentication import StorageHttpChallenge
+from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import is_retry, StorageRetryPolicy
 
@@ -127,6 +127,8 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                         continue
                 break
             except AzureError as err:
+                if isinstance(err, AzureSigningError):
+                    raise
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore teamprojectid, planid, jobid, oidctoken
 from typing import Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -10,7 +9,7 @@ from azure.core.credentials import AccessToken
 from azure.core.rest import HttpResponse
 
 from .client_assertion import ClientAssertionCredential
-from ..._credentials.azure_pipelines import build_oidc_request, validate_env_vars
+from ..._credentials.azure_pipelines import TROUBLESHOOTING_GUIDE, build_oidc_request, validate_env_vars
 from .._internal import AsyncContextManager
 from ..._internal import validate_tenant_id
 from ..._internal.pipeline import build_pipeline
@@ -22,10 +21,17 @@ class AzurePipelinesCredential(AsyncContextManager):
     This credential enables authentication in Azure Pipelines using workload identity federation for Azure service
     connections.
 
-    :keyword str service_connection_id: The service connection ID, as found in the querystring's resourceId key.
-        Required.
-    :keyword str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
-    :keyword str client_id: The client ID of a Microsoft Entra app registration.
+    :keyword str tenant_id: The tenant ID for the service connection. Required.
+    :keyword str client_id: The client ID for the service connection. Required.
+    :keyword str service_connection_id: The service connection ID for the service connection associated with the
+        pipeline. From the service connection's configuration page URL in the Azure DevOps web portal, the ID
+        is the value of the "resourceId" query parameter. Required.
+    :keyword str system_access_token: The pipeline's System.AccessToken value. It is recommended to assign the value
+        of System.AccessToken to a secure variable in the Azure Pipelines environment. See
+        https://learn.microsoft.com/azure/devops/pipelines/build/variables#systemaccesstoken for more info. Required.
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
@@ -46,19 +52,23 @@ class AzurePipelinesCredential(AsyncContextManager):
         tenant_id: str,
         client_id: str,
         service_connection_id: str,
+        system_access_token: str,
         **kwargs: Any,
     ) -> None:
 
-        if not tenant_id or not client_id or not service_connection_id:
-            raise ValueError("tenant_id, client_id, and service_connection_id are required.")
+        if not system_access_token or not tenant_id or not client_id or not service_connection_id:
+            raise ValueError(
+                "'tenant_id', 'client_id','service_connection_id', and 'system_access_token' must be passed in as "
+                f"keyword arguments. Please refer to the troubleshooting guide at {TROUBLESHOOTING_GUIDE}."
+            )
         validate_tenant_id(tenant_id)
 
+        self._system_access_token = system_access_token
         self._service_connection_id = service_connection_id
         self._client_assertion_credential = ClientAssertionCredential(
             tenant_id=tenant_id, client_id=client_id, func=self._get_oidc_token, **kwargs
         )
         self._pipeline = build_pipeline(**kwargs)
-        self._env_validated = False
 
     async def get_token(
         self,
@@ -88,15 +98,13 @@ class AzurePipelinesCredential(AsyncContextManager):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        if not self._env_validated:
-            validate_env_vars()
-            self._env_validated = True
+        validate_env_vars()
         return await self._client_assertion_credential.get_token(
             *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
         )
 
     def _get_oidc_token(self) -> str:
-        request = build_oidc_request(self._service_connection_id)
+        request = build_oidc_request(self._service_connection_id, self._system_access_token)
         response = self._pipeline.run(request, retry_on_methods=[request.method])
         http_response: HttpResponse = response.http_response
         if http_response.status_code not in [200]:

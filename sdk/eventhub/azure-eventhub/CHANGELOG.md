@@ -1,6 +1,6 @@
 # Release History
 
-## 5.12.1 (Unreleased)
+## 5.12.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.12.1 (2024-06-11)
+
+### Bugs Fixed
+
+- Fixed a bug where the correct URI was not being used for consumer authentication, causing issues when assigning roles at the consumer group level. ([#35337](https://github.com/Azure/azure-sdk-for-python/issues/35337))
 
 ## 5.12.0 (2024-05-16)
 

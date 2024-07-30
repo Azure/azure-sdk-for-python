@@ -353,9 +353,11 @@ async def create_workload_identity_credential_async():
 
 def create_azure_pipelines_credential():
     # [START create_azure_pipelines_credential]
+    import os
     from azure.identity import AzurePipelinesCredential
 
     credential = AzurePipelinesCredential(
+        system_access_token=os.environ["SYSTEM_ACCESSTOKEN"],
         tenant_id="<tenant_id>",
         client_id="<client_id>",
         service_connection_id="<service_connection_id>",
@@ -365,9 +367,11 @@ def create_azure_pipelines_credential():
 
 async def create_azure_pipelines_credential_async():
     # [START create_azure_pipelines_credential_async]
+    import os
     from azure.identity.aio import AzurePipelinesCredential
 
     credential = AzurePipelinesCredential(
+        system_access_token=os.environ["SYSTEM_ACCESSTOKEN"],
         tenant_id="<tenant_id>",
         client_id="<client_id>",
         service_connection_id="<service_connection_id>",

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import WebSiteManagementClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -92,7 +97,9 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_control_center_sso_request_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_control_center_sso_request_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -425,7 +432,7 @@ def build_get_ownership_identifier_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_ownership_identifier_request(
+def build_create_or_update_ownership_identifier_request(  # pylint: disable=name-too-long
     resource_group_name: str, domain_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -467,7 +474,7 @@ def build_create_or_update_ownership_identifier_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_ownership_identifier_request(
+def build_delete_ownership_identifier_request(  # pylint: disable=name-too-long
     resource_group_name: str, domain_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -506,7 +513,7 @@ def build_delete_ownership_identifier_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_ownership_identifier_request(
+def build_update_ownership_identifier_request(  # pylint: disable=name-too-long
     resource_group_name: str, domain_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -655,7 +662,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainAvailabilityCheckResult or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainAvailabilityCheckResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -663,18 +669,17 @@ class DomainsOperations:
 
     @overload
     def check_availability(
-        self, identifier: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, identifier: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DomainAvailabilityCheckResult:
         """Check if a domain is available for registration.
 
         Description for Check if a domain is available for registration.
 
         :param identifier: Name of the domain. Required.
-        :type identifier: IO
+        :type identifier: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainAvailabilityCheckResult or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainAvailabilityCheckResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -682,23 +687,20 @@ class DomainsOperations:
 
     @distributed_trace
     def check_availability(
-        self, identifier: Union[_models.NameIdentifier, IO], **kwargs: Any
+        self, identifier: Union[_models.NameIdentifier, IO[bytes]], **kwargs: Any
     ) -> _models.DomainAvailabilityCheckResult:
         """Check if a domain is available for registration.
 
         Description for Check if a domain is available for registration.
 
-        :param identifier: Name of the domain. Is either a NameIdentifier type or a IO type. Required.
-        :type identifier: ~azure.mgmt.web.v2022_09_01.models.NameIdentifier or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param identifier: Name of the domain. Is either a NameIdentifier type or a IO[bytes] type.
+         Required.
+        :type identifier: ~azure.mgmt.web.v2022_09_01.models.NameIdentifier or IO[bytes]
         :return: DomainAvailabilityCheckResult or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainAvailabilityCheckResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -721,22 +723,21 @@ class DomainsOperations:
         else:
             _json = self._serialize.body(identifier, "NameIdentifier")
 
-        request = build_check_availability_request(
+        _request = build_check_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -749,13 +750,9 @@ class DomainsOperations:
         deserialized = self._deserialize("DomainAvailabilityCheckResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/checkDomainAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.Domain"]:
@@ -763,7 +760,6 @@ class DomainsOperations:
 
         Description for Get all domains in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Domain or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2022_09_01.models.Domain]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -774,7 +770,7 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.DomainCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -785,15 +781,14 @@ class DomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -804,14 +799,14 @@ class DomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DomainCollection", pipeline_response)
@@ -821,11 +816,11 @@ class DomainsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -838,20 +833,17 @@ class DomainsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/domains"}
-
     @distributed_trace
     def get_control_center_sso_request(self, **kwargs: Any) -> _models.DomainControlCenterSsoRequest:
         """Generate a single sign-on request for the domain management portal.
 
         Description for Generate a single sign-on request for the domain management portal.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainControlCenterSsoRequest or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainControlCenterSsoRequest
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -865,19 +857,18 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.DomainControlCenterSsoRequest] = kwargs.pop("cls", None)
 
-        request = build_get_control_center_sso_request_request(
+        _request = build_get_control_center_sso_request_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_control_center_sso_request.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -890,13 +881,9 @@ class DomainsOperations:
         deserialized = self._deserialize("DomainControlCenterSsoRequest", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_control_center_sso_request.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/generateSsoRequest"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def list_recommendations(
@@ -915,7 +902,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NameIdentifier or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2022_09_01.models.NameIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -923,18 +909,17 @@ class DomainsOperations:
 
     @overload
     def list_recommendations(
-        self, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> Iterable["_models.NameIdentifier"]:
         """Get domain name recommendations based on keywords.
 
         Description for Get domain name recommendations based on keywords.
 
         :param parameters: Search parameters for domain name recommendations. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NameIdentifier or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2022_09_01.models.NameIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -942,19 +927,16 @@ class DomainsOperations:
 
     @distributed_trace
     def list_recommendations(
-        self, parameters: Union[_models.DomainRecommendationSearchParameters, IO], **kwargs: Any
+        self, parameters: Union[_models.DomainRecommendationSearchParameters, IO[bytes]], **kwargs: Any
     ) -> Iterable["_models.NameIdentifier"]:
         """Get domain name recommendations based on keywords.
 
         Description for Get domain name recommendations based on keywords.
 
         :param parameters: Search parameters for domain name recommendations. Is either a
-         DomainRecommendationSearchParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.web.v2022_09_01.models.DomainRecommendationSearchParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         DomainRecommendationSearchParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.web.v2022_09_01.models.DomainRecommendationSearchParameters or
+         IO[bytes]
         :return: An iterator like instance of either NameIdentifier or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2022_09_01.models.NameIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -966,7 +948,7 @@ class DomainsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NameIdentifierCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -984,18 +966,17 @@ class DomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_recommendations_request(
+                _request = build_list_recommendations_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     content_type=content_type,
                     json=_json,
                     content=_content,
-                    template_url=self.list_recommendations.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1006,14 +987,14 @@ class DomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NameIdentifierCollection", pipeline_response)
@@ -1023,11 +1004,11 @@ class DomainsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1040,10 +1021,6 @@ class DomainsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_recommendations.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/listDomainRecommendations"
-    }
-
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Domain"]:
         """Get all domains in a resource group.
@@ -1052,7 +1029,6 @@ class DomainsOperations:
 
         :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Domain or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2022_09_01.models.Domain]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1063,7 +1039,7 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.DomainCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1074,16 +1050,15 @@ class DomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1094,14 +1069,14 @@ class DomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DomainCollection", pipeline_response)
@@ -1111,11 +1086,11 @@ class DomainsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1127,10 +1102,6 @@ class DomainsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains"
-    }
 
     @distributed_trace
     def get(self, resource_group_name: str, domain_name: str, **kwargs: Any) -> _models.Domain:
@@ -1142,12 +1113,11 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Domain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.Domain
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1161,21 +1131,20 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.Domain] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1188,18 +1157,14 @@ class DomainsOperations:
         deserialized = self._deserialize("Domain", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, domain_name: str, domain: Union[_models.Domain, IO], **kwargs: Any
+        self, resource_group_name: str, domain_name: str, domain: Union[_models.Domain, IO[bytes]], **kwargs: Any
     ) -> _models.Domain:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1222,7 +1187,7 @@ class DomainsOperations:
         else:
             _json = self._serialize.body(domain, "Domain")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
@@ -1230,16 +1195,15 @@ class DomainsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1259,10 +1223,6 @@ class DomainsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -1287,14 +1247,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Domain or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2022_09_01.models.Domain]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1305,7 +1257,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain: IO,
+        domain: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1319,18 +1271,10 @@ class DomainsOperations:
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
         :param domain: Domain registration information. Required.
-        :type domain: IO
+        :type domain: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Domain or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2022_09_01.models.Domain]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1338,7 +1282,7 @@ class DomainsOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, domain_name: str, domain: Union[_models.Domain, IO], **kwargs: Any
+        self, resource_group_name: str, domain_name: str, domain: Union[_models.Domain, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Domain]:
         """Creates or updates a domain.
 
@@ -1348,19 +1292,9 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :param domain: Domain registration information. Is either a Domain type or a IO type. Required.
-        :type domain: ~azure.mgmt.web.v2022_09_01.models.Domain or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param domain: Domain registration information. Is either a Domain type or a IO[bytes] type.
+         Required.
+        :type domain: ~azure.mgmt.web.v2022_09_01.models.Domain or IO[bytes]
         :return: An instance of LROPoller that returns either Domain or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2022_09_01.models.Domain]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1391,7 +1325,7 @@ class DomainsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Domain", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1401,17 +1335,15 @@ class DomainsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Domain].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}"
-    }
+        return LROPoller[_models.Domain](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1429,12 +1361,11 @@ class DomainsOperations:
          immediately. The default is :code:`<code>false</code>` which deletes the domain after 24 hours.
          Default value is None.
         :type force_hard_delete_domain: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1448,22 +1379,21 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             force_hard_delete_domain=force_hard_delete_domain,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1474,11 +1404,7 @@ class DomainsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def update(
@@ -1503,7 +1429,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Domain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.Domain
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1514,7 +1439,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain: IO,
+        domain: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1528,11 +1453,10 @@ class DomainsOperations:
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
         :param domain: Domain registration information. Required.
-        :type domain: IO
+        :type domain: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Domain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.Domain
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1540,7 +1464,11 @@ class DomainsOperations:
 
     @distributed_trace
     def update(
-        self, resource_group_name: str, domain_name: str, domain: Union[_models.DomainPatchResource, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        domain_name: str,
+        domain: Union[_models.DomainPatchResource, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Domain:
         """Creates or updates a domain.
 
@@ -1550,18 +1478,14 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :param domain: Domain registration information. Is either a DomainPatchResource type or a IO
-         type. Required.
-        :type domain: ~azure.mgmt.web.v2022_09_01.models.DomainPatchResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param domain: Domain registration information. Is either a DomainPatchResource type or a
+         IO[bytes] type. Required.
+        :type domain: ~azure.mgmt.web.v2022_09_01.models.DomainPatchResource or IO[bytes]
         :return: Domain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.Domain
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1584,7 +1508,7 @@ class DomainsOperations:
         else:
             _json = self._serialize.body(domain, "DomainPatchResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
@@ -1592,16 +1516,15 @@ class DomainsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1622,10 +1545,6 @@ class DomainsOperations:
 
         return deserialized  # type: ignore
 
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}"
-    }
-
     @distributed_trace
     def list_ownership_identifiers(
         self, resource_group_name: str, domain_name: str, **kwargs: Any
@@ -1638,7 +1557,6 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of domain. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DomainOwnershipIdentifier or the result of
          cls(response)
         :rtype:
@@ -1651,7 +1569,7 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.DomainOwnershipIdentifierCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1662,17 +1580,16 @@ class DomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_ownership_identifiers_request(
+                _request = build_list_ownership_identifiers_request(
                     resource_group_name=resource_group_name,
                     domain_name=domain_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_ownership_identifiers.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1683,14 +1600,14 @@ class DomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DomainOwnershipIdentifierCollection", pipeline_response)
@@ -1700,11 +1617,11 @@ class DomainsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1716,10 +1633,6 @@ class DomainsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_ownership_identifiers.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers"
-    }
 
     @distributed_trace
     def get_ownership_identifier(
@@ -1735,12 +1648,11 @@ class DomainsOperations:
         :type domain_name: str
         :param name: Name of identifier. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1754,22 +1666,21 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.DomainOwnershipIdentifier] = kwargs.pop("cls", None)
 
-        request = build_get_ownership_identifier_request(
+        _request = build_get_ownership_identifier_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_ownership_identifier.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1782,13 +1693,9 @@ class DomainsOperations:
         deserialized = self._deserialize("DomainOwnershipIdentifier", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_ownership_identifier.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update_ownership_identifier(
@@ -1819,7 +1726,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1831,7 +1737,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: IO,
+        domain_ownership_identifier: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1850,11 +1756,10 @@ class DomainsOperations:
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: IO
+        :type domain_ownership_identifier: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1866,7 +1771,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: Union[_models.DomainOwnershipIdentifier, IO],
+        domain_ownership_identifier: Union[_models.DomainOwnershipIdentifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.DomainOwnershipIdentifier:
         """Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -1882,18 +1787,14 @@ class DomainsOperations:
         :param name: Name of identifier. Required.
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is either a DomainOwnershipIdentifier type or a IO type. Required.
+         Is either a DomainOwnershipIdentifier type or a IO[bytes] type. Required.
         :type domain_ownership_identifier: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1916,7 +1817,7 @@ class DomainsOperations:
         else:
             _json = self._serialize.body(domain_ownership_identifier, "DomainOwnershipIdentifier")
 
-        request = build_create_or_update_ownership_identifier_request(
+        _request = build_create_or_update_ownership_identifier_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             name=name,
@@ -1925,16 +1826,15 @@ class DomainsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_ownership_identifier.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1947,13 +1847,9 @@ class DomainsOperations:
         deserialized = self._deserialize("DomainOwnershipIdentifier", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update_ownership_identifier.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete_ownership_identifier(  # pylint: disable=inconsistent-return-statements
@@ -1969,12 +1865,11 @@ class DomainsOperations:
         :type domain_name: str
         :param name: Name of identifier. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1988,22 +1883,21 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_ownership_identifier_request(
+        _request = build_delete_ownership_identifier_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_ownership_identifier.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2014,11 +1908,7 @@ class DomainsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_ownership_identifier.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def update_ownership_identifier(
@@ -2049,7 +1939,6 @@ class DomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2061,7 +1950,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: IO,
+        domain_ownership_identifier: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2080,11 +1969,10 @@ class DomainsOperations:
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: IO
+        :type domain_ownership_identifier: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2096,7 +1984,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: Union[_models.DomainOwnershipIdentifier, IO],
+        domain_ownership_identifier: Union[_models.DomainOwnershipIdentifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.DomainOwnershipIdentifier:
         """Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -2112,18 +2000,14 @@ class DomainsOperations:
         :param name: Name of identifier. Required.
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is either a DomainOwnershipIdentifier type or a IO type. Required.
+         Is either a DomainOwnershipIdentifier type or a IO[bytes] type. Required.
         :type domain_ownership_identifier: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: DomainOwnershipIdentifier or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DomainOwnershipIdentifier
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2146,7 +2030,7 @@ class DomainsOperations:
         else:
             _json = self._serialize.body(domain_ownership_identifier, "DomainOwnershipIdentifier")
 
-        request = build_update_ownership_identifier_request(
+        _request = build_update_ownership_identifier_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             name=name,
@@ -2155,16 +2039,15 @@ class DomainsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_ownership_identifier.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2177,13 +2060,9 @@ class DomainsOperations:
         deserialized = self._deserialize("DomainOwnershipIdentifier", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update_ownership_identifier.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def renew(  # pylint: disable=inconsistent-return-statements
@@ -2197,12 +2076,11 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2216,21 +2094,20 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_renew_request(
+        _request = build_renew_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.renew.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2241,11 +2118,7 @@ class DomainsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    renew.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/renew"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def transfer_out(self, resource_group_name: str, domain_name: str, **kwargs: Any) -> _models.Domain:
@@ -2257,17 +2130,19 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of domain. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Domain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2022_09_01.models.Domain
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            400: lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
+            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -2277,21 +2152,20 @@ class DomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.Domain] = kwargs.pop("cls", None)
 
-        request = build_transfer_out_request(
+        _request = build_transfer_out_request(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.transfer_out.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2304,10 +2178,6 @@ class DomainsOperations:
         deserialized = self._deserialize("Domain", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    transfer_out.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/transferOut"
-    }
+        return deserialized  # type: ignore

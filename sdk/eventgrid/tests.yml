@@ -5,19 +5,14 @@ extends:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
+      Location: eastus
+      UseFederatedAuth: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_STORAGE_CONNECTION_STRING: $(python-storage-blob-connection-string)
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         EVENTGRID_SAS: $(python-sdk-test-eg-sas)
         STORAGE_QUEUE_NAME: $(python-storage-queue-name)
-        EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT: $(python-eventgrid-partner-endpoint)
-        EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY: $(python-eventgrid-partner-key)
-        EVENTGRID_PARTNER_CHANNEL_NAME: $(python-eventgrid-partner-channel-name)
+        STORAGE_QUEUE_ACCOUNT_URL: $(python-storage-blob-storage-account-name)

@@ -315,6 +315,7 @@ class TestFileSystem(StorageRecordedTestCase):
         assert created
         assert meta == metadata
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_set_file_system_acl(self, **kwargs):
@@ -653,6 +654,7 @@ class TestFileSystem(StorageRecordedTestCase):
         assert file_systems is not None
         assert len(file_systems) >= 3
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_list_file_systems_with_public_access(self, **kwargs):
@@ -1086,7 +1088,7 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_directory('testdir1')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
@@ -1114,17 +1116,16 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_directory('testdir2')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
             audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            fsc.exists()
-            fsc.create_directory('testdir22')
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        fsc.exists()
+        fsc.create_directory('testdir22')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -200,7 +200,7 @@ class EventHubConsumer(
         if not self.running:
             if self._handler:
                 self._handler.close()
-            auth = self._client._create_auth()
+            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
                 endpoint=self._client._address.hostname, auth=auth

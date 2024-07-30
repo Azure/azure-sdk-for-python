@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -240,7 +240,6 @@ class SparkJobDefinitionOperations:
     def get_spark_job_definitions_by_workspace(self, **kwargs: Any) -> Iterable["_models.SparkJobDefinitionResource"]:
         """Lists spark job definitions.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SparkJobDefinitionResource or the result of
          cls(response)
         :rtype:
@@ -391,14 +390,6 @@ class SparkJobDefinitionOperations:
          for which it should match existing entity or can be * for unconditional update. Default value
          is None.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either SparkJobDefinitionResource or the result
          of cls(response)
         :rtype:
@@ -447,13 +438,15 @@ class SparkJobDefinitionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.SparkJobDefinitionResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.SparkJobDefinitionResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_spark_job_definition(
@@ -467,7 +460,6 @@ class SparkJobDefinitionOperations:
          get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobDefinitionResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SparkJobDefinitionResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -568,14 +560,6 @@ class SparkJobDefinitionOperations:
 
         :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -616,13 +600,13 @@ class SparkJobDefinitionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _execute_spark_job_definition_initial(
         self, spark_job_definition_name: str, **kwargs: Any
@@ -683,14 +667,6 @@ class SparkJobDefinitionOperations:
 
         :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either SparkBatchJob or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
@@ -740,13 +716,15 @@ class SparkJobDefinitionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.SparkBatchJob].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.SparkBatchJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _rename_spark_job_definition_initial(  # pylint: disable=inconsistent-return-statements
         self, spark_job_definition_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -807,14 +785,6 @@ class SparkJobDefinitionOperations:
         :type spark_job_definition_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -858,13 +828,13 @@ class SparkJobDefinitionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _debug_spark_job_definition_initial(
         self, properties: _models.SparkJobDefinition, **kwargs: Any
@@ -930,14 +900,6 @@ class SparkJobDefinitionOperations:
 
         :param properties: Properties of spark job definition. Required.
         :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either SparkBatchJob or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
@@ -989,10 +951,12 @@ class SparkJobDefinitionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.SparkBatchJob].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.SparkBatchJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

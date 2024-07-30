@@ -30,7 +30,7 @@ class NonSeekableStream(IOBase):
         self.wrapped_stream = wrapped_stream
 
     def write(self, data):
-        self.wrapped_stream.write(data)
+        return self.wrapped_stream.write(data)
 
     def read(self, count):
         return self.wrapped_stream.read(count)

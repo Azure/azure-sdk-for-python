@@ -21,7 +21,7 @@ class KeyVaultClientPreparer(AzureMgmtPreparer):
         if self.is_live:
             return EnvironmentCredential()
 
-        return Mock(get_token=lambda *_: AccessToken("fake-token", 0))
+        return Mock(spec_set=["get_token"], get_token=lambda *_: AccessToken("fake-token", 0))
 
     def create_resource(self, _, **kwargs):
         credential = self.create_credential()

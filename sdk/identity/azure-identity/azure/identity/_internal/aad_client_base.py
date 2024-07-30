@@ -267,7 +267,7 @@ class AadClientBase(abc.ABC):
     def _get_on_behalf_of_request(
         self,
         scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
         **kwargs: Any
     ) -> HttpRequest:
@@ -287,6 +287,10 @@ class AadClientBase(abc.ABC):
 
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        elif isinstance(client_credential, dict):
+            func = client_credential["client_assertion"]
+            data["client_assertion"] = func()
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
         else:
             data["client_secret"] = client_credential
@@ -318,7 +322,7 @@ class AadClientBase(abc.ABC):
     def _get_refresh_token_on_behalf_of_request(
         self,
         scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
         **kwargs: Any
     ) -> HttpRequest:
@@ -337,6 +341,10 @@ class AadClientBase(abc.ABC):
 
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        elif isinstance(client_credential, dict):
+            func = client_credential["client_assertion"]
+            data["client_assertion"] = func()
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
         else:
             data["client_secret"] = client_credential

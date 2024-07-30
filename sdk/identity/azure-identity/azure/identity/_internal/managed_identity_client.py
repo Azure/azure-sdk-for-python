@@ -13,6 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
+from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
@@ -49,9 +50,9 @@ class ManagedIdentityClientBase(abc.ABC):
             except DecodeError as ex:
                 if response.http_response.content_type.startswith("application/json"):
                     message = "Failed to deserialize JSON from response"
-                else:
-                    message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                    raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
+                raise CredentialUnavailableError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
