@@ -104,8 +104,8 @@ async def test_get_token(stderr):
     assert match, "couldn't find encoded script in command line"
     encoded_script = match.groups()[0]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-    assert "TenantId" not in decoded_script
-    assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
+    assert "tenantId = ''" in decoded_script
+    assert f"'ResourceUrl' = '{scope}'" in decoded_script
 
     assert mock_exec().result().communicate.call_count == 1
 
@@ -299,12 +299,12 @@ async def test_multitenant_authentication():
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search(r"-ResourceUrl\s+'([^']+)'(?:\s+-TenantId\s+(\d+))?", decoded_script)
+        match = re.search(r"\$tenantId\s*=\s*'([^']*)'", decoded_script)
         assert match
-        tenant = match[2]
+        tenant = match.group(1)
 
-        assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
-        token = first_token if tenant is None else second_token
+        assert not tenant or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if not tenant else second_token
         stdout = "azsdk%{}%{}".format(token, int(time.time()) + 3600)
 
         communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
@@ -333,11 +333,11 @@ async def test_multitenant_authentication_not_allowed():
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search(r"-ResourceUrl\s+'([^']+)'(?:\s+-TenantId\s+(\d+))?", decoded_script)
+        match = re.search(r"\$tenantId\s*=\s*'([^']*)'", decoded_script)
         assert match
-        tenant = match[2]
+        tenant = match.group(1)
 
-        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
+        assert not tenant, "credential shouldn't accept an explicit tenant ID"
         stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
         communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
         return Mock(communicate=communicate, returncode=0)
