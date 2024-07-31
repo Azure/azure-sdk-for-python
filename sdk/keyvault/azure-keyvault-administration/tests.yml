@@ -29,16 +29,17 @@ extends:
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
           Location: chinaeast2
-        # Test azure-keyvault-administration on *only* Managed HSM for weekly tests only
-        MatrixConfigs:
+      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+        # Test azure-keyvault-keys on Managed HSM for weekly tests only
+        AdditionalMatrixConfigs:
           - Name: keyvault_admin_weekly_matrix
             Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
             Selection: sparse
             GenerateVMJobs: true
-        ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
-          # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
-          MatrixFilters:
-            - OSVmImage=NonexistentImage
+      ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+        # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
+        MatrixFilters:
+          - OSVmImage=NonexistentImage
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
