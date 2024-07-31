@@ -2501,8 +2501,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
     async def _mock_execute_function(self, function, *args, **kwargs):
-        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                 if HttpHeaders.PartitionKey in args[4].headers else '')
+        if HttpHeaders.PartitionKey in args[4].headers:
+            self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey])
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
 
