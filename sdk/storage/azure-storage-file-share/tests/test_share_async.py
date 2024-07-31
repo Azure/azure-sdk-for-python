@@ -1690,30 +1690,30 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         # Arrange
         self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
-        max_mibps = 10340
-        max_iops = 102400
+        mibps = 10340
+        iops = 102400
 
         # Act / Assert
         share = await self._create_share(
             paid_bursting_enabled=True,
-            paid_bursting_max_bandwidth_mibps=5000,
-            paid_bursting_max_iops=1000
+            paid_bursting_bandwidth_mibps=5000,
+            paid_bursting_iops=1000
         )
         share_props = await share.get_share_properties()
         assert share_props.paid_bursting_enabled
-        assert share_props.paid_bursting_max_bandwidth_mibps == 5000
-        assert share_props.paid_bursting_max_iops == 1000
+        assert share_props.paid_bursting_bandwidth_mibps == 5000
+        assert share_props.paid_bursting_iops == 1000
 
         await share.set_share_properties(
             root_squash="NoRootSquash",
             paid_bursting_enabled=True,
-            paid_bursting_max_bandwidth_mibps=max_mibps,
-            paid_bursting_max_iops=max_iops
+            paid_bursting_bandwidth_mibps=mibps,
+            paid_bursting_iops=iops
         )
         share_props = await share.get_share_properties()
         assert share_props.paid_bursting_enabled
-        assert share_props.paid_bursting_max_bandwidth_mibps == max_mibps
-        assert share_props.paid_bursting_max_iops == max_iops
+        assert share_props.paid_bursting_bandwidth_mibps == mibps
+        assert share_props.paid_bursting_iops == iops
 
         shares = []
         async for share in self.fsc.list_shares():
@@ -1722,8 +1722,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert len(shares) == 1
         assert shares[0] is not None
         assert shares[0].paid_bursting_enabled
-        assert shares[0].paid_bursting_max_bandwidth_mibps == max_mibps
-        assert shares[0].paid_bursting_max_iops == max_iops
+        assert shares[0].paid_bursting_bandwidth_mibps == mibps
+        assert shares[0].paid_bursting_iops == iops
 
         await self._delete_shares()
 
