@@ -301,9 +301,6 @@ class ShareServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
-        :keyword bool paid_bursting_enabled: This property enables paid bursting.
-        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
-        :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.ShareProperties]
 
