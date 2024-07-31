@@ -190,15 +190,27 @@ SDK_TEAM_OWNED = [
 
 """
 todos
+new interpretation:
+
+Add DISABLED everywhere a check is disabled
+
+Status:
+ 
+Good: All CI are passing
+Needs_action: You have mandatory checks disabled or may soon fail from next-mypy, etc
+Blocked: You can't ship since you fail mandatory check or it was so bad that we disabled CI
+ 
+Individual CI checks:
+ 
+For any check that needs action or warning (including non-zero SLA), make yellow. 
+For any check that is blocking release, make red.
+An unknown mandatory check makes status == need_action
+
 
 - provide more granular results for muliple libaries under same service directory
 - report legend and actions needed
 - put in a powerbi with auto-refresh, script outputs csv which is committed to protected branch on sdk for python repo
-- include links in csv report
-- report SLA
-   - https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+-label%3Aissue-addressed+-label%3Aneeds-author-feedback+
-   - should we report feature-request separately?
-   - SLA violation: 30 days for questions, 90 days for bugs
+- fix markdown report to include new interpretation + SLA for disabled libraries
 - report number of community contrib PRs open
 """
 
@@ -669,7 +681,17 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx",
             "Tests - CI",
             "Tests - Live",
-            "SLA - Questions | Bugs",
+            "SLA - Questions",
+            "SLA - Bugs",
+            "Mypy_link",
+            "Pyright_link",
+            "Pylint_link",
+            "Sphinx_link",
+            "Tests - CI_link",
+            "Tests - Live_link",
+            "SLA - Questions_link",
+            "SLA - Bugs_link",
+            "Last Refresh"
         ]
         writer.writerow(column_names)
 
@@ -679,20 +701,53 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                 if omit_good is True and details["status"] == "GOOD":
                     continue
                 if details["status"] == "DISABLED":
-                    rows.append([library, details["status"]])
+                    rows.append(
+                        [
+                            library,
+                            details["status"],
+                            "DISABLED",
+                            "DISABLED",
+                            "DISABLED",
+                            "DISABLED",
+                            "DISABLED",
+                            "DISABLED",
+                            "DISABLED",
+                            details.get("sla", {}).get('question', {}).get('num', 0),
+                            details.get("sla", {}).get('bug', {}).get('num', 0),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            details.get("sla", {}).get('question', {}).get('link', ""),
+                            details.get("sla", {}).get('bug', {}).get('link', ""),
+                            datetime.datetime.today().strftime('%m-%d-%Y %H:%M:%S')
+                        ]
+                    )
                 else:
                     rows.append(
                         [
                             library,
                             details["status"],
-                            details["mypy"]["status"],
-                            details["pyright"]["status"],
+                            details['mypy']['status'],
+                            details['pyright']['status'],
                             details["type_check_samples"]["status"],
-                            details["pylint"]["status"],
-                            details["sphinx"]["status"],
-                            details["ci"]["status"],
-                            details["tests"]["status"],
-                            f"{details.get("sla", {}).get('question', {}).get('num', 0)} | {details.get("sla", {}).get('bug', {}).get('num', 0)}",
+                            details['pylint']['status'],
+                            details['sphinx']['status'],
+                            details['ci']['status'],
+                            details['tests']['status'],
+                            details.get("sla", {}).get('question', {}).get('num', 0),
+                            details.get("sla", {}).get('bug', {}).get('num', 0),
+                            details['mypy'].get("link", ""),
+                            details['pyright'].get("link", ""),
+                            details['pylint'].get("link", ""),
+                            details['sphinx'].get("link", ""),
+                            details['ci'].get("link", ""),
+                            details['tests'].get("link", ""),
+                            details.get("sla", {}).get('question', {}).get('link', ""),
+                            details.get("sla", {}).get('bug', {}).get('link', ""),
+                            datetime.datetime.today().strftime('%m-%d-%Y %H:%M:%S')
                         ]
                     )
         sorted_rows = sorted(rows)
