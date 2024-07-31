@@ -13,6 +13,7 @@ from dns.rdatatype import SRV  # cspell:disable-line
 request_retry_period = 5  # seconds
 HTTPS_PREFIX = "https://"
 
+
 class SRVRecord:
     priority: int
     weight: int
