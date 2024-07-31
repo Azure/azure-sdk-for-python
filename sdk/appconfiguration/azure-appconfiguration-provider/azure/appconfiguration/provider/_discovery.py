@@ -9,10 +9,9 @@ from urllib.parse import urlparse
 import dns.resolver
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
-from ._constants import HTTPS_PREFIX
 
 request_retry_period = 5  # seconds
-
+HTTPS_PREFIX = "https://"
 
 class SRVRecord:
     priority: int
@@ -28,7 +27,7 @@ class SRVRecord:
 
 
 def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled: bool):
-    if replica_discovery_enabled:
+    if not replica_discovery_enabled:
         return []
     known_domain = _get_known_domain(endpoint)
     if known_domain is None:
@@ -72,8 +71,8 @@ def _find_replicas(origin):
 
 
 def _request_record(request):
-    now = time.time()
-    while time.time() - now < request_retry_period:
+    start_time = time.time()
+    while time.time() - start_time < request_retry_period:
         try:
             return dns.resolver.resolve(request, SRV)
         except (NXDOMAIN, YXDOMAIN):  # cspell:disable-line
