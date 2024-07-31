@@ -72,7 +72,6 @@ CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoin
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
 # We avoid directly referencing it in the docs to avoid restclient references.
-@experimental
 class WorkspaceConnection(Resource):
     """Azure ML connection provides a secure way to store authentication and configuration information needed
     to connect and interact with the external resources.
