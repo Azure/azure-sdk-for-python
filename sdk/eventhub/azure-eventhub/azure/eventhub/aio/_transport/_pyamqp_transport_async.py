@@ -22,6 +22,7 @@ from ...exceptions import (
     EventDataSendError,
     OperationTimeoutError
 )
+from ..._constants import MAX_BUFFER_LENGTH
 
 
 if TYPE_CHECKING:
@@ -262,7 +263,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
                     # set a default value of consumer._prefetch for buffer length
-                    buff_length = 300
+                    buff_length = MAX_BUFFER_LENGTH
                     await consumer._open() # pylint: disable=protected-access
                     async with consumer._message_buffer_lock:
                         buff_length = len(consumer._message_buffer)
