@@ -61,6 +61,7 @@ class HttpXTransport(HttpTransport):
                 trust_env=self._use_env_settings,
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+                http2=True,
             )
 
     def close(self) -> None:
@@ -100,8 +101,8 @@ class HttpXTransport(HttpTransport):
             "method": request.method,
             "url": request.url,
             "headers": request.headers.items(),
-            "data": request._data,  # pylint: disable=protected-access
-            "files": request._files,  # pylint: disable=protected-access
+            "data": request.data,  # pylint: disable=protected-access
+            "files": request.files,  # pylint: disable=protected-access
             "timeout": timeout,
             **kwargs,
         }
@@ -154,6 +155,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
                 trust_env=self._use_env_settings,
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+                http2=True,
             )
 
     async def close(self) -> None:
@@ -187,8 +189,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             "method": request.method,
             "url": request.url,
             "headers": request.headers.items(),
-            "data": request._data,  # pylint: disable=protected-access
-            "files": request._files,  # pylint: disable=protected-access
+            "data": request.data,  # pylint: disable=protected-access
+            "files": request.files,  # pylint: disable=protected-access
             "timeout": timeout,
             **kwargs,
         }
