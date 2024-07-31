@@ -126,7 +126,7 @@ test_cases = [
 @pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
 def test_generate_mqtt_token(connection_string, hub, expected_url):
     client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
-    url_1 = client.get_client_access_token(webpubsub_client_protocol="MQTT")['url']
+    url_1 = client.get_client_access_token(client_protocol="MQTT")['url']
 
     assert url_1.split("?")[0] == expected_url
 

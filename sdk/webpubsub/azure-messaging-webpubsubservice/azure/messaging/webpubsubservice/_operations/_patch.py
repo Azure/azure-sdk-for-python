@@ -83,7 +83,7 @@ def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace
-    def get_client_access_token(self, *, webpubsub_client_protocol: Optional[str] = "Default", **kwargs: Any) -> JSON:
+    def get_client_access_token(self, *, client_protocol: Optional[str] = "Default", **kwargs: Any) -> JSON:
         """Build an authentication token.
 
         :keyword user_id: User Id.
@@ -95,7 +95,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :keyword groups: Groups that the connection will join when it connects. Default value is None.
         :paramtype groups: list[str]
-        :keyword webpubsub_client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
+        :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
          PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
          'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
         :paramtype client_type: str
@@ -124,7 +124,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        path = "/clients/mqtt/hubs/" if webpubsub_client_protocol.lower() == "mqtt" else "/client/hubs/"
+        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
         # Example URL for Default Client Type: https://<service-name>.webpubsub.azure.com/client/hubs/<hub>
         # and for MQTT Client Type: https://<service-name>.webpubsub.azure.com/clients/mqtt/hubs/<hub>
         client_url = client_endpoint + path + hub
@@ -132,7 +132,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
-            token = super().get_client_access_token(client_type=webpubsub_client_protocol, **kwargs).get("token")
+            token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {
             "baseUrl": client_url,
             "token": token,
