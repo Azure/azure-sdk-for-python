@@ -1042,8 +1042,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 self.close()
 
     def _on_disposition_received(self, message_delivery, reason, state):
-        for state_key in state:
-            state_error = state[state_key]
+        state_error = list(state.values())[0]
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and (len(state_error) == 0 or state_error[0] is None):
