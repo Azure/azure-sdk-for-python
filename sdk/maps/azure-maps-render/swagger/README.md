@@ -20,8 +20,8 @@ autorest .\README.md
 ## Settings
 
 ```yaml
-tag: '2022-08-01'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Render/stable/2022-08-01/render.json
+tag: '2024-04-01'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Render/stable/2024-04-01/render.json
 output-folder: ../azure/maps/render/_generated
 namespace: azure.maps.render
 package-name: azure-maps-render
@@ -35,5 +35,4 @@ title: MapsRenderClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
 python3-only: true
-models-mode: msrest
 ```

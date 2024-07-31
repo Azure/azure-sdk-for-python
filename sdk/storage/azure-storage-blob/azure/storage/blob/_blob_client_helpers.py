@@ -68,17 +68,6 @@ def _parse_url(
     container_name: str,
     blob_name: str
 ) -> Tuple["ParseResult", Optional[str], Optional[str]]:
-    """Performs initial input validation and returns the parsed URL, SAS token, and path snapshot.
-
-    :param str account_url:
-        The URL to the storage account.
-    :param str container_name:
-        The name of the container.
-    :param str blob_name:
-        The name of the blob.
-    :returns: The parsed URL, SAS token, and path snapshot.
-    :rtype: Tuple[ParseResult, Optional[str], Optional[str]]
-    """
     try:
         if not account_url.lower().startswith('http'):
             account_url = "https://" + account_url
@@ -96,33 +85,11 @@ def _parse_url(
     return parsed_url, sas_token, path_snapshot
 
 def _format_url(container_name: Union[bytes, str], scheme: str, blob_name: str, query_str: str, hostname: str) -> str:
-    """Format the endpoint URL according to the current location mode hostname.
-
-    :param Union[bytes, str] container_name:
-        The name of the container.
-    :param str scheme:
-        The scheme for the current location mode hostname.
-    :param str blob_name:
-        The name of the blob.
-    :param str query_str:
-        The query string of the endpoint URL being formatted.
-    :param str hostname:
-        The current location mode hostname.
-    :returns: The formatted endpoint URL according to the specified location mode hostname.
-    :rtype: str
-    """
     if isinstance(container_name, str):
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
 
 def _encode_source_url(source_url: str) -> str:
-    """Encodes the source URL.
-
-    :param str source_url:
-        The source_url to be encoded.
-    :returns: The encoded source URL.
-    :rtype: str
-    """
     parsed_source_url = urlparse(source_url)
     source_scheme = parsed_source_url.scheme
     source_hostname = parsed_source_url.netloc.rstrip('/')
@@ -144,28 +111,6 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     client: "AzureBlobStorage",
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for an upload blob operation.
-
-    :param data:
-        The blob data to be uploaded.
-    :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
-    :param Union[str, BlobType] blob_type:
-        The type of the blob. This can be either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
-    :param Optional[int] length:
-        Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
-    :param Optional[Dict[str, str]] metadata:
-        Name-value pairs associated with the blob as metadata.
-    :param Dict[str, Any] encryption_options:
-        The options for encryption, if enabled.
-    :param StorageConfiguration config:
-        The Storage configuration options.
-    :param str sdk_moniker:
-        The string representing the SDK package version.
-    :param AzureBlobStorage client:
-        The generated Blob Storage client.
-    :returns: A dictionary containing the upload blob options.
-    :rtype: Dict[str, Any]
-    """
     encoding = kwargs.pop('encoding', 'UTF-8')
     if isinstance(data, str):
         data = data.encode(encoding)
@@ -243,21 +188,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         raise ValueError(f"Unsupported BlobType: {blob_type}")
     return kwargs
 
-def _upload_blob_from_url_options(
-    source_url: str,
-    **kwargs: Any
-) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for an upload blob operation from URL.
-
-    :param str source_url:
-        A URL of up to 2 KB in length that specifies a file or blob.
-        The value should be URL-encoded as it would appear in a request URI.
-        If the source is in another account, the source must either be public
-        or must be authenticated via a shared access signature. If the source
-        is public, no authentication is required.
-    :returns: A dictionary containing the upload blob from URL options.
-    :rtype: Dict[str, Any]
-    """
+def _upload_blob_from_url_options(source_url: str, **kwargs: Any ) -> Dict[str, Any]:
     source_url = _encode_source_url(source_url=source_url)
     tier = kwargs.pop('standard_blob_tier', None)
     overwrite = kwargs.pop('overwrite', False)
@@ -382,20 +313,7 @@ def _download_blob_options(
     options.update(kwargs)
     return options
 
-def _quick_query_options(
-    snapshot: Optional[str],
-    query_expression: str,
-    **kwargs: Any
-) -> Tuple[Dict[str, Any], str]:
-    """Creates a dictionary containing the options for a quick query operation.
-
-    :param Optional[str] snapshot:
-        The snapshot data of the blob.
-    :param str query_expression:
-        A query statement.
-    :returns: A dictionary containing the quick query options and offset.
-    :rtype: Tuple[Dict[str, Any], str]
-    """
+def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwargs: Any ) -> Tuple[Dict[str, Any], str]:
     delimiter = '\n'
     input_format = kwargs.pop('blob_format', None)
     if input_format == QuickQueryDialect.DelimitedJson:
@@ -458,15 +376,6 @@ def _quick_query_options(
     return options, delimiter
 
 def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for a generic delete blob operation.
-
-    :param Optional[str] delete_snapshots:
-        Required if the blob has associated snapshots. Values include:
-         - "only": Deletes only the blobs snapshots.
-         - "include": Deletes the blob along with all snapshots.
-    :returns: A dictionary containing the generic delete blob options.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if delete_snapshots:
@@ -486,19 +395,6 @@ def _delete_blob_options(
     delete_snapshots: Optional[str] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for a specific delete blob operation.
-
-    :param Optional[str] snapshot:
-        The snapshot data of the blob.
-    :param Optional[str] version_id:
-        The version id that specifies the version of the blob to operate on.
-    :param Optional[str] delete_snapshots:
-        Required if the blob has associated snapshots. Values include:
-         - "only": Deletes only the blobs snapshots.
-         - "include": Deletes the blob along with all snapshots.
-    :returns: A dictionary containing the specific delete blob options.
-    :rtype: Dict[str, Any]
-    """
     if snapshot and delete_snapshots:
         raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
     options = _generic_delete_blob_options(delete_snapshots, **kwargs)
@@ -508,14 +404,6 @@ def _delete_blob_options(
     return options
 
 def _set_http_headers_options(content_settings: Optional["ContentSettings"] = None, **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for a set HTTP headers operation.
-
-    :param Optional["ContentSettings"] content_settings:
-        ContentSettings object used to set blob properties. Used to set content type, encoding,
-        language, disposition, md5, and cache control.
-    :returns: A dictionary containing the set HTTP headers options.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     blob_headers = None
@@ -538,15 +426,6 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
     return options
 
 def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any):
-    """Creates a dictionary containing the options for a set blob metadata operation.
-
-    :param Optional[Dict[str, str]] metadata:
-        Dict containing name and value pairs. Each call to this operation
-        replaces all existing metadata attached to the blob. To remove all
-        metadata from the blob, call this operation with no metadata headers.
-    :returns: A dictionary containing the set HTTP headers options.
-    :rtype: Dict[str, Any]
-    """
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -576,23 +455,6 @@ def _create_page_blob_options(
     premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for creating a page blob.
-
-    :param int size:
-        This specifies the maximum size for the page blob, up to 1 TB.
-        The page blob size must be aligned to a 512-byte boundary.
-    :param ContentSettings content_settings:
-        ContentSettings object used to set blob properties. Used to set content type, encoding,
-        language, disposition, md5, and cache control.
-    :param metadata: Name-value pairs associated with the blob as metadata.
-    :type metadata: Optional[Dict[str, str]]
-    :param PremiumPageBlobTier premium_page_blob_tier:
-        A page blob tier value to set the blob to. The tier correlates to the size of the
-        blob and number of allowed IOPS. This is only applicable to page blobs on
-        premium storage accounts.
-    :returns: A dictionary containing the options for a create page blob operation.
-    :rtype: Dict[str, Any]
-    """
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -652,16 +514,6 @@ def _create_append_blob_options(
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for creating an append blob.
-
-    :param ContentSettings content_settings:
-        ContentSettings object used to set blob properties. Used to set content type, encoding,
-        language, disposition, md5, and cache control.
-    :param metadata: Name-value pairs associated with the blob as metadata.
-    :type metadata: Optional[Dict[str, str]]
-    :returns: A dictionary containing the options for a create append blob operation.
-    :rtype: Dict[str, Any]
-    """
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -706,13 +558,6 @@ def _create_append_blob_options(
     return options
 
 def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for creating a blob snapshot.
-
-    :param metadata: Name-value pairs associated with the blob as metadata.
-    :type metadata: Optional[Dict[str, str]]
-    :returns: A dictionary containing the options for creating a blob snapshot.
-    :rtype: Dict[str, Any]
-    """
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -741,25 +586,6 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     incremental_copy: bool = False,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for starting a blob copy from URL.
-
-    :param str source_url:
-        A URL of up to 2 KB in length that specifies a file or blob.
-        The value should be URL-encoded as it would appear in a request URI.
-        If the source is in another account, the source must either be public
-        or must be authenticated via a shared access signature. If the source
-        is public, no authentication is required.
-    :param metadata: Name-value pairs associated with the blob as metadata.
-    :type metadata: Optional[Dict[str, str]]
-    :param bool incremental_copy:
-        Copies the snapshot of the source page blob to a destination page blob.
-        The snapshot is copied such that only the differential changes between
-        the previously copied snapshot are transferred to the destination.
-        The copied snapshots are complete copies of the original snapshot and
-        can be read or copied from as usual. Defaults to False.
-    :returns: A dictionary containing the options for a start copy from URL operation.
-    :rtype: Dict[str, Any]
-    """
     source_url = _encode_source_url(source_url=source_url)
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
@@ -837,14 +663,6 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     return options
 
 def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for aborting a copy.
-
-    :param copy_id:
-        The copy operation to abort. This can be either an ID string, or an instance of BlobProperties.
-    :type copy_id: Union[str, Dict[str, Any], BlobProperties]
-    :returns: A dictionary containing the options for an abort copy operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     if isinstance(copy_id, BlobProperties):
         copy_id = copy_id.copy.id  # type: ignore [assignment]
@@ -863,18 +681,6 @@ def _stage_block_options(
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for staging a block.
-
-    :param str block_id:
-        A string value that identifies the block.
-        The string should be less than or equal to 64 bytes in size.
-        For a given blob, the block_id must be the same size for each block.
-    :param data: The blob data.
-    :type data: data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-    :param int length: Size of the block.
-    :returns: A dictionary containing the options for a stage block operation.
-    :rtype: Dict[str, Any]
-    """
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
         data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
@@ -917,20 +723,6 @@ def _stage_block_from_url_options(
     source_content_md5: Optional[Union[bytes, bytearray]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for staging a block from URL
-
-    :param str block_id: A string value that identifies the block.
-        The string should be less than or equal to 64 bytes in size.
-        For a given blob, the block_id must be the same size for each block.
-    :param str source_url: The URL.
-    :param int source_offset:
-        Start of byte range to use for the block. Must be set if source length is provided.
-    :param int source_length: The size of the block in bytes.
-    :param bytearray source_content_md5:
-        Specify the md5 calculated for the range of bytes that must be read from the copy source.
-    :returns: A dictionary containing the options for a create page blob operation.
-    :rtype: Dict[str, Any]
-    """
     source_url = _encode_source_url(source_url=source_url)
     source_authorization = kwargs.pop('source_authorization', None)
     if source_length is not None and source_offset is None:
@@ -965,14 +757,7 @@ def _stage_block_from_url_options(
     options.update(kwargs)
     return options
 
-def _get_block_list_result(blocks: BlockList) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
-    """Gets the block list results from the provided blocks.
-
-    :param BlockList blocks:
-        The blocks returned from generated code.
-    :returns: A list of blocks.
-    :rtype: Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]
-    """
+def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]:
     committed = []
     uncommitted = []
     if blocks.committed_blocks:
@@ -987,18 +772,6 @@ def _commit_block_list_options(
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for committing a block list.
-
-    :param List[BlobBlock] block_list:
-        List of Block blobs.
-    :param ContentSettings content_settings:
-        ContentSettings object used to set blob properties. Used to set content type, encoding,
-        language, disposition, md5, and cache control.
-    :param metadata: Name-value pairs associated with the blob as metadata.
-    :type metadata: Optional[Dict[str, str]]
-    :returns: A dictionary containing the options for a commit block list operation.
-    :rtype: Dict[str, Any]
-    """
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
         if isinstance(block, BlobBlock):
@@ -1063,20 +836,6 @@ def _set_blob_tags_options(
     tags: Optional[Dict[str, str]] = None,
     **kwargs: Any
 )-> Dict[str, Any]:
-    """Creates a dictionary containing the options for setting blob tags.
-
-    :param Optional[str] version_id:
-        The version id that specifies the version of the blob to operate on.
-    :param tags:
-        Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-        The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-        and tag values must be between 0 and 256 characters.
-        Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-        space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-    :type tags: Optional[Dict[str, str]]
-    :returns: A dictionary containing the options for a set blob tags operation.
-    :rtype: Dict[str, Any]
-    """
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
@@ -1091,15 +850,6 @@ def _set_blob_tags_options(
     return options
 
 def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for getting blob tags.
-
-    :param Optional[str] version_id:
-        The version id that specifies the version of the blob to operate on.
-    :param Optional[str] snapshot:
-        The snapshot data of the blob.
-    :returns: A dictionary containing the options for a get blob tags operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
 
@@ -1119,32 +869,6 @@ def _get_page_ranges_options(
     previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for getting page ranges.
-
-    :param Optional[str] snapshot:
-        The snapshot data of the blob.
-    :param Optional[int] offset:
-        Start of byte range to use for getting valid page ranges.
-        If no length is given, all bytes after the offset will be searched.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :param Optional[int] length:
-        Number of bytes to use for getting valid page ranges.
-        If length is given, offset must be provided.
-        This range will return valid page ranges from the offset start up to
-        the specified length.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :param previous_snapshot_diff:
-        The snapshot diff parameter that contains an opaque DateTime value that
-        specifies a previous blob snapshot to be compared against a more recent snapshot
-        or the current blob.
-    :type previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]]
-    :returns: A dictionary containing the options for a get page ranges operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if length is not None and offset is None:
@@ -1176,18 +900,6 @@ def _set_sequence_number_options(
     sequence_number: Optional[str] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for setting a sequence number.
-
-    :param str sequence_number_action:
-        This property indicates how the service should modify the blob's sequence
-        number. See :class:`~azure.storage.blob.SequenceNumberAction` for more information.
-    :param Optional[str] sequence_number:
-        This property sets the blob's sequence number. The sequence number is a
-        user-controlled property that you can use to track requests and manage
-        concurrency issues.
-    :returns: A dictionary containing the options for a set sequence number operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if sequence_number_action is None:
@@ -1203,14 +915,6 @@ def _set_sequence_number_options(
     return options
 
 def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for resizing a blob.
-
-    :param int size:
-        Size used to resize blob. Maximum size for a page blob is up to 1 TB.
-        The page blob size must be aligned to a 512-byte boundary.
-    :returns: A dictionary containing the options for a resize blob operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if size is None:
@@ -1237,23 +941,6 @@ def _upload_page_options(
     length: int,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for uploading a page.
-
-    :param bytes page:
-        Content of the page.
-    :param int offset:
-        Start of byte range to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length  must be a modulus of
-        512.
-    :param int length:
-        Number of bytes to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :returns: A dictionary containing the options for an upload page operation.
-    :rtype: Dict[str, Any]
-    """
     if isinstance(page, str):
         page = page.encode(kwargs.pop('encoding', 'UTF-8'))
     if offset is None or offset % 512 != 0:
@@ -1299,27 +986,6 @@ def _upload_pages_from_url_options(
     source_offset: int,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for uploading pages from URL.
-
-    :param str source_url:
-        The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
-        shared access signature attached.
-    :param int offset:
-        Start of byte range to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length  must be a modulus of
-        512.
-    :param int length:
-        Number of bytes to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :param int source_offset:
-        This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
-        The service will read the same number of bytes as the destination range (length-offset).
-    :returns: A dictionary containing the options for an upload pages from URL operation.
-    :rtype: Dict[str, Any]
-    """
     source_url = _encode_source_url(source_url=source_url)
     # TODO: extract the code to a method format_range
     if offset is None or offset % 512 != 0:
@@ -1374,21 +1040,6 @@ def _clear_page_options(
     length: int,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for clearing a range of pages.
-
-    :param int offset:
-        Start of byte range to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :param int length:
-        Number of bytes to use for writing to a section of the blob.
-        Pages must be aligned with 512-byte boundaries, the start offset
-        must be a modulus of 512 and the length must be a modulus of
-        512.
-    :returns: A dictionary containing the options for a clear range of pages operation.
-    :rtype: Dict[str, Any]
-    """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     seq_conditions = SequenceNumberAccessConditions(
         if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -1426,16 +1077,6 @@ def _append_block_options(
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for appending a block.
-
-    :param data:
-        Content of the block. This can be bytes, text, an iterable or a file-like object.
-    :type data: bytes or str or Iterable
-    :param int length:
-        Size of the block in bytes.
-    :returns: A dictionary containing the options for an append block operation.
-    :rtype: Dict[str, Any]
-    """
     if isinstance(data, str):
         data = data.encode(kwargs.pop('encoding', 'UTF-8'))
     if length is None:
@@ -1485,18 +1126,6 @@ def _append_block_from_url_options(
     source_length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for appending blocks from URL.
-
-    :param str copy_source_url:
-        The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
-        shared access signature attached.
-    :param int source_offset:
-        This indicates the start of the range of bytes (inclusive) that has to be taken from the copy source.
-    :param int source_length:
-        This indicates the end of the range of bytes that has to be taken from the copy source.
-    :returns: A dictionary containing the options for an append block from URL operation.
-    :rtype: Dict[str, Any]
-    """
     copy_source_url = _encode_source_url(source_url=copy_source_url)
     # If end range is provided, start range must be provided
     if source_length is not None and source_offset is None:
@@ -1548,11 +1177,6 @@ def _append_block_from_url_options(
     return options
 
 def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for sealing an append blob.
-
-    :returns: A dictionary containing the options for a seal append blob operation.
-    :rtype: Dict[str, Any]
-    """
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     append_conditions = None
     if appendpos_condition is not None:
@@ -1575,18 +1199,6 @@ def _from_blob_url(
     blob_url: str,
     snapshot: Optional[Union[BlobProperties, str, Dict[str, Any]]]
 ) -> Tuple[str, str, str, Optional[str]]:
-    """Creates a blob URL to interact with a specific Blob.
-
-    :param str blob_url:
-        The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :param Union[str, Dict[str, Any]] snapshot:
-        The optional blob snapshot on which to operate. This can be the snapshot ID string
-        or the response returned from :func:`create_snapshot`. If specified, this will override
-        the snapshot in the url.
-    :returns: The parsed out account_url, container_name, blob_name, and path_snapshot
-    :rtype: Tuple[str, str, str, Optional[str]]
-    """
     try:
         if not blob_url.lower().startswith('http'):
             blob_url = "https://" + blob_url

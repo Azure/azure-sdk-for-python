@@ -65,9 +65,9 @@ _COMMON_OPTIONS = {
 
 # Cosmos resource ID validation regex breakdown:
 # ^ Match start of string.
-# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
+# [^/\#?] Match any character that is not /\#?\n\r\t.
 # $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
@@ -318,6 +318,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
+    # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
+    # refreshed.
+    if resource_type != 'dbs' and options.get("containerRID"):
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     return headers
 

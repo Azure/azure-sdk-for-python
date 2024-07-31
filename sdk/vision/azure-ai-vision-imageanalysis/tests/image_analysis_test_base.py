@@ -11,7 +11,7 @@ import azure.ai.vision.imageanalysis.aio as async_sdk
 from os import path
 from typing import List, Optional, Union
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
 from azure.core.pipeline import PipelineRequest
 
@@ -53,15 +53,26 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     def _create_client_for_standard_analysis(self, sync: bool, get_connection_url: bool = False, **kwargs):
         endpoint = kwargs.pop("vision_endpoint")
         key = kwargs.pop("vision_key")
-        self._create_client(endpoint, key, sync, get_connection_url)
+        credential = AzureKeyCredential(key)
+        self._create_client(endpoint, credential, sync, get_connection_url)
+
+    def _create_client_for_standard_analysis_with_entra_id_auth(self, sync: bool, get_connection_url: bool = False, **kwargs):
+        endpoint = kwargs.pop("vision_endpoint")
+        # See /tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py for `get_credential`
+        if sync:
+            credential = self.get_credential(sdk.ImageAnalysisClient, is_async=False)
+        else:
+            credential = self.get_credential(async_sdk.ImageAnalysisClient, is_async=True)
+        self._create_client(endpoint, credential, sync, get_connection_url)
 
     def _create_client_for_authentication_failure(self, sync: bool, **kwargs):
         endpoint = kwargs.pop("vision_endpoint")
         key = "00000000000000000000000000000000"
-        self._create_client(endpoint, key, sync, False)
-
-    def _create_client(self, endpoint: str, key: str, sync: bool, get_connection_url: bool):
         credential = AzureKeyCredential(key)
+        self._create_client(endpoint, credential, sync, False)
+
+    def _create_client(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], sync: bool, get_connection_url: bool):
+        
         if sync:
             self.client = sdk.ImageAnalysisClient(
                 endpoint=endpoint,

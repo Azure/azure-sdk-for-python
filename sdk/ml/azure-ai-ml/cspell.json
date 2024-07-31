@@ -12,6 +12,7 @@
         "FAISS",
         "faiss",
         "Faiss",
-        "LLMRAG"
+        "LLMRAG",
+        "expirable"
     ]
 }
