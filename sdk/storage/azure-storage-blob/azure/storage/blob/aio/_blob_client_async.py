@@ -1942,7 +1942,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     async def get_block_list(
         self, block_list_type: str = "committed",
         **kwargs: Any
-    ) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
+    ) -> Tuple[List[BlobBlock], List[BlobBlock]]:
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -1967,7 +1967,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: A tuple of two lists - committed and uncommitted blocks
-        :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
+        :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
@@ -2187,7 +2187,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_blob_tags(self, **kwargs: Any) -> Optional[Dict[str, str]]:
+    async def get_blob_tags(self, **kwargs: Any) -> Dict[str, str]:
         """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
 
         .. versionadded:: 12.4.0
@@ -2216,7 +2216,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
-            return parse_tags(tags)  # pylint: disable=protected-access
+            return cast(Dict[str, str], parse_tags(tags))  # pylint: disable=protected-access
         except HttpResponseError as error:
             process_storage_error(error)
 
