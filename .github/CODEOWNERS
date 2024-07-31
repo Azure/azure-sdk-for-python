@@ -100,6 +100,10 @@
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
 
+# ServiceLabel: %Communication - Call Automation
+# PRLabel: %Communication - Call Automation
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
@@ -149,6 +153,14 @@
 # ServiceLabel: %DevCenter
 # PRLabel: %DevCenter
 /sdk/devcenter/                                                      @drielenr @leti367 @sebrenna
+
+# ServiceLabel: %Defender EASM
+# PRLabel: %Defender EASM
+/sdk/easm/                                                           @nathanfalke
+
+# ServiceLabel: %Face
+# PRLabel: %Face
+/sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
 # PRLabel: %Cognitive - Health Insights
