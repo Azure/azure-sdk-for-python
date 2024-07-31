@@ -101,8 +101,7 @@ class TestModelClient(ModelClientTestBase):
         for _ in range(2):
             try:
                 response = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    raw_request_hook=self.request_callback
+                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
                 )
             except ServiceRequestError as _:
                 # The test should throw this exception!
@@ -229,17 +228,19 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    # TODO: Add id=
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
                                 ),
+                                # TODO: Add id=
                             ]
                         ),
                         sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
@@ -267,7 +268,7 @@ class TestModelClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -304,7 +305,7 @@ class TestModelClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
@@ -321,13 +322,13 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     )
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
@@ -377,7 +378,7 @@ class TestModelClient(ModelClientTestBase):
             max_tokens=768,
             model="some-other-model-id",
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            response_format=sdk.models.ChatCompletionsResponseFormatText(),
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
@@ -394,13 +395,13 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     )
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
@@ -432,7 +433,7 @@ class TestModelClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -578,7 +579,7 @@ class TestModelClient(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_tool(self, **kwargs):
-        forecast_tool = sdk.models.ChatCompletionsFunctionToolDefinition(
+        forecast_tool = sdk.models.ChatCompletionsToolDefinition(
             function=sdk.models.FunctionDefinition(
                 name="get_max_temperature",
                 description="A function that returns the forecasted maximum temperature IN a given city, a given few days from now, in Fahrenheit. It returns `unknown` if the forecast is not known.",

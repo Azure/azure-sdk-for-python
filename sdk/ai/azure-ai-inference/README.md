@@ -185,7 +185,7 @@ Embeddings operations target the URL route `images/embeddings` on the provided e
 
 ### Inference using Azure OpenAI endpoints
 
-The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is mostly compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
+The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
 
 ## Examples
 

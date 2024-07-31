@@ -159,9 +159,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype top_p: float
     :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
     :paramtype max_tokens: int
-    :keyword response_format: An object specifying the format that the model must output. Used to
-        enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-    :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+    :keyword response_format: The format that the model must output. Use this to enable JSON mode
+        instead of the default text mode.
+        Note that to enable JSON mode, some AI models may also require you to instruct the model to
+        produce JSON via a system or user message. Default value is None.
+    :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
     :keyword stop: A collection of textual sequences that will end completions generation. Default
         value is None.
     :paramtype stop: list[str]
@@ -203,7 +205,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -212,7 +214,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -245,7 +247,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -268,7 +270,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -291,7 +293,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -358,9 +360,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the model must output. Use this to enable JSON mode
+         instead of the default text mode.
+         Note that to enable JSON mode, some AI models may also require you to instruct the model to
+         produce JSON via a system or user message. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -450,7 +454,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -518,9 +522,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the model must output. Use this to enable JSON mode
+         instead of the default text mode.
+         Note that to enable JSON mode, some AI models may also require you to instruct the model to
+         produce JSON via a system or user message. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -560,7 +566,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -584,10 +590,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -599,7 +605,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -696,7 +702,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -852,7 +858,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -868,10 +874,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -881,7 +887,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embed_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -980,7 +986,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -1136,7 +1142,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -1152,10 +1158,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1165,7 +1171,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embed_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

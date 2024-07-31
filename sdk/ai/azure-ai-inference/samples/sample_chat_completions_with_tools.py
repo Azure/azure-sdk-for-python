@@ -20,7 +20,6 @@ USAGE:
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
-
 def sample_chat_completions_with_tools():
     import os
     import json
@@ -36,8 +35,7 @@ def sample_chat_completions_with_tools():
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
         AssistantMessage,
-        ChatCompletionsFunctionToolCall,
-        ChatCompletionsFunctionToolDefinition,
+        ChatCompletionsToolDefinition,
         CompletionsFinishReason,
         FunctionDefinition,
         SystemMessage,
@@ -65,7 +63,7 @@ def sample_chat_completions_with_tools():
             return "Sorry, I don't have that information."
 
     # Define a 'tool' that the model can use to retrieves flight information
-    flight_info = ChatCompletionsFunctionToolDefinition(
+    flight_info = ChatCompletionsToolDefinition(
         function=FunctionDefinition(
             name="get_flight_info",
             description="Returns information about the next flight between two cities. This includes the name of the airline, flight number and the date and time of the next flight",
@@ -87,7 +85,10 @@ def sample_chat_completions_with_tools():
     )
 
     # Create a chat completion client. Make sure you selected a model that supports tools.
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
     # Make a chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
@@ -100,33 +101,32 @@ def sample_chat_completions_with_tools():
         tools=[flight_info],
     )
 
-    # The model should be asking for tool calls
+    # The model should be asking for a tool call
     if response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
         messages.append(AssistantMessage(tool_calls=response.choices[0].message.tool_calls))
 
-        # The tool should be of type function call. He we assume only one function call is required.
+        # In this sample we assume only one tool call was requested
         if response.choices[0].message.tool_calls is not None and len(response.choices[0].message.tool_calls) == 1:
 
             tool_call = response.choices[0].message.tool_calls[0]
 
-            if type(tool_call) is ChatCompletionsFunctionToolCall:
+            # Only tools of type function are supported. Make a function call.
+            function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
+            print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
+            callable_func = locals()[tool_call.function.name]
 
-                function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
-                print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
-                callable_func = locals()[tool_call.function.name]
+            function_response = callable_func(**function_args)
+            print(f"Function response = {function_response}")
 
-                function_response = callable_func(**function_args)
-                print(f"Function response = {function_response}")
+            # Provide the tool response to the model, by appending it to the chat history
+            messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
 
-                # Provide the tool response to the model, by appending it to the chat history
-                messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
+            # With the additional tools information on hand, get another response from the model
+            response = client.complete(messages=messages, tools=[flight_info])
 
-                # With the additional tools information on hand, get another response from the model
-                response = client.complete(messages=messages, tools=[flight_info])
-
-                print(f"Model response = {response.choices[0].message.content}")
+            print(f"Model response = {response.choices[0].message.content}")
 
 
 if __name__ == "__main__":

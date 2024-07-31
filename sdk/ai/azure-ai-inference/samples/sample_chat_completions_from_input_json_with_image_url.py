@@ -69,9 +69,9 @@ def sample_chat_completions_from_input_json_with_image_url():
                             "text": "What's in this image?"
                         },
                         {
-                            "type": "image_url", 
+                            "type": "image_url",
                             "image_url": {
-                                "url" : "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/samples/sample1.png",
+                                "url": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/samples/sample1.png",
                                 "detail": "high",
                             },
                         },
