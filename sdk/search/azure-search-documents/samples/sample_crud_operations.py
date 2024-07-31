@@ -35,10 +35,7 @@ search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(ke
 def upload_document():
     # [START upload_document]
     DOCUMENT = {
-        "category": "Hotel",
         "hotelId": "1000",
-        "rating": 4.0,
-        "rooms": [],
         "hotelName": "Azure Inn",
     }
 
@@ -50,7 +47,7 @@ def upload_document():
 
 def merge_document():
     # [START merge_document]
-    result = search_client.merge_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
+    result = search_client.merge_documents(documents=[{"hotelId": "783", "hotelName": "Renovated Ranch"}])
 
     print("Merge into new document succeeded: {}".format(result[0].succeeded))
     # [END merge_document]

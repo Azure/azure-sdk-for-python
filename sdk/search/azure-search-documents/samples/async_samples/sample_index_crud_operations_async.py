@@ -45,6 +45,7 @@ async def create_index():
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         ComplexField(
@@ -81,6 +82,7 @@ async def update_index():
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
