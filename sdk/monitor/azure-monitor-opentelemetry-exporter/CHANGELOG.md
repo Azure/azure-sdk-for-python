@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Update instrumentation constants info
+    ([#36481](https://github.com/Azure/azure-sdk-for-python/pull/36481))
+
 ## 1.0.0b28 (2024-07-29)
 
 ### Other Changes
