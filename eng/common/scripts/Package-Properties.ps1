@@ -15,6 +15,7 @@ class PackageProps
     [boolean]$IsNewSdk
     [string]$ArtifactName
     [string]$ReleaseStatus
+    [string[]]$DependentPackages
 
     PackageProps([string]$name, [string]$version, [string]$directoryPath, [string]$serviceDirectory)
     {
@@ -55,7 +56,7 @@ class PackageProps
             if ($changeLogEntry -and $changeLogEntry.ReleaseStatus)
             {
               $this.ReleaseStatus = $changeLogEntry.ReleaseStatus.Trim().Trim("()")
-            } 
+            }
         }
         else
         {
@@ -101,7 +102,7 @@ function Get-PkgProperties
         return $pkgProps[0]
     }
 
-    LogError "Failed to retrive Properties for [$PackageName]"
+    LogError "Failed to retrieve Properties for [$PackageName]"
     return $null
 }
 
@@ -111,6 +112,8 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $allPackageProperties = Get-AllPkgProperties
     $diff = Get-Content $InputDiffJson | ConvertFrom-Json
     $targetedFiles = $diff.ChangedFiles
+
+    $dependentPackagesForInclusion = @()
 
     foreach($pkg in $allPackageProperties)
     {

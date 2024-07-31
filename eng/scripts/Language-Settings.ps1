@@ -35,13 +35,19 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     Pop-Location
   }
 
+
   foreach ($line in $allPkgPropLines)
   {
+    Write-Host $line
+
     $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")
     $pkgDirectoryPath = $pkgInfo[3]
+
+    $additionalDependentPackages = $pkgInfo[4] -Split ","
+
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
     {
@@ -55,6 +61,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $pkgProp.IsNewSdk = $isNewSdk
     $pkgProp.SdkType = $sdkType
     $pkgProp.ArtifactName = $packageName
+    $pkgProp.DependentPackages = $additionalDependentPackages
     $allPackageProps += $pkgProp
   }
   return $allPackageProps
