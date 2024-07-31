@@ -29,8 +29,8 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
-    @overload
-    async def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload # type: ignore[override]
+    async def begin_infer_radiology_insights(
         self,
         id: str,
         resource: _models.RadiologyInsightsJob,
@@ -56,8 +56,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @overload
-    async def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def begin_infer_radiology_insights(
         self,
         id: str,
         resource: JSON,
@@ -83,8 +83,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @overload
-    async def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def begin_infer_radiology_insights(
         self,
         id: str,
         resource: IO[bytes],
@@ -110,8 +110,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @distributed_trace_async
-    async def begin_infer_radiology_insights(  # type: ignore[override]
+    @distributed_trace_async  # type: ignore[override]
+    async def begin_infer_radiology_insights(
         self,
         id: str,
         resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],

@@ -39,8 +39,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
-    @overload
-    def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    def begin_infer_radiology_insights(
         self,
         id: str,
         resource: _models.RadiologyInsightsJob,
@@ -66,8 +66,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @overload
-    def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    def begin_infer_radiology_insights(
         self,
         id: str,
         resource: JSON,
@@ -93,8 +93,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @overload
-    def begin_infer_radiology_insights(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    def begin_infer_radiology_insights(
         self,
         id: str,
         resource: IO[bytes],
@@ -120,8 +120,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @distributed_trace
-    def begin_infer_radiology_insights(  # type: ignore[override]
+    @distributed_trace # type: ignore[override]
+    def begin_infer_radiology_insights(
         self,
         id: str,
         resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
