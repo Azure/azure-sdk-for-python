@@ -16,6 +16,7 @@ extends:
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
+          Location: 'eastus2'
         UsGov:
           ServiceConnection: usgov_azure-sdk-tests
           SubscriptionConfigurationFilePaths:
