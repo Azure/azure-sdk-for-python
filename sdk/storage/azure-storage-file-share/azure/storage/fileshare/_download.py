@@ -254,12 +254,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._response = None
         self._etag = None
 
+        self._first_get_size = self._config.max_single_get_size
         # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = (
-            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
-        )
+        if self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5:
+            self._first_get_size = self._config.max_chunk_get_size
+
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -357,7 +358,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        # TODO: This probably needs to change
         if response.properties.size == self.size:
             self._download_complete = True
         self._etag = response.properties.etag
