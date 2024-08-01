@@ -114,18 +114,34 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $targetedFiles = $diff.ChangedFiles
 
     $dependentPackagesForInclusion = @()
+    $lookup = @{}
 
-    foreach($pkg in $allPackageProperties)
+    foreach ($pkg in $allPackageProperties)
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
+        $lookupKey = ($pkg.DirectoryPath).Replace($RepoRoot, "").SubString(1)
+        $lookup[$lookupKey] = $pkg
+        Write-Host $lookupKey
 
-        foreach($file in $targetedFiles)
+        foreach ($file in $targetedFiles)
         {
             $filePath = Resolve-Path (Join-Path $RepoRoot $file)
             $shouldInclude = $filePath -like "$pkgDirectory*"
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
+
+                if ($pkg.DependentPackages) {
+                    $dependentPackagesForInclusion += $pkg.DependentPackages
+                }
             }
+        }
+    }
+
+    foreach ($addition in $dependentPackagesForInclusion) {
+        Write-Host $addition
+
+        if ($lookup[$addition]) {
+            $packagesWithChanges += $lookup[$addition]
         }
     }
 

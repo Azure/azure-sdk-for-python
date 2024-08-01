@@ -1,6 +1,4 @@
 import argparse
-import sys
-import glob
 import os
 import re
 
@@ -10,32 +8,32 @@ from ci_tools.parsing import ParsedSetup
 
 additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
-        "sdk/storage/azure-storage-blob",
-        "sdk/servicebus/azure-servicebus",
-        "sdk/eventhub/azure-eventhub",
-        "sdk/tables/azure-data-table",
-        "sdk/appconfig/azure-appconfig",
-        "sdk/keyvault/azure-keyvault-keys",
-        "sdk/identity/azure-identity",
-        "sdk/core/azure-mgmt-core",
-        "sdk/core/azure-core-experimental",
-        "sdk/core/azure-core-tracing-opentelemetry",
-        "sdk/core/azure-core-tracing-opencensus",
-        "sdk/cosmos/azure-cosmos",
-        "sdk/ml/azure-ai-ml",
-        "sdk/ai/azure-ai-documentintelligence",
-        "sdk/ai/azure-ai-inference",
-        "sdk/ai/azure-ai-textanalytics",
-        "sdk/ai/azure-ai-doctranslation",
-        "sdk/compute/azure-mgmt-compute",
-        "sdk/communication/azure-communication-chat",
-        "sdk/communication/azure-communication-identity",
+        os.path.join("sdk", "storage", "azure-storage-blob"),
+        os.path.join("sdk", "servicebus", "azure-servicebus"),
+        os.path.join("sdk", "eventhub", "azure-eventhub"),
+        os.path.join("sdk", "tables", "azure-data-table"),
+        os.path.join("sdk", "appconfig", "azure-appconfig"),
+        os.path.join("sdk", "keyvault", "azure-keyvault-keys"),
+        os.path.join("sdk", "identity", "azure-identity"),
+        os.path.join("sdk", "core", "azure-mgmt-core"),
+        os.path.join("sdk", "core", "azure-core-experimental"),
+        os.path.join("sdk", "core", "azure-core-tracing-opentelemetry"),
+        os.path.join("sdk", "core", "azure-core-tracing-opencensus"),
+        os.path.join("sdk", "cosmos", "azure-cosmos"),
+        os.path.join("sdk", "ml", "azure-ai-ml"),
+        os.path.join("sdk", "ai", "azure-ai-documentintelligence"),
+        os.path.join("sdk", "ai", "azure-ai-inference"),
+        os.path.join("sdk", "ai", "azure-ai-textanalytics"),
+        os.path.join("sdk", "ai", "azure-ai-doctranslation"),
+        os.path.join("sdk", "compute", "azure-mgmt-compute"),
+        os.path.join("sdk", "communication", "azure-communication-chat"),
+        os.path.join("sdk", "communication", "azure-communication-identity")
     ],
     "azure-mgmt-core": [
-        "sdk/compute/azure-mgmt-compute",
-        "sdk/network/azure-mgmt-network",
-        "sdk/resource/azure-mgmt-resource",
-        "sdk/keyvault/azure-mgmt-keyvault",
+        os.path.join("sdk", "compute", "azure-mgmt-compute"),
+        os.path.join("sdk", "network", "azure-mgmt-network"),
+        os.path.join("sdk", "resource", "azure-mgmt-resource"),
+        os.path.join("sdk", "keyvault", "azure-mgmt-keyvault")
     ]
 }
 
