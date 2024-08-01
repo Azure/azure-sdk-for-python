@@ -116,25 +116,25 @@ foreach ($packagePropFile in $packageProperties)
     if ($packages)
     {
         $pkgPath = $packages.Values[0]
-        $isRequired = Should-Process-Package -pkgPath $pkgPath -packageName $artifact.name
+        $isRequired = Should-Process-Package -pkgPath $pkgPath -packageName $($packageMetadata.Name)
         Write-Host "Is API change detect required for $($packages.Name):$($isRequired)"
         if ($isRequired -eq $True)
         {
             $filePath = $pkgPath.Replace($ArtifactPath , "").Replace("\", "/")
-            $respCode = Submit-Request -filePath $filePath -packageName $artifact.name
+            $respCode = Submit-Request -filePath $filePath -packageName $($packageMetadata.Name)
             if ($respCode -ne '200')
             {
-                $responses[$artifact.name] = $respCode
+                $responses[$($packageMetadata.Name)] = $respCode
             }
         }
         else
         {
-            Write-Host "Pull request does not have any change for $($artifact.name). Skipping API change detect."
+            Write-Host "Pull request does not have any change for $($packageMetadata.Name)). Skipping API change detect."
         }
     }
     else
     {
-        Write-Host "No package is found in artifact path to find API changes for $($artifact.name)"
+        Write-Host "No package is found in artifact path to find API changes for $($packageMetadata.Name)"
     }
 }
 
