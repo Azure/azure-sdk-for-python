@@ -16,7 +16,6 @@ class PackageProps
     [string]$ArtifactName
     [string]$ReleaseStatus
     [string[]]$DependentPackages
-    [string]$IncludedByFile
 
     PackageProps([string]$name, [string]$version, [string]$directoryPath, [string]$serviceDirectory)
     {
@@ -121,7 +120,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
         $lookupKey = ($pkg.DirectoryPath).Replace($RepoRoot, "").SubString(1)
-        Write-Host "Storing $($pkg.Name) in $lookupKey"
         $lookup[$lookupKey] = $pkg
 
         foreach ($file in $targetedFiles)
@@ -131,7 +129,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
 
-                Write-Host "While examining $($pkg.Name) I saw the following dependent packages $($pkg.DependentPackages)"
                 if ($pkg.DependentPackages) {
                     $dependentPackagesForInclusion += $pkg.DependentPackages
                 }
@@ -140,7 +137,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     }
 
     foreach ($addition in $dependentPackagesForInclusion) {
-        Write-Host "Examining $addition to see if it shows up in the complete package list"
         if ($lookup[$addition]) {
             $packagesWithChanges += $lookup[$addition]
         }
