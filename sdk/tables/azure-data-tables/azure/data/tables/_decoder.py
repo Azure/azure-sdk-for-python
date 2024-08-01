@@ -104,9 +104,9 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
                 continue
             
             edm_type = edmtypes.get(name)
-            if isinstance(value, int) and edm_type is None:
-                if value >= 2**31 or value < (-(2**31)):
-                    edm_type = EdmType.INT64
+            # if isinstance(value, int) and edm_type is None:
+            #     if value >= 2**31 or value < (-(2**31)):
+            #         edm_type = EdmType.INT64
 
             if not edm_type:
                 decoded[name] = value # no type info, property should parse automatically
