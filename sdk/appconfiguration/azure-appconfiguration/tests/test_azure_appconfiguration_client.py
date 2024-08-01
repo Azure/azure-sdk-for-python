@@ -1205,14 +1205,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
         self.add_for_test(self.client, self.create_config_setting())
         self.add_for_test(self.client, self.create_config_setting_no_label())
-        self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label="\"label\""))
-        
+        self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label='"label"'))
+
         rep = self.client.list_labels()
         assert len(list(rep)) == 3
 
         rep = self.client.list_labels(name="test*")
         assert len(list(rep)) == 1
-        
+
         self.tear_down()
 
 

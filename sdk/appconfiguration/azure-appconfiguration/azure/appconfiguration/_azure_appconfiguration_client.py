@@ -753,7 +753,9 @@ class AzureAppConfigurationClient:
         return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
-    def get_snapshot(self, name: str, *, fields: Optional[List[Union[str, SnapshotFields]]] = None, **kwargs) -> ConfigurationSnapshot:
+    def get_snapshot(
+        self, name: str, *, fields: Optional[List[Union[str, SnapshotFields]]] = None, **kwargs
+    ) -> ConfigurationSnapshot:
         """Get a configuration setting snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve.
@@ -787,7 +789,7 @@ class AzureAppConfigurationClient:
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
             Available fields see :class:`~azure.appconfiguration.SnapshotFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.SnapshotFields] or None
-        :keyword status: Filter results based on snapshot keys. Available status see 
+        :keyword status: Filter results based on snapshot keys. Available status see
             :class:`~azure.appconfiguration.SnapshotStatus`.
         :paramtype status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`

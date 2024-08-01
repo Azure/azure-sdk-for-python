@@ -1232,14 +1232,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
         await self.add_for_test(self.client, self.create_config_setting())
         await self.add_for_test(self.client, self.create_config_setting_no_label())
-        await self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label="\"label\""))
-        
+        await self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label='"label"'))
+
         rep = await self.convert_to_list(self.client.list_labels())
         assert len(list(rep)) == 3
 
         rep = await self.convert_to_list(self.client.list_labels(name="test*"))
         assert len(list(rep)) == 1
-        
+
         await self.tear_down()
 
 
