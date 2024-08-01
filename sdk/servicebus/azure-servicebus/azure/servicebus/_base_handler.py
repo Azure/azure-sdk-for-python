@@ -363,30 +363,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _check_live(self):
         """check whether the handler is alive"""
-        # pylint: disable=protected-access
-        if self._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-        # The following client validation is for two purposes in a session receiver:
-        # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
-        # once there's a connection error, we don't retry on the session entity and simply raise SessionlockLostError.
-        # 2. self._session._lock_expired is a hot fix as client validation for session lock expiration.
-        # Because currently uamqp doesn't have the ability to detect remote session lock lost.
-        # Usually the service would send a detach frame once a session lock gets expired, however, in the edge case
-        # when we drain messages in a queue and try to settle messages after lock expiration,
-        # we are not able to receive the detach frame by calling uamqp connection.work(),
-        # Eventually this should be a fix in the uamqp library.
-        # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
-        if self._amqp_transport.KIND == "uamqp":
-            try:
-                if self._session and (
-                    self._session._lock_lost or self._session._lock_expired
-                ):
-                    raise SessionLockLostError(error=self._session.auto_renew_error)
-            except AttributeError:
-                pass
+        self._amqp_transport.check_live(self)
 
     def _do_retryable_operation( # pylint: disable=inconsistent-return-statements
         self,

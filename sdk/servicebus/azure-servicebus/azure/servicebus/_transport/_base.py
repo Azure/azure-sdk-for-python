@@ -391,3 +391,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         dead_letter_error_description=None,
     ):
         """TODO"""
+
+    @staticmethod
+    @abstractmethod
+    def check_live(handler):
+        """TODO"""

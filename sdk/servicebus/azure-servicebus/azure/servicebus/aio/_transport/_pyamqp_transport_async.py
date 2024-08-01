@@ -564,3 +564,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 dead_letter_error_description=dead_letter_error_description,
             )
             message._settled = True
+
+    @staticmethod
+    async def check_live(receiver):
+        # pylint: disable=protected-access
+        if receiver._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
