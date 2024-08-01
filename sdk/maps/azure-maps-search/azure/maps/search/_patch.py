@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import Union, Any, MutableMapping, List
+from typing import Union, Any, MutableMapping, List, Optional
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -51,15 +51,15 @@ class MapsSearchClient(MapsSearchClientGenerated):
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
         *,
-        endpoint: Optional[str] = None,
+        endpoint: str = "https://atlas.microsoft.com",
         client_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         super().__init__(
             credential=credential,  # type: ignore
-            endpoint=kwargs.pop("endpoint", "https://atlas.microsoft.com"),
+            endpoint=endpoint,
+            client_id=client_id,
             api_version=kwargs.pop("api_version", "2023-06-01"),
-            client_id=kwargs.pop("client_id", None),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
