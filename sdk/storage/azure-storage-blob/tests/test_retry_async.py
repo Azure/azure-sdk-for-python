@@ -19,8 +19,9 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import LocationMode
+from azure.storage.blob._shared.authentication import AzureSigningError
 from azure.storage.blob._shared.policies_async import ExponentialRetry, LinearRetry
-from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 from devtools_testutils import ResponseCallback, RetryCounter
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -528,5 +529,31 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
             await blob.download_blob()
         assert stream_reader_read_mock.call_count == count[0] == 4
+
+    @BlobPreparer()
+    async def test_invalid_storage_account_key(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = "a"
+
+        # Arrange
+        blob_client = self._create_storage_service(
+            BlobClient,
+            storage_account_name,
+            storage_account_key,
+            container_name="foo",
+            blob_name="bar"
+        )
+
+        retry_counter = RetryCounter()
+        retry_callback = retry_counter.simple_count
+
+        # Act
+        with pytest.raises(AzureSigningError) as e:
+            await blob_client.get_blob_properties(retry_hook=retry_callback)
+
+        # Assert
+        assert ("This is likely due to an invalid shared key. Please check your shared key and try again." in
+                e.value.message)
+        assert retry_counter.count == 0
 
 # ------------------------------------------------------------------------------
