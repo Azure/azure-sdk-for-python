@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import binascii
 import functools
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, overload
@@ -27,7 +26,7 @@ from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotUpdateParameters, SnapshotStatus, LabelFields
+from .._generated.models import SnapshotUpdateParameters, SnapshotStatus, SnapshotFields, LabelFields, KeyValueFields
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
@@ -147,7 +146,7 @@ class AzureAppConfigurationClient:
         label_filter: Optional[str] = None,
         tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
-        fields: Optional[List[str]] = None,
+        fields: Optional[List[Union[str, KeyValueFields]]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -164,7 +163,8 @@ class AzureAppConfigurationClient:
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
+            Available fields see :class:`~azure.appconfiguration.KeyValueFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.KeyValueFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -194,8 +194,7 @@ class AzureAppConfigurationClient:
         self,
         *,
         snapshot_name: str,
-        fields: Optional[List[str]] = None,
-        tags_filter: Optional[List[str]] = None,
+        fields: Optional[List[Union[str, KeyValueFields]]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
@@ -203,9 +202,8 @@ class AzureAppConfigurationClient:
 
         :keyword str snapshot_name: The snapshot name.
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
-        :keyword tags_filter: A filter used to query by tags. Default value is None.
-        :paramtype tags_filter: list[str] or None
+            Available fields see :class:`~azure.appconfiguration.KeyValueFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.KeyValueFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -221,17 +219,16 @@ class AzureAppConfigurationClient:
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         snapshot_name = kwargs.pop("snapshot_name", None)
-        tags = kwargs.pop("tags_filter", None)
 
         if snapshot_name is not None:
             return self._impl.get_key_values(  # type: ignore[return-value]
                 snapshot=snapshot_name,
                 accept_datetime=accept_datetime,
                 select=select,
-                tags=tags,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs,
             )
+        tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
         command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
@@ -486,7 +483,7 @@ class AzureAppConfigurationClient:
         *,
         tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
-        fields: Optional[List[str]] = None,
+        fields: Optional[List[Union[str, KeyValueFields]]] = None,
         **kwargs,
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """
@@ -503,7 +500,8 @@ class AzureAppConfigurationClient:
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
+            Available fields see :class:`~azure.appconfiguration.KeyValueFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.KeyValueFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -614,7 +612,7 @@ class AzureAppConfigurationClient:
         name: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: Optional[List[Union[str, LabelFields]]] = None,
         **kwargs,
     ) -> AsyncItemPaged[str]:
         """Gets a list of labels.
@@ -628,7 +626,8 @@ class AzureAppConfigurationClient:
             specified time. Default value is None.
         :paramtype accept_datetime: str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
+            Available fields see :class:`~azure.appconfiguration.LabelFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.LabelFields] or None
         :return: An async iterator of labels.
         :rtype: ~azure.core.paging.AsyncItemPaged[str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -769,13 +768,14 @@ class AzureAppConfigurationClient:
         return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace_async
-    async def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> ConfigurationSnapshot:
+    async def get_snapshot(self, name: str, *, fields: Optional[List[Union[str, SnapshotFields]]] = None, **kwargs) -> ConfigurationSnapshot:
         """Get a configuration setting snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
+            Available fields see :class:`~azure.appconfiguration.SnapshotFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.SnapshotFields] or None
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -790,7 +790,7 @@ class AzureAppConfigurationClient:
         self,
         *,
         name: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: Optional[List[Union[str, SnapshotFields]]] = None,
         status: Optional[List[Union[str, SnapshotStatus]]] = None,
         **kwargs,
     ) -> AsyncItemPaged[ConfigurationSnapshot]:
@@ -800,8 +800,10 @@ class AzureAppConfigurationClient:
         :keyword name: Filter results based on snapshot name.
         :paramtype name: str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-        :paramtype fields: list[str] or None
-        :keyword status: Filter results based on snapshot keys.
+            Available fields see :class:`~azure.appconfiguration.SnapshotFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.SnapshotFields] or None
+        :keyword status: Filter results based on snapshot keys. Available status see 
+            :class:`~azure.appconfiguration.SnapshotStatus`.
         :paramtype status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
