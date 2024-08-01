@@ -24,7 +24,7 @@ from .generate_utils import (
     init_new_service,
     update_servicemetadata,
     judge_tag_preview,
-    format_samples,
+    format_samples_and_tests,
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
@@ -316,7 +316,7 @@ def main(generate_input, generate_output):
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
-            format_samples(sdk_code_path)
+            format_samples_and_tests(sdk_code_path)
 
             # Update metadata
             try:
