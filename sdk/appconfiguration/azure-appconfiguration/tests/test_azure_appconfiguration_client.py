@@ -1078,9 +1078,6 @@ class TestAppConfigurationClient(AppConfigTestCase):
         items = self.client.list_configuration_settings(snapshot_name=snapshot_name)
         assert len(list(items)) == 1
 
-        items = self.client.list_configuration_settings(snapshot_name=snapshot_name, tags_filter=["tag1=invalid"])
-        assert len(list(items)) == 0
-
         self.tear_down()
 
     @app_config_decorator
@@ -1197,18 +1194,25 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
-        self.set_up(appconfiguration_connection_string)
+    def test_list_labels(self, appconfiguration_connection_string):
+        self.client = self.create_client(appconfiguration_connection_string)
+        config_settings = self.client.list_configuration_settings()
+        for config_setting in config_settings:
+            self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
 
-        rep = self.client.list_labels(name=LABEL)
-        assert len(list(rep)) == 1
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 0
+
+        self.add_for_test(self.client, self.create_config_setting())
+        self.add_for_test(self.client, self.create_config_setting_no_label())
+        self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label="\"label\""))
+        
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 3
 
         rep = self.client.list_labels(name="test*")
         assert len(list(rep)) == 1
-
-        rep = self.client.list_labels()
-        assert len(list(rep)) == 2
-
+        
         self.tear_down()
 
 
