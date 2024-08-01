@@ -348,3 +348,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         dead_letter_error_description=None,
     ):
         """TODO"""
+
+    @staticmethod
+    @abstractmethod
+    async def check_live(receiver):
+        """TODO"""
