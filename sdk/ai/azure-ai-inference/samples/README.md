@@ -55,20 +55,20 @@ Note that the client library does not directly read these environment variable a
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
-| Chat completions | `CHAT_COMPLETIONS_ENDPOINT` | `CHAT_COMPLETIONS_KEY` |
-| Embeddings | `EMBEDDINGS_ENDPOINT` | `EMBEDDINGS_KEY` |
+| Chat completions | `AZURE_AI_CHAT_ENDPOINT` | `AZURE_AI_CHAT_KEY` |
+| Embeddings | `AZURE_AI_EMBEDDINGS_ENDPOINT` | `AZURE_AI_EMBEDDINGS_KEY` |
 <!--
 | Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
 -->
 
-To run against a Managed Compute Endpoint, some samples also have an optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
+To run against a Managed Compute Endpoint, some samples also have an optional environment variable `AZURE_AI_CHAT_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
 
 ## Azure OpenAI endpoints
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
-| Chat completions | `AOAI_CHAT_COMPLETIONS_ENDPOINT` | `AOAI_CHAT_COMPLETIONS_KEY` |
-| Embeddings | `AOAI_EMBEDDINGS_ENDPOINT` | `AOAI_EMBEDDINGS_KEY` |
+| Chat completions | `AZURE_OPENAI_CHAT_ENDPOINT` | `AZURE_OPENAI_CHAT_KEY` |
+| Embeddings | `AZURE_OPENAI_EMBEDDINGS_ENDPOINT` | `AZURE_OPENAI_EMBEDDINGS_KEY` |
 <!--
 | Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
 -->
@@ -92,11 +92,13 @@ similarly for the other samples.
 |[sample_chat_completions_streaming.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming.py) | One chat completion operation using a synchronous client and streaming response. |
 |[sample_chat_completions_streaming_with_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming_with_entra_id_auth.py) | One chat completion operation using a synchronous client and streaming response, using Entra ID authentication. This sample also shows setting the `azureml-model-deployment` HTTP request header, which may be required for some Managed Compute endpoint. |
 |[sample_chat_completions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions.py) | One chat completion operation using a synchronous client. |
-|[sample_chat_completions_with_images.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_images.py) | One chat completion operation using a synchronous client, which includes sending an input image. |
+|[sample_chat_completions_with_defaults.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_defaults.py) | One chat completion operation using a synchronous client, with default chat completions configuration set in the client constructor. |
+|[sample_chat_completions_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_url.py) | One chat completion operation using a synchronous client, which includes sending an input image URL. |
+|[sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) | One chat completion operation using a synchronous client, which includes sending input image data read from a local file. |
 |[sample_chat_completions_with_history.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_history.py) | Two chat completion operations using a synchronous client, with the second completion using chat history from the first. |
 |[sample_chat_completions_from_input_bytes.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_bytes.py) | One chat completion operation using a synchronous client, with input messages provided as `IO[bytes]`. |
 |[sample_chat_completions_from_input_json.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json.py) | One chat completion operation using a synchronous client, with input messages provided as a dictionary (type `MutableMapping[str, Any]`) |
-|[sample_chat_completions_from_input_json_with_images.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json_with_images.py) | One chat completion operation using a synchronous client, with input messages provided as a dictionary (type `MutableMapping[str, Any]`). Includes sending an input image. |
+|[sample_chat_completions_from_input_json_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json_with_image_url.py) | One chat completion operation using a synchronous client, with input messages provided as a dictionary (type `MutableMapping[str, Any]`). Includes sending an input image URL. |
 |[sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) | Shows how do use a tool (function) in chat completions, for an AI model that supports tools |
 |[sample_load_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_load_client.py) | Shows how do use the function `load_client` to create the appropriate synchronous client based on the provided endpoint URL. In this example, it creates a synchronous `ChatCompletionsClient`. |
 |[sample_get_model_info.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_get_model_info.py) | Get AI model information using the chat completions client. Similarly can be done with all other clients. |
@@ -108,6 +110,7 @@ similarly for the other samples.
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings.py) | One embeddings operation using a synchronous client. |
+|[sample_embeddings_with_defaults.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings_with_defaults.py) | One embeddings operation using a synchronous client, with default embeddings configuration set in the client constructor. |
 |[sample_embeddings_azure_openai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings_azure_openai.py) | One embeddings operation using a synchronous client, against Azure OpenAI endpoint. |
 
 <!--

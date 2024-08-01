@@ -111,6 +111,7 @@ class CodegenTestPR:
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.target_date = os.getenv('TARGET_DATE', '')
         self.test_folder = os.getenv('TEST_FOLDER', '')
+        self.issue_owner = os.getenv('ISSUE_OWNER', '')
 
         self.package_name = '' # 'dns' of 'sdk/compute/azure-mgmt-dns'
         self.whole_package_name = '' # 'azure-mgmt-dns'
@@ -356,26 +357,15 @@ class CodegenTestPR:
         self.calculate_next_version()
         self.edit_all_version_file()
 
-    def edit_changelog_for_new_service(self):
-        def edit_changelog_for_new_service_proc(content: List[str]):
-            for i in range(0, len(content)):
-                if '##' in content[i]:
-                    content[i] = f'## {self.next_version} ({self.target_release_date})\n'
-                    break
-
-        modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
-
-    def edit_changelog(self):
+    def check_changelog_file(self):
         def edit_changelog_proc(content: List[str]):
-            content[1:1] = ['\n', f'## {self.next_version}{self.version_suggestion} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
+            next_version = self.next_version
+            content[1:1] = ['\n', f'## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
+            if next_version == "1.0.0b1":
+                for _ in range(4):
+                    content.pop()
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
-
-    def check_changelog_file(self):
-        if self.next_version == '1.0.0b1':
-            self.edit_changelog_for_new_service()
-        else:
-            self.edit_changelog()
 
     def check_dev_requirement(self):
         file = Path(f'sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt')
@@ -537,7 +527,7 @@ class CodegenTestPR:
             # comment to ask for check from users
             issue_number = int(self.issue_link.split('/')[-1])
             api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            author = api.issues.get(issue_number=issue_number).user.login
+            author = self.issue_owner or api.issues.get(issue_number=issue_number).user.login
             body = f'Hi @{author}, please check whether CHANGELOG for this release meet requirements:\n' \
                 f'```\n' \
                 f'CHANGELOG:\n' \

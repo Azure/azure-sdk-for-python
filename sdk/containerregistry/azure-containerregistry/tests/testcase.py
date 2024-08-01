@@ -12,7 +12,7 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential
+from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential, get_credential
 
 logger = logging.getLogger()
 
@@ -27,7 +27,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            return get_credential(authority)
+            return get_credential(authority=authority, **kwargs)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
@@ -115,19 +115,10 @@ def get_audience(authority: str) -> str:
         return "https://management.usgovcloudapi.net"
 
 
-def get_credential(authority: str, **kwargs):
-    return ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority,
-    )
-
-
 def import_image(endpoint, repository, tags):
     authority = get_authority(endpoint)
     logger.warning(f"Import image authority: {authority}")
-    credential = get_credential(authority)
+    credential = get_credential(authority=authority)
 
     with ContainerRegistryClient(endpoint, credential) as client:
         # Upload a layer

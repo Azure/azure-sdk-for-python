@@ -48,7 +48,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +104,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_get_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -137,7 +137,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -151,7 +151,7 @@ def build_create_or_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -173,7 +173,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,7 +187,7 @@ def build_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -209,7 +209,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_delete_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -242,7 +242,7 @@ def build_add_vms_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -256,7 +256,7 @@ def build_add_vms_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -278,7 +278,7 @@ def build_list_private_ip_addresses_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -292,7 +292,7 @@ def build_list_private_ip_addresses_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -314,7 +314,7 @@ def build_remove_vms_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -328,7 +328,7 @@ def build_remove_vms_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -837,8 +837,8 @@ class CloudVmClustersOperations:
             deserialized = self._deserialize("CloudVmCluster", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1014,8 +1014,8 @@ class CloudVmClustersOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1136,8 +1136,8 @@ class CloudVmClustersOperations:
             deserialized = self._deserialize("CloudVmCluster", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1465,8 +1465,8 @@ class CloudVmClustersOperations:
             deserialized = self._deserialize("CloudVmCluster", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -35,7 +35,7 @@ def pre_prepare_client(client, data):
 
 
 def send_batch_message(conn_str, eventhub_name, num_of_events, single_event_size, run_times=1, description=None):
-    client = EventHubProducerClient.from_connection_string(
+    client = EventHubProducerClient(
         conn_str=conn_str, eventhub_name=eventhub_name
     )
 

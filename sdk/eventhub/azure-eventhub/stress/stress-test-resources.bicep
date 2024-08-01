@@ -98,10 +98,8 @@ resource id_name_baseName_contributorRoleId_testApplicationOid 'Microsoft.Author
 
 output EVENT_HUB_NAMESPACE string = eventHubsNamespace_var
 output EVENT_HUB_HOSTNAME string = '${eventHubsNamespace_var}.servicebus.windows.net'
-output EVENT_HUB_CONN_STR string = listkeys(eventHubAuthRuleName, ehVersion).primaryConnectionString
 output EVENT_HUB_NAME string = eventHubName
 output EVENT_HUB_SAS_POLICY string = eventHubAuthRuleName
 output EVENT_HUB_SAS_KEY string = listkeys(eventHubAuthRuleName, ehVersion).primaryKey
-output AZURE_STORAGE_CONN_STR string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount_var};AccountKey=${listKeys(storageAccountId, providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value};EndpointSuffix=${storageEndpointSuffix}'
 output AZURE_STORAGE_ACCOUNT string = storageAccount_var
 output AZURE_STORAGE_ACCESS_KEY string = listKeys(storageAccountId, providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value

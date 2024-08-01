@@ -12,8 +12,9 @@ import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 from azure.eventhub import EventData
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -48,9 +49,10 @@ async def on_event(partition_context, event):
 
 
 async def main():
-    producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    producer_client = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
     )
 
     async with producer_client:
@@ -61,10 +63,11 @@ async def main():
         event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
         await producer_client.send_batch(event_data_batch_to_partition_0)
 
-    consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        consumer_group='$Default',
+    consumer_client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+        consumer_group='$Default',
     )
 
     partition_0_prop = await consumer_client.get_partition_properties("0")

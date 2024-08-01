@@ -17,77 +17,85 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AutonomousDatabaseBackupLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AutonomousDatabaseBackupLifecycleState enum."""
+    """Autonomous database backup lifecycle state enum."""
 
     CREATING = "Creating"
+    """AutonomousDatabase backup is creating"""
     ACTIVE = "Active"
+    """AutonomousDatabase backup is active"""
     DELETING = "Deleting"
+    """AutonomousDatabase backup is deleting"""
     FAILED = "Failed"
+    """AutonomousDatabase backup is failed"""
     UPDATING = "Updating"
+    """AutonomousDatabase backup is updating"""
 
 
 class AutonomousDatabaseBackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AutonomousDatabaseBackupType enum."""
+    """Autonomous database backup type enum."""
 
     INCREMENTAL = "Incremental"
+    """Incremental backup"""
     FULL = "Full"
+    """Full backup"""
     LONG_TERM = "LongTerm"
+    """LongTerm backup"""
 
 
 class AutonomousDatabaseLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AutonomousDatabaseLifecycleState enum."""
+    """Autonomous database lifecycle state enum."""
 
     PROVISIONING = "Provisioning"
-    """PROVISIONING value"""
+    """Indicates that resource in Provisioning state"""
     AVAILABLE = "Available"
-    """AVAILABLE value"""
+    """Indicates that resource in Available state"""
     STOPPING = "Stopping"
-    """STOPPING value"""
+    """Indicates that resource in Stopping state"""
     STOPPED = "Stopped"
-    """STOPPED value"""
+    """Indicates that resource in Stopped state"""
     STARTING = "Starting"
-    """STARTING value"""
+    """Indicates that resource in Starting state"""
     TERMINATING = "Terminating"
-    """TERMINATING value"""
+    """Indicates that resource in Terminating state"""
     TERMINATED = "Terminated"
-    """TERMINATED value"""
+    """Indicates that resource in Terminated state"""
     UNAVAILABLE = "Unavailable"
-    """UNAVAILABLE value"""
+    """Indicates that resource in Unavailable state"""
     RESTORE_IN_PROGRESS = "RestoreInProgress"
-    """RESTORE_IN_PROGRESS value"""
+    """Indicates that resource in RestoreInProgress state"""
     RESTORE_FAILED = "RestoreFailed"
-    """RESTORE_FAILED value"""
+    """Indicates that resource in RestoreFailed state"""
     BACKUP_IN_PROGRESS = "BackupInProgress"
-    """BACKUP_IN_PROGRESS value"""
+    """Indicates that resource in BackupInProgress state"""
     SCALE_IN_PROGRESS = "ScaleInProgress"
-    """SCALE_IN_PROGRESS value"""
+    """Indicates that resource in ScaleInProgress state"""
     AVAILABLE_NEEDS_ATTENTION = "AvailableNeedsAttention"
-    """AVAILABLE_NEEDS_ATTENTION value"""
+    """Indicates that resource is available but needs attention"""
     UPDATING = "Updating"
-    """UPDATING value"""
+    """Indicates that resource in Updating state"""
     MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
-    """MAINTENANCE_IN_PROGRESS value"""
+    """Indicates that resource maintenance in progress state"""
     RESTARTING = "Restarting"
-    """RESTARTING value"""
+    """Indicates that resource in Restarting state"""
     RECREATING = "Recreating"
-    """RECREATING value"""
+    """Indicates that resource in Recreating state"""
     ROLE_CHANGE_IN_PROGRESS = "RoleChangeInProgress"
-    """ROLE_CHANGE_IN_PROGRESS value"""
+    """Indicates that resource role change in progress state"""
     UPGRADING = "Upgrading"
-    """UPGRADING value"""
+    """Indicates that resource in Upgrading state"""
     INACCESSIBLE = "Inaccessible"
-    """INACCESSIBLE value"""
+    """IIndicates that resource in Inaccessible state"""
     STANDBY = "Standby"
-    """STANDBY value"""
+    """Indicates that resource in Standby state"""
 
 
 class AutonomousMaintenanceScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AutonomousMaintenanceScheduleType enum."""
+    """Autonomous database maintenance schedule type enum."""
 
     EARLY = "Early"
-    """EARLY value"""
+    """Early maintenance schedule"""
     REGULAR = "Regular"
-    """REGULAR value"""
+    """Regular maintenance schedule"""
 
 
 class AzureResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -100,89 +108,89 @@ class AzureResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     PROVISIONING = "Provisioning"
-    """Provisioning value"""
+    """Indicates that resource in Provisioning state"""
 
 
 class CloneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CloneType enum."""
+    """Clone type enum."""
 
     FULL = "Full"
-    """FULL value"""
+    """Full clone"""
     METADATA = "Metadata"
-    """METADATA value"""
+    """Metadata only"""
 
 
 class CloudAccountProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CloudAccountProvisioningState enum."""
 
     PENDING = "Pending"
-    """Pending value"""
+    """Pending - Initial state when Oracle cloud account is not configured"""
     PROVISIONING = "Provisioning"
-    """Provisioning value"""
+    """Provisioning - State when Oracle cloud account is being provisioned"""
     AVAILABLE = "Available"
-    """Available value"""
+    """Available - State when Oracle cloud account cloud linking is complete and it is available"""
 
 
 class CloudExadataInfrastructureLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CloudExadataInfrastructureLifecycleState enum."""
 
     PROVISIONING = "Provisioning"
-    """PROVISIONING value"""
+    """Indicates that resource in Provisioning state"""
     AVAILABLE = "Available"
-    """AVAILABLE value"""
+    """Indicates that resource in Available state"""
     UPDATING = "Updating"
-    """UPDATING value"""
+    """Indicates that resource in Updating state"""
     TERMINATING = "Terminating"
-    """TERMINATING value"""
+    """Indicates that resource in Terminating state"""
     TERMINATED = "Terminated"
-    """TERMINATED value"""
+    """Indicates that resource in Terminated state"""
     MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
-    """MAINTENANCE_IN_PROGRESS value"""
+    """Indicates that resource maintenance in progress state"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Indicates that resource in Failed state"""
 
 
 class CloudVmClusterLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CloudVmClusterLifecycleState enum."""
+    """Cloud VM Cluster lifecycle state enum."""
 
     PROVISIONING = "Provisioning"
-    """PROVISIONING value"""
+    """Indicates that resource in Provisioning state"""
     AVAILABLE = "Available"
-    """AVAILABLE value"""
+    """Indicates that resource in Available state"""
     UPDATING = "Updating"
-    """UPDATING value"""
+    """Indicates that resource in Updating state"""
     TERMINATING = "Terminating"
-    """TERMINATING value"""
+    """Indicates that resource in Terminating state"""
     TERMINATED = "Terminated"
-    """TERMINATED value"""
+    """Indicates that resource in Terminated state"""
     MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
-    """MAINTENANCE_IN_PROGRESS value"""
+    """Indicates that resource Maintenance in progress state"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Indicates that resource in Failed state"""
 
 
 class ComputeModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeModel enum."""
+    """Compute model enum."""
 
     ECPU = "ECPU"
-    """ECPU value"""
+    """ECPU model type"""
     OCPU = "OCPU"
-    """OCPU value"""
+    """OCPU model type"""
 
 
 class ConsumerGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ConsumerGroup enum."""
+    """Consumer group enum."""
 
     HIGH = "High"
-    """HIGH value"""
+    """High group"""
     MEDIUM = "Medium"
-    """MEDIUM value"""
+    """Medium group"""
     LOW = "Low"
-    """LOW value"""
+    """Low group"""
     TP = "Tp"
-    """TP value"""
+    """TP group"""
     TPURGENT = "Tpurgent"
-    """TPURGENT value"""
+    """TPurgent group"""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -195,36 +203,36 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DatabaseEditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DatabaseEditionType enum."""
+    """Database edition type enum."""
 
     STANDARD_EDITION = "StandardEdition"
-    """STANDARD_EDITION value"""
+    """Standard edition"""
     ENTERPRISE_EDITION = "EnterpriseEdition"
-    """ENTERPRISE_EDITION value"""
+    """Enterprise edition"""
 
 
 class DataBaseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DataBaseType enum."""
+    """Database type enum."""
 
     REGULAR = "Regular"
-    """REGULAR value"""
+    """Regular DB"""
     CLONE = "Clone"
-    """CLONE value"""
+    """Clone DB"""
 
 
 class DataSafeStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DataSafeStatusType enum."""
+    """DataSafe status type enum."""
 
     REGISTERING = "Registering"
-    """REGISTERING value"""
+    """Registering status"""
     REGISTERED = "Registered"
-    """REGISTERED value"""
+    """Registered status"""
     DEREGISTERING = "Deregistering"
-    """DEREGISTERING value"""
+    """Deregistering status"""
     NOT_REGISTERED = "NotRegistered"
-    """NOT_REGISTERED value"""
+    """NotRegistered status"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Failed status"""
 
 
 class DayOfWeekName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -263,157 +271,157 @@ class DbNodeMaintenanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of database node maintenance."""
 
     VMDB_REBOOT_MIGRATION = "VmdbRebootMigration"
-    """Provisioning value"""
+    """VMDB reboot migration maintenance type"""
 
 
 class DbNodeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DnNode provisioning state enum."""
 
     PROVISIONING = "Provisioning"
-    """PROVISIONING value"""
+    """Indicates that resource in Provisioning state"""
     AVAILABLE = "Available"
-    """AVAILABLE value"""
+    """Indicates that resource in Available state"""
     UPDATING = "Updating"
-    """UPDATING value"""
+    """Indicates that resource in Updating state"""
     STOPPING = "Stopping"
-    """STOPPING value"""
+    """Indicates that resource in Stopping state"""
     STOPPED = "Stopped"
-    """STOPPED value"""
+    """Indicates that resource in Stopped state"""
     STARTING = "Starting"
-    """STARTING value"""
+    """Indicates that resource in Starting state"""
     TERMINATING = "Terminating"
-    """TERMINATING value"""
+    """Indicates that resource in Terminating state"""
     TERMINATED = "Terminated"
-    """TERMINATED value"""
+    """Indicates that resource in Terminated state"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Indicates that resource in Failed state"""
 
 
 class DbServerPatchingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Db Server patching status enum."""
+    """DB Server patching status enum."""
 
     SCHEDULED = "Scheduled"
-    """SCHEDULED value"""
+    """Patching scheduled"""
     MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
-    """MAINTENANCE_IN_PROGRESS value"""
+    """Patching in progress"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Patching failed"""
     COMPLETE = "Complete"
-    """COMPLETE value"""
+    """Patching completed"""
 
 
 class DbServerProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DbServerProvisioningState enum."""
 
     CREATING = "Creating"
-    """CREATING value"""
+    """Indicates that resource in Creating state"""
     AVAILABLE = "Available"
-    """AVAILABLE value"""
+    """Indicates that resource in Available state"""
     UNAVAILABLE = "Unavailable"
-    """UNAVAILABLE value"""
+    """Indicates that resource in Unavailable state"""
     DELETING = "Deleting"
-    """DELETING value"""
+    """Indicates that resource in Deleting state"""
     DELETED = "Deleted"
-    """DELETED value"""
+    """Indicates that resource in Deleted state"""
     MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
-    """MAINTENANCE_IN_PROGRESS value"""
+    """Indicates that resource maintenance in progress state"""
 
 
 class DisasterRecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisasterRecoveryType enum."""
+    """Disaster recovery type enum."""
 
     ADG = "Adg"
-    """ADG value"""
+    """ADG type"""
     BACKUP_BASED = "BackupBased"
-    """BACKUP_BASED value"""
+    """Backup based type"""
 
 
 class DiskRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DiskRedundancy enum."""
+    """Disk redundancy enum."""
 
     HIGH = "High"
-    """High value"""
+    """High redundancy"""
     NORMAL = "Normal"
-    """Normal value"""
+    """Normal redundancy"""
 
 
 class DnsPrivateViewsLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DnsPrivateViews lifecycle state enum."""
+    """DNS Private Views lifecycle state enum."""
 
     ACTIVE = "Active"
-    """Active value"""
+    """DNS Private View is active"""
     DELETED = "Deleted"
-    """Deleted value"""
+    """DNS Private View is deleted"""
     DELETING = "Deleting"
-    """Deleting value"""
+    """DNS Private View is deleting"""
     UPDATING = "Updating"
-    """Updating value"""
+    """DNS Private View is updating"""
 
 
 class DnsPrivateZonesLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DnsPrivateZones lifecycle state enum."""
+    """DNS Private Zones lifecycle state enum."""
 
     ACTIVE = "Active"
-    """Active value"""
+    """DNS Private Zones is active"""
     CREATING = "Creating"
-    """Creating value"""
+    """DNS Private Zones is creating"""
     DELETED = "Deleted"
-    """Deleted value"""
+    """DNS Private Zones is deleted"""
     DELETING = "Deleting"
-    """Deleting value"""
+    """DNS Private Zones is deleting"""
     UPDATING = "Updating"
-    """Updating value"""
+    """DNS Private Zones is updating"""
 
 
 class GenerateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """GenerateType enum."""
+    """Generate type enum."""
 
     SINGLE = "Single"
-    """SINGLE value"""
+    """Generate single"""
     ALL = "All"
-    """ALL value"""
+    """Generate all"""
 
 
 class HostFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """HostFormatType enum."""
+    """Host format type enum."""
 
     FQDN = "Fqdn"
-    """FQDN value"""
+    """FQDN format"""
     IP = "Ip"
-    """IP value"""
+    """IP format"""
 
 
 class Intent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Intent enum."""
 
     RETAIN = "Retain"
-    """Retain value"""
+    """Retain intent"""
     RESET = "Reset"
-    """Reset value"""
+    """Reset intent"""
 
 
 class IormLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IORMLifecycleState enum."""
+    """ORM lifecycle state enum."""
 
     BOOT_STRAPPING = "BootStrapping"
-    """BOOTSTRAPPING value"""
+    """Indicates that resource in Provisioning state"""
     ENABLED = "Enabled"
-    """ENABLED value"""
+    """Indicates that resource in Enabled state"""
     DISABLED = "Disabled"
-    """DISABLED value"""
+    """Indicates that resource in Disabled state"""
     UPDATING = "Updating"
-    """UPDATING value"""
+    """Indicates that resource in Updating state"""
     FAILED = "Failed"
-    """FAILED value"""
+    """Indicates that resource in Failed state"""
 
 
 class LicenseModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LicenseModel enum."""
 
     LICENSE_INCLUDED = "LicenseIncluded"
-    """LicenseIncluded value"""
+    """License included"""
     BRING_YOUR_OWN_LICENSE = "BringYourOwnLicense"
-    """BringYourOwnLicense value"""
+    """Bring Your Own License"""
 
 
 class MonthName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -449,41 +457,41 @@ class Objective(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Objective enum."""
 
     LOW_LATENCY = "LowLatency"
-    """LOW_LATENCY value"""
+    """Low latency objective"""
     HIGH_THROUGHPUT = "HighThroughput"
-    """HIGH_THROUGHPUT value"""
+    """High throughput objective"""
     BALANCED = "Balanced"
-    """BALANCED value"""
+    """Balanced objective"""
     AUTO = "Auto"
-    """AUTO value"""
+    """Auto objective"""
     BASIC = "Basic"
-    """BASIC value"""
+    """Basic objective"""
 
 
 class OpenModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OpenModeType enum."""
+    """Open mode type enum."""
 
     READ_ONLY = "ReadOnly"
-    """READ_ONLY value"""
+    """ReadOnly mode"""
     READ_WRITE = "ReadWrite"
-    """READ_WRITE value"""
+    """ReadWrite mode"""
 
 
 class OperationsInsightsStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OperationsInsightsStatusType enum."""
+    """Operations Insights status type enum."""
 
     ENABLING = "Enabling"
-    """ENABLING value"""
+    """Enabling status"""
     ENABLED = "Enabled"
-    """ENABLED value"""
+    """Enabled status"""
     DISABLING = "Disabling"
-    """DISABLING value"""
+    """Disabling status"""
     NOT_ENABLED = "NotEnabled"
-    """NOT_ENABLED value"""
+    """NotEnabled status"""
     FAILED_ENABLING = "FailedEnabling"
-    """FAILED_ENABLING value"""
+    """FailedEnabling status"""
     FAILED_DISABLING = "FailedDisabling"
-    """FAILED_DISABLING value"""
+    """FailedDisabling status"""
 
 
 class OracleSubscriptionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -508,57 +516,70 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PatchingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PatchingMode enum."""
+    """Patching mode enum."""
 
     ROLLING = "Rolling"
-    """Rolling value"""
+    """Rolling patching"""
     NON_ROLLING = "NonRolling"
-    """Non Rolling value"""
+    """Non Rolling patching"""
 
 
 class PermissionLevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PermissionLevelType enum."""
+    """Permission level type enum."""
 
     RESTRICTED = "Restricted"
-    """RESTRICTED value"""
+    """Restricted permission level"""
     UNRESTRICTED = "Unrestricted"
-    """UNRESTRICTED value"""
+    """Unrestricted permission level"""
 
 
 class Preference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Preference enum."""
 
     NO_PREFERENCE = "NoPreference"
-    """NoPreference value"""
+    """No preference"""
     CUSTOM_PREFERENCE = "CustomPreference"
-    """CustomPreference value"""
+    """Custom preference"""
 
 
 class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ProtocolType enum."""
+    """Protocol type enum."""
 
     TCP = "TCP"
-    """TCP value"""
+    """TCP protocol"""
     TCPS = "TCPS"
-    """TCPS value"""
+    """TCPS protocol"""
 
 
 class RefreshableModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RefreshableModelType enum."""
+    """Refreshable model type enum."""
 
     AUTOMATIC = "Automatic"
-    """AUTOMATIC value"""
+    """Automatic refreshable model type"""
     MANUAL = "Manual"
-    """MANUAL value"""
+    """Manual refreshable model type"""
 
 
 class RefreshableStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RefreshableStatusType enum."""
+    """Refreshable status type enum."""
 
     REFRESHING = "Refreshing"
-    """REFRESHING value"""
+    """Refreshing status"""
     NOT_REFRESHING = "NotRefreshing"
-    """NOT_REFRESHING value"""
+    """NotRefreshing status"""
+
+
+class RepeatCadenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Repeat cadence type enum."""
+
+    ONE_TIME = "OneTime"
+    """Repeat one time"""
+    WEEKLY = "Weekly"
+    """Repeat weekly"""
+    MONTHLY = "Monthly"
+    """Repeat monthly"""
+    YEARLY = "Yearly"
+    """Repeat yearly"""
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -573,112 +594,103 @@ class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RoleType enum."""
+    """Role type enum."""
 
     PRIMARY = "Primary"
-    """PRIMARY value"""
+    """Primary role"""
     STANDBY = "Standby"
-    """STANDBY value"""
+    """Standby role"""
     DISABLED_STANDBY = "DisabledStandby"
-    """DISABLED_STANDBY value"""
+    """DisabledStandby role"""
     BACKUP_COPY = "BackupCopy"
-    """BACKUP_COPY value"""
+    """BackupCopy role"""
     SNAPSHOT_STANDBY = "SnapshotStandby"
-    """SNAPSHOT_STANDBY value"""
+    """SnapshotStandby role"""
 
 
 class SessionModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SessionModeType enum."""
+    """Session mode type enum."""
 
     DIRECT = "Direct"
-    """DIRECT value"""
+    """Direct session mode"""
     REDIRECT = "Redirect"
-    """REDIRECT value"""
+    """Redirect session mode"""
 
 
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SourceType enum."""
+    """Source type enum."""
 
     NONE = "None"
-    """NONE value"""
+    """None source"""
     DATABASE = "Database"
-    """DATABASE value"""
+    """Database source"""
     BACKUP_FROM_ID = "BackupFromId"
-    """BACKUP_FROM_ID value"""
+    """Backup from ID source"""
     BACKUP_FROM_TIMESTAMP = "BackupFromTimestamp"
-    """BACKUP_FROM_TIMESTAMP value"""
+    """Backup from timestamp source"""
     CLONE_TO_REFRESHABLE = "CloneToRefreshable"
-    """CLONE_TO_REFRESHABLE value"""
+    """Clone to refreshable source"""
     CROSS_REGION_DATAGUARD = "CrossRegionDataguard"
-    """CROSS_REGION_DATAGUARD value"""
+    """Cross region dataguard source"""
     CROSS_REGION_DISASTER_RECOVERY = "CrossRegionDisasterRecovery"
-    """CROSS_REGION_DISASTER_RECOVERY value"""
+    """cross region disaster recovery source"""
 
 
 class SyntaxFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SyntaxFormatType enum."""
+    """Syntax format type enum."""
 
     LONG = "Long"
-    """LONG value"""
+    """Long format"""
     EZCONNECT = "Ezconnect"
-    """EZCONNECT value"""
+    """Ezconnect format"""
     EZCONNECTPLUS = "Ezconnectplus"
-    """EZCONNECTPLUS value"""
+    """Ezconnectplus format"""
 
 
 class TlsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TlsAuthenticationType enum."""
+    """TLS authentication type enum."""
 
     SERVER = "Server"
-    """SERVER value"""
+    """Server authentication"""
     MUTUAL = "Mutual"
-    """MUTUAL value"""
+    """Mutual TLS"""
 
 
 class UpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UpdateAction enum."""
+    """Update action enum."""
 
     ROLLING_APPLY = "RollingApply"
-    """ROLLING_APPLY value"""
+    """Rolling apply action"""
     NON_ROLLING_APPLY = "NonRollingApply"
-    """NON_ROLLING_APPLY value"""
+    """Non rolling apply action"""
     PRE_CHECK = "PreCheck"
-    """PRECHECK value"""
+    """Pre-check action"""
     ROLL_BACK = "RollBack"
-    """ROLLBACK value"""
+    """Rollback action"""
 
 
 class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """validation status."""
 
     SUCCEEDED = "Succeeded"
-    """Succeeded value"""
+    """Validation succeeded"""
     FAILED = "Failed"
-    """Failed value"""
-
-
-class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Versions for API."""
-
-    V20230901 = "2023-09-01-preview"
-    """2023-09-01-preview"""
-    V_INTERNAL_API = "internal"
-    """internal api - RPaaS to ORP"""
+    """Validation failed"""
 
 
 class VirtualNetworkAddressLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VirtualNetworkAddressLifecycleState enum."""
 
     PROVISIONING = "Provisioning"
-    """Provisioning value"""
+    """Indicates that resource in Provisioning state"""
     AVAILABLE = "Available"
-    """Available value"""
+    """Indicates that resource in Available state"""
     TERMINATING = "Terminating"
-    """Terminating value"""
+    """Indicates that resource in Terminating state"""
     TERMINATED = "Terminated"
-    """Terminated value"""
+    """Indicates that resource in Terminated state"""
     FAILED = "Failed"
-    """Failed value"""
+    """Indicates that resource in Failed state"""
 
 
 class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -696,9 +708,9 @@ class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ZoneType enum."""
+    """Zone type enum."""
 
     PRIMARY = "Primary"
-    """Primary value"""
+    """Primary zone"""
     SECONDARY = "Secondary"
-    """Secondary value"""
+    """Secondary zone"""

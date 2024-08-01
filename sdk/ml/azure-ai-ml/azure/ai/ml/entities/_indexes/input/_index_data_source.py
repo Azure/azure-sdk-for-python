@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing import Union
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import IndexInputType
 
@@ -12,6 +13,7 @@ from azure.ai.ml.constants._common import IndexInputType
 
 
 # Defines stuff related to supplying inputs for an index AKA the base data.
+@experimental
 class IndexDataSource:
     """Base class for configs that define data that will be processed into an ML index.
     This class should not be instantiated directly. Use one of its child classes instead.
@@ -28,24 +30,26 @@ class IndexDataSource:
 # Field bundle for creating an index from files located in a Git repo.
 # TODO Does git_url need to specifically be an SSH or HTTPS style link?
 # TODO What is git connection id?
+@experimental
 class GitSource(IndexDataSource):
     """Config class for creating an ML index from files located in a git repository.
 
-    :param git_url: A link to the repository to use.
-    :type git_url: str
-    :param git_branch_name: The name of the branch to use from the target repository.
-    :type git_branch_name: str
-    :param git_connection_id: The connection ID for GitHub
-    :type git_connection_id: str
+    :param url: A link to the repository to use.
+    :type url: str
+    :param branch_name: The name of the branch to use from the target repository.
+    :type branch_name: str
+    :param connection_id: The connection ID for GitHub
+    :type connection_id: str
     """
 
-    def __init__(self, *, git_url: str, git_branch_name: str, git_connection_id: str):
-        self.git_url = git_url
-        self.git_branch_name = git_branch_name
-        self.git_connection_id = git_connection_id
+    def __init__(self, *, url: str, branch_name: str, connection_id: str):
+        self.url = url
+        self.branch_name = branch_name
+        self.connection_id = connection_id
         super().__init__(input_type=IndexInputType.GIT)
 
 
+@experimental
 class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 

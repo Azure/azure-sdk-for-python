@@ -1,0 +1,25 @@
+#source ../configs/genai-momo/out-of-box-monitoring.yaml
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: genai_app_monitoring
+display_name: Virtual Assistant application monitoring
+description: Monitoring setup for virutal Assistant GenAI application with minimal configuration
+
+trigger:
+  type: recurrence
+  frequency: day
+  interval: 1 # runs data analysis job daily at 23:15pm
+  schedule: 
+    hours: 23
+    minutes: 15
+  
+create_monitor:
+  compute:  # clusterless spark compute to run monitoring job
+    instance_type: standard_e4s_v3
+    runtime_version: "3.2"
+  monitoring_target:
+    ml_task: questionanswering #question_answering
+    endpoint_deployment_id: azureml:va-endpoint:va-deployment
+
+# by default, production data associated with prompt flow deployment will be used
+# by default, monitoring will include token usage and generation quality metrics that don't require any data column mapping.
+# if any signal/metrics require data column mapping, user will need to use advanced setting or CLI/SDK for setup

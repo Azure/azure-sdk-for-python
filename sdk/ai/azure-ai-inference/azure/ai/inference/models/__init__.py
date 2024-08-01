@@ -16,34 +16,34 @@ from ._models import ChatCompletionsNamedFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
-from ._models import ContentItem
-from ._models import ImageContentItem
-from ._models import ImageUrl
-from ._models import TextContentItem
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
+from ._models import ContentItem
 from ._models import EmbeddingInput
 from ._models import EmbeddingItem
 from ._models import EmbeddingsResult
 from ._models import EmbeddingsUsage
 from ._models import FunctionCall
 from ._models import FunctionDefinition
+from ._models import ImageContentItem
+from ._patch import ImageUrl
 from ._models import ModelInfo
 from ._models import StreamingChatChoiceUpdate
 from ._models import StreamingChatCompletionsUpdate
 from ._models import SystemMessage
+from ._models import TextContentItem
 from ._models import ToolMessage
 from ._models import UserMessage
 
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
-from ._enums import ImageDetailLevel
 from ._enums import ChatRole
+from ._enums import CompletionsFinishReason
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
+from ._enums import ImageDetailLevel
 from ._enums import ModelType
-from ._enums import CompletionsFinishReason
 
 from ._patch import StreamingChatCompletions
 from ._patch import AsyncStreamingChatCompletions
@@ -62,33 +62,33 @@ __all__ = [
     "ChatCompletionsNamedToolSelection",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
-    "ContentItem",
-    "ImageContentItem",
-    "ImageUrl",
-    "TextContentItem",
     "ChatRequestMessage",
     "ChatResponseMessage",
     "CompletionsUsage",
+    "ContentItem",
     "EmbeddingInput",
     "EmbeddingItem",
     "EmbeddingsResult",
     "EmbeddingsUsage",
     "FunctionCall",
     "FunctionDefinition",
+    "ImageContentItem",
+    "ImageUrl",
     "ModelInfo",
     "StreamingChatChoiceUpdate",
     "StreamingChatCompletionsUpdate",
     "SystemMessage",
+    "TextContentItem",
     "ToolMessage",
     "UserMessage",
     "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
-    "ImageDetailLevel",
     "ChatRole",
+    "CompletionsFinishReason",
     "EmbeddingEncodingFormat",
     "EmbeddingInputType",
+    "ImageDetailLevel",
     "ModelType",
-    "CompletionsFinishReason",
 ]
 
 _patch_sdk()

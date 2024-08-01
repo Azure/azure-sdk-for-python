@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -187,12 +192,11 @@ class ManagementPoliciesOperations:
          always be 'default'. "default" Required.
         :type management_policy_name: str or
          ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -206,22 +210,21 @@ class ManagementPoliciesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-11-01"))
         cls: ClsType[_models.ManagementPolicy] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             management_policy_name=management_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -233,13 +236,9 @@ class ManagementPoliciesOperations:
         deserialized = self._deserialize("ManagementPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/managementPolicies/{managementPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -270,7 +269,6 @@ class ManagementPoliciesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -282,7 +280,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, _models.ManagementPolicyName],
-        properties: IO,
+        properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -301,11 +299,10 @@ class ManagementPoliciesOperations:
         :type management_policy_name: str or
          ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyName
         :param properties: The ManagementPolicy set to a storage account. Required.
-        :type properties: IO
+        :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -317,7 +314,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, _models.ManagementPolicyName],
-        properties: Union[_models.ManagementPolicy, IO],
+        properties: Union[_models.ManagementPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagementPolicy:
         """Sets the managementpolicy to the specified storage account.
@@ -334,17 +331,13 @@ class ManagementPoliciesOperations:
         :type management_policy_name: str or
          ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyName
         :param properties: The ManagementPolicy set to a storage account. Is either a ManagementPolicy
-         type or a IO type. Required.
-        :type properties: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy or IO[bytes]
         :return: ManagementPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -367,7 +360,7 @@ class ManagementPoliciesOperations:
         else:
             _json = self._serialize.body(properties, "ManagementPolicy")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             management_policy_name=management_policy_name,
@@ -376,16 +369,15 @@ class ManagementPoliciesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -397,13 +389,9 @@ class ManagementPoliciesOperations:
         deserialized = self._deserialize("ManagementPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/managementPolicies/{managementPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -426,12 +414,11 @@ class ManagementPoliciesOperations:
          always be 'default'. "default" Required.
         :type management_policy_name: str or
          ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -445,22 +432,21 @@ class ManagementPoliciesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             management_policy_name=management_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -470,8 +456,4 @@ class ManagementPoliciesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/managementPolicies/{managementPolicyName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

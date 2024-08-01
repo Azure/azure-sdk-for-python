@@ -6,15 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Mapping, Any
+from typing import List, overload, Mapping, Any, Generic, TypeVar
 from azure.core.messaging import CloudEvent
 from ._models import (
     ReceiveDetails as InternalReceiveDetails,
     BrokerProperties as InternalBrokerProperties,
 )
 
+DataType = TypeVar("DataType")
 
-class ReceiveDetails(InternalReceiveDetails):
+class ReceiveDetails(InternalReceiveDetails, Generic[DataType]):
     """Receive operation details per Cloud Event.
 
     All required parameters must be populated in order to send to Azure.
@@ -30,7 +31,7 @@ class ReceiveDetails(InternalReceiveDetails):
         self,
         *,
         broker_properties: "BrokerProperties",
-        event: "CloudEvent",
+        event: CloudEvent[DataType],
     ): ...
 
     @overload

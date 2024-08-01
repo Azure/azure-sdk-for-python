@@ -402,6 +402,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering
-[questionanswering_rest_docs_authoring]: https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects
+[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering?view=rest-language-2021-10-01
+[questionanswering_rest_docs_authoring]: https://learn.microsoft.com/rest/api/language/question-answering-projects?view=rest-language-2021-10-01
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)

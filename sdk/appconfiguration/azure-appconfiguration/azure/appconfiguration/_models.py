@@ -173,10 +173,10 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             to be considered enabled.
         :paramtype filters: list[dict[str, Any]] or None
         """
-        if "key" in kwargs or "value" in kwargs:
-            raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
+        if "value" in kwargs:
+            raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.feature_id = feature_id
-        self.key = self._key_prefix + self.feature_id
+        self.key = kwargs.get("key", None) or (self._key_prefix + self.feature_id)
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -235,19 +235,23 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         filters = None
         display_name = None
         description = None
+        feature_id = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
                 enabled = temp.get("enabled", False)
                 display_name = temp.get("display_name")
                 description = temp.get("description")
+                feature_id = temp.get("id")
+
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
         except (ValueError, json.JSONDecodeError):
             pass
 
         return cls(
-            feature_id=key_value.key.lstrip(".appconfig.featureflag").lstrip("/"),  # type: ignore
+            feature_id=feature_id,  # type: ignore
+            key=key_value.key,
             label=key_value.label,
             content_type=key_value.content_type,
             last_modified=key_value.last_modified,

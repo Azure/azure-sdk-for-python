@@ -104,6 +104,8 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
+      - ${{ parameters.PreSteps }}
+
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: ${{ parameters.OSName }}
@@ -116,7 +118,11 @@ jobs:
         parameters:
           SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
           SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
-          EnvVars: ${{ parameters.EnvVars }}
+          ${{ if parameters.UseFederatedAuth }}:
+            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+          EnvVars:
+            Pool: $(Pool)
+            ${{ insert }}: ${{ parameters.EnvVars }}
 
       - ${{ if parameters.TestResourceDirectories }}:
         - ${{ each directory in parameters.TestResourceDirectories }}:
@@ -128,7 +134,10 @@ jobs:
               ArmTemplateParameters: $(ArmTemplateParameters)
               UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
               ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
-              SubscriptionConfigurationFilePath: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePath }}
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+              EnvVars:
+                Pool: $(Pool)
+                ${{ insert }}: ${{ parameters.EnvVars }}
       - ${{ if not(parameters.TestResourceDirectories) }}:
           - template: /eng/common/TestResources/deploy-test-resources.yml
             parameters:
@@ -138,7 +147,10 @@ jobs:
               ArmTemplateParameters: $(ArmTemplateParameters)
               UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
               ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
-              SubscriptionConfigurationFilePath: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePath }}
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+              EnvVars:
+                Pool: $(Pool)
+                ${{ insert }}: ${{ parameters.EnvVars }}
 
       - template: ../steps/build-test.yml
         parameters:
@@ -148,8 +160,6 @@ jobs:
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
             ${{ insert }}: ${{ parameters.EnvVars }}
-          PreSteps: ${{ parameters.PreSteps }}
-          PostSteps: ${{ parameters.PostSteps }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)
           ToxTestEnv: ${{ parameters.ToxTestEnv }}
@@ -160,7 +170,7 @@ jobs:
           TestProxy: ${{ parameters.TestProxy }}
           UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
           ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
-          SubscriptionConfigurationFilePath: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePath }}
+          SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
 
       - ${{ if parameters.TestResourceDirectories }}:
         - ${{ each directory in parameters.TestResourceDirectories }}:
@@ -170,7 +180,7 @@ jobs:
               SubscriptionConfiguration: $(SubscriptionConfiguration)
               UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
               ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
-              SubscriptionConfigurationFilePath: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePath }}
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
       - ${{ if not(parameters.TestResourceDirectories) }}:
         - template: /eng/common/TestResources/remove-test-resources.yml
           parameters:
@@ -178,4 +188,6 @@ jobs:
             SubscriptionConfiguration: $(SubscriptionConfiguration)
             UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
             ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
-            SubscriptionConfigurationFilePath: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePath }}
+            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+
+      - ${{ parameters.PostSteps }}

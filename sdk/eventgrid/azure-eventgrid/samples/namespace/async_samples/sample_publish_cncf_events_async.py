@@ -30,14 +30,15 @@ client = EventGridPublisherClient(endpoint, credential, namespace_topic=topic_na
 
 
 async def publish():
-    await client.send(
-        [
-            CloudEvent(
-                attributes={"type": "cloudevent", "source": "/cncf/cloud/event/1.0", "subject": "testing-cncf-event"},
-                data=b"This is a cncf cloud event.",
-            )
-        ]
-    )
+    async with client:
+        await client.send(
+            [
+                CloudEvent(
+                    attributes={"type": "cloudevent", "source": "/cncf/cloud/event/1.0", "subject": "testing-cncf-event"},
+                    data=b"This is a cncf cloud event.",
+                )
+            ]
+        )
 
 
 if __name__ == "__main__":

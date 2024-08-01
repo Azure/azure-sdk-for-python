@@ -77,9 +77,10 @@ from ._models_py3 import GenerateAutonomousDatabaseWalletDetails
 from ._models_py3 import GiVersion
 from ._models_py3 import GiVersionListResult
 from ._models_py3 import GiVersionProperties
+from ._models_py3 import LongTermBackUpScheduleDetails
 from ._models_py3 import MaintenanceWindow
 from ._models_py3 import Month
-from ._models_py3 import NSGCidr
+from ._models_py3 import NsgCidr
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -90,17 +91,22 @@ from ._models_py3 import OracleSubscriptionUpdate
 from ._models_py3 import OracleSubscriptionUpdateProperties
 from ._models_py3 import PeerDbDetails
 from ._models_py3 import Plan
+from ._models_py3 import PlanUpdate
 from ._models_py3 import PortRange
 from ._models_py3 import PrivateIpAddressProperties
 from ._models_py3 import PrivateIpAddressesFilter
 from ._models_py3 import ProfileType
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
-from ._models_py3 import ResourcePlanTypeUpdate
+from ._models_py3 import RestoreAutonomousDatabaseDetails
 from ._models_py3 import SaasSubscriptionDetails
 from ._models_py3 import ScheduledOperationsType
 from ._models_py3 import ScheduledOperationsTypeUpdate
 from ._models_py3 import SystemData
+from ._models_py3 import SystemVersion
+from ._models_py3 import SystemVersionListResult
+from ._models_py3 import SystemVersionProperties
+from ._models_py3 import SystemVersionsFilter
 from ._models_py3 import TrackedResource
 from ._models_py3 import ValidationError
 from ._models_py3 import ValidationResult
@@ -151,6 +157,7 @@ from ._oracle_database_mgmt_client_enums import Preference
 from ._oracle_database_mgmt_client_enums import ProtocolType
 from ._oracle_database_mgmt_client_enums import RefreshableModelType
 from ._oracle_database_mgmt_client_enums import RefreshableStatusType
+from ._oracle_database_mgmt_client_enums import RepeatCadenceType
 from ._oracle_database_mgmt_client_enums import ResourceProvisioningState
 from ._oracle_database_mgmt_client_enums import RoleType
 from ._oracle_database_mgmt_client_enums import SessionModeType
@@ -159,7 +166,6 @@ from ._oracle_database_mgmt_client_enums import SyntaxFormatType
 from ._oracle_database_mgmt_client_enums import TlsAuthenticationType
 from ._oracle_database_mgmt_client_enums import UpdateAction
 from ._oracle_database_mgmt_client_enums import ValidationStatus
-from ._oracle_database_mgmt_client_enums import Versions
 from ._oracle_database_mgmt_client_enums import VirtualNetworkAddressLifecycleState
 from ._oracle_database_mgmt_client_enums import WorkloadType
 from ._oracle_database_mgmt_client_enums import ZoneType
@@ -239,9 +245,10 @@ __all__ = [
     "GiVersion",
     "GiVersionListResult",
     "GiVersionProperties",
+    "LongTermBackUpScheduleDetails",
     "MaintenanceWindow",
     "Month",
-    "NSGCidr",
+    "NsgCidr",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -252,17 +259,22 @@ __all__ = [
     "OracleSubscriptionUpdateProperties",
     "PeerDbDetails",
     "Plan",
+    "PlanUpdate",
     "PortRange",
     "PrivateIpAddressProperties",
     "PrivateIpAddressesFilter",
     "ProfileType",
     "ProxyResource",
     "Resource",
-    "ResourcePlanTypeUpdate",
+    "RestoreAutonomousDatabaseDetails",
     "SaasSubscriptionDetails",
     "ScheduledOperationsType",
     "ScheduledOperationsTypeUpdate",
     "SystemData",
+    "SystemVersion",
+    "SystemVersionListResult",
+    "SystemVersionProperties",
+    "SystemVersionsFilter",
     "TrackedResource",
     "ValidationError",
     "ValidationResult",
@@ -312,6 +324,7 @@ __all__ = [
     "ProtocolType",
     "RefreshableModelType",
     "RefreshableStatusType",
+    "RepeatCadenceType",
     "ResourceProvisioningState",
     "RoleType",
     "SessionModeType",
@@ -320,7 +333,6 @@ __all__ = [
     "TlsAuthenticationType",
     "UpdateAction",
     "ValidationStatus",
-    "Versions",
     "VirtualNetworkAddressLifecycleState",
     "WorkloadType",
     "ZoneType",

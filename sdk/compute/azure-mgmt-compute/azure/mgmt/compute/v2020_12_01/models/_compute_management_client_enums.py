@@ -81,7 +81,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference or
     galleryImageReference."""
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
     by storageAccountId."""
     COPY = "Copy"
@@ -92,12 +92,15 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
     the disk."""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    by storageAccountId."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
-    are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
-    specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \u2013
+    are::code:`<br>`:code:`<br>` **Attach** \\u2013 This value is used when you are using a
+    specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013
     This value is used when you are using an image to create the virtual machine. If you are using
     a platform image, you also use the imageReference element described above. If you are using a
     marketplace image, you  also use the plan element previously described.
@@ -389,7 +392,7 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**.
+    :code:`<br>`\\ **http** :code:`<br>`:code:`<br>` **https**.
     """
 
     HTTP = "Http"

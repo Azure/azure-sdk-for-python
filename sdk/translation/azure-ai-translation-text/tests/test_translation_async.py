@@ -312,7 +312,7 @@ class TestTranslationAsync(TextTranslationTest):
         endpoint = kwargs.get("translation_text_endpoint")
         apikey = kwargs.get("translation_text_apikey")
         region = kwargs.get("translation_text_region")
-        client = self.create_async_client_token(endpoint, apikey, region)
+        client = self.create_async_client_token(endpoint, apikey, region, "https://api.microsofttranslator.com/")
 
         to_language = ["cs"]
         input_text_elements = ["This is a test."]

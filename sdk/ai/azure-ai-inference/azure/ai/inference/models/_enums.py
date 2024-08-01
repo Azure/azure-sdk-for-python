@@ -40,24 +40,6 @@ class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnu
     """Specifies that the model should respond with a call to one or more tools."""
 
 
-class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A representation of the possible image detail levels for image-based chat completions message
-    content.
-    """
-
-    AUTO = "auto"
-    """Specifies that the model should determine which detail level to apply using heuristics like
-    image size."""
-    LOW = "low"
-    """Specifies that image evaluation should be constrained to the 'low-res' model that may be faster
-    and consume fewer
-    tokens but may also be less accurate for highly detailed images."""
-    HIGH = "high"
-    """Specifies that image evaluation should enable the 'high-res' model that may be more accurate
-    for highly detailed
-    images but may also be slower and consume more tokens."""
-
-
 class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A description of the intended purpose of a message within a chat completions interaction."""
 
@@ -115,6 +97,24 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
 
 
+class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A representation of the possible image detail levels for image-based chat completions message
+    content.
+    """
+
+    AUTO = "auto"
+    """Specifies that the model should determine which detail level to apply using heuristics like
+    image size."""
+    LOW = "low"
+    """Specifies that image evaluation should be constrained to the 'low-res' model that may be faster
+    and consume fewer
+    tokens but may also be less accurate for highly detailed images."""
+    HIGH = "high"
+    """Specifies that image evaluation should enable the 'high-res' model that may be more accurate
+    for highly detailed
+    images but may also be slower and consume more tokens."""
+
+
 class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of AI model."""
 
@@ -141,5 +141,5 @@ class UnknownParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DROP = "drop"
     """The service will ignore (drop) unknown parameters in the request payload. It will only pass the
     known parameters to the back-end AI model."""
-    PASS_THROUGH = "pass_through"
+    PASS_THROUGH = "pass-through"
     """The service will pass unknown parameters to the back-end AI model."""

@@ -1,5 +1,11 @@
 # Release History
 
+## 13.1.1 (2024-06-12)
+
+### Bugs Fixed
+
+  - Fix serialization error when setting model property with `azure.core.serialization.NULL`
+
 ## 13.1.0 (2024-04-15)
 
 ### Features Added

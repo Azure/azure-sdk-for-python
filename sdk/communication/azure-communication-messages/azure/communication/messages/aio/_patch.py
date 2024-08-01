@@ -64,10 +64,11 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from a Connection String.
+
         :param conn_str: Azure Communication Service endpoint. Required.
         :type conn_str: str
         :return: instance of NotificationMessagesClient.
-        :rtype:~azure.communication.message.notificationmessagesclient
+        :rtype: ~azure.communication.message.NotificationMessagesClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
@@ -116,10 +117,11 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from a Connection String.
+
         :param conn_str: Azure Communication Service endpoint. Required.
         :type conn_str: str
         :return: instance of MessageTemplateClient.
-        :rtype:~azure.communication.message.messagetemplateclient
+        :rtype: ~azure.communication.message.MessageTemplateClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)

@@ -118,26 +118,24 @@ The following sections provide several code snippets covering some of the most c
 
 Get the partition ids of an Event Hub.
 
-<!-- SNIPPET:connection_string_authentication.connection_string_authentication -->
-
 ```python
 import os
 from azure.eventhub import EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+consumer_client = EventHubConsumerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     consumer_group='$Default',
     eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
 )
 
 with consumer_client:
     pass # consumer_client is now ready to be used.
 ```
-
-<!-- END SNIPPET -->
 
 ### Publish events to an Event Hub
 
@@ -165,11 +163,17 @@ the `EventHubConsumerClient.receive` method will be of use as follows:
 ```python
 import logging
 from azure.eventhub import EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+client = EventHubConsumerClient(
+    fully_qualified_namespace=fully_qualified_namespace,
+    eventhub_name=eventhub_name,
+    consumer_group=consumer_group,
+    credential=DefaultAzureCredential(),
+)
 
 logger = logging.getLogger("azure.eventhub")
 logging.basicConfig(level=logging.INFO)
@@ -195,11 +199,17 @@ triggers the callback on a batch of events, attempting to receive a number at a 
 ```python
 import logging
 from azure.eventhub import EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+client = EventHubConsumerClient(
+    fully_qualified_namespace=fully_qualified_namespace,
+    eventhub_name=eventhub_name,
+    consumer_group=consumer_group,
+    credential=DefaultAzureCredential(),
+)
 
 logger = logging.getLogger("azure.eventhub")
 logging.basicConfig(level=logging.INFO)
@@ -223,11 +233,11 @@ Use the `create_batch` method on `EventHubProducer` to create an `EventDataBatch
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
 import asyncio
-from azure.eventhub.aio import EventHubProducerClient  # The package name suffixed with ".aio" for async
+from azure.eventhub.aio import EventHubProducerClient   # The package name suffixed with ".aio" for async
 from azure.eventhub import EventData
+from azure.identity.aio import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-consumer_group = '<< CONSUMER GROUP >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 async def create_batch(client):
@@ -241,7 +251,11 @@ async def create_batch(client):
     return event_data_batch
 
 async def send():
-    client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
+    client = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=DefaultAzureCredential(),
+    )
     batch_data = await create_batch(client)
     async with client:
         await client.send_batch(batch_data)
@@ -260,8 +274,9 @@ aio, one would need the following:
 import logging
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
+from azure.identity.aio import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
@@ -273,7 +288,12 @@ async def on_event(partition_context, event):
     await partition_context.update_checkpoint(event)
 
 async def receive():
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        consumer_group=consumer_group,
+        credential=DefaultAzureCredential(),
+    )
     async with client:
         await client.receive(
             on_event=on_event,
@@ -296,8 +316,9 @@ the same within asyncio as follows:
 import logging
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
+from azure.identity.aio import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
@@ -309,7 +330,12 @@ async def on_event_batch(partition_context, events):
     await partition_context.update_checkpoint()
 
 async def receive_batch():
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        consumer_group=consumer_group,
+        credential=DefaultAzureCredential(),
+    )
     async with client:
         await client.receive_batch(
             on_event_batch=on_event_batch,
@@ -351,11 +377,12 @@ import asyncio
 
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
+from azure.identity.aio import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
+blob_account_url = '<< STORAGE ACCOUNT URL >>'
 container_name = '<<NAME OF THE BLOB CONTAINER>>'
 
 async def on_event(partition_context, event):
@@ -369,11 +396,16 @@ async def receive(client):
     )
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)
-    client = EventHubConsumerClient.from_connection_string(
-        connection_str,
-        consumer_group,
+    checkpoint_store = BlobCheckpointStore(
+        blob_account_url=blob_account_url,
+        container_name=container_name,
+        credential=DefaultAzureCredential()
+    )
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
+        credential=DefaultAzureCredential(),
+        consumer_group=consumer_group,
         checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:
@@ -464,16 +496,24 @@ $ pip install uamqp
 
 ```python
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+fully_qualified_namespace = '<< EVENT HUBS FULLY QUALIFIED NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
-client = EventHubProducerClient.from_connection_string(
-    connection_str, eventhub_name=eventhub_name, uamqp_transport=True
+client = EventHubProducerClient(
+    fully_qualified_namespace=fully_qualified_namespace,
+    eventhub_name=eventhub_name,
+    credential=DefaultAzureCredential(),
+    uamqp_transport=True
 )
-client = EventHubConsumerClient.from_connection_string(
-    connection_str, consumer_group, eventhub_name=eventhub_name, uamqp_transport=True
+client = EventHubConsumerClient(
+    fully_qualified_namespace=fully_qualified_namespace,
+    eventhub_name=eventhub_name,
+    credential=DefaultAzureCredential(),
+    consumer_group=consumer_group,
+    uamqp_transport=True
 )
 ```
 

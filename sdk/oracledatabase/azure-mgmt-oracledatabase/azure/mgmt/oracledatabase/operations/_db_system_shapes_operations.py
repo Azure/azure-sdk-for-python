@@ -45,7 +45,7 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_get_request(location: str, dbsystemshapename: str, subscription_id: st
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +83,7 @@ def build_get_request(location: str, dbsystemshapename: str, subscription_id: st
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "dbsystemshapename": _SERIALIZER.url("dbsystemshapename", dbsystemshapename, "str"),
+        "dbsystemshapename": _SERIALIZER.url("dbsystemshapename", dbsystemshapename, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

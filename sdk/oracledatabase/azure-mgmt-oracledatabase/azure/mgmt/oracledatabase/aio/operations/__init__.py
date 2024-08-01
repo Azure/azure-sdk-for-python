@@ -17,6 +17,7 @@ from ._db_system_shapes_operations import DbSystemShapesOperations
 from ._dns_private_views_operations import DnsPrivateViewsOperations
 from ._dns_private_zones_operations import DnsPrivateZonesOperations
 from ._gi_versions_operations import GiVersionsOperations
+from ._system_versions_operations import SystemVersionsOperations
 from ._oracle_subscriptions_operations import OracleSubscriptionsOperations
 from ._autonomous_database_backups_operations import AutonomousDatabaseBackupsOperations
 from ._db_servers_operations import DbServersOperations
@@ -39,6 +40,7 @@ __all__ = [
     "DnsPrivateViewsOperations",
     "DnsPrivateZonesOperations",
     "GiVersionsOperations",
+    "SystemVersionsOperations",
     "OracleSubscriptionsOperations",
     "AutonomousDatabaseBackupsOperations",
     "DbServersOperations",

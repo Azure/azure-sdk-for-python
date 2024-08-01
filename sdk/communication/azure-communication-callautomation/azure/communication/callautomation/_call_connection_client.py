@@ -840,7 +840,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
-        :param  invitation_id: The invitation ID that was used to add the participant.
+
+        :param invitation_id: The invitation ID that was used to add the participant.
         :type invitation_id: str
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
@@ -877,19 +878,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> None:
         """Hold participant from call while playing music.
+
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or
          list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource]
         :param target_participant: The targets to play media to. Default value is 'all', to play media
          to all participants in the call.
         :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: Whether the media should be repeated until stopped.
+         **DEPRECATED**: 'loop' has been deprecated and will be removed from future releases.
         :paramtype loop: bool
-        **DEPRECATED**: 'loop' has been deprecated and will be removed from future releases.
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :return: None
