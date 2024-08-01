@@ -8,13 +8,19 @@ import os
 from pathlib import Path
 
 import pytest
+import time
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from testcase import LoadtestingPowerShellPreparer, LoadtestingTest
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import (
+    recorded_by_proxy,
+    set_bodiless_matcher,
+    set_custom_default_matcher,
+)
 
 DISPLAY_NAME = "TestingResourcePyTest"
 NON_EXISTING_RESOURCE = "nonexistingresource"
+
 
 class TestRunOps(LoadtestingTest):
 
@@ -26,7 +32,7 @@ class TestRunOps(LoadtestingTest):
             {
                 "description": "",
                 "displayName": DISPLAY_NAME,
-                "loadTestConfig": {
+                "loadTestConfiguration": {
                     "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,
@@ -36,11 +42,13 @@ class TestRunOps(LoadtestingTest):
                 "passFailCriteria": {"passFailMetrics": {}},
                 "keyvaultReferenceIdentityType": "SystemAssigned",
                 "keyvaultReferenceIdentityId": None,
-            }
+            },
         )
 
         validation_poller = admin_client.begin_upload_test_file(
-            test_id, "sample.jmx", open(os.path.join(os.path.dirname(__file__), "sample.jmx"), "rb")
+            test_id,
+            "sample.jmx",
+            open(os.path.join(os.path.dirname(__file__), "sample.jmx"), "rb"),
         )
 
         validation_poller.result(6000)
@@ -55,7 +63,7 @@ class TestRunOps(LoadtestingTest):
             {
                 "testId": test_id,
                 "displayName": "My New Load Test Run from PyTest",
-            }
+            },
         )
         run_poller.result(10800)
 
@@ -110,7 +118,6 @@ class TestRunOps(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             run_client.delete_test_run(NON_EXISTING_RESOURCE)
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_test_run_file(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
@@ -129,7 +136,6 @@ class TestRunOps(LoadtestingTest):
         with pytest.raises(HttpResponseError):
             run_client.get_test_run_file(loadtesting_test_run_id, NON_EXISTING_RESOURCE)
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_list_test_runs(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
@@ -142,10 +148,9 @@ class TestRunOps(LoadtestingTest):
         result = run_client.list_test_runs()
         assert result is not None
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_stop_test_run(self, loadtesting_endpoint):
+    def test_stop(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         self.setup_loadtest(loadtesting_endpoint, "new-load-test-from-pytest-abc")
@@ -161,15 +166,14 @@ class TestRunOps(LoadtestingTest):
             {
                 "testId": "new-load-test-from-pytest-abc",
                 "displayName": "My New Load Test Run from PyTest",
-            }
+            },
         )
 
-        result = run_client.stop_test_run("my-new-test-run-from-pytest")
+        result = run_client.stop("my-new-test-run-from-pytest")
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            run_client.stop_test_run(NON_EXISTING_RESOURCE)
-
+            run_client.stop(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
@@ -185,21 +189,29 @@ class TestRunOps(LoadtestingTest):
         metric_namespaces = run_client.get_metric_namespaces(loadtesting_test_run_id)
         assert metric_namespaces is not None
 
-        metric_definitions = run_client.get_metric_definitions(loadtesting_test_run_id,
-                            metric_namespace=metric_namespaces["value"][0]["name"])
+        metric_definitions = run_client.get_metric_definitions(
+            loadtesting_test_run_id,
+            metric_namespace=metric_namespaces["value"][0]["name"],
+        )
         assert metric_definitions is not None
 
         metrics = run_client.list_metrics(
             test_run_id=loadtesting_test_run_id,
             metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"]
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
         )
         assert metrics is not None
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_create_or_update_app_component(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    def test_create_or_update_app_component(
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_test_run_id,
+        loadtesting_resource_id,
+    ):
         set_bodiless_matcher()
 
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
@@ -209,17 +221,15 @@ class TestRunOps(LoadtestingTest):
         result = run_client.create_or_update_app_components(
             loadtesting_test_run_id,
             {
-                "components":
-                    {
-                        loadtesting_resource_id:
-                            {
-                                "resourceId": loadtesting_resource_id,
-                                "resourceName": "App-Service-Sample-Demo",
-                                "resourceType": "Microsoft.Web/sites",
-                                "kind": "web"
-                            }
+                "components": {
+                    loadtesting_resource_id: {
+                        "resourceId": loadtesting_resource_id,
+                        "resourceName": "App-Service-Sample-Demo",
+                        "resourceType": "Microsoft.Web/sites",
+                        "kind": "web",
                     }
-            }
+                }
+            },
         )
         assert result is not None
 
@@ -227,22 +237,26 @@ class TestRunOps(LoadtestingTest):
             run_client.create_or_update_app_components(
                 NON_EXISTING_RESOURCE,
                 {
-                    "components":
-                        {
-                            loadtesting_resource_id:
-                                {
-                                    "resourceId": loadtesting_resource_id,
-                                    "resourceName": "App-Service-Sample-Demo",
-                                    "resourceType": "Microsoft.Web/sites",
-                                    "kind": "web"
-                                }
+                    "components": {
+                        loadtesting_resource_id: {
+                            "resourceId": loadtesting_resource_id,
+                            "resourceName": "App-Service-Sample-Demo",
+                            "resourceType": "Microsoft.Web/sites",
+                            "kind": "web",
                         }
-                }
+                    }
+                },
             )
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_app_component(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    def test_get_app_component(
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_test_run_id,
+        loadtesting_resource_id,
+    ):
         set_bodiless_matcher()
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
@@ -253,7 +267,13 @@ class TestRunOps(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_create_or_update_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    def test_create_or_update_server_metrics_config(
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_test_run_id,
+        loadtesting_resource_id,
+    ):
         set_bodiless_matcher()
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
@@ -270,16 +290,22 @@ class TestRunOps(LoadtestingTest):
                         "name": "requests/duration",
                         "aggregation": "Average",
                         "unit": None,
-                        "resourceType": "microsoft.insights/components"
+                        "resourceType": "microsoft.insights/components",
                     }
                 }
-            }
+            },
         )
         assert result is not None
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    def test_get_server_metrics_config(
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_test_run_id,
+        loadtesting_resource_id,
+    ):
         set_bodiless_matcher()
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
