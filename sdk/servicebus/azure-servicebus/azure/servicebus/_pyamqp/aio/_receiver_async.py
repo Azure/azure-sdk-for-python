@@ -165,9 +165,6 @@ class ReceiverLink(Link):
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     async def _incoming_disposition(self, frame):
-        # If delivery_id is not settled, return
-        # if not frame[3]:  # settled
-        #     return
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
         unsettled = []

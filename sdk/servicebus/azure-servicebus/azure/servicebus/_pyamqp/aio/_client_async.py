@@ -958,6 +958,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
+
+            # TODO add state_error to the error here
             self._process_receive_error(
                 message_delivery,
                 condition=ErrorCondition.UnknownError
