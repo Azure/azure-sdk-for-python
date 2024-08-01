@@ -131,6 +131,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
 
+                Write-Host "While examining $($pkg.Name) I saw the follinwg dependent packages $($pkg.DependentPackages)"
                 if ($pkg.DependentPackages) {
                     $dependentPackagesForInclusion += $pkg.DependentPackages
                 }
