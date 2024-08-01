@@ -72,7 +72,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         assert len(batch_response.response_headers) > 0
         assert int(lsn) + 10 < batch_response.response_headers['lsn']
 
-    def test_query_paging_headers(self):
+    async def test_query_paging_headers_async(self):
         container = await self.test_database.create_container(id="responses_paging_test" + str(uuid.uuid4()),
                                                               partition_key=PartitionKey(path="/number"),
                                                               offer_throughput=11000)
