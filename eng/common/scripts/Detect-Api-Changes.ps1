@@ -10,8 +10,6 @@ Param (
   [string] $BuildId,
   [Parameter(Mandatory=$True)]
   [string] $CommitSha,
-  [Parameter(Mandatory=$True)]
-  [array] $ArtifactList,
   [string] $APIViewUri,
   [string] $RepoFullName = "",
   [string] $ArtifactName = "packages",
@@ -20,6 +18,8 @@ Param (
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
+
+$configFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
 
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
 function Submit-Request($filePath, $packageName)
@@ -64,7 +64,6 @@ function Submit-Request($filePath, $packageName)
 function Should-Process-Package($pkgPath, $packageName)
 {
     $pkg = Split-Path -Leaf $pkgPath
-    $configFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
     $pkgPropPath = Join-Path -Path $configFileDir "$packageName.json"
     if (!(Test-Path $pkgPropPath))
     {
@@ -103,15 +102,22 @@ if (!($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiR
 }
 
 $responses = @{}
-foreach ($artifact in $ArtifactList)
+
+$packageProperties = Get-ChildItem -Recurse -Force "$configFileDir" `
+  | Where-Object { $_.Extension -eq '.json' }
+
+foreach ($packagePropFile in $packageProperties)
 {
-    Write-Host "Processing $($artifact.name)"
-    $packages = &$FindArtifactForApiReviewFn $ArtifactPath $artifact.name
+    $packageMetadata = Get-Content $packagePropFile | ConvertFrom-Json
+    Write-Host "Processing $($packageMetadata.Name)"
+
+    $packages = &$FindArtifactForApiReviewFn $ArtifactPath $packageMetadata.Name
+
     if ($packages)
     {
         $pkgPath = $packages.Values[0]
         $isRequired = Should-Process-Package -pkgPath $pkgPath -packageName $artifact.name
-        Write-Host "Is API change detect required for $($artifact.name):$($isRequired)"
+        Write-Host "Is API change detect required for $($packages.Name):$($isRequired)"
         if ($isRequired -eq $True)
         {
             $filePath = $pkgPath.Replace($ArtifactPath , "").Replace("\", "/")
