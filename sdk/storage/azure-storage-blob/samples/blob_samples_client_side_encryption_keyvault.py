@@ -32,7 +32,7 @@ import os
 import sys
 import uuid
 
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
 from azure.keyvault.keys import KeyVaultKey, KeyType
@@ -89,14 +89,8 @@ class KeyWrapper:
 storage_url = get_env_var(STORAGE_URL)
 keyvault_url = get_env_var(KEYVAULT_URL)
 
-# Retrieve service principal values from environment variables
-# The service principal can be created using Azure CLI's `az ad sp create-for-rbac` command.
-tenant_id = get_env_var(TENANT_ID)
-client_id = get_env_var(CLIENT_ID)  # aka appId in AzureCLI
-client_secret = get_env_var(CLIENT_SECRET)  # aka password in AzureCLI
-
 # Construct a token credential for use by Storage and KeyVault clients.
-credential = ClientSecretCredential(tenant_id, client_id, client_secret)
+credential = DefaultAzureCredential()
 secret_client = SecretClient(keyvault_url, credential=credential)
 
 # The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'

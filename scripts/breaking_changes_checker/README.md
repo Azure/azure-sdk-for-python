@@ -65,6 +65,7 @@ IGNORE_BREAKING_CHANGES = {
 | RemovedOrRenamedClientMethod        | A client method was removed or renamed in the current version.                                                        | ("RemovedOrRenamedClientMethod", "module-name", "client-name", "function-name")   |
 | RemovedOrRenamedClass               | A model or publicly exposed class was removed or renamed in the current version.                                      | ("RemovedOrRenamedClass", "module-name", "class-name")                            |
 | RemovedOrRenamedClassMethod         | A model or publicly exposed class' method was removed or renamed in the current version.                              | ("RemovedOrRenamedClassMethod", "module-name", "class-name", "function-name")     |
+| RemovedOrRenamedOperationGroup         | An operation group was removed or renamed from the client in the current version.                              | ("RemovedOrRenamedOperationGroup", "module-name", "client-name", "operation-group-name")     |
 | RemovedOrRenamedInstanceAttribute   | An instance attribute was removed or renamed in the current version.                                                  | ("RemovedOrRenamedInstanceAttribute", "module-name", "class-name")                |
 | RemovedOrRenamedEnumValue           | An enum value was removed or renamed in the current version                                                           | ("RemovedOrRenamedEnumValue", "module-name", "class-name")                        |
 | RemovedOrRenamedModuleLevelFunction | A module level function was removed or renamed in the current version.                                                | ("RemovedOrRenamedModuleLevelFunction", "module-name", "function-name")           |
@@ -87,6 +88,28 @@ Example:
 
 ```
 C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --latest-pypi-version
+```
+
+### Changelog reporting
+
+The breaking changes tool also supports reporting general changes between library versions. The changes will be reported in changelog format and will be reported as `### Breaking Changes` or `### Features Added`.
+
+To get changelog output use the `--changelog` flag:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --changelog
+```
+
+Example output:
+
+```
+### Breaking Changes
+
+The model or publicly exposed class 'azure.contoso.widgetmanager.models.Widget' had its instance variable 'bar' deleted or renamed in the current version
+
+### Features Added
+
+The model or publicly exposed class 'azure.contoso.widgetmanager.models.Widget' had property 'foo' added in the current version
 ```
 
 ### Generating code reports

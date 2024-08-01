@@ -1,6 +1,6 @@
 {
-  "AssetsRepo": "Azure/azure-sdk-assets",
-  "AssetsRepoPrefixPath": "python",
-  "TagPrefix": "python/network/azure-mgmt-network",
-  "Tag": "python/network/azure-mgmt-network_a5909e94e2"
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/network/azure-mgmt-network",
+    "Tag": "python/network/azure-mgmt-network_7efacdc4ed"
 }
