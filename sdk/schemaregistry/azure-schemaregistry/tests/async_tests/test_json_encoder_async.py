@@ -34,7 +34,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.schemaregistry import SchemaFormat
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
-from azure.schemaregistry.encoder.jsonencoder import InvalidContentError, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import InvalidContentError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -61,6 +61,7 @@ DRAFT2020_12_SCHEMA_JSON = {
     },
 }
 DRAFT2020_12_SCHEMA_STR = json.dumps(DRAFT2020_12_SCHEMA_JSON)
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 DRAFT07_SCHEMA_JSON = {
     "$id": "https://example.com/personasyncdraft07.schema.json",
@@ -78,6 +79,11 @@ DRAFT07_SCHEMA_JSON = {
     },
 }
 DRAFT07_SCHEMA_STR = json.dumps(DRAFT07_SCHEMA_JSON)
+DRAFT07_SCHEMA_IDENTIFIER = "http://json-schema.org/draft-07/schema"
+DRAFT06_SCHEMA_IDENTIFIER = "http://json-schema.org/draft-06/schema"
+DRAFT04_SCHEMA_IDENTIFIER = "http://json-schema.org/draft-04/schema"
+DRAFT03_SCHEMA_IDENTIFIER = "http://json-schema.org/draft-03/schema"
+DRAFT2019_09_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2019-09/schema"
 
 
 class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
@@ -96,7 +102,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
     ):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
         sr_json_encoder = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT2020_12_SCHEMA_IDENTIFIER
         )
 
         # pre-register schema
@@ -144,7 +150,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
     ):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
         sr_json_encoder = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_07
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT07_SCHEMA_IDENTIFIER
         )
 
         # encoding without registering schema raises error
@@ -169,9 +175,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
 
         # use encoder w/o group_name to decode
         extra_sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
-        sr_json_encoder_no_group = JsonSchemaEncoder(
-            client=extra_sr_client, validate=JsonSchemaDraftIdentifier.DRAFT_07
-        )
+        sr_json_encoder_no_group = JsonSchemaEncoder(client=extra_sr_client, validate=DRAFT07_SCHEMA_IDENTIFIER)
         decoded_content = await sr_json_encoder_no_group.decode(encoded_message_content)
         assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
@@ -196,7 +200,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
     ):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
         sr_json_encoder = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT2020_12_SCHEMA_IDENTIFIER
         )
 
         # pre-register schema
@@ -206,7 +210,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
         schema_id = schema_properties.id
         dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
 
-        # message type that doesn't fit MessageType protocol
+        # message type that doesn't fit OutboundMessageContent/InboundMessageContent protocol
         class BadExample:
             def __init__(self, not_content):
                 self.not_content = not_content
@@ -214,15 +218,15 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
         # encoding invalid message_type raises error
         with pytest.raises(TypeError) as e:
             await sr_json_encoder.encode({"name": "Ben"}, schema_id=schema_id, message_type=BadExample)
-        assert "subtype of the MessageType" in (str(e.value))
+        assert "subtype of the OutboundMessageContent" in (str(e.value))
 
         # decoding invalid message_type raises error
         bad_ex = BadExample("fake")
         with pytest.raises(TypeError) as e:  # caught TypeError
             await sr_json_encoder.decode(message=bad_ex)
-        assert "subtype of the MessageType" in (str(e.value))
+        assert "subtype of the InboundMessageContent" in (str(e.value))
 
-        # message type that fits MessageType protocol
+        # message type that fits OutboundMessageContent/InboundMessageContent protocol
         class GoodExample:
             def __init__(self, content, **kwargs):
                 self.content = content
@@ -260,7 +264,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
     ):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
         sr_json_encoder = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT2020_12_SCHEMA_IDENTIFIER
         )
 
         from genson import SchemaBuilder
@@ -328,19 +332,19 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
             sr_json_encoder = JsonSchemaEncoder(
                 client=sr_client, group_name=schemaregistry_group, validate="http://json-schema.org/draft-01/schema"
             )
-        assert "not a supported identifier" in str(exc.value)
+        assert "not a supported" in str(exc.value)
 
         # Draft 3/4 do not accept float for integer type
         dict_content = {"name": "Ben", "favorite_number": 1.0, "favorite_color": "red"}
         sr_json_encoder_d3 = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_03
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT03_SCHEMA_IDENTIFIER
         )
         with pytest.raises(InvalidContentError) as exc:
             await sr_json_encoder_d3.encode(dict_content, schema=DRAFT2020_12_SCHEMA_STR)
         assert isinstance(exc.value.__cause__, jsonschema.exceptions.ValidationError)
         assert exc.value.__cause__.message == "1.0 is not of type 'integer'"
         sr_json_encoder_d4 = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_04
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT04_SCHEMA_IDENTIFIER
         )
         with pytest.raises(InvalidContentError) as exc:
             await sr_json_encoder_d4.encode(dict_content, schema_id=schema_id)
@@ -349,7 +353,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
 
         # Draft 6+ does accept float for integer type + test passing str value
         sr_json_encoder_d6 = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_06.value
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT06_SCHEMA_IDENTIFIER
         )
         encoded_message_content = await sr_json_encoder_d6.encode(dict_content, schema=DRAFT2020_12_SCHEMA_STR)
         content_type = encoded_message_content["content_type"]
@@ -357,7 +361,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
 
         assert content_type.split("+")[1] == schema_id
         sr_json_encoder_d19 = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT2019_09
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT2019_09_SCHEMA_IDENTIFIER
         )
         encoded_message_content = await sr_json_encoder_d19.encode(dict_content, schema_id=schema_id)
 
@@ -383,7 +387,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
 
         # wrong data type, check with draft 7 validator
         sr_json_encoder_d7 = JsonSchemaEncoder(
-            client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_07
+            client=sr_client, group_name=schemaregistry_group, validate=DRAFT07_SCHEMA_IDENTIFIER
         )
         dict_content_bad = {"name": "Ben", "favorite_number": 7, "favorite_color": 7}
         with pytest.raises(InvalidContentError) as e:

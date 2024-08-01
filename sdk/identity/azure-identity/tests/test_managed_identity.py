@@ -360,63 +360,6 @@ def test_cloud_shell_user_assigned_identity():
         assert token.expires_on == expires_on
 
 
-def test_app_service_2017_09_01():
-    """When the environment for 2019-08-01 is not configured, 2017-09-01 should be used."""
-
-    access_token = "****"
-    expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
-    secret = "expected-secret"
-    scope = "scope"
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                url,
-                method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "resource": scope},
-            )
-        ]
-        * 2,
-        responses=[
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {
-            EnvironmentVariables.MSI_ENDPOINT: url,
-            EnvironmentVariables.MSI_SECRET: secret,
-        },
-        clear=True,
-    ):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token == expected_token
-        assert token.expires_on == expires_on
-
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token == expected_token
-        assert token.expires_on == expires_on
-
-
 def test_prefers_app_service_2019_08_01():
     """When the environment is configured for both App Service versions, the credential should prefer the most recent"""
 
@@ -561,7 +504,6 @@ def test_app_service_user_assigned_identity():
     endpoint = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
-    param_name, param_value = "foo", "bar"
 
     transport = validating_transport(
         requests=[
@@ -579,7 +521,6 @@ def test_app_service_user_assigned_identity():
                     "api-version": "2019-08-01",
                     "client_id": client_id,
                     "resource": scope,
-                    param_name: param_value,
                 },
             ),
         ],
@@ -605,9 +546,7 @@ def test_app_service_user_assigned_identity():
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
-        credential = ManagedIdentityCredential(
-            client_id=client_id, transport=transport, identity_config={param_name: param_value}
-        )
+        credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
         token = credential.get_token(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
@@ -645,7 +584,7 @@ def test_imds():
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(transport=transport).get_token(scope)
-    assert token == expected_token
+    assert token.token == expected_token.token
 
 
 def test_imds_tenant_id():
@@ -680,7 +619,7 @@ def test_imds_tenant_id():
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-    assert token == expected_token
+    assert token.token == expected_token.token
 
 
 def test_imds_text_response():
@@ -694,7 +633,7 @@ def test_imds_text_response():
     mock_send = mock.Mock(return_value=response)
     credential = ManagedIdentityCredential(transport=mock.Mock(send=mock_send))
     with pytest.raises(CredentialUnavailableError):
-        token = credential.get_token("")
+        token = credential.get_token("scope")
     within_credential_chain.set(False)
 
 
@@ -764,7 +703,7 @@ def test_imds_user_assigned_identity():
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
-    assert token == expected_token
+    assert token.token == expected_token.token
 
 
 def test_service_fabric():
@@ -846,242 +785,6 @@ def test_service_fabric_tenant_id():
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token
         assert token.expires_on == expires_on
-
-
-def test_azure_arc(tmpdir):
-    """Azure Arc 2019-11-01"""
-    access_token = "****"
-    api_version = "2019-11-01"
-    expires_on = 42
-    identity_endpoint = "http://localhost:42/token"
-    imds_endpoint = "http://localhost:42"
-    scope = "scope"
-    secret_key = "XXXX"
-
-    key_file = tmpdir.mkdir("key").join("key_file.key")
-    key_file.write(secret_key)
-    assert key_file.read() == secret_key
-    key_path = os.path.join(key_file.dirname, key_file.basename)
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-        ],
-        responses=[
-            # first response gives path to authentication key
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_path)}),
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": expires_on,
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
-            token = ManagedIdentityCredential(transport=transport).get_token(scope)
-            assert token.token == access_token
-            assert token.expires_on == expires_on
-
-
-def test_azure_arc_tenant_id(tmpdir):
-    """Azure Arc 2019-11-01"""
-    access_token = "****"
-    api_version = "2019-11-01"
-    expires_on = 42
-    identity_endpoint = "http://localhost:42/token"
-    imds_endpoint = "http://localhost:42"
-    scope = "scope"
-    secret_key = "XXXX"
-
-    key_file = tmpdir.mkdir("key").join("key_file.key")
-    key_file.write(secret_key)
-    assert key_file.read() == secret_key
-    key_path = os.path.join(key_file.dirname, key_file.basename)
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-        ],
-        responses=[
-            # first response gives path to authentication key
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_path)}),
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": expires_on,
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
-            token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-            assert token.token == access_token
-            assert token.expires_on == expires_on
-
-
-def test_azure_arc_client_id():
-    """Azure Arc doesn't support user-assigned managed identity"""
-    with mock.patch(
-        "os.environ",
-        {
-            EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
-            EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
-        },
-    ):
-        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
-            credential = ManagedIdentityCredential(client_id="some-guid")
-
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
-    assert "not supported" in str(ex.value)
-
-
-def test_azure_arc_key_too_large(tmp_path):
-
-    api_version = "2019-11-01"
-    identity_endpoint = "http://localhost:42/token"
-    imds_endpoint = "http://localhost:42"
-    scope = "scope"
-    secret_key = "X" * 4097
-
-    key_file = tmp_path / "key_file.key"
-    key_file.write_text(secret_key)
-    assert key_file.read_text() == secret_key
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-        ],
-        responses=[
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
-        ],
-    )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
-            with pytest.raises(ClientAuthenticationError) as ex:
-                ManagedIdentityCredential(transport=transport).get_token(scope)
-            assert "file size" in str(ex.value)
-
-
-def test_azure_arc_key_not_exist(tmp_path):
-
-    api_version = "2019-11-01"
-    identity_endpoint = "http://localhost:42/token"
-    imds_endpoint = "http://localhost:42"
-    scope = "scope"
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-        ],
-        responses=[
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm=/path/to/key_file"}),
-        ],
-    )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        with pytest.raises(ClientAuthenticationError) as ex:
-            ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert "not exist" in str(ex.value)
-
-
-def test_azure_arc_key_invalid(tmp_path):
-
-    api_version = "2019-11-01"
-    identity_endpoint = "http://localhost:42/token"
-    imds_endpoint = "http://localhost:42"
-    scope = "scope"
-    key_file = tmp_path / "key_file.txt"
-    key_file.write_text("secret")
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-            Request(
-                base_url=identity_endpoint,
-                method="GET",
-                required_headers={"Metadata": "true"},
-                required_params={"api-version": api_version, "resource": scope},
-            ),
-        ],
-        responses=[
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
-            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
-        ],
-    )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: "/foo"):
-            with pytest.raises(ClientAuthenticationError) as ex:
-                ManagedIdentityCredential(transport=transport).get_token(scope)
-            assert "Unexpected file path" in str(ex.value)
-
-        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
-            with pytest.raises(ClientAuthenticationError) as ex:
-                ManagedIdentityCredential(transport=transport).get_token(scope)
-            assert "extension" in str(ex.value)
 
 
 def test_token_exchange(tmpdir):

@@ -53,7 +53,7 @@ from typing import cast, Iterator
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     schema_id = pre_register_schema(schema_registry)
-    encoder = JsonSchemaEncoder(client=schema_registry, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+    encoder = JsonSchemaEncoder(client=schema_registry, validate=cast(str, SCHEMA_JSON["$schema"]))
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = decode_event_data_message(encoder, event_data_alice)

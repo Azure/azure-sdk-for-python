@@ -39,7 +39,10 @@ async def main():
         await copied_blob.start_copy_from_url(source_blob)
         for i in range(10):
             props = await copied_blob.get_blob_properties()
-            status = props.copy.status
+            if props.copy.status is not None:
+                status = props.copy.status
+            else:
+                status = "None"
             print("Copy status: " + status)
             if status == "success":
                 # copy finished
@@ -51,8 +54,12 @@ async def main():
             props = await copied_blob.get_blob_properties()
             print(props.copy.status)
             copy_id = props.copy.id
-            await copied_blob.abort_copy(copy_id)
-            props = copied_blob.get_blob_properties()
+            if copy_id is not None:
+                await copied_blob.abort_copy(copy_id)
+            else:
+                print("copy_id was unexpectedly None, check if the operation completed successfully.")
+                sys.exit(1)
+            props = await copied_blob.get_blob_properties()
             print(props.copy.status)
 
 if __name__ == "__main__":

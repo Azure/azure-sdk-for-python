@@ -23,12 +23,12 @@ class BearerTokenPolicyTest(PerfStressTest):
 
         self.request = HttpRequest("GET", "https://localhost")
 
-        credential = Mock(get_token=Mock(return_value=token))
+        credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
         self.pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential=credential)])
 
         get_token_future = asyncio.Future()
         get_token_future.set_result(token)
-        async_credential = Mock(get_token=Mock(return_value=get_token_future))
+        async_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=get_token_future))
 
         send_future = asyncio.Future()
         send_future.set_result(Mock())

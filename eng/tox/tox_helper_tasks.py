@@ -28,26 +28,19 @@ def unzip_sdist_to_directory(containing_folder: str) -> str:
         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
         return unzip_file_to_directory(tars[0], containing_folder)
 
+
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)
             extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
             return os.path.join(extract_location, extracted_dir)
-    elif path_to_zip_file.endswith(".tar.gz") or path_to_zip_file.endswith(".tgz"):
-        with tarfile.open(path_to_zip_file, "r:gz") as tar_ref:
-            tar_ref.extractall(extract_location)
-            top_level_dir = None
-            for member in tar_ref.getmembers():
-                if member.isdir():
-                    top_level_dir = member.name.split('/')[0]
-                    break
-            if top_level_dir:
-                return os.path.join(extract_location, top_level_dir)
-            else:
-                raise ValueError("Failed to determine the top-level directory in the tar.gz archive")
     else:
-        raise ValueError("Unsupported file format")
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
+
 
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")

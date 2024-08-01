@@ -31,13 +31,14 @@ import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+META_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 
 def on_event(partition_context, event):
@@ -66,7 +67,7 @@ json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=DefaultAzureCredential()
     ),
-    validate=JsonSchemaDraftIdentifier.DRAFT2020_12,
+    validate=META_SCHEMA_IDENTIFIER,
 )
 
 

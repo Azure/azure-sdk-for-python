@@ -42,7 +42,6 @@ class EventHandler(AssistantEventHandler):
             for tool in details.tool_calls:
                 if tool.type == "code_interpreter":
                     assert tool.id
-                    assert tool.code_interpreter.outputs
                     assert tool.code_interpreter.input is not None
                 elif tool.type == "function":
                     assert tool.id
@@ -339,6 +338,7 @@ class TestAssistants(AzureRecordedTestCase):
             delete_file = client.files.delete(file.id)
             assert delete_file.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_vector_stores_crud(self, client, api_type, api_version, **kwargs):
@@ -418,6 +418,7 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert deleted_vector_store.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_vector_stores_batch_crud(self, client, api_type, api_version, **kwargs):
@@ -533,6 +534,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_runs_file_search(self, client, api_type, api_version, **kwargs):

@@ -26,6 +26,8 @@ jobs:
     maxParallel: 5
   pool:
     vmImage: 'ubuntu-20.04'
+  variables:
+    Codeql.Enabled: false
   steps:
     - task: UsePythonVersion@0
       inputs:

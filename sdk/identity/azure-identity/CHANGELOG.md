@@ -1,6 +1,6 @@
 # Release History
 
-## 1.17.2 (Unreleased)
+## 1.18.0b2 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,15 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.18.0b1 (2024-07-16)
+
 - Fixed the issue that `SharedTokenCacheCredential` was not picklable.
 
 ### Other Changes
+
+- The synchronous `ManagedIdentityCredential` was updated to use MSAL (Microsoft Authentication Library) for handling most of the underlying managed identity implementations.
 
 ## 1.17.1 (2024-06-21)
 
