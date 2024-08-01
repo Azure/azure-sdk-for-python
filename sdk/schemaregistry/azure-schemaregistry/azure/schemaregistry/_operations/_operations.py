@@ -43,7 +43,7 @@ def build_schema_registry_list_schema_groups_request(**kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -64,7 +64,7 @@ def build_schema_registry_list_schema_versions_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +91,7 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
     accept = _headers.pop("Accept", "application/json; serialization=Avro")
     # Construct URL
     _url = "/$schemaGroups/$schemas/{id}"
@@ -116,7 +116,7 @@ def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
     accept = _headers.pop("Accept", "application/json; serialization=Avro")
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions/{schemaVersion}"

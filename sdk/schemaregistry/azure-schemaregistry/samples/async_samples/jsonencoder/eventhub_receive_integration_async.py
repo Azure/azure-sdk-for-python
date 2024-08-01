@@ -32,7 +32,6 @@ import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -40,6 +39,7 @@ EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+META_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 
 # create an EventHubConsumerClient instance
@@ -54,7 +54,7 @@ json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=azure_credential
     ),
-    validate=JsonSchemaDraftIdentifier.DRAFT2020_12,
+    validate=META_SCHEMA_IDENTIFIER,
 )
 
 

@@ -97,9 +97,7 @@ class FeatureStoreConfigurationOptions(object):
             description="7-day and 3-day rolling aggregation of transactions featureset",
             entities=["azureml:account:1"],
             stage="Development",
-            specification=FeatureSetSpecification(
-                path="../tests/test_configs/feature_set/code_sample/FeatureSetSpec.yaml"
-            ),
+            specification=FeatureSetSpecification(path="../azure-ai-ml/tests/test_configs/feature_set/code_sample/"),
             tags={"data_type": "nonPII"},
         )
 

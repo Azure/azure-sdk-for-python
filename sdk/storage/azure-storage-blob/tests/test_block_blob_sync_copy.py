@@ -95,7 +95,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         split = 4 * 1024
         destination_blob_name = self.get_resource_name('destblob')
         destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
-        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):

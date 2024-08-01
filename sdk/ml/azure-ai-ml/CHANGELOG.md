@@ -1,15 +1,23 @@
 # Release History
 
-## 1.19.0 (unreleased)
+## 1.20.0 (unreleased)
 
+## 1.19.0 (2024-07-29)
+
+### Feature Added
+
+  - Added enable_sso operation under compute operation that will allow user to enable sso setting of a compute instance without any write permission set on compute.
+  
 ### Bugs Fixed
 - Workspace update no longer broken for older workspaces due to deprecated tags.
+- Support credential-less fileshare datastore
 
 ## 1.18.0 (2024-07-09)
 
 ### Features Added
 
-- Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+ - Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+ - Uploads to account key access datastores will be authorized via a SAS token retrieved from a call to `DatastoreOperations._list_secrets`. Key-based authentication for uploads for such datastores is no longer used. Identity-based datastores will use user identity authentication retrieved from the MLClient.
 - Support `update_sso_settings` in `ComputeOperations`, to enable or disable single sign-on settings of a compute instance.
 
 ### Bugs Fixed

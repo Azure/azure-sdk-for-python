@@ -333,9 +333,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
-        :keyword bool enable_snapshot_virtual_directory_access:
-            Specifies whether the snapshot virtual directory should be accessible at the root of the share
-            mount point when NFS is enabled. Default value is True.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 

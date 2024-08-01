@@ -1,2 +1,0 @@
-[tool.azure-sdk-build]
-strict_sphinx = true

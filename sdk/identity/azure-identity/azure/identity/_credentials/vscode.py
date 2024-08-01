@@ -139,7 +139,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
-    @log_get_token("VSCodeCredential")
+    @log_get_token
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
