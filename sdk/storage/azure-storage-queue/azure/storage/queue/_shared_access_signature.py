@@ -53,7 +53,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], Any]] = None
+        sts_hook: Optional[Callable[[str], None]] = None
     ) -> str:
         '''
         Generates a shared access signature for the queue.
@@ -97,7 +97,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
-        :type sts_hook: Optional[Callable[[str], Any]]
+        :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
@@ -155,7 +155,7 @@ def generate_account_sas(
     ip: Optional[str] = None,
     *,
     services: Union[Services, str] = Services(queue=True),
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the queue service.
@@ -196,7 +196,7 @@ def generate_account_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -223,7 +223,7 @@ def generate_queue_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for a queue.
@@ -272,7 +272,7 @@ def generate_queue_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 

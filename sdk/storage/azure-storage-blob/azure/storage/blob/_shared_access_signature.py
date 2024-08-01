@@ -67,7 +67,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], Any]] = None,
+        sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
         '''
@@ -139,7 +139,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
-        :type sts_hook: Optional[Callable[[str], Any]]
+        :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
@@ -181,7 +181,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], Any]] = None,
+        sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
         '''
@@ -243,7 +243,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
-        :type sts_hook: Optional[Callable[[str], Any]]
+        :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
@@ -356,7 +356,7 @@ def generate_account_sas(
     ip: Optional[str] = None,
     *,
     services: Union[Services, str] = Services(blob=True),
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the blob service.
@@ -401,7 +401,7 @@ def generate_account_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -438,7 +438,7 @@ def generate_container_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for a container.
@@ -515,7 +515,7 @@ def generate_container_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -566,7 +566,7 @@ def generate_blob_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for a blob.
@@ -655,7 +655,7 @@ def generate_blob_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

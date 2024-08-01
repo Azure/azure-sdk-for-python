@@ -37,7 +37,7 @@ def generate_account_sas(
     expiry: Union["datetime", str],
     *,
     services: Union[Services, str] = Services(blob=True),
-    sts_hook: Optional[Callable[[str], Any]] = None,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the DataLake service.
@@ -82,7 +82,7 @@ def generate_account_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -105,7 +105,7 @@ def generate_file_system_sas(
     permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
     expiry=None,  # type: Optional[Union[datetime, str]]
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], Any]]
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
     **kwargs  # type: Any
 ):
     # type: (...) -> str
@@ -194,7 +194,7 @@ def generate_file_system_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -218,7 +218,7 @@ def generate_directory_sas(
     permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
     expiry=None,  # type: Optional[Union[datetime, str]]
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], Any]]
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
     **kwargs  # type: Any
 ):
     # type: (...) -> str
@@ -309,7 +309,7 @@ def generate_directory_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -338,7 +338,7 @@ def generate_file_sas(
     permission=None,  # type: Optional[Union[FileSasPermissions, str]]
     expiry=None,  # type: Optional[Union[datetime, str]]
     *,
-    sts_hook=None,  # type: Optional[Callable[[str], Any]]
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
     **kwargs  # type: Any
 ):
     # type: (...) -> str
@@ -431,7 +431,8 @@ def generate_file_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], Any]]
+    :paramtype sts_hook: Optional[Callable[[str], None
+    ]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

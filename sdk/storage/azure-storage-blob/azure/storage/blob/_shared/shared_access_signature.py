@@ -164,7 +164,7 @@ class SharedAccessSignature(object):
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
-        :type sts_hook: Optional[Callable[[str], Any]]
+        :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
         '''
