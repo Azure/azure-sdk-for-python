@@ -331,6 +331,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
+        logger: Optional["Logger"] = None
     ) -> None:
         # pylint: disable=protected-access
         from ..._pyamqp.error import ErrorCondition
@@ -372,9 +373,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
         except AMQPLinkError as le:
-            # TODO: fix logger
-            import logging
-            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
+            raise PyamqpTransport.create_servicebus_exception(logger, le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

@@ -792,11 +792,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
+        logger: Optional["Logger"] = None
     ) -> None:
         # pylint: disable=protected-access
         try:
             if handler._link._is_closed:
-                raise AMQPLinkError("Link is closed.")
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Link is closed.", retryable=True)
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -831,12 +832,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-
-
         except AMQPLinkError as le:
-            # TODO: fix logger
-            import logging
-            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
+            raise PyamqpTransport.create_servicebus_exception(logger, le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

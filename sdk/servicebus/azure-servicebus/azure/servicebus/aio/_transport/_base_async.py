@@ -259,6 +259,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         settle_operation,
         dead_letter_reason=None,
         dead_letter_error_description=None,
+        logger=None
     ) -> None:
         """
         Settles message.
@@ -268,6 +269,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param str settle_operation: The settle operation.
         :param str or None dead_letter_reason: Optional. The dead letter reason.
         :param str or None dead_letter_error_description: Optional. The dead letter error description.
+        :param Logger or None logger: Logger.
         """
 
     @staticmethod
