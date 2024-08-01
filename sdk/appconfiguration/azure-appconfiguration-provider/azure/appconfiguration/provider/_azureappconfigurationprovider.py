@@ -50,14 +50,13 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._client_manager import ConfigurationClientWrapper, ConfigurationClientManager
-from ._discovery import find_auto_failover_endpoints
+from ._client_manager import ConfigurationClientManager
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]
 _T = TypeVar("_T")
 logger = logging.getLogger(__name__)
 
@@ -325,39 +324,26 @@ def _buildprovider(
     else:
         user_agent = USER_AGENT
 
-    clients = []
-    if connection_string and endpoint:
-        clients.append(
-            ConfigurationClientWrapper.from_connection_string(
-                endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
-            clients.append(
-                ConfigurationClientWrapper.from_connection_string(
-                    failover_endpoint, failover_connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    if endpoint and credential:
-        clients.append(
-            ConfigurationClientWrapper.from_credential(
-                endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            clients.append(
-                ConfigurationClientWrapper.from_credential(
-                    endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+    interval: int = kwargs.get("refresh_interval", 30)
+    if interval < 1:
+        raise ValueError("Refresh interval must be greater than or equal to 1 second.")
+
+    min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
+    max_backoff: int = 600 if 600 <= interval else interval
+
+    provider._replica_client_manager = ConfigurationClientManager(
+        connection_string,
+        endpoint,
+        credential,
+        user_agent,
+        retry_total,
+        retry_backoff_max,
+        replica_discovery_enabled,
+        min_backoff,
+        max_backoff,
+        **kwargs
+    )
+    return provider
 
 
 def _resolve_keyvault_reference(
@@ -489,14 +475,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def __init__(self, endpoint, **kwargs) -> None:
         self._origin_endpoint = endpoint
-
-        interval: int = kwargs.get("refresh_interval", 30)
-        if interval < 1:
-            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-
-        min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
-        max_backoff: int = 600 if 600 <= interval else interval
-        self._replica_client_manager = ConfigurationClientManager(min_backoff, max_backoff)
+        self._replica_client_manager = None
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -546,6 +525,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         try:
+            self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
             for client in active_clients:
