@@ -121,6 +121,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
         $lookupKey = ($pkg.DirectoryPath).Replace($RepoRoot, "").SubString(1)
+        Write-Host "Storing $($pkg.Name) in $lookupKey"
         $lookup[$lookupKey] = $pkg
 
         foreach ($file in $targetedFiles)
@@ -138,6 +139,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     }
 
     foreach ($addition in $dependentPackagesForInclusion) {
+        Write-Host "Examining $addition to see if it shows up in the complete package list"
         if ($lookup[$addition]) {
             $packagesWithChanges += $lookup[$addition]
         }
