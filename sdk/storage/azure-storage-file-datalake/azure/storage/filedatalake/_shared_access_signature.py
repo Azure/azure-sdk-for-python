@@ -431,8 +431,7 @@ def generate_file_sas(
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
-    :paramtype sts_hook: Optional[Callable[[str], None
-    ]]
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
