@@ -18,7 +18,7 @@ extends:
           ServiceConnection: azure-sdk-tests-preview
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: $(LOCATION)
+          Location: eastus
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         TEST_MODE: 'RunLiveNoRecord'
