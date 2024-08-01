@@ -179,3 +179,4 @@ class NamedIo(io.BytesIO):
     def __init__(self, name: str, *args, **kwargs):
         super(NamedIo, self).__init__(*args, **kwargs)
         self.name = name
+
