@@ -4,12 +4,14 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
+      BuildTargetingString: "azure-keyvault-keys"
+      JobName: azure_keyvault_keys
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
       UseFederatedAuth: true
       CloudConfig:
         Public:
-          Location: 'eastus2'
+          Location: 'brazilsouth'
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
