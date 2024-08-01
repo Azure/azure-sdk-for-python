@@ -24,7 +24,7 @@ steps:
     foreach($propertiesFile in $packageProperties) {
       $PackageProp = Get-Content -Path $propertiesFile | ConvertFrom-Json
 
-      $paths += $PackageProp.DirectoryPath
+      $paths += (Join-Path "$(Build.SourcesDirectory)" $PackageProp.DirectoryPath)
     }
 
     $scanPaths = $paths -join ","
