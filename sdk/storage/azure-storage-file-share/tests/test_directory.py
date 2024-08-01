@@ -1404,13 +1404,22 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory_client = share_client.create_directory('dir1')
         user_given_permission_sddl = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
                                       "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
                                       "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
         user_given_permission_binary = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
                                         "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
                                         "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
+
+        directory_client = share_client.create_directory(
+            'dir1',
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+
+        props = directory_client.get_directory_properties()
+        assert props is not None
+        assert props.permission_key is not None
 
         directory_client.set_http_headers(
             file_permission=user_given_permission_binary,
