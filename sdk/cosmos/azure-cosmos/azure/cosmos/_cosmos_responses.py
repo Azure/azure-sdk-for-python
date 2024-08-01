@@ -6,6 +6,8 @@ from azure.core.utils import CaseInsensitiveDict
 
 class CosmosDictResponse(dict):
     def __init__(self, original_dict, response_headers):
+        if original_dict is None:
+            original_dict = {}
         super().__init__(original_dict)
         self._response_headers = response_headers
 
@@ -21,6 +23,8 @@ class CosmosDictResponse(dict):
 
 class CosmosListResponse(list):
     def __init__(self, original_list, response_headers):
+        if original_list is None:
+            original_list = []
         super().__init__(original_list)
         self._response_headers = response_headers
 

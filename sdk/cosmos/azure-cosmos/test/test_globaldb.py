@@ -104,8 +104,8 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         host_url = urlparse(TestGlobalDB.host)
@@ -131,8 +131,8 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        container.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(TestGlobalDB.write_location_host)
@@ -204,8 +204,8 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        item = container.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(self.write_location_host)
@@ -230,8 +230,8 @@ class TestGlobalDB(unittest.TestCase):
             # Delay to get these resources replicated to read location due to Eventual consistency
             time.sleep(5)
 
-            container.read_item(item=created_document, partition_key=created_document['pk'])
-            content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+            read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+            content_location = str(read_response.response_headers[HttpHeaders.ContentLocation])
 
             content_location_url = urlparse(content_location)
             read_location2_url = urlparse(self.read_location2_host)

@@ -203,9 +203,9 @@ def execute_item_batch(database):
     container = database.create_container_if_not_exists(id="batch_container",
                                                         partition_key=PartitionKey(path='/account_number'))
     # We create three items to use for the sample.
-    create_response1 = container.create_item(get_sales_order("read_item"))
-    create_response2 = container.create_item(get_sales_order("delete_item"))
-    create_response3 = container.create_item(get_sales_order("replace_item"))
+    container.create_item(get_sales_order("read_item"))
+    container.create_item(get_sales_order("delete_item"))
+    create_response = container.create_item(get_sales_order("replace_item"))
 
     # We create our batch operations
     create_item_operation = ("create", (get_sales_order("create_item"),))
@@ -217,12 +217,11 @@ def execute_item_batch(database):
     replace_item_if_match_operation = ("replace",
                                        ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
                                                          "message": "item was replaced"}),
-                                       {"if_match_etag": container.client_connection.last_response_headers.get("etag")})
+                                       {"if_match_etag": create_response.response_headers.get("etag")})
     replace_item_if_none_match_operation = ("replace",
                                             ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
                                                               "message": "item was replaced"}),
-                                            {"if_none_match_etag":
-                                                 container.client_connection.last_response_headers.get("etag")})
+                                            {"if_none_match_etag": create_response.response_headers.get("etag")})
 
     # Put our operations into a list
     batch_operations = [
