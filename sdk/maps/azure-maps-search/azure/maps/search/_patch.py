@@ -50,6 +50,9 @@ class MapsSearchClient(MapsSearchClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        endpoint: Optional[str] = None,
+        client_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         super().__init__(
