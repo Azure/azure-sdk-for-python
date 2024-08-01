@@ -22,6 +22,10 @@ load-plugins=pylint_guidelines_checker
 # Added disables from super-with-arguments
 disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin
 
+# Add enable for useless disables
+enable=useless-suppression
+
+
 [FORMAT]
 max-line-length=120
 

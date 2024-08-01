@@ -757,7 +757,7 @@ def _stage_block_from_url_options(
     options.update(kwargs)
     return options
 
-def _get_block_list_result(blocks: BlockList) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
+def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]:
     committed = []
     uncommitted = []
     if blocks.committed_blocks:
