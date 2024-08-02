@@ -66,7 +66,7 @@ class TestCosmosResponses(unittest.TestCase):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response.response_headers) > 0
-        assert int(lsn) + 10 < batch_response.response_headers['lsn']
+        assert int(lsn) + 10 < int(batch_response.response_headers['lsn'])
 
     def test_query_paging_headers(self):
         container = self.test_database.create_container(id="responses_paging_test" + str(uuid.uuid4()),
