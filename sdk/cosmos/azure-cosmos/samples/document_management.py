@@ -198,66 +198,6 @@ def patch_item(container, doc_id):
                                                  response["service_addition"]))
 
 
-def execute_item_batch(database):
-    print('\n1.11 Executing Batch Item operations\n')
-    container = database.create_container_if_not_exists(id="batch_container",
-                                                        partition_key=PartitionKey(path='/account_number'))
-    # We create three items to use for the sample.
-    container.create_item(get_sales_order("read_item"))
-    container.create_item(get_sales_order("delete_item"))
-    container.create_item(get_sales_order("replace_item"))
-
-    # We create our batch operations
-    create_item_operation = ("create", (get_sales_order("create_item"),))
-    upsert_item_operation = ("upsert", (get_sales_order("upsert_item"),))
-    read_item_operation = ("read", ("read_item",))
-    delete_item_operation = ("delete", ("delete_item",))
-    replace_item_operation = ("replace", ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                           "message": "item was replaced"}))
-    replace_item_if_match_operation = ("replace",
-                                       ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                         "message": "item was replaced"}),
-                                       {"if_match_etag": container.client_connection.last_response_headers.get("etag")})
-    replace_item_if_none_match_operation = ("replace",
-                                            ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                              "message": "item was replaced"}),
-                                            {"if_none_match_etag":
-                                                 container.client_connection.last_response_headers.get("etag")})
-
-    # Put our operations into a list
-    batch_operations = [
-        create_item_operation,
-        upsert_item_operation,
-        read_item_operation,
-        delete_item_operation,
-        replace_item_operation,
-        replace_item_if_match_operation,
-        replace_item_if_none_match_operation]
-
-    # Run that list of operations
-    batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key="Account1")
-    # Batch results are returned as a list of item operation results - or raise a CosmosBatchOperationError if
-    # one of the operations failed within your batch request.
-    print("\nResults for the batch operations: {}\n".format(batch_results))
-
-    # You can also use this logic to read directly from a file into the batch you'd like to create:
-    with open("file_name.txt", "r") as data_file:
-        container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
-
-    # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
-    # error returned for your application debugging, making it easy to pinpoint the failing operation
-    # [START handle_batch_error]
-    batch_operations = [create_item_operation, create_item_operation]
-    try:
-        container.execute_item_batch(batch_operations, partition_key="Account1")
-    except exceptions.CosmosBatchOperationError as e:
-        error_operation_index = e.error_index
-        error_operation_response = e.operation_responses[error_operation_index]
-        error_operation = batch_operations[error_operation_index]
-        print("\nError operation: {}, error operation response: {}\n".format(error_operation, error_operation_response))
-    # [END handle_batch_error]
-
-
 def delete_item(container, doc_id):
     print('\n1.12 Deleting Item by Id\n')
 
@@ -531,7 +471,6 @@ def run_sample():
         upsert_item(container, 'SalesOrder1')
         conditional_patch_item(container, 'SalesOrder1')
         patch_item(container, 'SalesOrder1')
-        execute_item_batch(db)
         delete_item(container, 'SalesOrder1')
         delete_all_items_by_partition_key(db, "CompanyA")
         query_items_with_continuation_token_size_limit(container, 'SalesOrder1')
