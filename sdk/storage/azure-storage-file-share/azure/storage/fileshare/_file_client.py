@@ -89,7 +89,7 @@ def _upload_file_helper(
         if size == 0:
             return response
 
-        responses = upload_data_chunks(
+        return upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -101,7 +101,6 @@ def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
-        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except HttpResponseError as error:
         process_storage_error(error)
 

@@ -123,6 +123,33 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert response
 
     @BlobPreparer()
+    def testing_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        self.container._config.max_single_put_size = 512
+        self.container._config.max_block_size = 512
+        # self.container._config.min_large_block_upload_threshold = 100
+        data = b'abc' * 512
+
+        # Act
+        response = blob.upload_blob(data, max_concurrency=1)
+        result = blob.download_blob().read()
+
+        # Assert
+        assert response['etag']
+        assert result == data
+
+        response = blob.upload_blob(data, overwrite=True, validate_content=True, max_concurrency=2)
+        result = blob.download_blob().read()
+
+        # Assert
+        assert response['etag']
+        assert result == data
+
+    @BlobPreparer()
     @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
     @GenericTestProxyParametrize1()
     @recorded_by_proxy

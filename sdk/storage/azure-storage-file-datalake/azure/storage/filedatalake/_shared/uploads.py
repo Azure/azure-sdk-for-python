@@ -10,7 +10,7 @@ from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperati
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import AnyStr, cast, IO, Iterable, Optional, Sized, Tuple, Union
+from typing import Any, AnyStr, cast, Dict, Generator, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
@@ -77,11 +77,11 @@ def prepare_upload_data(
 
 
 def _parallel_uploads(executor, uploader, pending, running):
-    range_ids = []
+    chunks = []
     while True:
         # Wait for some download to finish before adding a new one
         done, running = futures.wait(running, return_when=futures.FIRST_COMPLETED)
-        range_ids.extend([chunk.result() for chunk in done])
+        chunks.extend([chunk.result() for chunk in done])
         try:
             for _ in range(0, len(done)):
                 next_chunk = next(pending)
@@ -91,8 +91,28 @@ def _parallel_uploads(executor, uploader, pending, running):
 
     # Wait for the remaining uploads to finish
     done, _running = futures.wait(running)
-    range_ids.extend([chunk.result() for chunk in done])
-    return range_ids
+    chunks.extend([chunk.result() for chunk in done])
+    return chunks
+
+
+class ChunkInfo:
+    offset: int
+    length: int
+    md5: Optional[bytes] = None
+    crc64: Optional[bytes] = None
+    id: Optional[str] = None
+    """The id of the chunk. Only set if chunk needs to be committed."""
+    response_headers: Dict[str, Any] = {}
+    """The response headers from the upload chunk operation."""
+
+    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
+        self.offset = offset
+        self.length = len(data)
+
+        if checksum_algorithm == ChecksumAlgorithm.MD5:
+            self.md5 = calculate_md5(data)
+        if checksum_algorithm == ChecksumAlgorithm.CRC64:
+            self.crc64 = calculate_crc64_bytes(data)
 
 
 def upload_data_chunks(
@@ -118,6 +138,7 @@ def upload_data_chunks(
         parallel=parallel,
         progress_hook=progress_hook,
         **kwargs)
+
     if parallel:
         with futures.ThreadPoolExecutor(max_concurrency) as executor:
             upload_tasks = uploader.get_chunk_streams()
@@ -125,12 +146,16 @@ def upload_data_chunks(
                 executor.submit(with_current_context(uploader.process_chunk), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
-            range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
+            chunks = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
-        range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
-    if any(range_ids):
-        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
-    return uploader.response_headers
+        chunks = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
+
+    chunks.sort(key=lambda c: c.offset)
+    # If chunks have an id, return list of ids
+    if chunks[0].id is not None:
+        return [c.id for c in chunks]
+    # Else, return the last chunk's response headers
+    return chunks[-1].response_headers
 
 
 def upload_substream_blocks(
@@ -170,24 +195,6 @@ def upload_substream_blocks(
     return []
 
 
-class ChunkInfo:
-    offset: int
-    data: bytes
-    length: int
-    md5: Optional[bytes] = None
-    crc64: Optional[bytes] = None
-
-    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
-        self.offset = offset
-        self.data = data
-        self.length = len(data)
-
-        if checksum_algorithm == ChecksumAlgorithm.MD5:
-            self.md5 = calculate_md5(self.data)
-        if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64_bytes(self.data)
-
-
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
@@ -219,14 +226,13 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         # Encryption
         self.encryptor = encryptor
         self.padder = padder
-        self.response_headers = None
         self.etag = None
         self.last_modified = None
         self.request_options = kwargs
         # Legacy support for bool - Pass True through to pipeline
         self.request_options['validate_content'] = self.validate_content if self.validate_content is True else None
 
-    def get_chunk_streams(self):
+    def get_chunk_streams(self) -> Generator[Tuple[bytes, ChunkInfo], None, None]:
         index = 0
         while True:
             data = b""
@@ -251,21 +257,21 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                     data = self.padder.update(data)
                 if self.encryptor:
                     data = self.encryptor.update(data)
-                yield ChunkInfo(index, data, self.validate_content)
+                yield data, ChunkInfo(index, data, self.validate_content)
             else:
                 if self.padder:
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
                 if data:
-                    yield ChunkInfo(index, data, self.validate_content)
+                    yield data, ChunkInfo(index, data, self.validate_content)
                 break
             index += len(data)
 
-    def process_chunk(self, chunk_info):
-        range_id = self._upload_chunk(chunk_info)
+    def process_chunk(self, chunk_data: Tuple[bytes, ChunkInfo]) -> ChunkInfo:
+        chunk_info = self._upload_chunk(chunk_data[0], chunk_data[1])
         self._update_progress(chunk_info.length)
-        return range_id
+        return chunk_info
 
     def _update_progress(self, length):
         if self.progress_lock is not None:
@@ -277,7 +283,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         raise NotImplementedError("Must be implemented by child class.")
 
     def get_substream_blocks(self):
@@ -321,21 +327,24 @@ class BlockBlobChunkUploader(_ChunkUploader):
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         # TODO: This is incorrect, but works with recording.
         index = f'{chunk_info.offset:032d}'
         block_id = encode_base64(url_quote(encode_base64(index)))
-        self.service.stage_block(
+        response_headers = self.service.stage_block(
             block_id,
             chunk_info.length,
-            chunk_info.data,
+            data,
             transactional_content_md5=chunk_info.md5,
             transactional_content_crc64=chunk_info.crc64,
+            cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return index, block_id
+        chunk_info.id = block_id
+        chunk_info.response_headers = response_headers
+        return chunk_info
 
     def _upload_substream_block(self, index, block_stream):
         try:
@@ -360,13 +369,14 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # if reached the end without returning, then chunk_data is all 0's
         return not any(bytearray(chunk_data))
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         # avoid uploading the empty pages
-        if not self._is_chunk_empty(chunk_info.data):
+        response_headers = {}
+        if not self._is_chunk_empty(data):
             chunk_end = chunk_info.offset + chunk_info.length - 1
             content_range = f"bytes={chunk_info.offset}-{chunk_end}"
-            self.response_headers = self.service.upload_pages(
-                body=chunk_info.data,
+            response_headers = self.service.upload_pages(
+                body=data,
                 content_length=chunk_info.length,
                 range=content_range,
                 transactional_content_md5=chunk_info.md5,
@@ -378,7 +388,9 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             )
 
             if not self.parallel and self.request_options.get('modified_access_conditions'):
-                self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+                self.request_options['modified_access_conditions'].if_match = response_headers['etag']
+        chunk_info.response_headers = response_headers
+        return chunk_info
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -390,10 +402,10 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
         super(AppendBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         if self.current_length is None:
-            self.response_headers = self.service.append_block(
-                body=chunk_info.data,
+            response_headers = self.service.append_block(
+                body=data,
                 content_length=chunk_info.length,
                 transactional_content_md5=chunk_info.md5,
                 transactional_content_crc64=chunk_info.crc64,
@@ -402,12 +414,12 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
                 upload_stream_current=self.progress_total,
                 **self.request_options
             )
-            self.current_length = int(self.response_headers["blob_append_offset"])
+            self.current_length = int(response_headers["blob_append_offset"])
         else:
             self.request_options['append_position_access_conditions'].append_position = \
                 self.current_length + chunk_info.offset
-            self.response_headers = self.service.append_block(
-                body=chunk_info.data,
+            response_headers = self.service.append_block(
+                body=data,
                 content_length=chunk_info.length,
                 transactional_content_md5=chunk_info.md5,
                 transactional_content_crc64=chunk_info.crc64,
@@ -416,6 +428,8 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
                 upload_stream_current=self.progress_total,
                 **self.request_options
             )
+        chunk_info.response_headers = response_headers
+        return chunk_info
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -423,13 +437,13 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
 
 class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         # Use a namedtuple here to avoid having a Datalake import in shared code
         PathHeaders = namedtuple('PathHeaders', ['transactional_content_hash'])
         path_headers = PathHeaders(chunk_info.md5) if chunk_info.md5 is not None else None
 
-        self.response_headers = self.service.append_data(
-            body=chunk_info.data,
+        response_headers = self.service.append_data(
+            body=data,
             position=chunk_info.offset,
             content_length=chunk_info.length,
             path_http_headers=path_headers,  # type: ignore
@@ -441,7 +455,9 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
         )
 
         if not self.parallel and self.request_options.get('modified_access_conditions'):
-            self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+            self.request_options['modified_access_conditions'].if_match = response_headers['etag']
+        chunk_info.response_headers = response_headers
+        return chunk_info
 
     def _upload_substream_block(self, index, block_stream):
         try:
@@ -460,20 +476,20 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
-    def _upload_chunk(self, chunk_info):
+    def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         # Files is unique in self.service here is a ShareFileClient rather than a generated client
         # Pass through any value of validate_content to let upload_range use it
         self.request_options['validate_content'] = self.validate_content
-        response = self.service.upload_range(
-            chunk_info.data,
+        response_headers = self.service.upload_range(
+            data,
             chunk_info.offset,
             chunk_info.length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        chunk_end = chunk_info.offset + chunk_info.length - 1
-        return f'bytes={chunk_info.offset}-{chunk_end}', response
+        chunk_info.response_headers = response_headers
+        return chunk_info
 
     # TODO: Implement this method.
     def _upload_substream_block(self, index, block_stream):
