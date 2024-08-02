@@ -76,6 +76,8 @@ from .._range_partition_resolver import RangePartitionResolver
 
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
+
+
 class CredentialDict(TypedDict, total=False):
     masterKey: str
     resourceTokens: Mapping[str, Any]
@@ -736,7 +738,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result,
+        return CosmosDictResponse(result,
                                   response_headers=last_response_headers)
 
     async def UpsertUser(
@@ -874,7 +876,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result,
+        return CosmosDictResponse(result,
                                   response_headers=last_response_headers)
 
     async def __Post(
@@ -1172,7 +1174,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result,
+        return CosmosDictResponse(result,
                                   response_headers=last_response_headers)
 
     async def __Get(
@@ -1436,7 +1438,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result,
+        return CosmosDictResponse(result,
                                   response_headers=last_response_headers)
 
     async def ReplaceOffer(
@@ -1535,7 +1537,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result,
+        return CosmosDictResponse(result,
                                   response_headers=last_response_headers)
 
     async def __Put(
@@ -1947,7 +1949,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         if response_hook:
             response_hook(last_response_headers, final_responses)
-        return CosmosListResponse(original_list=final_responses,
+        return CosmosListResponse(final_responses,
                                   response_headers=last_response_headers)
 
     async def _Batch(

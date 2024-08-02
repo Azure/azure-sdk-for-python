@@ -2047,7 +2047,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(result, response_headers=last_response_headers)
 
     def Batch(
         self,
@@ -2109,7 +2109,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         if response_hook:
             response_hook(last_response_headers, final_responses)
-        return CosmosListResponse(original_list=final_responses, response_headers=last_response_headers)
+        return CosmosListResponse(final_responses, response_headers=last_response_headers)
 
     def _Batch(
         self,
@@ -2621,7 +2621,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(result, response_headers=last_response_headers)
 
     def Upsert(
         self,
@@ -2665,7 +2665,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(result, response_headers=last_response_headers)
 
     def Replace(
         self,
@@ -2708,7 +2708,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(result, response_headers=last_response_headers)
 
     def Read(
         self,
@@ -2746,7 +2746,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(result, response_headers=last_response_headers)
 
     def DeleteResource(
         self,
