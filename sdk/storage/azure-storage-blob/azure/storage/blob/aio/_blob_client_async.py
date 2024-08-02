@@ -736,6 +736,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return downloader
 
     @distributed_trace_async
+    async def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
+        raise NotImplementedError("not yet implemented :)")
+
+    @distributed_trace_async
     async def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
         """Marks the specified blob for deletion.
 

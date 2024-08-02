@@ -18,7 +18,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results."""
 
     name: str
-    """The name of the blob being quered."""
+    """The name of the blob being queried."""
     container: str
     """The name of the container where the blob is."""
     response_headers: Dict[str, Any]
