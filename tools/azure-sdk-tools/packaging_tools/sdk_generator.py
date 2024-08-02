@@ -297,6 +297,11 @@ def main(generate_input, generate_output):
             package_names = get_package_names(sdk_folder)
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {input_readme}: {str(e)}")
+            _LOGGER.error(
+                "Please first check if the failure happens only to Python automation, or for all SDK automations. "
+                "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. "
+                "If it happens to Python alone, you can open an issue to https://github.com/Azure/autorest.python/issues. Please include the link of this Pull Request in the issue."
+            )
             raise e
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
