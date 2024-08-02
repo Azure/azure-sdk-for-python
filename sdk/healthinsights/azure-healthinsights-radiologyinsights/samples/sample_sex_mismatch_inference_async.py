@@ -2,12 +2,12 @@
 # Licensed under the MIT License.
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_sex_mismatch_inference_async.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_sex_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+submit it to the client, RadiologyInsightsClient, and display the Sex Mismatch indication.
 
 
 USAGE:
@@ -16,29 +16,31 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
-2. python sample_critical_result_inference_async.py
-   
-"""
+2. python sample_sex_mismatch_inference_async.py
 
+"""
 import asyncio
 import datetime
 import os
 import uuid
 
-from azure.healthinsights.radiologyinsights import models
 
+
+from azure.healthinsights.radiologyinsights import models
+    
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
+    # [START create_radiology_insights_client]
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
     radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
-
+    # [END create_radiology_insights_client]
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
     COMPARISON:   
@@ -113,21 +115,22 @@ async def radiology_insights_async() -> None:
             )
             radiology_insights_result = await poller.result()
             
-            display_critical_results(radiology_insights_result)
+            display_sex_mismatch(radiology_insights_result)
     except Exception as ex:
         raise ex
 
-
-def display_critical_results(radiology_insights_result):
-    # [START display_critical_result]
+def display_sex_mismatch(radiology_insights_result):
+    # [START display_sex_mismatch]
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
-            if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                critical_result = ri_inference.result
-                print(f"Critical Result Inference found: {critical_result.description}")
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.SEX_MISMATCH:
+                print(f"Sex Mismatch Inference found")
+                indication = ri_inference.sex_indication
+                for code in indication.coding:
+                    print(f"Sex Mismatch: Sex Indication: {code.system} {code.code} {code.display}")
 
+    # [END display_sex_mismatch]
 
-# [END display_critical_result]
 
 
 if __name__ == "__main__":
