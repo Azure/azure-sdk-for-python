@@ -3,8 +3,6 @@
 
 This document explains the logging system for the Azure ML SDK for developers in this repository who want to understand how the logging system works and how to configure it for their own methods and modules.
 
-
-
 ### When do we log?
 
 Logging will be disabled if
