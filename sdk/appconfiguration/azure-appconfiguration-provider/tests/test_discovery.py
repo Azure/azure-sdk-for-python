@@ -26,10 +26,10 @@ class TestDiscovery:
     def test_get_known_domain(self):
         fake_endpoint = "https://fake.endpoint"
         assert _get_known_domain(fake_endpoint) is None
-        fake_endpoint = "https://fake.endpoint." + AZCONFIG_IO
-        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO
-        fake_endpoint = "https://fake.endpoint" + AZCONFIG_IO + ".test"
-        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO + ".test"
+        fake_endpoint = "https://fake.endpoint." + AZCONFIG_IO # cspell:disable-line
+        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO # cspell:disable-line
+        fake_endpoint = "https://fake.endpoint" + AZCONFIG_IO + ".test" # cspell:disable-line
+        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO + ".test" # cspell:disable-line
         fake_endpoint = "https://fake.endpoint" + APPCONFIG_IO
         assert _get_known_domain(fake_endpoint) == APPCONFIG_IO
 
