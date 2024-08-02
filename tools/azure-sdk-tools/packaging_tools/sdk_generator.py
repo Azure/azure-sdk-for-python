@@ -1,3 +1,4 @@
+import sys
 from typing import List, Dict, Any
 import argparse
 import json
@@ -36,6 +37,7 @@ from .generate_utils import (
 from .conf import CONF_NAME
 
 logging.basicConfig(
+    stream=sys.stdout,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %X",
 )

@@ -1,3 +1,4 @@
+import sys
 import argparse
 import logging
 from pathlib import Path
@@ -16,6 +17,7 @@ from .swaggertosdk.SwaggerToSdkCore import (
 )
 
 logging.basicConfig(
+    stream=sys.stdout,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %X",
 )
