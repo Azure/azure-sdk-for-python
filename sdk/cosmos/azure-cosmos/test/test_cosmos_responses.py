@@ -53,7 +53,7 @@ class TestCosmosResponses(unittest.TestCase):
         upsert_response = container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
         assert len(upsert_response.response_headers) > 0
         assert int(lsn) + 1 == int(upsert_response.response_headers['lsn'])
-        lsn = create_response.response_headers['lsn']
+        lsn = upsert_response.response_headers['lsn']
 
         upsert_response['replace'] = True
         replace_response = container.replace_item(upsert_response['id'], upsert_response)

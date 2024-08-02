@@ -57,7 +57,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         upsert_response = await container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
         assert len(upsert_response.response_headers) > 0
         assert int(lsn) + 1 == int(upsert_response.response_headers['lsn'])
-        lsn = create_response.response_headers['lsn']
+        lsn = upsert_response.response_headers['lsn']
 
         upsert_response['replace'] = True
         replace_response = await container.replace_item(upsert_response['id'], upsert_response)
@@ -78,7 +78,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                                                               offer_throughput=11000)
         for i in range(10):
             await container.create_item({"id": str(uuid.uuid4()), "number": i % 2})
-        iterable = container.query_items("select * from c", enable_cross_partition_query=True, max_item_count=3)
+        iterable = container.query_items("select * from c", max_item_count=3)
         item_pages = iterable.by_page()
         assert len(item_pages.response_headers) == 0
 

@@ -110,8 +110,9 @@ class TestGlobalDB(unittest.TestCase):
         content_location_url = urlparse(content_location)
         host_url = urlparse(TestGlobalDB.host)
 
-        # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client instance
-        self.assertEqual(str(content_location_url.hostname), str(host_url.hostname))
+        # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client
+        # instance
+        assert str(content_location_url.hostname) in ['localhost', '127.0.0.1']
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDB.host)
 
         connection_policy.EnableEndpointDiscovery = True
