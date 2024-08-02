@@ -8,6 +8,8 @@ from unittest.mock import patch, call
 from azure.appconfiguration.provider._discovery import _get_known_domain, _request_record, _find_replicas
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers, Answer  # cspell:disable-line
 
+AZCONFIG_IO = ".azconfig.io" # cspell:disable-line
+APPCONFIG_IO = ".appconfig.io" # cspell:disable-line
 
 class FakeAnswer:
 
@@ -24,12 +26,12 @@ class TestDiscovery:
     def test_get_known_domain(self):
         fake_endpoint = "https://fake.endpoint"
         assert _get_known_domain(fake_endpoint) is None
-        fake_endpoint = "https://fake.endpoint.azconfig.io"
-        assert _get_known_domain(fake_endpoint) == ".azconfig.io"
-        fake_endpoint = "https://fake.endpoint.azconfig.io.test"
-        assert _get_known_domain(fake_endpoint) == ".azconfig.io.test"
-        fake_endpoint = "https://fake.endpoint.appconfig.io"
-        assert _get_known_domain(fake_endpoint) == ".appconfig.io"
+        fake_endpoint = "https://fake.endpoint." + AZCONFIG_IO
+        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO
+        fake_endpoint = "https://fake.endpoint" + AZCONFIG_IO + ".test"
+        assert _get_known_domain(fake_endpoint) == AZCONFIG_IO + ".test"
+        fake_endpoint = "https://fake.endpoint" + APPCONFIG_IO
+        assert _get_known_domain(fake_endpoint) == APPCONFIG_IO
 
     def test_request_record(self):
         origin_request = "_origin._tcp.fake.endpoint"
@@ -40,10 +42,10 @@ class TestDiscovery:
             mock_dns.return_value = [1, 2, 3]
             assert len(_request_record(origin_request)) == 3
 
-            mock_dns.side_effect = NXDOMAIN
+            mock_dns.side_effect = NXDOMAIN # cspell:disable-line
             assert len(_request_record(origin_request)) == 0
 
-            mock_dns.side_effect = YXDOMAIN
+            mock_dns.side_effect = YXDOMAIN # cspell:disable-line
             assert len(_request_record(origin_request)) == 0
 
             mock_dns.side_effect = LifetimeTimeout
