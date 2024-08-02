@@ -275,25 +275,29 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        if "resource-manager" in input_readme:
-            relative_path_readme = str(Path(spec_folder, input_readme))
-            update_metadata_for_multiapi_package(spec_folder, input_readme)
-            del_outdated_files(relative_path_readme)
-            config = generate(
-                CONFIG_FILE,
-                sdk_folder,
-                [],
-                relative_path_readme,
-                spec_folder,
-                force_generation=True,
-                python_tag=python_tag,
-            )
-        elif "data-plane" in input_readme:
-            config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
-        else:
-            del_outdated_generated_files(str(Path(spec_folder, input_readme)))
-            config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
-        package_names = get_package_names(sdk_folder)
+        try:
+            if "resource-manager" in input_readme:
+                relative_path_readme = str(Path(spec_folder, input_readme))
+                update_metadata_for_multiapi_package(spec_folder, input_readme)
+                del_outdated_files(relative_path_readme)
+                config = generate(
+                    CONFIG_FILE,
+                    sdk_folder,
+                    [],
+                    relative_path_readme,
+                    spec_folder,
+                    force_generation=True,
+                    python_tag=python_tag,
+                )
+            elif "data-plane" in input_readme:
+                config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+            else:
+                del_outdated_generated_files(str(Path(spec_folder, input_readme)))
+                config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
+            package_names = get_package_names(sdk_folder)
+        except Exception as e:
+            _LOGGER.error(f"fail to generate sdk for {input_readme}: {str(e)}")
+            raise e
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
@@ -330,7 +334,7 @@ def main(generate_input, generate_output):
                     input_readme,
                 )
             except Exception as e:
-                _LOGGER.info(f"fail to update meta: {str(e)}")
+                _LOGGER.error(f"fail to update meta: {str(e)}")
 
             # Setup package locally
             check_call(
