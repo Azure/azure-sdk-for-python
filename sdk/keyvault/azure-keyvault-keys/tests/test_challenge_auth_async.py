@@ -46,7 +46,7 @@ class TestChallengeAuth(KeyVaultTestCase):
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
         original_tenant = os.environ.get("AZURE_TENANT_ID")
         os.environ["AZURE_TENANT_ID"] = str(uuid4())
-        credential = self.get_credential(additionally_allowed_tenants="*")
+        credential = self.get_credential(KeyClient, additionally_allowed_tenants="*")
         managed_hsm_url = kwargs.pop("managed_hsm_url", None)
         keyvault_url = kwargs.pop("vault_url", None)
         vault_url = managed_hsm_url if is_hsm else keyvault_url
