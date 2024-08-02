@@ -477,7 +477,7 @@ async def test_receive_mimic_processing_async(connstr_senders, uamqp_transport):
         on_event.received += 1
         # Mimic processing of event 
         await asyncio.sleep(20)
-        assert len(client._event_processors.values()[0]._message_buffer) <=300
+        assert len(list(client._event_processors.values())[0]._message_buffer) <=300
 
     on_event.received = 0
     async with client:
