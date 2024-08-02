@@ -12,7 +12,7 @@ class CosmosDictResponse(dict):
         self._response_headers = response_headers
 
     @property
-    def response_headers(self) -> CaseInsensitiveDict:
+    def response_headers(self) -> CaseInsensitiveDict[str, Any]:
         """Returns the response headers associated to this result
 
         :return: Dict of response headers
