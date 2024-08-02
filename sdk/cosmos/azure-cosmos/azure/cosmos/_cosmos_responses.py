@@ -1,8 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-from azure.core.utils import CaseInsensitiveDict
 from typing import Any, Dict, Iterable, Mapping
+from azure.core.utils import CaseInsensitiveDict
 
 
 class CosmosDictResponse(dict):
