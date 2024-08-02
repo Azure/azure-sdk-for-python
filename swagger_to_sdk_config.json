@@ -15,7 +15,7 @@
   "generateOptions": {
     "generateScript": {
       "path": "sh scripts/automation_generate.sh",
-      "stdout": {
+      "stderr": {
         "showInComment": "(.*\\[ERROR\\]\\s*).*"
       }
     },
