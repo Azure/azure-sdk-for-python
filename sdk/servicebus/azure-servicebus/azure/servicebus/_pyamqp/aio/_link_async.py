@@ -226,10 +226,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
         pass
 
     async def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
+        # pylint: disable=protected-access
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
+        await self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
             self._session.links.pop(self.name, None)

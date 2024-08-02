@@ -14,7 +14,6 @@ from .link import Link
 from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPLinkError, ErrorCondition
 
 if TYPE_CHECKING:
     from .message import _MessageDelivery
@@ -164,7 +163,7 @@ class ReceiverLink(Link):
 
             )
             self._pending_receipts.append(delivery)
-            
+
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
 
@@ -197,7 +196,7 @@ class ReceiverLink(Link):
     def send_disposition(
         self,
         *,
-        wait: Union[bool, float] = False,
+        wait: Union[bool, float] = False, # pylint: disable=unused-argument
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
         settled: Optional[bool] = None,

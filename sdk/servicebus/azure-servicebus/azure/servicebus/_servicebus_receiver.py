@@ -19,8 +19,6 @@ from ._common.utils import create_authentication
 from ._common.tracing import (
     get_receive_links,
     receive_trace_context_manager,
-    settle_trace_context_manager,
-    get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
@@ -446,7 +444,8 @@ class ServiceBusReceiver(
             ):
                 self._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count)
 
-            return self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_time)
+            return self._amqp_transport.receive_loop(
+                self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_time)
         finally:
             self._receive_context.clear()
 
@@ -465,7 +464,8 @@ class ServiceBusReceiver(
             )
         self._check_message_alive(message, settle_operation)
 
-        self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
+        self._amqp_transport._settle_message_with_retry(
+            self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     def _settle_message(
         self,

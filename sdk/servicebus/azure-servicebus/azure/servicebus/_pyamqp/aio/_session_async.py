@@ -369,9 +369,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_detach(self, frame):
+        # pylint: disable=protected-access
         try:
             link = self._input_handles[frame[0]]  # handle
-            await link._incoming_detach(frame)  # pylint: disable=protected-access
+            await link._incoming_detach(frame)
             if link._is_closed:  # TODO - need for this
                 self.links.pop(link.name)
                 self._input_handles.pop(link.remote_handle)

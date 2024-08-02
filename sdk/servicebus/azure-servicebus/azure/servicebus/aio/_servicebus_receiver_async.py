@@ -53,9 +53,7 @@ from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
 from .._common.tracing import (
     receive_trace_context_manager,
-    settle_trace_context_manager,
     get_receive_links,
-    get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
@@ -435,7 +433,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count)
 
-            return await self._amqp_transport.receive_loop_async(self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_seconds)
+            return await self._amqp_transport.receive_loop_async(
+                self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_seconds)
         finally:
             self._receive_context.clear()
 
@@ -454,7 +453,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        await self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
+        await self._amqp_transport._settle_message_with_retry_async(
+            self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     async def _settle_message(  # type: ignore
         self,
