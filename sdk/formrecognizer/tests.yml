@@ -15,10 +15,10 @@ extends:
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
         Prod:
-          ServiceConnection: azure-sdk-tests-preview
+          ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: eastus
+          Location: 'centraluseuap'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         TEST_MODE: 'RunLiveNoRecord'
