@@ -258,7 +258,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
         roles: Optional[List[str]] = None,
         minutes_to_expire: int = 60,
         groups: Optional[List[str]] = None,
-        client_type: str = "Default",
+        client_protocol: str = "Default",
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -274,7 +274,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
         :paramtype minutes_to_expire: int
         :keyword groups: Groups that the connection will join when it connects. Default value is None.
         :paramtype groups: list[str]
-        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
+        :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
          PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
          'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
         :paramtype client_type: str
@@ -309,7 +309,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
             roles=roles,
             minutes_to_expire=minutes_to_expire,
             groups=groups,
-            client_type=client_type,
+            client_type=client_protocol,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

@@ -40,7 +40,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         minutes_to_expire: Optional[int] = 60,
         jwt_headers: Dict[str, Any] = None,
         groups: Optional[List[str]] = None,
-        client_type: Optional[str] = "Default",
+        client_protocol: Optional[str] = "Default",
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -57,7 +57,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
+        :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
          PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
          'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
         :paramtype client_type: str
@@ -87,7 +87,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        path = "/clients/mqtt/hubs/" if client_type.lower() == "mqtt" else "/client/hubs/"
+        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
         client_url = client_endpoint + path + hub
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(
@@ -104,7 +104,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             )
         else:
             access_token = await super().get_client_access_token(
-                user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, groups=groups, **kwargs
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                groups=groups,
+                client_protocol=client_protocol,
+                **kwargs
             )
             token = access_token.get("token")
         return {
