@@ -7,6 +7,10 @@ from subprocess import check_call
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 

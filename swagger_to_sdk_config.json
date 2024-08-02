@@ -8,7 +8,7 @@
     "initScript": {
       "path": "sh scripts/automation_init.sh",
       "stderr": {
-        "showInComment": "(.*\\[ERROR\\]\\s*).*"
+        "showInComment": false
       }
     }
   },

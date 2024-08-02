@@ -15,6 +15,10 @@ from .swaggertosdk.SwaggerToSdkCore import (
     get_repo_tag_meta,
 )
 
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 

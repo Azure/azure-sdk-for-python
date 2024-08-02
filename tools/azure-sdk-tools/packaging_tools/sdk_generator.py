@@ -35,6 +35,10 @@ from .generate_utils import (
 )
 from .conf import CONF_NAME
 
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
