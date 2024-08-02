@@ -456,14 +456,13 @@ try:
             # # we are not able to receive the detach frame by calling uamqp connection.work(),
             # # Eventually this should be a fix in the uamqp library.
             # # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
-            if receiver._amqp_transport.KIND == "uamqp":
-                try:
-                    if receiver._session and (
-                        receiver._session._lock_lost or receiver._session._lock_expired
-                    ):
-                        raise SessionLockLostError(error=receiver._session.auto_renew_error)
-                except AttributeError:
-                    pass
+            try:
+                if receiver._session and (
+                    receiver._session._lock_lost or receiver._session._lock_expired
+                ):
+                    raise SessionLockLostError(error=receiver._session.auto_renew_error)
+            except AttributeError:
+                pass
         
 except ImportError:
     pass
