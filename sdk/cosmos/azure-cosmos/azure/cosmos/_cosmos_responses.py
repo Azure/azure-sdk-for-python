@@ -5,7 +5,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 
 class CosmosDictResponse(dict):
-    def __init__(self, original_dict, response_headers):
+    def __init__(self, original_dict: Mapping[str, Any], /, *, response_headers: Mapping[str, Any]) -> None:
         if original_dict is None:
             original_dict = {}
         super().__init__(original_dict)
