@@ -56,7 +56,8 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
                     monitor_info['workspace_id'],
                     "range x from 1 to 1000000000000000 step 1 | count",
                     timespan=None,
-                    server_timeout=1,
+                    server_timeout=2,
+                    retry_total=0,
                 )
 
         assert 'Gateway timeout' in e.value.message
