@@ -243,7 +243,8 @@ class EventHubConsumer(
                     if self._is_non_retryable(exception):
                         last_exception = self._handle_exception(exception)
                         _LOGGER.info(
-                            "% operation has encountered an exception: %r.",
+                            "%r operation has encountered an exception: %r.",
+
                             self._name,
                             last_exception,
                         )
