@@ -71,7 +71,11 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False,
 def extract_breaking_change(changelog):
     log = changelog.split("\n")
     breaking_change = []
-    idx = log.index("### Breaking Changes")
+    idx = -1
+    try:
+        idx = log.index("### Breaking Changes")
+    except ValueError:
+        pass
     if idx > -1:
         for i in range(idx + 1, len(log)):
             if log[i].find("###") > -1:
