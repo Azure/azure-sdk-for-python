@@ -42,22 +42,11 @@ class TestChallengeAuth(KeyVaultTestCase):
         if not self.is_live:
             pytest.skip("This test is incompatible with vcrpy in playback")
 
-        client_id = os.environ.get("KEYVAULT_CLIENT_ID")
-        client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
-
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        if os.environ.get("AZURE_TEST_USE_PWSH_AUTH") == "true":
-            credential = AzurePowerShellCredential(tenant_id=str(uuid4()), additionally_allowed_tenants="*")
-        elif os.environ.get("AZURE_TEST_USE_CLI_AUTH") == "true":
-            credential = AzureCliCredential(tenant_id=str(uuid4()), additionally_allowed_tenants="*")
-        else:
-            credential = ClientSecretCredential(
-                tenant_id=str(uuid4()),
-                client_id=client_id,
-                client_secret=client_secret,
-                additionally_allowed_tenants="*",
-            )
+        original_tenant = os.environ.get("AZURE_TENANT_ID")
+        os.environ["AZURE_TENANT_ID"] = str(uuid4())
+        credential = self.get_credential(additionally_allowed_tenants="*")
         managed_hsm_url = kwargs.pop("managed_hsm_url", None)
         keyvault_url = kwargs.pop("vault_url", None)
         vault_url = managed_hsm_url if is_hsm else keyvault_url
@@ -74,6 +63,12 @@ class TestChallengeAuth(KeyVaultTestCase):
         client._client._config.authentication_policy._token = None
         fetched_key = await client.get_key(key_name)
         assert key.id == fetched_key.id
+
+        # clear the fake tenant
+        if original_tenant:
+            os.environ["AZURE_TENANT_ID"] = original_tenant
+        else:
+            os.environ.pop("AZURE_TENANT_ID")
 
 
 @pytest.mark.asyncio
