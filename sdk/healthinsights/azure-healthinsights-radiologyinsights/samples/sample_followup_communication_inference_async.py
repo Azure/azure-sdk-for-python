@@ -1,13 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_followup_communication_inference_async.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_followup_communication_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+submit it to the client, RadiologyInsightsClient, and display
+-the date and time of the follow-up communication,
+-the recipient of the follow-up communication, and
+-whether the follow-up communication was acknowledged 
 
 
 USAGE:
@@ -16,7 +20,7 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
-2. python sample_critical_result_inference_async.py
+2. python sample_followup_communication_inference_async.py
    
 """
 
@@ -113,22 +117,29 @@ async def radiology_insights_async() -> None:
             )
             radiology_insights_result = await poller.result()
             
-            display_critical_results(radiology_insights_result)
+            display_followup_communication(radiology_insights_result)
     except Exception as ex:
         raise ex
 
-
-def display_critical_results(radiology_insights_result):
-    # [START display_critical_result]
+def display_followup_communication(radiology_insights_result):
+    # [START display_followup_communication]
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
-            if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                critical_result = ri_inference.result
-                print(f"Critical Result Inference found: {critical_result.description}")
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:
+                print(f"Follow-up Communication Inference found")
+                if ri_inference.communicated_at is not None:
+                    for communicatedat in ri_inference.communicated_at:
+                        print(f"Follow-up Communication: Date Time: {communicatedat}")
+                else:
+                    print(f"Follow-up Communication: Date Time: Unknown")
+                if ri_inference.recipient is not None:
+                    for recipient in ri_inference.recipient:
+                        print(f"Follow-up Communication: Recipient: {recipient}")
+                else:
+                    print(f"Follow-up Communication: Recipient: Unknown")
+                print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
 
-
-# [END display_critical_result]
-
+    # [END display_followup_communication]
 
 if __name__ == "__main__":
     try:

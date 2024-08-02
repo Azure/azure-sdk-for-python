@@ -2,12 +2,15 @@
 # Licensed under the MIT License.
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_followup_communication_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
-It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+The sample_followup_communication_inference.py module processes a sample radiology document with the Radiology Insights service.
+It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
+submit it to the client, RadiologyInsightsClient, and display
+-the date and time of the follow-up communication,
+-the recipient of the follow-up communication, and
+-whether the follow-up communication was acknowledged    
 
 
 USAGE:
@@ -16,22 +19,19 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
-2. python sample_critical_result_inference_async.py
+2. python sample_followup_communication_inference.py
    
 """
-
-import asyncio
 import datetime
 import os
 import uuid
 
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
-async def radiology_insights_async() -> None:
-
-    from azure.identity.aio import DefaultAzureCredential
-    from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
-
+def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
@@ -105,33 +105,33 @@ async def radiology_insights_async() -> None:
         job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
     )
 
+    # Health Insights Radiology Insights
     try:
-        async with radiology_insights_client:
-            poller = await radiology_insights_client.begin_infer_radiology_insights(
-                id=job_id,
-                resource=patient_data,
-            )
-            radiology_insights_result = await poller.result()
-            
-            display_critical_results(radiology_insights_result)
+        poller = radiology_insights_client.begin_infer_radiology_insights(
+            id=job_id,
+            resource=patient_data,
+        )
+        radiology_insights_result = poller.result()
+        display_followup_communication(radiology_insights_result)
     except Exception as ex:
         raise ex
 
-
-def display_critical_results(radiology_insights_result):
-    # [START display_critical_result]
+def display_followup_communication(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
-            if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                critical_result = ri_inference.result
-                print(f"Critical Result Inference found: {critical_result.description}")
-
-
-# [END display_critical_result]
-
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:
+                print(f"Follow-up Communication Inference found")
+                if ri_inference.communicated_at is not None:
+                    for communicatedat in ri_inference.communicated_at:
+                        print(f"Follow-up Communication: Date Time: {communicatedat}")
+                else:
+                    print(f"Follow-up Communication: Date Time: Unknown")
+                if ri_inference.recipient is not None:
+                    for recipient in ri_inference.recipient:
+                        print(f"Follow-up Communication: Recipient: {recipient}")
+                else:
+                    print(f"Follow-up Communication: Recipient: Unknown")
+                print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(radiology_insights_async())
-    except Exception as ex:
-        raise ex
+    radiology_insights_sync()
