@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     AzureError,
+    HttpResponseError,
 )
 from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
@@ -1222,25 +1223,30 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_labels(self, appconfiguration_connection_string):
-        self.client = self.create_client(appconfiguration_connection_string)
-        config_settings = self.client.list_configuration_settings()
-        async for config_setting in config_settings:
-            await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+        await self.set_up(appconfiguration_connection_string)
 
         rep = await self.convert_to_list(self.client.list_labels())
-        assert len(list(rep)) == 0
-
-        await self.add_for_test(self.client, self.create_config_setting())
-        await self.add_for_test(self.client, self.create_config_setting_no_label())
-        await self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label='"label"'))
-
-        rep = await self.convert_to_list(self.client.list_labels())
-        assert len(list(rep)) == 3
+        assert len(list(rep)) >= 2
 
         rep = await self.convert_to_list(self.client.list_labels(name="test*"))
         assert len(list(rep)) == 1
 
-        await self.tear_down()
+        with pytest.raises(HttpResponseError) as error:
+            await self.convert_to_list(self.client.list_labels(name="test'@*$!%"))
+        assert error.value.status_code == 400
+        assert error.value.message == "Operation returned an invalid status 'Bad Request'"
+        assert (
+            '"title":"Invalid request parameter \'label\'","name":"label","detail":"label(6): Invalid character"'
+            in str(error.value)
+        )
+
+        config_settings = self.client.list_configuration_settings()
+        async for config_setting in config_settings:
+            await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+        rep = await self.convert_to_list(self.client.list_labels())
+        assert len(list(rep)) == 0
+
+        self.client.close()
 
 
 class TestAppConfigurationClientUnitTest:

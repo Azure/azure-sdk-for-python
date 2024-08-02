@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceExistsError,
+    HttpResponseError,
 )
 from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
@@ -1195,25 +1196,27 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @app_config_decorator
     @recorded_by_proxy
     def test_list_labels(self, appconfiguration_connection_string):
-        self.client = self.create_client(appconfiguration_connection_string)
-        config_settings = self.client.list_configuration_settings()
-        for config_setting in config_settings:
-            self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+        self.set_up(appconfiguration_connection_string)
 
         rep = self.client.list_labels()
-        assert len(list(rep)) == 0
-
-        self.add_for_test(self.client, self.create_config_setting())
-        self.add_for_test(self.client, self.create_config_setting_no_label())
-        self.client.add_configuration_setting(ConfigurationSetting(key=KEY, label='"label"'))
-
-        rep = self.client.list_labels()
-        assert len(list(rep)) == 3
+        assert len(list(rep)) >= 2
 
         rep = self.client.list_labels(name="test*")
         assert len(list(rep)) == 1
 
+        rep = self.client.list_labels(name="test'@*$!%")
+        with pytest.raises(HttpResponseError) as error:
+            rep.next()
+        assert error.value.status_code == 400
+        assert error.value.message == "Operation returned an invalid status 'Bad Request'"
+        assert (
+            '"title":"Invalid request parameter \'label\'","name":"label","detail":"label(6): Invalid character"'
+            in str(error.value)
+        )
+
         self.tear_down()
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 0
 
 
 class TestAppConfigurationClientUnitTest:

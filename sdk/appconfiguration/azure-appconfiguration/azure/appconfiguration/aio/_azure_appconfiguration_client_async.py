@@ -611,7 +611,7 @@ class AzureAppConfigurationClient:
         *,
         name: Optional[str] = None,
         after: Optional[str] = None,
-        accept_datetime: Optional[str] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, LabelFields]]] = None,
         **kwargs,
     ) -> AsyncItemPaged[str]:
@@ -624,7 +624,7 @@ class AzureAppConfigurationClient:
         :paramtype after: str or None
         :keyword accept_datetime: Requests the server to respond with the state of the resource at the
             specified time. Default value is None.
-        :paramtype accept_datetime: str or None
+        :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
             Available fields see :class:`~azure.appconfiguration.LabelFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.LabelFields] or None
@@ -632,6 +632,8 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.paging.AsyncItemPaged[str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
         return self._impl.get_labels(  # type: ignore[return-value]
             name=name,
             after=after,
