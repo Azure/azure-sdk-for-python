@@ -3779,7 +3779,12 @@ class TestStorageFile(StorageRecordedTestCase):
                                         "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
                                         "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
 
-        source_file.create_file(1024)
+        source_file.create_file(
+            1024,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+
         props = source_file.get_file_properties()
         assert props is not None
         assert props.permission_key is not None
