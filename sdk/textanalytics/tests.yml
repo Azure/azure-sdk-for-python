@@ -14,9 +14,13 @@ extends:
           MatrixReplace:
             - TestSamples=.*/true
         UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          ServiceConnection: usgov_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
         China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          ServiceConnection: china_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureChinaMsft.json
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(TEXTANALYTICS_SUBSCRIPTION_ID)

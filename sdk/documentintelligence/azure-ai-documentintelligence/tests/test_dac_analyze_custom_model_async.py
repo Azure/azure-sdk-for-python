@@ -7,8 +7,7 @@
 import pytest
 import uuid
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import set_bodiless_matcher, get_credential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient, DocumentIntelligenceAdministrationClient
 from azure.ai.documentintelligence.models import (
@@ -26,9 +25,8 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         with pytest.raises(ValueError) as e:
             async with client:
@@ -41,9 +39,8 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         with pytest.raises(ValueError) as e:
             async with client:
@@ -56,9 +53,8 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
@@ -72,9 +68,8 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
@@ -89,12 +84,11 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     async def test_custom_document_transform(self, documentintelligence_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         di_admin_client = DocumentIntelligenceAdministrationClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
         di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
 
         recorded_variables = kwargs.pop("variables", {})

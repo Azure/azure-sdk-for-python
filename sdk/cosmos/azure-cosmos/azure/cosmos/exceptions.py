@@ -55,6 +55,18 @@ class CosmosHttpResponseError(HttpResponseError):
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
+    def __init__(self, status_code=None, message=None, response=None, sub_status_code=None, **kwargs):
+        """
+        :param int sub_status_code: HTTP response sub code.
+        """
+        if sub_status_code and not response:
+            self.http_error_message = message
+            self.sub_status = sub_status_code
+            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
+            super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
+            self.status_code = status_code
+        else:
+            super(CosmosResourceNotFoundError, self).__init__(status_code, message, response, **kwargs)
 
 
 class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
@@ -88,6 +100,7 @@ class CosmosBatchOperationError(HttpResponseError):
             :caption: Handle a CosmosBatchOperationError:
             :name: handle_batch_error
     """
+
     def __init__(
             self,
             error_index=None,
@@ -128,3 +141,13 @@ def _partition_range_is_gone(e):
             and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
     return False
+
+
+def _container_recreate_exception(e) -> bool:
+    is_bad_request = e.status_code == http_constants.StatusCodes.BAD_REQUEST
+    is_collection_rid_mismatch = e.sub_status == http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH
+
+    is_not_found = e.status_code == http_constants.StatusCodes.NOT_FOUND
+    is_throughput_not_found = e.sub_status == http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND
+
+    return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_throughput_not_found)

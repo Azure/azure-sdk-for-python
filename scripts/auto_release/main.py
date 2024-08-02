@@ -359,7 +359,11 @@ class CodegenTestPR:
 
     def check_changelog_file(self):
         def edit_changelog_proc(content: List[str]):
-            content[1:1] = ['\n', f'## {self.next_version}{self.version_suggestion} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
+            next_version = self.next_version
+            content[1:1] = ['\n', f'## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
+            if next_version == "1.0.0b1":
+                for _ in range(4):
+                    content.pop()
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
 
@@ -486,7 +490,7 @@ class CodegenTestPR:
         pr_body = "" if not self.check_package_size_result else "{}\n".format("\n".join(self.check_package_size_result))
         pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         if not self.is_single_path:
-            pr_body += f'\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview\ntrue'
+            pr_body += f'\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview\ntrue\nSkip.BreakingChanges\ntrue'
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR

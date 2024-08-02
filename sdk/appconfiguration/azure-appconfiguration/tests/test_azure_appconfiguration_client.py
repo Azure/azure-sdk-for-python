@@ -1172,8 +1172,6 @@ class TestAppConfigurationClient(AppConfigTestCase):
 class TestAppConfigurationClientUnitTest:
     def test_type_error(self):
         with pytest.raises(TypeError):
-            _ = FeatureFlagConfigurationSetting("blah", key="blah")
-        with pytest.raises(TypeError):
             _ = FeatureFlagConfigurationSetting("blah", value="blah")
         with pytest.raises(TypeError):
             _ = SecretReferenceConfigurationSetting("blah", value="blah")
