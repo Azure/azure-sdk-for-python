@@ -207,12 +207,11 @@ class EventHubConsumer(
             )
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)
-            self.handler_ready = False
+            self._handler.open(connection=conn)
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self.handler_ready = True
             self.running = True
-
-        if not self.handler_ready:
-            if self._handler.client_ready():    # type: ignore
-                self.handler_ready = True
 
         return self.handler_ready
 
