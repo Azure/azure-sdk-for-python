@@ -22,7 +22,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         assert result == []
@@ -31,7 +31,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_all(self, resource_group):
         response = self.client.virtual_machines.list_all(
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         assert response
