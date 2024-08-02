@@ -4,6 +4,7 @@
 
 # pylint: disable=too-many-instance-attributes
 
+import warnings
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
@@ -28,13 +29,7 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_field_in_override, load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    UserErrorException,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
@@ -228,22 +223,9 @@ class Workspace(Resource):
         :return: Returns mlflow tracking uri of the workspace.
         :rtype: str
         """
-        # if _with_auth:
-        #     module_logger.warning(
-        #     "'_with_auth' is deprecated and will be removed in a future release. ")
+        # TODO: To check with Amit the use of this function
 
-        try:
-            from azureml.mlflow import get_mlflow_tracking_uri_v2
-
-            return get_mlflow_tracking_uri_v2(self)
-        except ImportError as e:
-            error_msg = (
-                "azureml.mlflow could not be imported. "
-                "Please ensure that 'azureml-mlflow' has been installed in the current python environment."
-            )
-            raise UserErrorException(error_msg) from e
-
-        # return self._mlflow_tracking_uri
+        return self._mlflow_tracking_uri
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace spec into a file in yaml format.
@@ -336,7 +318,7 @@ class Workspace(Resource):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
+    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object]) -> Optional["Workspace"]:
 
         if not rest_obj:
             return None
@@ -352,8 +334,20 @@ class Workspace(Resource):
 
         # TODO: Remove attribute check once Oct API version is out
         mlflow_tracking_uri = None
+
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
-            mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+            try:
+                from azureml.mlflow import get_mlflow_tracking_uri_v2
+
+                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj.ml_flow_tracking_uri, v2_service_context)
+            except ImportError:
+                mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+                error_msg = (
+                    "azureml.mlflow could not be imported. azureml-mlflow will not use credentials passed to `MLClient`"
+                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment. "
+                )
+                warnings.warn(error_msg, UserWarning)
+            # mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None
