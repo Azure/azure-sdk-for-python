@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the `send_certificate_chain` keyword argument was not being honored when using certs with the synchronous `OnBehalfOfCredential`. ([#36538](https://github.com/Azure/azure-sdk-for-python/pull/36538))
+
 ### Other Changes
 
 ## 1.18.0b1 (2024-07-16)
