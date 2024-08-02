@@ -1061,11 +1061,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
-        elif reason == LinkDeliverySettleReason.SETTLED:
-            message_delivery.state = MessageDeliveryState.Ok
-        elif reason == LinkDeliverySettleReason.TIMEOUT:
-            message_delivery.state = MessageDeliveryState.Timeout
-            message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
             self._process_receive_error(

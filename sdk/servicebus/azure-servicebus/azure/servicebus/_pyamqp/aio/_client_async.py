@@ -950,16 +950,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
-        # TODO: Confirm if the following statements below are needed, do we want a TimeOut to be set?
-        elif reason == LinkDeliverySettleReason.SETTLED:
-            message_delivery.state = MessageDeliveryState.Ok
-        elif reason == LinkDeliverySettleReason.TIMEOUT:
-            message_delivery.state = MessageDeliveryState.Timeout
-            message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
-
-            # TODO add state_error to the error here
             self._process_receive_error(
                 message_delivery,
                 condition=ErrorCondition.UnknownError
