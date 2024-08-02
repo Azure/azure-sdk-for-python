@@ -2,10 +2,11 @@
 # Copyright (c) 2024 Microsoft Corporation
 
 from azure.core.utils import CaseInsensitiveDict
+from typing import Any, Dict, Iterable, Mapping
 
 
 class CosmosDictResponse(dict):
-    def __init__(self, original_dict: Mapping[str, Any], /, *, response_headers: Mapping[str, Any]) -> None:
+    def __init__(self, original_dict: Mapping[str, Any], /, *, response_headers: CaseInsensitiveDict[str, Any]) -> None:
         if original_dict is None:
             original_dict = {}
         super().__init__(original_dict)
@@ -22,14 +23,15 @@ class CosmosDictResponse(dict):
 
 
 class CosmosListResponse(list):
-    def __init__(self, original_list, response_headers):
+    def __init__(self, original_list: Iterable[Dict[str, Any]], /, *,
+                 response_headers: CaseInsensitiveDict[str, Any]) -> None:
         if original_list is None:
             original_list = []
         super().__init__(original_list)
         self._response_headers = response_headers
 
     @property
-    def response_headers(self) -> CaseInsensitiveDict:
+    def response_headers(self) -> CaseInsensitiveDict[str, Any]:
         """Returns the response headers associated to this result
 
         :return: Dict of response headers
