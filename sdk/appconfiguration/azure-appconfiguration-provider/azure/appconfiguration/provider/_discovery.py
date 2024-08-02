@@ -68,7 +68,7 @@ def _find_replicas(origin):
     while True:
         request = f"_alt{str(i)}._tcp.{origin}"
         answers = _request_record(request)
-        if not answers:
+        if answers is None:
             return None  # Timeout
         if len(answers) == 0:
             break

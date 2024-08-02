@@ -268,7 +268,7 @@ class ConfigurationClientWrapper:
         self._client.__exit__(*args)
 
 
-class ConfigurationClientManager: # pylint:disable=too-many-instance-attributes
+class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         connection_string: Optional[str],
