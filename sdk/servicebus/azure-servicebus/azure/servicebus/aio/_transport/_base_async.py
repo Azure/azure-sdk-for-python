@@ -255,9 +255,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         handler,
         message,
         settle_operation,
+        logger,
         dead_letter_reason=None,
         dead_letter_error_description=None,
-        logger=None
     ) -> None:
         """
         Settles message.
@@ -331,7 +331,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         max_message_count,
         batch,
         abs_timeout,
-        timeout=None,
+        timeout,
         **kwargs
     ):
         """

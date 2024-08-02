@@ -861,9 +861,9 @@ try:
             handler: "ReceiveClient",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
+            logger: "Logger",
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
-            logger: Optional["Logger"] = None,
         ) -> None:  # pylint: disable=unused-argument
         # uamqp doesn't have the ability to wait to receive disposition result returned
         # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and

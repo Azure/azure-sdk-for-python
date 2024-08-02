@@ -472,6 +472,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         self._handler,
                         message,
                         settle_operation,
+                        _LOGGER,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
                     )

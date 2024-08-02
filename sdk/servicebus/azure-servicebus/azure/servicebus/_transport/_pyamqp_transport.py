@@ -790,9 +790,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         handler: ReceiveClient,
         message: "ServiceBusReceivedMessage",
         settle_operation: str,
+        logger: "Logger",
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
-        logger: Optional["Logger"] = None
     ) -> None:
         # pylint: disable=protected-access
         try:
