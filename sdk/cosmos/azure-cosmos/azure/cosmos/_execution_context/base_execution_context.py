@@ -80,7 +80,7 @@ class _QueryExecutionContextBase(object):
         :rtype: ~azure.cosmos.CosmosListResponse
         """
         self._ensure()
-        res = CosmosListResponse(original_list=self._buffer, response_headers=self._response_headers)
+        res = CosmosListResponse(self._buffer, response_headers=self._response_headers)
         self._buffer.clear()
         return res
 
@@ -142,7 +142,7 @@ class _QueryExecutionContextBase(object):
                 self._continuation = None
             if fetched_items:
                 break
-        return CosmosListResponse(original_list=fetched_items, response_headers=response_headers)
+        return CosmosListResponse(fetched_items, response_headers=response_headers)
 
     def _fetch_items_helper_with_retries(self, fetch_function):
         def callback():
