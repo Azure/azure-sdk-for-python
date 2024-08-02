@@ -10,11 +10,9 @@ from typing_extensions import Literal
 if TYPE_CHECKING:
     try:
         from uamqp import types as uamqp_types
-        from uamqp import Message as uamqp_Message
     except ImportError:
         uamqp_types = None
 
-    from ..._pyamqp.message import Message as pyamqp_message
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
