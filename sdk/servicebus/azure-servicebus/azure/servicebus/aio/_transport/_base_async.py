@@ -331,10 +331,18 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         max_message_count,
         batch,
         abs_timeout,
-        timeout,
+        timeout=None,
         **kwargs
     ):
-        """TODO"""
+        """
+        Receive messages.
+        :param ServiceBusReceiver receiver: Receiver.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync amqp_receive_client: Receive client.
+        :param int max_message_count: Max message count.
+        :param bool batch: Batch.
+        :param float abs_timeout: Abs timeout.
+        :param float or None timeout: Timeout.
+        """
 
     @staticmethod
     @abstractmethod
@@ -345,9 +353,19 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
-        """TODO"""
+        """
+        Settle message with retry.
+        :param ServiceBusReceiver receiver: Receiver.
+        :param ServiceBusReceivedMessage message: Message.
+        :param str settle_operation: Settle operation.
+        :param str or None dead_letter_reason: Optional. Dead letter reason.
+        :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        """
 
     @staticmethod
     @abstractmethod
     async def check_live(receiver):
-        """TODO"""
+        """
+        Check if receiver is live.
+        :param ServiceBusReceiver receiver: Receiver.
+        """

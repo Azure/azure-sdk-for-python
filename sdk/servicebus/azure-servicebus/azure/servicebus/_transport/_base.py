@@ -378,7 +378,15 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         timeout,
         **kwargs
     ):
-        """TODO"""
+        """
+        Receive Messages.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+        :param ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient amqp_receive_client: The receive client.
+        :param int max_message_count: The maximum message count.
+        :param bool batch: Is batch.
+        :param float abs_timeout: The absolute timeout.
+        :param float timeout: The timeout.
+        """
 
 
     @staticmethod
@@ -390,9 +398,19 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
-        """TODO"""
+        """
+        Settle message with retry.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param ServiceBusReceivedMessage message: Message to settle.
+        :param str settle_operation: The operation to settle message.
+        :param str or None dead_letter_reason: Optional. Dead letter reason.
+        :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        """
 
     @staticmethod
     @abstractmethod
-    def check_live(handler):
-        """TODO"""
+    def check_live(receiver):
+        """
+        Check if Receiver is alive.
+        :param ServiceBusReceiver receiver: The receiver.
+        """
