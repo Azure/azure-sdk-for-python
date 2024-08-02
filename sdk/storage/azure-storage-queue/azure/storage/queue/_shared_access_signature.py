@@ -5,7 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import (
+    Any, Callable, Optional, Union,
+    TYPE_CHECKING
+)
 from urllib.parse import parse_qs
 
 from azure.storage.queue._shared import sign_string
@@ -49,7 +52,8 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         start: Optional[Union["datetime", str]] = None,
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
-        protocol: Optional[str] = None
+        protocol: Optional[str] = None,
+        sts_hook: Optional[Callable[[str], None]] = None
     ) -> str:
         '''
         Generates a shared access signature for the queue.
@@ -90,6 +94,10 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :param sts_hook:
+            For debugging purposes only. If provided, the hook is called with the string to sign
+            that was used to generate the SAS.
+        :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
@@ -97,6 +105,9 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_resource_signature(self.account_name, self.account_key, queue_name)
+
+        if sts_hook is not None:
+            sts_hook(sas.string_to_sign)
 
         return sas.get_token()
 
@@ -131,6 +142,7 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
+        self.string_to_sign = string_to_sign
 
 
 def generate_account_sas(
@@ -143,6 +155,7 @@ def generate_account_sas(
     ip: Optional[str] = None,
     *,
     services: Union[Services, str] = Services(queue=True),
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the queue service.
@@ -180,6 +193,10 @@ def generate_account_sas(
         Will default to only this package (i.e. queue) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -191,6 +208,7 @@ def generate_account_sas(
         expiry=expiry,
         start=start,
         ip=ip,
+        sts_hook=sts_hook,
         **kwargs
     )
 
@@ -204,6 +222,8 @@ def generate_queue_sas(
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
+    *,
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for a queue.
@@ -249,6 +269,10 @@ def generate_queue_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -274,6 +298,7 @@ def generate_queue_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        sts_hook=sts_hook,
         **kwargs
     )
 
