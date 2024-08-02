@@ -28,7 +28,7 @@ from ..._pyamqp.error import (
 from ._base_async import AmqpTransportAsync
 from ..._common.utils import utc_from_timestamp, utc_now
 from ..._common.tracing import (
-        get_receive_links, 
+        get_receive_links,
         receive_trace_context_manager,
         settle_trace_context_manager,
         get_span_link_from_message,
@@ -258,7 +258,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
             if receiver._handler._link.current_link_credit <= 0:
-                await receiver._amqp_transport.reset_link_credit_async(receiver._handler, link_credit=receiver._handler._link_credit)
+                await receiver._amqp_transport.reset_link_credit_async(receiver._handler,
+                                                                       link_credit=receiver._handler._link_credit)
             pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
@@ -337,7 +338,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         from ..._pyamqp.error import ErrorCondition
         try:
             if handler._link._is_closed:
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Link is closed.", retryable=True)
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced,
+                                    description="Link is closed.", retryable=True)
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -488,6 +490,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
+        # pylint: disable=protected-access
         receive_drain_timeout = 2 # 200 ms
         first_message_received = expired = False
         receiving = True
@@ -502,14 +505,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 ):
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
                     if not sent_drain:
-                        await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
+                        await receiver._amqp_transport.reset_link_credit_async(
+                            amqp_receive_client, max_message_count, drain=True)
                         sent_drain = True
                         time_sent = time.time()
-                    
-                    # If we have sent a drain and we havent received messages in X time or gotten back the responding flow, lets close the link
-                    if (not receiver._handler._link._received_drain_response and sent_drain) and (time.time() - time_sent > receive_drain_timeout):
+
+                    # If we have sent a drain and we havent received messages in X time
+                    # or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) \
+                        and (time.time() - time_sent > receive_drain_timeout):
                         expired = True
-                        await receiver._handler._link.detach(close=True, error="Have not received back drain response in time")
+                        await receiver._handler._link.detach(close=True,
+                                                            error="Have not received back drain response in time")
                         break
 
                     # if you have received the drain -> break out of the loop
@@ -517,7 +524,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         expired = True
                         break
 
-                    ## Figure this out - getting stuck in receive if we are below max_message_count and we are not exiting this loop to go to complete_message?
+                    # TODO: Figure this out - getting stuck in receive if we are below max_message_count
+                    #  and we are not exiting this loop to go to complete_message?
 
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
@@ -539,19 +547,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
             ):
                 batch.append(amqp_receive_client._received_messages.get())
-                amqp_receive_client._received_messages.task_done()     
-        
+                amqp_receive_client._received_messages.task_done()
+
 
         return [receiver._build_received_message(message) for message in batch]
-    
+
     @staticmethod
-    async def _settle_message_with_retry(
+    async def _settle_message_with_retry_async(
         receiver,
         message,
         settle_operation,
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
+        # pylint: disable=protected-access
         link = get_span_link_from_message(message)
         trace_links = [link] if link else []
         with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
@@ -566,7 +575,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             message._settled = True
 
     @staticmethod
-    async def check_live(receiver):
+    def check_live(receiver):
         # pylint: disable=protected-access
         if receiver._shutdown.is_set():
             raise ValueError(

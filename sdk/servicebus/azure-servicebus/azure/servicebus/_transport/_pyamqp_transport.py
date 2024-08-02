@@ -39,7 +39,7 @@ from .._pyamqp._connection import Connection, _CLOSING_STATES
 from ._base import AmqpTransport
 from .._common.utils import utc_from_timestamp, utc_now
 from .._common.tracing import (
-        get_receive_links, 
+        get_receive_links,
         receive_trace_context_manager,
         settle_trace_context_manager,
         get_span_link_from_message,
@@ -685,7 +685,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.set()
             receiver._open()
             if receiver._handler._link.current_link_credit <= 0:
-                receiver._amqp_transport.reset_link_credit(receiver._handler, link_credit=receiver._handler._link_credit)
+                receiver._amqp_transport.reset_link_credit(
+                    receiver._handler, link_credit=receiver._handler._link_credit)
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(
@@ -797,7 +798,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if handler._link._is_closed:
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Link is closed.", retryable=True)
+                raise AMQPLinkError(
+                    condition=ErrorCondition.LinkDetachForced, description="Link is closed.", retryable=True)
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -1095,6 +1097,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
+        # pylint: disable=protected-access
         receive_drain_timeout = 2 # 200 ms
         first_message_received = expired = False
         receiving = True
@@ -1115,17 +1118,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                         time_sent = time.time()
                         break
 
-                    # If we have sent a drain and we havent received messages in X time or gotten back the responding flow, lets close the link
-                    if (not receiver._handler._link._received_drain_response and sent_drain) and (time.time() - time_sent > receive_drain_timeout):
+                    # If we have sent a drain and we havent received messages in X time
+                    # or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) \
+                        and (time.time() - time_sent > receive_drain_timeout):
                         expired = True
-                        receiver._handler._link.detach(close=True, error="Have not received back drain response in time")
+                        receiver._handler._link.detach(close=True,
+                                                       error="Have not received back drain response in time")
                         break
 
                     # if you have received the drain -> break out of the loop
                     if receiver._handler._link._received_drain_response:
                         expired = True
                         break
-        
+
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = amqp_receive_client.do_work()
                 received = amqp_receive_client._received_messages.qsize() - before
@@ -1146,9 +1152,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             ):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
-              
+
         return [receiver._build_received_message(message) for message in batch]
-    
+
 
     @staticmethod
     def _settle_message_with_retry(
@@ -1158,6 +1164,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
+        # pylint: disable=protected-access
         link = get_span_link_from_message(message)
         trace_links = [link] if link else []
         with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
@@ -1173,9 +1180,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def check_live(receiver):
-            # pylint: disable=protected-access
-            if receiver._shutdown.is_set():
-                raise ValueError(
-                    "The handler has already been shutdown. Please use ServiceBusClient to "
-                    "create a new instance."
-                )
+        # pylint: disable=protected-access
+        if receiver._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )

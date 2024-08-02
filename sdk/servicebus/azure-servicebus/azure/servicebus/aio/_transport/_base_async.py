@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable, List
+from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
@@ -346,7 +346,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def _settle_message_with_retry(
+    async def _settle_message_with_retry_async(
         receiver,
         message,
         settle_operation,
@@ -364,7 +364,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def check_live(receiver):
+    def check_live(receiver):
         """
         Check if receiver is live.
         :param ServiceBusReceiver receiver: Receiver.
