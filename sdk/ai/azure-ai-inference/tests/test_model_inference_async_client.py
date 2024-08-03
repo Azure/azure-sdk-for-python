@@ -159,7 +159,9 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         await client.close()
 
     @ServicePreparerEmbeddings()
@@ -217,13 +219,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     )
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
@@ -255,7 +257,7 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -295,7 +297,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
@@ -312,13 +314,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     )
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
@@ -371,7 +373,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=768,
             model="some-other-model-id",
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            response_format=sdk.models.ChatCompletionsResponseFormatText(),
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
@@ -388,13 +390,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     )
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     )
@@ -426,7 +428,7 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -605,8 +607,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_input_image_url(self, **kwargs):
-        # TODO: Update this to point to Main branch
-        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/tests/test_image1.png"
         client = self._create_async_aoai_chat_client(**kwargs)
         response = await client.complete(
             messages=[

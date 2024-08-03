@@ -9,11 +9,11 @@
 from ._models import AssistantMessage
 from ._models import ChatChoice
 from ._models import ChatCompletions
-from ._models import ChatCompletionsFunctionToolCall
-from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsFunctionToolSelection
-from ._models import ChatCompletionsNamedFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
+from ._models import ChatCompletionsResponseFormat
+from ._models import ChatCompletionsResponseFormatJSON
+from ._models import ChatCompletionsResponseFormatText
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
 from ._models import ChatRequestMessage
@@ -31,12 +31,13 @@ from ._patch import ImageUrl
 from ._models import ModelInfo
 from ._models import StreamingChatChoiceUpdate
 from ._models import StreamingChatCompletionsUpdate
+from ._models import StreamingChatResponseMessageUpdate
+from ._models import StreamingChatResponseToolCallUpdate
 from ._models import SystemMessage
 from ._models import TextContentItem
 from ._models import ToolMessage
 from ._models import UserMessage
 
-from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
@@ -55,11 +56,11 @@ __all__ = [
     "AssistantMessage",
     "ChatChoice",
     "ChatCompletions",
-    "ChatCompletionsFunctionToolCall",
-    "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsFunctionToolSelection",
-    "ChatCompletionsNamedFunctionToolSelection",
     "ChatCompletionsNamedToolSelection",
+    "ChatCompletionsResponseFormat",
+    "ChatCompletionsResponseFormatJSON",
+    "ChatCompletionsResponseFormatText",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
     "ChatRequestMessage",
@@ -77,11 +78,12 @@ __all__ = [
     "ModelInfo",
     "StreamingChatChoiceUpdate",
     "StreamingChatCompletionsUpdate",
+    "StreamingChatResponseMessageUpdate",
+    "StreamingChatResponseToolCallUpdate",
     "SystemMessage",
     "TextContentItem",
     "ToolMessage",
     "UserMessage",
-    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
     "CompletionsFinishReason",

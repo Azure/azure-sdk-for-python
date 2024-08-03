@@ -13,6 +13,8 @@ USAGE:
     1. Update `key_auth` below to `True` for key authentication, or `False` for
        Entra ID authentication.
     2. Update `api_version` (the AOAI REST API version) as needed.
+       See the "Data plane - inference" row in the table here for latest AOAI api-version:
+       https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
     3. Set one or two environment variables, depending on your authentication method:
         * AZURE_OPENAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
             https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
@@ -53,7 +55,7 @@ def sample_embeddings_azure_openai():
             endpoint=endpoint,
             credential=AzureKeyCredential(""),  # Pass in an empty value.
             headers={"api-key": key},
-            api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
+            api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
 
     else:  # Entra ID authentication
@@ -63,7 +65,7 @@ def sample_embeddings_azure_openai():
             endpoint=endpoint,
             credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
-            api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
+            api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
 
     response = client.embed(input=["first phrase", "second phrase", "third phrase"])
