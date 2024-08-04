@@ -752,7 +752,7 @@ def test_writes_to_cache():
     assert token.token == second_access_token
 
     # verify the credential didn't add a new cache entry
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
+    assert len(list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN))) == 1
 
 
 def test_initialization():
