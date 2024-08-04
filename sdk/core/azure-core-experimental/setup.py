@@ -62,6 +62,6 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.25.0",
+        "azure-core>=1.30.0",
     ],
 )

@@ -5,9 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
+from typing import Callable, Dict, Optional, Union, Any, Mapping, Type, Tuple
 from base64 import b64encode
 from datetime import datetime, timedelta, timezone
-import uuid
+from uuid import UUID
+from enum import Enum
+from math import isnan
 import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -27,9 +30,9 @@ from azure.data.tables import (
 )
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX, DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _decode_error
-from azure.identity import DefaultAzureCredential
+from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
 
-from devtools_testutils import is_live
+from devtools_testutils import is_live, get_credential
 
 TEST_TABLE_PREFIX = "pytablesync"
 
@@ -44,6 +47,9 @@ SERVICE_LIVE_RESP_BODY = (
     ">live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication"
     "></StorageServiceStats> "
 )
+
+_ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
+_ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 
 
 class FakeTokenCredential(object):
@@ -95,7 +101,7 @@ class TableTestCase(object):
 
     def get_token_credential(self):
         if is_live():
-            return DefaultAzureCredential()
+            return get_credential()
         return self.generate_fake_token_credential()
 
     def generate_fake_token_credential(self):
@@ -106,7 +112,7 @@ class TableTestCase(object):
 
     def set_uuid_variable(self, variables, name, uuid_param):
         uuid_string = variables.setdefault(name, str(uuid_param))
-        return uuid.UUID(uuid_string)
+        return UUID(uuid_string)
 
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
@@ -169,7 +175,7 @@ class TableTestCase(object):
             "birthday": datetime(1970, 10, 4, tzinfo=timezone.utc),
             "binary": b"binary",
             "other": EntityProperty(20, EdmType.INT32),
-            "clsid": uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833"),
+            "clsid": UUID("c9da6455-213d-42c9-9a79-3e9149a57833"),
         }
         return TableEntity(**properties)
 
@@ -206,7 +212,7 @@ class TableTestCase(object):
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
-        assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
+        assert entity["clsid"] == UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
         assert entity.metadata.pop("etag", None)
         assert isinstance(entity.metadata.pop("timestamp", None), datetime)
         assert not entity.metadata, "Found metadata: {}".format(entity.metadata)
@@ -229,7 +235,7 @@ class TableTestCase(object):
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
-        assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
+        assert entity["clsid"] == UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
         assert entity.metadata.pop("etag", None)
         assert isinstance(entity.metadata.pop("timestamp", None), datetime)
         assert sorted(list(entity.metadata.keys())) == ["editLink", "id", "type"], "Found metadata: {}".format(
@@ -299,7 +305,7 @@ class TableTestCase(object):
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
         assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=timezone.utc)
         assert entity["other"] == 20
-        assert isinstance(entity["clsid"], uuid.UUID)
+        assert isinstance(entity["clsid"], UUID)
         assert str(entity["clsid"]) == "c9da6455-213d-42c9-9a79-3e9149a57833"
         assert entity.metadata["etag"]
         assert entity.metadata["timestamp"]
@@ -437,7 +443,7 @@ class TableTestCase(object):
             "birthday": datetime(1990, 4, 1, tzinfo=timezone.utc),
             "binary": b"binary-binary",
             "other": EntityProperty(40, EdmType.INT32),
-            "clsid": uuid.UUID("c8da6455-213e-42d9-9b79-3f9149a57833"),
+            "clsid": UUID("c8da6455-213e-42d9-9b79-3f9149a57833"),
         }
         self.table.create_entity(properties)
         return entity1, resp
@@ -527,3 +533,153 @@ def _decode_proxy_error(response, error_message=None, error_type=None, **kwargs)
 
 
 _error._decode_error = _decode_proxy_error
+
+
+def _to_entity_binary(value):
+    return EdmType.BINARY, _encode_base64(value)
+
+
+def _to_entity_bool(value):
+    return None, value
+
+
+def _to_entity_datetime(value):
+    if isinstance(value, str):
+        # Pass a serialized datetime straight through
+        return EdmType.DATETIME, value
+    try:
+        # Check is this is a 'round-trip' datetime, and if so
+        # pass through the original value.
+        if value.tables_service_value:
+            return EdmType.DATETIME, value.tables_service_value
+    except AttributeError:
+        pass
+    return EdmType.DATETIME, _to_utc_datetime(value)
+
+
+def _to_entity_float(value):
+    if isinstance(value, str):
+        # Pass a serialized value straight through
+        return EdmType.DOUBLE, value
+    if isnan(value):
+        return EdmType.DOUBLE, "NaN"
+    if value == float("inf"):
+        return EdmType.DOUBLE, "Infinity"
+    if value == float("-inf"):
+        return EdmType.DOUBLE, "-Infinity"
+    return EdmType.DOUBLE, value
+
+
+def _to_entity_guid(value):
+    return EdmType.GUID, str(value)
+
+
+def _to_entity_int32(value):
+    value = int(value)
+    if value >= 2**31 or value < -(2**31):
+        raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
+    return None, value
+
+
+def _to_entity_int64(value):
+    int_value = int(value)
+    if int_value >= 2**63 or int_value < -(2**63):
+        raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
+    return EdmType.INT64, str(value)
+
+
+def _to_entity_str(value):
+    return EdmType.STRING, str(value)
+
+
+# Conversion from Python type to a function which returns a tuple of the
+# type string and content string.
+_PYTHON_TO_ENTITY_CONVERSIONS: Dict[Type, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
+    int: _to_entity_int32,
+    bool: _to_entity_bool,
+    datetime: _to_entity_datetime,
+    float: _to_entity_float,
+    UUID: _to_entity_guid,
+    Enum: _to_entity_str,
+    str: _to_entity_str,
+    bytes: _to_entity_binary,
+}
+
+# Conversion from Edm type to a function which returns a tuple of the
+# type string and content string. These conversions are only used when the
+# full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
+# the Odata type tag, even for field types where it's not necessary. This is why
+# boolean and int32 have special processing below, as we would not normally add the
+# Odata type tags for these to keep payload size minimal.
+# This is also necessary for CLI compatibility.
+_EDM_TO_ENTITY_CONVERSIONS: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
+    EdmType.BINARY: _to_entity_binary,
+    EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
+    EdmType.DATETIME: _to_entity_datetime,
+    EdmType.DOUBLE: _to_entity_float,
+    EdmType.GUID: _to_entity_guid,
+    EdmType.INT32: lambda v: (EdmType.INT32, _to_entity_int32(v)[1]),  # Still using the int32 validation
+    EdmType.INT64: _to_entity_int64,
+    EdmType.STRING: _to_entity_str,
+}
+
+
+# The old encoder
+def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Any]:
+    """Converts an entity object to json to send.
+    The entity format is:
+    {
+       "Address":"Mountain View",
+       "Age":23,
+       "AmountDue":200.23,
+       "CustomerCode@odata.type":"Edm.Guid",
+       "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
+       "CustomerSince@odata.type":"Edm.DateTime",
+       "CustomerSince":"2008-07-10T00:00:00",
+       "IsActive":true,
+       "NumberOfOrders@odata.type":"Edm.Int64",
+       "NumberOfOrders":"255",
+       "PartitionKey":"my_partition_key",
+       "RowKey":"my_row_key"
+    }
+
+    :param source: A table entity.
+    :type source: ~azure.data.tables.TableEntity or Mapping[str, Any]
+    :return: An entity with property's metadata in JSON format.
+    :rtype: dict
+    """
+
+    properties = {}
+
+    to_send = dict(source)  # shallow copy
+
+    # set properties type for types we know if value has no type info.
+    # if value has type info, then set the type to value.type
+    for name, value in to_send.items():
+        if value is None:
+            continue
+        mtype: Optional[EdmType] = None
+        if isinstance(value, Enum):
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS[str]
+            mtype, value = convert(value)
+        elif isinstance(value, datetime):
+            mtype, value = _to_entity_datetime(value)
+        elif isinstance(value, tuple):
+            if value[0] is None:
+                continue
+            convert = _EDM_TO_ENTITY_CONVERSIONS[EdmType(value[1])]
+            mtype, value = convert(value[0])
+        else:
+            try:
+                convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
+            except KeyError:
+                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value))) from None
+            mtype, value = convert(value)
+
+        # form the property node
+        properties[name] = value
+        if mtype:
+            properties[name + "@odata.type"] = mtype.value
+
+    # generate the entity_body
+    return properties

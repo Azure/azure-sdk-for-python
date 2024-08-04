@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-from typing import Any, List, Iterable, Optional
+from typing import Any, List, Iterable, Optional, Type
 import urllib.parse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -27,13 +27,15 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ._vaults_operations import VaultsOperations as _VaultsOperations, ClsType, build_list_request
 from .. import models as _models
-from .._vendor import _convert_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
@@ -42,16 +44,8 @@ class VaultsOperations(_VaultsOperations):
 
         :param top: Maximum number of results to return. Default value is None.
         :type top: int
-        :keyword filter: The filter to apply on the operation. Default value is "resourceType eq
-         'Microsoft.KeyVault/vaults'". Note that overriding this default value may result in unsupported
-         behavior.
-        :paramtype filter: str
-        :keyword api_version: Azure Resource Manager Api Version. Default value is "2015-11-01". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Resource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2023_02_01.models.Resource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2018_02_14.models.Resource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -60,10 +54,12 @@ class VaultsOperations(_VaultsOperations):
         filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop(
             "filter", _params.pop("$filter", "resourceType eq 'Microsoft.KeyVault/vaults'")
         )
-        api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
+        api_version: Literal["2015-11-01"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2015-11-01")
+        )
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -74,17 +70,15 @@ class VaultsOperations(_VaultsOperations):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     top=top,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -95,15 +89,13 @@ class VaultsOperations(_VaultsOperations):
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                # change this line to use the passed in api version
                 _next_request_params["api-version"] = api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
@@ -113,11 +105,11 @@ class VaultsOperations(_VaultsOperations):
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -128,8 +120,6 @@ class VaultsOperations(_VaultsOperations):
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}
 
 
 __all__: List[str] = ["VaultsOperations"]  # Add all objects you want publicly available to users at this package level

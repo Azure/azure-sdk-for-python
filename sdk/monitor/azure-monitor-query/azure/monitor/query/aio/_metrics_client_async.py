@@ -29,6 +29,26 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword str audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
+        cloud audience (https://metrics.monitor.azure.com).
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_metrics_client_async]
+            :end-before: [END create_metrics_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the asynchronous MetricsClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_metrics_client_sovereign_cloud_async]
+            :end-before: [END create_metrics_client_sovereign_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -60,7 +80,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
         roll_up_by: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
@@ -155,7 +175,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
             orderby=order_by,
             filter=filter,
             rollupby=roll_up_by,  # cspell:ignore rollupby
-            **kwargs
+            **kwargs,
         )
 
         # In rare cases, the generated value is a JSON string instead of a dict. This potentially stems from a bug in

@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
     is_live,
+    remove_batch_sanitizers,
     set_bodiless_matcher,
     set_custom_default_matcher,
 )
@@ -87,7 +88,7 @@ def _query_param_regex(name, *, only_value=True) -> str:
     return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
@@ -95,6 +96,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
         ignored_query_parameters="api-version",
     )
+
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
@@ -125,6 +130,13 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(regex=feature_store_name, value="00000")
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3436: $..resourceGroup
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003", "AZSDK3436"])
 
 
 def pytest_addoption(parser):
@@ -289,6 +301,11 @@ def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2024_07_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2024_07_01_preview")
 
 
 @pytest.fixture

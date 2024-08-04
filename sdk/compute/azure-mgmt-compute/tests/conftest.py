@@ -30,15 +30,15 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, remove_batch_sanitizers
 from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitizer
+
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
 
-    
 load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
@@ -54,4 +54,8 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
-    add_body_key_sanitizer(json_path="$....accessSAS", value="accessSAS")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3493", "AZSDK2003"])

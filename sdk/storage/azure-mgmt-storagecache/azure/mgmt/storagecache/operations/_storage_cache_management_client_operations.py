@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +39,7 @@ def build_check_aml_fs_subnets_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -64,11 +64,13 @@ def build_check_aml_fs_subnets_request(subscription_id: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_required_aml_fs_subnets_size_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_required_aml_fs_subnets_size_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -93,7 +95,9 @@ def build_get_required_aml_fs_subnets_size_request(subscription_id: str, **kwarg
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMixinABC):
+class StorageCacheManagementClientOperationsMixin(  # pylint: disable=name-too-long
+    StorageCacheManagementClientMixinABC
+):
     @overload
     def check_aml_fs_subnets(  # pylint: disable=inconsistent-return-statements
         self,
@@ -110,7 +114,6 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -118,17 +121,20 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
 
     @overload
     def check_aml_fs_subnets(  # pylint: disable=inconsistent-return-statements
-        self, aml_filesystem_subnet_info: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        aml_filesystem_subnet_info: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Check that subnets will be valid for AML file system create calls.
 
         :param aml_filesystem_subnet_info: Information about the subnets to validate. Default value is
          None.
-        :type aml_filesystem_subnet_info: IO
+        :type aml_filesystem_subnet_info: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -136,17 +142,16 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
 
     @distributed_trace
     def check_aml_fs_subnets(  # pylint: disable=inconsistent-return-statements
-        self, aml_filesystem_subnet_info: Optional[Union[_models.AmlFilesystemSubnetInfo, IO]] = None, **kwargs: Any
+        self,
+        aml_filesystem_subnet_info: Optional[Union[_models.AmlFilesystemSubnetInfo, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> None:
         """Check that subnets will be valid for AML file system create calls.
 
         :param aml_filesystem_subnet_info: Information about the subnets to validate. Is either a
-         AmlFilesystemSubnetInfo type or a IO type. Default value is None.
-        :type aml_filesystem_subnet_info: ~azure.mgmt.storagecache.models.AmlFilesystemSubnetInfo or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         AmlFilesystemSubnetInfo type or a IO[bytes] type. Default value is None.
+        :type aml_filesystem_subnet_info: ~azure.mgmt.storagecache.models.AmlFilesystemSubnetInfo or
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -182,22 +187,21 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
             else:
                 _json = None
 
-        request = build_check_aml_fs_subnets_request(
+        _request = build_check_aml_fs_subnets_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_aml_fs_subnets.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -207,11 +211,7 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    check_aml_fs_subnets.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/checkAmlFSSubnets"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def get_required_aml_fs_subnets_size(
@@ -230,7 +230,6 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RequiredAmlFilesystemSubnetsSize or the result of cls(response)
         :rtype: ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -239,7 +238,7 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
     @overload
     def get_required_aml_fs_subnets_size(
         self,
-        required_aml_filesystem_subnets_size_info: Optional[IO] = None,
+        required_aml_filesystem_subnets_size_info: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -248,11 +247,10 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
 
         :param required_aml_filesystem_subnets_size_info: Information to determine the number of
          available IPs a subnet will need to host the AML file system. Default value is None.
-        :type required_aml_filesystem_subnets_size_info: IO
+        :type required_aml_filesystem_subnets_size_info: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RequiredAmlFilesystemSubnetsSize or the result of cls(response)
         :rtype: ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -262,7 +260,7 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
     def get_required_aml_fs_subnets_size(
         self,
         required_aml_filesystem_subnets_size_info: Optional[
-            Union[_models.RequiredAmlFilesystemSubnetsSizeInfo, IO]
+            Union[_models.RequiredAmlFilesystemSubnetsSizeInfo, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> _models.RequiredAmlFilesystemSubnetsSize:
@@ -270,13 +268,9 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
 
         :param required_aml_filesystem_subnets_size_info: Information to determine the number of
          available IPs a subnet will need to host the AML file system. Is either a
-         RequiredAmlFilesystemSubnetsSizeInfo type or a IO type. Default value is None.
+         RequiredAmlFilesystemSubnetsSizeInfo type or a IO[bytes] type. Default value is None.
         :type required_aml_filesystem_subnets_size_info:
-         ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSizeInfo or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSizeInfo or IO[bytes]
         :return: RequiredAmlFilesystemSubnetsSize or the result of cls(response)
         :rtype: ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -309,22 +303,21 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
             else:
                 _json = None
 
-        request = build_get_required_aml_fs_subnets_size_request(
+        _request = build_get_required_aml_fs_subnets_size_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_required_aml_fs_subnets_size.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -336,10 +329,6 @@ class StorageCacheManagementClientOperationsMixin(StorageCacheManagementClientMi
         deserialized = self._deserialize("RequiredAmlFilesystemSubnetsSize", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_required_aml_fs_subnets_size.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/getRequiredAmlFSSubnetsSize"
-    }
+        return deserialized  # type: ignore

@@ -46,16 +46,14 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     try:
         from uamqp import (
-            authentication as uamqp_authentication,
             Message as uamqp_Message,
             AMQPClientAsync as uamqp_AMQPClientAsync,
         )
-        from uamqp.authentication import JWTTokenAsync
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
     except ImportError:
-        uamqp_authentication = None
         uamqp_Message = None
         uamqp_AMQPClientAsync = None
-        JWTTokenAsync = None
+        uamqp_JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
     try:
@@ -109,7 +107,7 @@ if TYPE_CHECKING:
         def running(self, value: bool) -> None:
             pass
 
-        def _create_handler(self, auth: Union["JWTTokenAsync", JWTTokenAuthAsync]) -> None:
+        def _create_handler(self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]) -> None:
             pass
 
     _MIXIN_BASE = AbstractConsumerProducer
@@ -254,26 +252,36 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self) -> Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]:
+    async def _create_auth_async(
+        self, *, auth_uri: Optional[str] = None
+    ) -> Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
 
+        :keyword auth_uri: The URI to authenticate with.
+        :paramtype auth_uri: str or None
+        
         :return: A JWTTokenAuthAsync instance to authenticate the session.
         :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
-
         """
+        # if auth_uri is not provided, use the default hub one
+        entity_auth_uri = auth_uri if auth_uri else self._eventhub_auth_uri
+
         try:
             # ignore mypy's warning because token_type is Optional
             token_type = self._credential.token_type  # type: ignore
@@ -281,14 +289,14 @@ class ClientBaseAsync(ClientBase):
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
             return await self._amqp_transport.create_token_auth_async(
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
+                entity_auth_uri,
+                functools.partial(self._credential.get_token, entity_auth_uri),
                 token_type=token_type,
                 config=self._config,
                 update_token=True,
             )
         return await self._amqp_transport.create_token_auth_async(
-            self._auth_uri,
+            entity_auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             config=self._config,
@@ -339,7 +347,7 @@ class ClientBaseAsync(ClientBase):
             )
             try:
                 conn = await self._conn_manager_async.get_connection(
-                    host=self._address.hostname, auth=mgmt_auth
+                    endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
@@ -472,10 +480,10 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         if not self.running:
             if self._handler:
                 await self._handler.close_async()
-            auth = await self._client._create_auth_async()
+            auth = await self._client._create_auth_async(auth_uri=self._client._auth_uri)
             self._create_handler(auth)
             conn = await self._client._conn_manager_async.get_connection(
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():

@@ -1,7 +1,6 @@
 import functools
 import datetime
 
-from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
@@ -9,18 +8,20 @@ from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
     recorded_by_proxy,
+    get_credential,
 )
 
 HealthInsightsEnvPreparer = functools.partial(
     EnvironmentVariableLoader,
     "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
-    healthinsights_key="00000000000000000000000000000000",
+    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
 )
 
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
-    def create_request(self):
+    @HealthInsightsEnvPreparer()
+    @recorded_by_proxy
+    def test_sync(self, healthinsights_endpoint):
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -45,7 +46,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
-        encounter = models.Encounter(
+        encounter = models.PatientEncounter(
             id="encounter2",
             class_property=models.EncounterClass.IN_PATIENT,
             period=models.TimePeriod(start=start, end=end),
@@ -62,7 +63,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
             id="doc2",
             content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
-            created_date_time=create_date_time,
+            created_at=create_date_time,
             specialty_type=models.SpecialtyType.RADIOLOGY,
             administrative_metadata=models.DocumentAdministrativeMetadata(
                 ordered_procedures=[ordered_procedure], encounter_id="encounter2"
@@ -73,7 +74,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         patient1 = models.PatientRecord(
             id="patient_id2",
-            info=patient_info,
+            details=patient_info,
             encounters=[encounter],
             patient_documents=[patient_document1],
         )
@@ -81,22 +82,15 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        return data
+        jobdata = models.RadiologyInsightsJob(job_data=data)
 
-    @HealthInsightsEnvPreparer()
-    @recorded_by_proxy
-    def test_critical_result(self, healthinsights_endpoint, healthinsights_key):
         radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
+            healthinsights_endpoint, get_credential()
         )
-        data = TestRadiologyInsightsClient.create_request(self)
-        request_time = datetime.datetime(2024, 2, 26, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
+
         poller = radiology_insights_client.begin_infer_radiology_insights(
-            data,
-            headers={
-                "Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT"),
-                "Repeatability-Request-ID": "5ac5fbb2-0185-4c17-82dd-e0fcf36a2184",
-            },
+            id="SyncJobID",
+            resource=jobdata,
         )
         radiology_insights_result = poller.result()
 

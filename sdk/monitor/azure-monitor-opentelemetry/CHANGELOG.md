@@ -1,8 +1,44 @@
 # Release History
 
-## 1.4.2 (Unreleased)
+## 1.6.2 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.1 (2024-07-30)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36482](https://github.com/Azure/azure-sdk-for-python/pull/36482))
+
+## 1.6.0 (2024-06-06)
+
+### Features Added
+
+- Enable views configuration
+    ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
+- Rework autoinstrumentation: Configure exporters and samplers directly
+    ([#35890](https://github.com/Azure/azure-sdk-for-python/pull/35890))
+
+## 1.5.0 (2024-05-31)
+
+### Features Added
+
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+
+## 1.4.2 (2024-05-20)
+
+### Features Added
+
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
 
 ### Breaking Changes
 

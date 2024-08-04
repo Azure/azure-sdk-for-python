@@ -351,7 +351,7 @@ class AlertSimulatorRequestProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AlertSimulatorBundlesRequestProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -385,7 +385,7 @@ class AlertSimulatorRequestProperties(_serialization.Model):
 class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
     """Simulate alerts according to this bundles.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -454,7 +454,7 @@ class ResourceIdentifier(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureResourceIdentifier, LogAnalyticsIdentifier
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: There can be multiple identifiers of different type per alert, this field specify
      the identifier type. Required. Known values are: "AzureResource" and "LogAnalytics".
@@ -482,7 +482,7 @@ class AzureResourceIdentifier(ResourceIdentifier):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: There can be multiple identifiers of different type per alert, this field specify
      the identifier type. Required. Known values are: "AzureResource" and "LogAnalytics".
@@ -584,7 +584,7 @@ class LogAnalyticsIdentifier(ResourceIdentifier):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: There can be multiple identifiers of different type per alert, this field specify
      the identifier type. Required. Known values are: "AzureResource" and "LogAnalytics".

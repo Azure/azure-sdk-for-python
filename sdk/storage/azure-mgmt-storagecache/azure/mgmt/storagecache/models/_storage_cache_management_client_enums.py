@@ -72,6 +72,23 @@ class CacheIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
 
 
+class ConflictResolutionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the import job will handle conflicts. For example, if the import job is trying to bring in
+    a directory, but a file is at that path, how it handles it. Fail indicates that the import job
+    should stop immediately and not do anything with the conflict. Skip indicates that it should
+    pass over the conflict. OverwriteIfDirty causes the import job to delete and re-import the file
+    or directory if it is a conflicting type, is dirty, or was not previously imported.
+    OverwriteAlways extends OverwriteIfDirty to include releasing files that had been restored but
+    were not dirty. Please reference https://learn.microsoft.com/en-us/azure/azure-managed-lustre/
+    for a thorough explanation of these resolution modes.
+    """
+
+    FAIL = "Fail"
+    SKIP = "Skip"
+    OVERWRITE_IF_DIRTY = "OverwriteIfDirty"
+    OVERWRITE_ALWAYS = "OverwriteAlways"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -126,6 +143,33 @@ class HealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAITING_FOR_KEY = "WaitingForKey"
     START_FAILED = "StartFailed"
     UPGRADE_FAILED = "UpgradeFailed"
+
+
+class ImportJobProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class ImportStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the import job. InProgress indicates the import is still running. Canceled
+    indicates it has been canceled by the user. Completed indicates import finished, successfully
+    importing all discovered blobs into the Lustre namespace. CompletedPartial indicates the import
+    finished but some blobs either were found to be conflicting and could not be imported or other
+    errors were encountered. Failed means the import was unable to complete due to a fatal error.
+    """
+
+    IN_PROGRESS = "InProgress"
+    CANCELLING = "Cancelling"
+    CANCELED = "Canceled"
+    COMPLETED = "Completed"
+    COMPLETED_PARTIAL = "CompletedPartial"
+    FAILED = "Failed"
 
 
 class MaintenanceDayOfWeekType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

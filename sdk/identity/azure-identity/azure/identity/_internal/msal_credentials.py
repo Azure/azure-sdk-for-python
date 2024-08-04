@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 from typing import Any, List, Union, Dict, Optional
+from typing_extensions import Self
 
 import msal
 
@@ -24,7 +25,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client_id: str,
-        client_credential: Optional[Union[str, Dict[str, str]]] = None,
+        client_credential: Optional[Union[str, Dict[str, Any]]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
         authority: Optional[str] = None,
@@ -59,7 +60,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         super(MsalCredential, self).__init__()
 
-    def __enter__(self) -> "MsalCredential":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

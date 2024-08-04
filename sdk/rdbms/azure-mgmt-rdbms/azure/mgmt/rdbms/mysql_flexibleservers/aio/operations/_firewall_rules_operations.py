@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -37,6 +38,10 @@ from ...operations._firewall_rules_operations import (
     build_list_by_server_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -68,7 +73,7 @@ class FirewallRulesOperations:
         parameters: Union[_models.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.FirewallRule]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -271,7 +276,7 @@ class FirewallRulesOperations:
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -386,7 +391,7 @@ class FirewallRulesOperations:
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.FirewallRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -453,7 +458,7 @@ class FirewallRulesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
         cls: ClsType[_models.FirewallRuleListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

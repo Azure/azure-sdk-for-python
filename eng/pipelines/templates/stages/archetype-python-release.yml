@@ -34,7 +34,18 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+
+                    - task: UsePythonVersion@0
+                      inputs:
+                        versionSpec: '3.12'
+
+                    - script: |
+                        set -e
+                        python -m pip install -r eng/release_requirements.txt
+                      displayName: Install Release Dependencies
+
                     - template: /eng/common/pipelines/templates/steps/retain-run.yml
+
                     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                       parameters:
                         PackageName: "azure-template"
@@ -95,6 +106,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
+
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
@@ -131,13 +143,17 @@ stages:
                           Get-ChildItem $esrpDirectory
                         displayName: Isolate files for ESRP Publish
 
-                      - task: EsrpRelease@2
+                      - task: EsrpRelease@7
                         displayName: 'Publish to ESRP'
                         inputs:
-                          ConnectedServiceName: 'ESRP Release Service'
+                          ConnectedServiceName: 'Azure SDK Engineering System'
+                          ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                          KeyVaultName: 'AzureSDKEngKeyVault'
+                          AuthCertName: 'azure-sdk-esrp-release-auth-certificate'
+                          SignCertName: 'azure-sdk-esrp-release-sign-certificate'
                           Intent: 'PackageDistribution'
                           ContentType: 'PyPI'
-                          PackageLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                          FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
                           Owners: $(Build.RequestedForEmail)
                           Approvers: $(Build.RequestedForEmail)
                           ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
@@ -187,7 +203,6 @@ stages:
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                          BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
@@ -280,7 +295,6 @@ stages:
           name: azsdk-pool-mms-ubuntu-2004-general
           os: linux
         steps:
-        - checkout: none
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5

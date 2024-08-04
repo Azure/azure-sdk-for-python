@@ -9,19 +9,20 @@
 from ._operations import Operations
 from ._locations_operations import LocationsOperations
 from ._private_clouds_operations import PrivateCloudsOperations
+from ._addons_operations import AddonsOperations
+from ._authorizations_operations import AuthorizationsOperations
+from ._cloud_links_operations import CloudLinksOperations
 from ._clusters_operations import ClustersOperations
 from ._datastores_operations import DatastoresOperations
-from ._hcx_enterprise_sites_operations import HcxEnterpriseSitesOperations
-from ._authorizations_operations import AuthorizationsOperations
-from ._global_reach_connections_operations import GlobalReachConnectionsOperations
-from ._workload_networks_operations import WorkloadNetworksOperations
-from ._cloud_links_operations import CloudLinksOperations
-from ._addons_operations import AddonsOperations
-from ._virtual_machines_operations import VirtualMachinesOperations
 from ._placement_policies_operations import PlacementPoliciesOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
+from ._global_reach_connections_operations import GlobalReachConnectionsOperations
+from ._hcx_enterprise_sites_operations import HcxEnterpriseSitesOperations
+from ._iscsi_paths_operations import IscsiPathsOperations
+from ._script_executions_operations import ScriptExecutionsOperations
 from ._script_packages_operations import ScriptPackagesOperations
 from ._script_cmdlets_operations import ScriptCmdletsOperations
-from ._script_executions_operations import ScriptExecutionsOperations
+from ._workload_networks_operations import WorkloadNetworksOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -31,19 +32,20 @@ __all__ = [
     "Operations",
     "LocationsOperations",
     "PrivateCloudsOperations",
+    "AddonsOperations",
+    "AuthorizationsOperations",
+    "CloudLinksOperations",
     "ClustersOperations",
     "DatastoresOperations",
-    "HcxEnterpriseSitesOperations",
-    "AuthorizationsOperations",
-    "GlobalReachConnectionsOperations",
-    "WorkloadNetworksOperations",
-    "CloudLinksOperations",
-    "AddonsOperations",
-    "VirtualMachinesOperations",
     "PlacementPoliciesOperations",
+    "VirtualMachinesOperations",
+    "GlobalReachConnectionsOperations",
+    "HcxEnterpriseSitesOperations",
+    "IscsiPathsOperations",
+    "ScriptExecutionsOperations",
     "ScriptPackagesOperations",
     "ScriptCmdletsOperations",
-    "ScriptExecutionsOperations",
+    "WorkloadNetworksOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

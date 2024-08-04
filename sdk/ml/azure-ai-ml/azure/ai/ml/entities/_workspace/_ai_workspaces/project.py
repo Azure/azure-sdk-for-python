@@ -5,12 +5,14 @@
 
 from typing import Any, Dict, Optional
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._schema.workspace import ProjectSchema
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities import Workspace
 
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
+@experimental
 class Project(Workspace):
     """A Project is a lightweight object for orchestrating AI applications, and is parented by a hub.
     Unlike a standard workspace, a project does not have a variety of sub-resources directly associated with it.

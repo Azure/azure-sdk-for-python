@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -31,7 +31,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -64,7 +64,7 @@ def build_deployments_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -72,7 +72,7 @@ def build_deployments_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_deployments_check_existence_request(
+def build_deployments_check_existence_request(  # pylint: disable=name-too-long
     resource_group_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -91,7 +91,7 @@ def build_deployments_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -99,7 +99,7 @@ def build_deployments_check_existence_request(
     return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
-def build_deployments_create_or_update_request(
+def build_deployments_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -122,7 +122,7 @@ def build_deployments_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -157,7 +157,7 @@ def build_deployments_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -187,7 +187,7 @@ def build_deployments_cancel_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -218,7 +218,7 @@ def build_deployments_validate_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -231,7 +231,7 @@ def build_deployments_validate_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployments_export_template_request(
+def build_deployments_export_template_request(  # pylint: disable=name-too-long
     resource_group_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -253,7 +253,7 @@ def build_deployments_export_template_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -290,7 +290,7 @@ def build_deployments_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -305,7 +305,9 @@ def build_deployments_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployments_calculate_template_hash_request(*, json: JSON, **kwargs: Any) -> HttpRequest:
+def build_deployments_calculate_template_hash_request(  # pylint: disable=name-too-long
+    *, json: JSON, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -345,7 +347,7 @@ def build_providers_unregister_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -372,7 +374,7 @@ def build_providers_register_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -398,7 +400,7 @@ def build_providers_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -429,7 +431,7 @@ def build_providers_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if expand is not None:
@@ -442,7 +444,7 @@ def build_providers_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_resource_groups_list_resources_request(
+def build_resource_groups_list_resources_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     subscription_id: str,
     *,
@@ -466,7 +468,7 @@ def build_resource_groups_list_resources_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -483,7 +485,7 @@ def build_resource_groups_list_resources_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_resource_groups_check_existence_request(
+def build_resource_groups_check_existence_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -498,7 +500,7 @@ def build_resource_groups_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -506,7 +508,7 @@ def build_resource_groups_check_existence_request(
     return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
-def build_resource_groups_create_or_update_request(
+def build_resource_groups_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -525,7 +527,7 @@ def build_resource_groups_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -551,7 +553,7 @@ def build_resource_groups_delete_request(resource_group_name: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -575,7 +577,7 @@ def build_resource_groups_get_request(resource_group_name: str, subscription_id:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -603,7 +605,7 @@ def build_resource_groups_patch_request(resource_group_name: str, subscription_i
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -616,7 +618,7 @@ def build_resource_groups_patch_request(resource_group_name: str, subscription_i
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_resource_groups_export_template_request(
+def build_resource_groups_export_template_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -637,7 +639,7 @@ def build_resource_groups_export_template_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -665,7 +667,7 @@ def build_resource_groups_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -704,7 +706,7 @@ def build_resources_move_resources_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -736,7 +738,7 @@ def build_resources_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -782,7 +784,7 @@ def build_resources_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -819,7 +821,7 @@ def build_resources_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -860,7 +862,7 @@ def build_resources_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -906,7 +908,7 @@ def build_resources_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -951,7 +953,7 @@ def build_resources_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -974,7 +976,7 @@ def build_tags_delete_value_request(tag_name: str, tag_value: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -982,7 +984,7 @@ def build_tags_delete_value_request(tag_name: str, tag_value: str, subscription_
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_tags_create_or_update_value_request(
+def build_tags_create_or_update_value_request(  # pylint: disable=name-too-long
     tag_name: str, tag_value: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -999,7 +1001,7 @@ def build_tags_create_or_update_value_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1024,7 +1026,7 @@ def build_tags_create_or_update_request(tag_name: str, subscription_id: str, **k
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1046,7 +1048,7 @@ def build_tags_delete_request(tag_name: str, subscription_id: str, **kwargs: Any
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1067,7 +1069,7 @@ def build_tags_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1101,7 +1103,7 @@ def build_deployment_operations_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1134,7 +1136,7 @@ def build_deployment_operations_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -1165,11 +1167,12 @@ class DeploymentsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1180,24 +1183,23 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployments_delete_request(
+        _request = build_deployments_delete_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1207,11 +1209,7 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1222,14 +1220,6 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment to be deleted. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1237,7 +1227,7 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1256,7 +1246,7 @@ class DeploymentsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1265,17 +1255,13 @@ class DeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def check_existence(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> bool:
@@ -1286,12 +1272,11 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: bool or the result of cls(response)
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1302,24 +1287,23 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployments_check_existence_request(
+        _request = build_deployments_check_existence_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.check_existence.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1329,17 +1313,17 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
         return 200 <= response.status_code <= 299
 
-    check_existence.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
-
     def _create_or_update_initial(
-        self, resource_group_name: str, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DeploymentExtended:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1350,7 +1334,7 @@ class DeploymentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
@@ -1362,7 +1346,7 @@ class DeploymentsOperations:
         else:
             _json = self._serialize.body(parameters, "Deployment")
 
-        request = build_deployments_create_or_update_request(
+        _request = build_deployments_create_or_update_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
@@ -1370,16 +1354,15 @@ class DeploymentsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1398,10 +1381,6 @@ class DeploymentsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -1425,14 +1404,6 @@ class DeploymentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DeploymentExtended or the result of
          cls(response)
         :rtype:
@@ -1445,7 +1416,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1458,18 +1429,10 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DeploymentExtended or the result of
          cls(response)
         :rtype:
@@ -1479,7 +1442,11 @@ class DeploymentsOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Create a named template deployment using a template.
 
@@ -1489,19 +1456,8 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
-         or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns either DeploymentExtended or the result of
          cls(response)
         :rtype:
@@ -1511,7 +1467,7 @@ class DeploymentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1534,7 +1490,7 @@ class DeploymentsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1544,17 +1500,15 @@ class DeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DeploymentExtended].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
+        return LROPoller[_models.DeploymentExtended](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> _models.DeploymentExtended:
@@ -1565,12 +1519,11 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentExtended or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1581,24 +1534,23 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
-        request = build_deployments_get_request(
+        _request = build_deployments_get_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1610,13 +1562,9 @@ class DeploymentsOperations:
         deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
@@ -1629,12 +1577,11 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1645,24 +1592,23 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployments_cancel_request(
+        _request = build_deployments_cancel_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.cancel.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1672,11 +1618,7 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def validate(
@@ -1700,7 +1642,6 @@ class DeploymentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1711,7 +1652,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1724,11 +1665,10 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Deployment to validate. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1736,7 +1676,11 @@ class DeploymentsOperations:
 
     @distributed_trace
     def validate(
-        self, resource_group_name: str, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DeploymentValidateResult:
         """Validate a deployment template.
 
@@ -1745,17 +1689,14 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Deployment to validate. Is either a Deployment type or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Deployment to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment or IO[bytes]
         :return: DeploymentValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1766,7 +1707,7 @@ class DeploymentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
@@ -1778,7 +1719,7 @@ class DeploymentsOperations:
         else:
             _json = self._serialize.body(parameters, "Deployment")
 
-        request = build_deployments_validate_request(
+        _request = build_deployments_validate_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
@@ -1786,16 +1727,15 @@ class DeploymentsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1815,10 +1755,6 @@ class DeploymentsOperations:
 
         return deserialized  # type: ignore
 
-    validate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"
-    }
-
     @distributed_trace
     def export_template(
         self, resource_group_name: str, deployment_name: str, **kwargs: Any
@@ -1830,12 +1766,11 @@ class DeploymentsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentExportResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1846,24 +1781,23 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
-        request = build_deployments_export_template_request(
+        _request = build_deployments_export_template_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.export_template.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1875,13 +1809,9 @@ class DeploymentsOperations:
         deserialized = self._deserialize("DeploymentExportResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_template.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -1896,7 +1826,6 @@ class DeploymentsOperations:
         :type filter: str
         :param top: Query parameters. If null is passed returns all deployments. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentExtended or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended]
@@ -1905,10 +1834,10 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1919,18 +1848,17 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_deployments_list_request(
+                _request = build_deployments_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1941,14 +1869,14 @@ class DeploymentsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
@@ -1958,11 +1886,11 @@ class DeploymentsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1974,22 +1902,17 @@ class DeploymentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/"
-    }
-
     @distributed_trace
     def calculate_template_hash(self, template: JSON, **kwargs: Any) -> _models.TemplateHashResult:
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash. Required.
         :type template: JSON
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateHashResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateHashResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2000,26 +1923,25 @@ class DeploymentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.TemplateHashResult] = kwargs.pop("cls", None)
 
         _json = self._serialize.body(template, "object")
 
-        request = build_deployments_calculate_template_hash_request(
+        _request = build_deployments_calculate_template_hash_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.calculate_template_hash.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2031,11 +1953,9 @@ class DeploymentsOperations:
         deserialized = self._deserialize("TemplateHashResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    calculate_template_hash.metadata = {"url": "/providers/Microsoft.Resources/calculateTemplateHash"}
+        return deserialized  # type: ignore
 
 
 class ProvidersOperations:
@@ -2056,6 +1976,7 @@ class ProvidersOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def unregister(self, resource_provider_namespace: str, **kwargs: Any) -> _models.Provider:
@@ -2063,12 +1984,11 @@ class ProvidersOperations:
 
         :param resource_provider_namespace: Namespace of the resource provider. Required.
         :type resource_provider_namespace: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Provider or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2079,23 +1999,22 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
-        request = build_providers_unregister_request(
+        _request = build_providers_unregister_request(
             resource_provider_namespace=resource_provider_namespace,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.unregister.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2107,11 +2026,9 @@ class ProvidersOperations:
         deserialized = self._deserialize("Provider", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    unregister.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def register(self, resource_provider_namespace: str, **kwargs: Any) -> _models.Provider:
@@ -2119,12 +2036,11 @@ class ProvidersOperations:
 
         :param resource_provider_namespace: Namespace of the resource provider. Required.
         :type resource_provider_namespace: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Provider or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2135,23 +2051,22 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
-        request = build_providers_register_request(
+        _request = build_providers_register_request(
             resource_provider_namespace=resource_provider_namespace,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.register.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2163,11 +2078,9 @@ class ProvidersOperations:
         deserialized = self._deserialize("Provider", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    register.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -2180,7 +2093,6 @@ class ProvidersOperations:
         :param expand: The $expand query parameter. e.g. To include property aliases in response, use
          $expand=resourceTypes/aliases. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Provider or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.Provider]
@@ -2189,10 +2101,10 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.ProviderListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2203,17 +2115,16 @@ class ProvidersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_providers_list_request(
+                _request = build_providers_list_request(
                     subscription_id=self._config.subscription_id,
                     top=top,
                     expand=expand,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2224,14 +2135,14 @@ class ProvidersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ProviderListResult", pipeline_response)
@@ -2241,11 +2152,11 @@ class ProvidersOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2257,8 +2168,6 @@ class ProvidersOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers"}
-
     @distributed_trace
     def get(self, resource_provider_namespace: str, expand: Optional[str] = None, **kwargs: Any) -> _models.Provider:
         """Gets a resource provider.
@@ -2268,12 +2177,11 @@ class ProvidersOperations:
         :param expand: The $expand query parameter. e.g. To include property aliases in response, use
          $expand=resourceTypes/aliases. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Provider or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2284,24 +2192,23 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
-        request = build_providers_get_request(
+        _request = build_providers_get_request(
             resource_provider_namespace=resource_provider_namespace,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2313,11 +2220,9 @@ class ProvidersOperations:
         deserialized = self._deserialize("Provider", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}"}
+        return deserialized  # type: ignore
 
 
 class ResourceGroupsOperations:
@@ -2338,6 +2243,7 @@ class ResourceGroupsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_resources(
@@ -2356,13 +2262,12 @@ class ResourceGroupsOperations:
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
         :param expand: Comma-separated list of additional properties to be included in the response.
-         Valid values include ``createdTime``\ , ``changedTime`` and ``provisioningState``. For example,
-         ``$expand=createdTime,changedTime``. Default value is None.
+         Valid values include ``createdTime``\\ , ``changedTime`` and ``provisioningState``. For
+         example, ``$expand=createdTime,changedTime``. Default value is None.
         :type expand: str
         :param top: Query parameters. If null is passed returns all resource groups. Default value is
          None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GenericResourceExpanded or the result of
          cls(response)
         :rtype:
@@ -2372,10 +2277,10 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2386,19 +2291,18 @@ class ResourceGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_resource_groups_list_resources_request(
+                _request = build_resource_groups_list_resources_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     expand=expand,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_resources.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2409,14 +2313,14 @@ class ResourceGroupsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
@@ -2426,11 +2330,11 @@ class ResourceGroupsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2442,8 +2346,6 @@ class ResourceGroupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources"}
-
     @distributed_trace
     def check_existence(self, resource_group_name: str, **kwargs: Any) -> bool:
         """Checks whether resource group exists.
@@ -2451,12 +2353,11 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to check. The name is case
          insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: bool or the result of cls(response)
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2467,23 +2368,22 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resource_groups_check_existence_request(
+        _request = build_resource_groups_check_existence_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.check_existence.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2493,10 +2393,8 @@ class ResourceGroupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
         return 200 <= response.status_code <= 299
-
-    check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     @overload
     def create_or_update(
@@ -2517,7 +2415,6 @@ class ResourceGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2525,7 +2422,7 @@ class ResourceGroupsOperations:
 
     @overload
     def create_or_update(
-        self, resource_group_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, resource_group_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceGroup:
         """Create a resource group.
 
@@ -2533,11 +2430,10 @@ class ResourceGroupsOperations:
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update resource group service
          operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2545,24 +2441,20 @@ class ResourceGroupsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, resource_group_name: str, parameters: Union[_models.ResourceGroup, IO], **kwargs: Any
+        self, resource_group_name: str, parameters: Union[_models.ResourceGroup, IO[bytes]], **kwargs: Any
     ) -> _models.ResourceGroup:
         """Create a resource group.
 
         :param resource_group_name: The name of the resource group to be created or updated. Required.
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update resource group service
-         operation. Is either a ResourceGroup type or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         operation. Is either a ResourceGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup or IO[bytes]
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2573,7 +2465,7 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
@@ -2585,23 +2477,22 @@ class ResourceGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "ResourceGroup")
 
-        request = build_resource_groups_create_or_update_request(
+        _request = build_resource_groups_create_or_update_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2621,12 +2512,10 @@ class ResourceGroupsOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
-
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2637,23 +2526,22 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resource_groups_delete_request(
+        _request = build_resource_groups_delete_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2663,9 +2551,7 @@ class ResourceGroupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -2674,14 +2560,6 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to be deleted. The name is case
          insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2689,7 +2567,7 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2707,7 +2585,7 @@ class ResourceGroupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -2716,15 +2594,13 @@ class ResourceGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, **kwargs: Any) -> _models.ResourceGroup:
@@ -2733,12 +2609,11 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to get. The name is case
          insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2749,23 +2624,22 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
-        request = build_resource_groups_get_request(
+        _request = build_resource_groups_get_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2777,11 +2651,9 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize("ResourceGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
+        return deserialized  # type: ignore
 
     @overload
     def patch(
@@ -2805,7 +2677,6 @@ class ResourceGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2813,7 +2684,7 @@ class ResourceGroupsOperations:
 
     @overload
     def patch(
-        self, resource_group_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, resource_group_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceGroup:
         """Resource groups can be updated through a simple PATCH operation to a group address. The format
         of the request is the same as that for creating a resource groups, though if a field is
@@ -2824,11 +2695,10 @@ class ResourceGroupsOperations:
         :type resource_group_name: str
         :param parameters: Parameters supplied to the update state resource group service operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2836,7 +2706,7 @@ class ResourceGroupsOperations:
 
     @distributed_trace
     def patch(
-        self, resource_group_name: str, parameters: Union[_models.ResourceGroup, IO], **kwargs: Any
+        self, resource_group_name: str, parameters: Union[_models.ResourceGroup, IO[bytes]], **kwargs: Any
     ) -> _models.ResourceGroup:
         """Resource groups can be updated through a simple PATCH operation to a group address. The format
         of the request is the same as that for creating a resource groups, though if a field is
@@ -2846,17 +2716,13 @@ class ResourceGroupsOperations:
          is case insensitive. Required.
         :type resource_group_name: str
         :param parameters: Parameters supplied to the update state resource group service operation. Is
-         either a ResourceGroup type or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         either a ResourceGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup or IO[bytes]
         :return: ResourceGroup or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2867,7 +2733,7 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
@@ -2879,23 +2745,22 @@ class ResourceGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "ResourceGroup")
 
-        request = build_resource_groups_patch_request(
+        _request = build_resource_groups_patch_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.patch.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2907,11 +2772,9 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize("ResourceGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    patch.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
+        return deserialized  # type: ignore
 
     @overload
     def export_template(
@@ -2932,7 +2795,6 @@ class ResourceGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroupExportResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2940,7 +2802,7 @@ class ResourceGroupsOperations:
 
     @overload
     def export_template(
-        self, resource_group_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, resource_group_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceGroupExportResult:
         """Captures the specified resource group as a template.
 
@@ -2948,11 +2810,10 @@ class ResourceGroupsOperations:
         :type resource_group_name: str
         :param parameters: Parameters supplied to the export template resource group operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGroupExportResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2960,24 +2821,21 @@ class ResourceGroupsOperations:
 
     @distributed_trace
     def export_template(
-        self, resource_group_name: str, parameters: Union[_models.ExportTemplateRequest, IO], **kwargs: Any
+        self, resource_group_name: str, parameters: Union[_models.ExportTemplateRequest, IO[bytes]], **kwargs: Any
     ) -> _models.ResourceGroupExportResult:
         """Captures the specified resource group as a template.
 
         :param resource_group_name: The name of the resource group to be created or updated. Required.
         :type resource_group_name: str
         :param parameters: Parameters supplied to the export template resource group operation. Is
-         either a ExportTemplateRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ExportTemplateRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         either a ExportTemplateRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ExportTemplateRequest or
+         IO[bytes]
         :return: ResourceGroupExportResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2988,7 +2846,7 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ResourceGroupExportResult] = kwargs.pop("cls", None)
 
@@ -3000,23 +2858,22 @@ class ResourceGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "ExportTemplateRequest")
 
-        request = build_resource_groups_export_template_request(
+        _request = build_resource_groups_export_template_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.export_template.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3028,13 +2885,9 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize("ResourceGroupExportResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_template.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -3047,7 +2900,6 @@ class ResourceGroupsOperations:
         :param top: Query parameters. If null is passed returns all resource groups. Default value is
          None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceGroup or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup]
@@ -3056,10 +2908,10 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.ResourceGroupListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3070,17 +2922,16 @@ class ResourceGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_resource_groups_list_request(
+                _request = build_resource_groups_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -3091,14 +2942,14 @@ class ResourceGroupsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceGroupListResult", pipeline_response)
@@ -3108,11 +2959,11 @@ class ResourceGroupsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3123,8 +2974,6 @@ class ResourceGroupsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups"}
 
 
 class ResourcesOperations:
@@ -3145,11 +2994,12 @@ class ResourcesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     def _move_resources_initial(  # pylint: disable=inconsistent-return-statements
-        self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO], **kwargs: Any
+        self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3160,7 +3010,7 @@ class ResourcesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -3172,23 +3022,22 @@ class ResourcesOperations:
         else:
             _json = self._serialize.body(parameters, "ResourcesMoveInfo")
 
-        request = build_resources_move_resources_request(
+        _request = build_resources_move_resources_request(
             source_resource_group_name=source_resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._move_resources_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3198,11 +3047,7 @@ class ResourcesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _move_resources_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def begin_move_resources(
@@ -3223,14 +3068,6 @@ class ResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3238,7 +3075,12 @@ class ResourcesOperations:
 
     @overload
     def begin_move_resources(
-        self, source_resource_group_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        source_resource_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Move resources from one resource group to another. The resources being moved should all be in
         the same resource group.
@@ -3246,18 +3088,10 @@ class ResourcesOperations:
         :param source_resource_group_name: Source resource group name. Required.
         :type source_resource_group_name: str
         :param parameters: move resources' parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3265,27 +3099,17 @@ class ResourcesOperations:
 
     @distributed_trace
     def begin_move_resources(
-        self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO], **kwargs: Any
+        self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Move resources from one resource group to another. The resources being moved should all be in
         the same resource group.
 
         :param source_resource_group_name: Source resource group name. Required.
         :type source_resource_group_name: str
-        :param parameters: move resources' parameters. Is either a ResourcesMoveInfo type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourcesMoveInfo or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: move resources' parameters. Is either a ResourcesMoveInfo type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourcesMoveInfo or
+         IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3293,7 +3117,7 @@ class ResourcesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -3314,7 +3138,7 @@ class ResourcesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3323,17 +3147,13 @@ class ResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_move_resources.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(
@@ -3344,13 +3164,12 @@ class ResourcesOperations:
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
         :param expand: Comma-separated list of additional properties to be included in the response.
-         Valid values include ``createdTime``\ , ``changedTime`` and ``provisioningState``. For example,
-         ``$expand=createdTime,changedTime``. Default value is None.
+         Valid values include ``createdTime``\\ , ``changedTime`` and ``provisioningState``. For
+         example, ``$expand=createdTime,changedTime``. Default value is None.
         :type expand: str
         :param top: The number of results to return. If null is passed, returns all resources. Default
          value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GenericResourceExpanded or the result of
          cls(response)
         :rtype:
@@ -3360,10 +3179,10 @@ class ResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3374,18 +3193,17 @@ class ResourcesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_resources_list_request(
+                _request = build_resources_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     expand=expand,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -3396,14 +3214,14 @@ class ResourcesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
@@ -3413,11 +3231,11 @@ class ResourcesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3428,8 +3246,6 @@ class ResourcesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}
 
     @distributed_trace
     def check_existence(
@@ -3457,12 +3273,11 @@ class ResourcesOperations:
         :type resource_name: str
         :param api_version: Required.
         :type api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: bool or the result of cls(response)
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3475,7 +3290,7 @@ class ResourcesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resources_check_existence_request(
+        _request = build_resources_check_existence_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -3483,16 +3298,15 @@ class ResourcesOperations:
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.check_existence.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3502,12 +3316,8 @@ class ResourcesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
         return 200 <= response.status_code <= 299
-
-    check_existence.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -3535,12 +3345,11 @@ class ResourcesOperations:
         :type resource_name: str
         :param api_version: Required.
         :type api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3553,7 +3362,7 @@ class ResourcesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resources_delete_request(
+        _request = build_resources_delete_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -3561,16 +3370,15 @@ class ResourcesOperations:
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3580,11 +3388,7 @@ class ResourcesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def create_or_update(
@@ -3620,7 +3424,6 @@ class ResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GenericResource or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3635,7 +3438,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3656,11 +3459,10 @@ class ResourcesOperations:
         :param api_version: Required.
         :type api_version: str
         :param parameters: Create or update resource parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GenericResource or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3675,7 +3477,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        parameters: Union[_models.GenericResource, IO],
+        parameters: Union[_models.GenericResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.GenericResource:
         """Create a resource.
@@ -3694,17 +3496,14 @@ class ResourcesOperations:
         :param api_version: Required.
         :type api_version: str
         :param parameters: Create or update resource parameters. Is either a GenericResource type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource or
+         IO[bytes]
         :return: GenericResource or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3726,7 +3525,7 @@ class ResourcesOperations:
         else:
             _json = self._serialize.body(parameters, "GenericResource")
 
-        request = build_resources_create_or_update_request(
+        _request = build_resources_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -3737,16 +3536,15 @@ class ResourcesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3766,10 +3564,6 @@ class ResourcesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
-
     def _update_initial(
         self,
         resource_group_name: str,
@@ -3778,10 +3572,10 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        parameters: Union[_models.GenericResource, IO],
+        parameters: Union[_models.GenericResource, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.GenericResource]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3803,7 +3597,7 @@ class ResourcesOperations:
         else:
             _json = self._serialize.body(parameters, "GenericResource")
 
-        request = build_resources_update_request(
+        _request = build_resources_update_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -3814,16 +3608,15 @@ class ResourcesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3837,13 +3630,9 @@ class ResourcesOperations:
             deserialized = self._deserialize("GenericResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -3879,14 +3668,6 @@ class ResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GenericResource or the result of
          cls(response)
         :rtype:
@@ -3903,7 +3684,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3924,18 +3705,10 @@ class ResourcesOperations:
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
         :param parameters: Parameters for updating the resource. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GenericResource or the result of
          cls(response)
         :rtype:
@@ -3952,7 +3725,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        parameters: Union[_models.GenericResource, IO],
+        parameters: Union[_models.GenericResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GenericResource]:
         """Updates a resource.
@@ -3971,19 +3744,9 @@ class ResourcesOperations:
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
         :param parameters: Parameters for updating the resource. Is either a GenericResource type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource or
+         IO[bytes]
         :return: An instance of LROPoller that returns either GenericResource or the result of
          cls(response)
         :rtype:
@@ -4018,7 +3781,7 @@ class ResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("GenericResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -4028,17 +3791,15 @@ class ResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.GenericResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
+        return LROPoller[_models.GenericResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(
@@ -4066,12 +3827,11 @@ class ResourcesOperations:
         :type resource_name: str
         :param api_version: Required.
         :type api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GenericResource or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4084,7 +3844,7 @@ class ResourcesOperations:
 
         cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
 
-        request = build_resources_get_request(
+        _request = build_resources_get_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -4092,16 +3852,15 @@ class ResourcesOperations:
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4113,13 +3872,9 @@ class ResourcesOperations:
         deserialized = self._deserialize("GenericResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
 
 class TagsOperations:
@@ -4140,6 +3895,7 @@ class TagsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def delete_value(  # pylint: disable=inconsistent-return-statements
@@ -4151,12 +3907,11 @@ class TagsOperations:
         :type tag_name: str
         :param tag_value: The value of the tag. Required.
         :type tag_value: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4167,24 +3922,23 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_tags_delete_value_request(
+        _request = build_tags_delete_value_request(
             tag_name=tag_name,
             tag_value=tag_value,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4194,9 +3948,7 @@ class TagsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def create_or_update_value(self, tag_name: str, tag_value: str, **kwargs: Any) -> _models.TagValue:
@@ -4206,12 +3958,11 @@ class TagsOperations:
         :type tag_name: str
         :param tag_value: The value of the tag. Required.
         :type tag_value: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TagValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4222,24 +3973,23 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.TagValue] = kwargs.pop("cls", None)
 
-        request = build_tags_create_or_update_value_request(
+        _request = build_tags_create_or_update_value_request(
             tag_name=tag_name,
             tag_value=tag_value,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4258,8 +4008,6 @@ class TagsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}
 
     @distributed_trace
     def create_or_update(self, tag_name: str, **kwargs: Any) -> _models.TagDetails:
@@ -4267,12 +4015,11 @@ class TagsOperations:
 
         :param tag_name: The name of the tag. Required.
         :type tag_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TagDetails or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4283,23 +4030,22 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.TagDetails] = kwargs.pop("cls", None)
 
-        request = build_tags_create_or_update_request(
+        _request = build_tags_create_or_update_request(
             tag_name=tag_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4319,20 +4065,17 @@ class TagsOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}
-
     @distributed_trace
     def delete(self, tag_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a subscription resource tag.
 
         :param tag_name: The name of the tag. Required.
         :type tag_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4343,23 +4086,22 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_tags_delete_request(
+        _request = build_tags_delete_request(
             tag_name=tag_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4369,15 +4111,12 @@ class TagsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.TagDetails"]:
         """Get a list of subscription resource tags.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TagDetails or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails]
@@ -4386,10 +4125,10 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.TagsListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4400,15 +4139,14 @@ class TagsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_tags_list_request(
+                _request = build_tags_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -4419,14 +4157,14 @@ class TagsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("TagsListResult", pipeline_response)
@@ -4436,11 +4174,11 @@ class TagsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4451,8 +4189,6 @@ class TagsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames"}
 
 
 class DeploymentOperationsOperations:
@@ -4473,6 +4209,7 @@ class DeploymentOperationsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def get(
@@ -4487,12 +4224,11 @@ class DeploymentOperationsOperations:
         :type deployment_name: str
         :param operation_id: Operation Id. Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentOperation or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4503,25 +4239,24 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
-        request = build_deployment_operations_get_request(
+        _request = build_deployment_operations_get_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4533,13 +4268,9 @@ class DeploymentOperationsOperations:
         deserialized = self._deserialize("DeploymentOperation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -4554,7 +4285,6 @@ class DeploymentOperationsOperations:
         :type deployment_name: str
         :param top: Query parameters. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentOperation or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperation]
@@ -4563,10 +4293,10 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-02-01"))
         cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4577,18 +4307,17 @@ class DeploymentOperationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_deployment_operations_list_request(
+                _request = build_deployment_operations_list_request(
                     resource_group_name=resource_group_name,
                     deployment_name=deployment_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -4599,14 +4328,14 @@ class DeploymentOperationsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
@@ -4616,11 +4345,11 @@ class DeploymentOperationsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4631,7 +4360,3 @@ class DeploymentOperationsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations"
-    }

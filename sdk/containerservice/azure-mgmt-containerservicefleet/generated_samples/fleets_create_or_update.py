@@ -35,11 +35,15 @@ def main():
     response = client.fleets.begin_create_or_update(
         resource_group_name="rg1",
         fleet_name="fleet1",
-        resource={"location": "East US", "properties": {}, "tags": {"archv2": "", "tier": "production"}},
+        resource={
+            "location": "East US",
+            "properties": {"hubProfile": {"agentProfile": {"vmSize": "Standard_DS1"}, "dnsPrefix": "dnsprefix1"}},
+            "tags": {"archv2": "", "tier": "production"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2023-10-15/examples/Fleets_CreateOrUpdate.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2024-04-01/examples/Fleets_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

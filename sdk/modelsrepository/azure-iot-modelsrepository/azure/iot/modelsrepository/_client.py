@@ -45,25 +45,27 @@ class ModelsRepositoryClient(object):
 
     def __init__(self, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (Any) -> None
-        """
+        """Create a client for working with the Azure IoT Models Repository.
+
+        For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
+
         :keyword str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
         :keyword str dependency_resolution: Dependency resolution mode.
             Possible values:
-                - "disabled": Do not resolve model dependencies
-                - "enabled": Resolve model dependencies from the repository
-                - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded
-                        model DTDL document in the repository. If this is not successful, will fall
-                        back on manually resolving dependencies in the repository
+
+            - "disabled": Do not resolve model dependencies
+            - "enabled": Resolve model dependencies from the repository
+            - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded
+                model DTDL document in the repository. If this is not successful, will fall
+                back on manually resolving dependencies in the repository.
+
             If using the default repository location, the default dependency resolution mode will
             be "tryFromExpanded". If using a custom repository location, the default dependency
             resolution mode will be "enabled".
         :keyword str api_version: The API version for the Models Repository Service you wish to
             access.
-
-        For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
-
         :raises: ValueError if an invalid argument is provided
         """
         repository_location = kwargs.get("repository_location", _DEFAULT_LOCATION)
@@ -114,11 +116,12 @@ class ModelsRepositoryClient(object):
         :keyword str dependency_resolution: Dependency resolution mode override. This value takes
             precedence over the value set on the client.
             Possible values:
-                - "disabled": Do not resolve model dependencies
-                - "enabled": Resolve model dependencies from the repository
-                - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded
-                        model DTDL document in the repository. If this is not successful, will fall
-                        back on manually resolving dependencies in the repository
+    
+            - "disabled": Do not resolve model dependencies
+            - "enabled": Resolve model dependencies from the repository
+            - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded
+                model DTDL document in the repository. If this is not successful, will fall
+                back on manually resolving dependencies in the repository
 
         :raises: ValueError if given an invalid dependency resolution mode
         :raises: ~azure.iot.modelsrepository.ModelError if there is an error parsing the retrieved model(s)

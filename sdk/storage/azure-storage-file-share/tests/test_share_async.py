@@ -9,7 +9,12 @@ from datetime import datetime, timedelta
 
 import pytest
 import requests
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError
+)
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -20,7 +25,9 @@ from azure.storage.fileshare import (
     ShareAccessTier,
     ShareProtocols,
     ShareRootSquash,
-    ShareSasPermissions
+    ShareSasPermissions,
+    ShareServiceClient,
+    StorageErrorCode
 )
 from azure.storage.fileshare.aio import ShareClient, ShareFileClient, ShareServiceClient
 
@@ -91,7 +98,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     async def test_create_share_with_oauth_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         self._setup(storage_account_name, storage_account_key)
         share_name = self.get_resource_name(TEST_SHARE_PREFIX)
@@ -744,6 +751,29 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_list_shares_enable_snapshot_virtual_directory_access(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+        share = await self._create_share(protocols="NFS", headers={'x-ms-enable-snapshot-virtual-directory-access': "False"})
+
+        # Act
+        list_props = []
+        async for s in self.fsc.list_shares():
+            list_props.append(s)
+        share_props = await share.get_share_properties()
+
+        # Assert
+        assert list_props[0].protocols[0] == 'NFS'
+        assert list_props[0].enable_snapshot_virtual_directory_access is False
+
+        assert share_props.protocols[0] == 'NFS'
+        assert share_props.enable_snapshot_virtual_directory_access is False
+        await self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_no_options_for_premium_account(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
@@ -961,6 +991,34 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert shares[0] is not None
         self.assertNamedItemInContainer(shares, share.share_name)
         await self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_shares_account_sas_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share = await self._create_share()
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() - timedelta(hours=1)
+        )
+
+        # Act
+        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        with pytest.raises(ClientAuthenticationError) as e:
+            shares = []
+            async for s in fsc.list_shares():
+                shares.append(s)
+
+        # Assert
+        assert e.value.error_code == StorageErrorCode.AUTHENTICATION_FAILED
+        assert "authenticationerrordetail" in e.value.message
 
 
     @FileSharePreparer()

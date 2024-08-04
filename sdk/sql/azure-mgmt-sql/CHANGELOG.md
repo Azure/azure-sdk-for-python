@@ -1,5 +1,17 @@
 # Release History
 
+## 4.0.0b18 (2024-07-11)
+
+### Bugs Fixed
+
+  - Fix import error when import from azure.mgmt.sql.aio
+
+## 4.0.0b17 (2024-05-20)
+
+### Features Added
+
+  - Model DatabaseOperation has a new parameter operation_phase_details
+
 ## 4.0.0b16 (2024-04-07)
 
 ### Features Added

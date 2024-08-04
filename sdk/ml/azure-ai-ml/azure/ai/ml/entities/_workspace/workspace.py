@@ -81,11 +81,18 @@ class Workspace(Resource):
     :type primary_user_assigned_identity: str
     :param managed_network: workspace's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :param system_datastores_auth_mode: The authentication mode for system datastores.
+    :type system_datastores_auth_mode: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
+    :param allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+    :type allow_roleassignment_on_rg: Optional[bool]
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
+    :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
+        Use the Project class instead now.
+    :type workspace_hub: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -117,8 +124,11 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
+        allow_roleassignment_on_rg: Optional[bool] = None,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
+        workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -155,7 +165,11 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
+        self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
+        if workspace_hub and not hub_id:
+            hub_id = workspace_hub
         self.__hub_id = hub_id
         # Overwrite kind if hub_id is provided. Technically not needed anymore,
         # but kept for backwards if people try to just use a normal workspace like
@@ -320,6 +334,14 @@ class Workspace(Resource):
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
+        # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
+        allow_roleassignment_on_rg = None
+        if hasattr(rest_obj, "allow_roleassignment_on_rg"):
+            allow_roleassignment_on_rg = rest_obj.allow_roleassignment_on_rg
+        system_datastores_auth_mode = None
+        if hasattr(rest_obj, "system_datastores_auth_mode"):
+            system_datastores_auth_mode = rest_obj.system_datastores_auth_mode
+
         # TODO: remove this once it is included in API response
         managed_network = None
         if hasattr(rest_obj, "managed_network"):
@@ -372,8 +394,10 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            system_datastores_auth_mode=system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
+            allow_roleassignment_on_rg=allow_roleassignment_on_rg,
             hub_id=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
             serverless_compute=serverless_compute,
@@ -417,8 +441,10 @@ class Workspace(Resource):
                 if self.managed_network
                 else None
             ),  # pylint: disable=protected-access
+            system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
+            allow_roleassignment_on_rg=self.allow_roleassignment_on_rg,
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )

@@ -64,6 +64,7 @@ class TestWorkspace(AzureRecordedTestCase):
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
             assert created_hub.associated_workspaces == []
+            assert created_hub.application_insights is None
 
             local_project1 = Project(
                 name=f"test_proj_1_{randstr('project_1_name')}",
@@ -73,6 +74,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 # don't set project location, make sure it gets copied via value injection
             )
             created_project1 = client.workspaces.begin_create(workspace=local_project1).result()
+            assert created_project1.application_insights is None
 
             local_project2 = Project(
                 name=f"test_proj_2_{randstr('project_2_name')}",
@@ -81,6 +83,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 display_name="project2 display name",
             )
             created_project2 = client.workspaces.begin_create(workspace=local_project2).result()
+            assert created_project2.application_insights is None
 
             project_ids = [created_project1.id, created_project2.id]
 
@@ -144,6 +147,14 @@ class TestWorkspace(AzureRecordedTestCase):
                 poller.wait()  # Need to wait for projects to be cleaned before deleting parent hub.
 
             if created_hub is not None:
+                if is_live():
+                    from time import sleep
+
+                    sleep(60)
                 poller = client.workspaces.begin_delete(created_hub.name, delete_dependent_resources=True)
                 assert poller
                 assert isinstance(poller, LROPoller)
+            # Double check that we didn't fail out of main code block before creating resources.
+            assert created_hub is not None
+            assert created_project1 is not None
+            assert created_project2 is not None

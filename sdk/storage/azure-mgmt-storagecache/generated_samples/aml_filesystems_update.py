@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagecache import StorageCacheManagementClient
 
 """
@@ -56,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/preview/2023-11-01-preview/examples/amlFilesystems_Update.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/amlFilesystems_Update.json
 if __name__ == "__main__":
     main()

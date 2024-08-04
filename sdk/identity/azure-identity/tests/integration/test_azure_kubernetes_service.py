@@ -16,20 +16,12 @@ class TestAzureKubernetesServiceIntegration:
     )
     def test_azure_kubernetes(self):
 
-        client_id = os.environ.get("IDENTITY_CLIENT_ID")
-        client_secret = os.environ.get("IDENTITY_CLIENT_SECRET")
-        tenant_id = os.environ.get("IDENTITY_TENANT_ID")
         resource_group = os.environ.get("IDENTITY_RESOURCE_GROUP")
         aks_cluster_name = os.environ.get("IDENTITY_AKS_CLUSTER_NAME")
-        subscription_id = os.environ.get("IDENTITY_SUBSCRIPTION_ID")
         pod_name = os.environ.get("IDENTITY_AKS_POD_NAME", "python-test-app")
 
         az_path = run_command(["which", "az"])
         kubectl_path = run_command(["which", "kubectl"])
-        run_command(
-            [az_path, "login", "--service-principal", "-u", client_id, "-p", client_secret, "--tenant", tenant_id]
-        )
-        run_command([az_path, "account", "set", "--subscription", subscription_id])
         run_command(
             [
                 az_path,

@@ -240,7 +240,7 @@ async def test_windows_event_loop():
     credential = AzurePowerShellCredential()
 
     with patch(AzurePowerShellCredential.__module__ + "._SyncCredential") as fallback:
-        fallback.return_value = Mock(get_token=sync_get_token)
+        fallback.return_value = Mock(spec_set=["get_token"], get_token=sync_get_token)
         with patch(AzurePowerShellCredential.__module__ + ".asyncio.get_event_loop"):
             # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
             await credential.get_token("scope")

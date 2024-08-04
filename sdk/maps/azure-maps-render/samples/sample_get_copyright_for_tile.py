@@ -22,7 +22,7 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_copyright_for_tile():
     # [START get_copyright_for_tile]
@@ -34,8 +34,9 @@ def get_copyright_for_tile():
     result = maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result.general_copyrights[0])
+    print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
     # [END get_copyright_for_tile]
+
 
 if __name__ == '__main__':
     get_copyright_for_tile()

@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 snippets = {}
 not_up_to_date = False
 
-target_snippet_sources = ["samples/*.py", "samples/*/*.py"]
+target_snippet_sources = ["samples/*.py", "samples/**/*.py"]
 target_md_files = ["README.md"]
 
 

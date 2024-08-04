@@ -176,6 +176,9 @@ class IssueProcess:
     @property
     def readme_local(self) -> str:
         return str(Path(self.spec_repo, self.readme_link.split('specification/')[1]))
+    
+    def local_file(self, name: str = "readme.md") -> Path:
+        return Path(self.readme_local, name)
 
     def get_local_file_content(self, name: str = "readme.md") -> str:
         with open(Path(self.readme_local, name), 'r', encoding='utf-8') as f:
@@ -342,14 +345,31 @@ class IssueProcess:
     def get_target_date(self):
         body = self.get_issue_body()
         try:
-            self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
+            try:
+                self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
+            except Exception:
+                try:
+                    self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
+                    self.target_date = datetime.strptime(self.target_date, "%m/%d/%Y").strftime('%Y-%m-%d')
+                except Exception:
+                    self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
+                    self.target_date = datetime.strptime(self.target_date, "%d/%m/%Y").strftime('%Y-%m-%d')
+
             self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:
             self.target_date = 'fail to get.'
             self.date_from_target = 1000  # make a ridiculous data to remind failure when error happens
 
+    def update_owner(self) -> None:
+        issue_body = self.get_issue_body()
+        for line in issue_body:
+            if "Requested by" in line:
+                self.owner = line.split('@')[-1].strip(', *\r\n')
+                break
+
     def run(self) -> None:
         # common part(don't change the order)
+        self.update_owner()
         self.auto_assign()  # necessary flow
         self.auto_parse()  # necessary flow
         self.get_target_date()
@@ -408,7 +428,7 @@ class Common:
             idx,
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
-            item.issue_package.issue.user.login,
+            item.owner,
             item.package_name,
             item.assignee,
             ' '.join(item.bot_advice),

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,7 +43,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +67,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,7 +139,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -179,7 +179,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -222,7 +222,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -265,7 +265,7 @@ def build_archive_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -308,7 +308,7 @@ def build_cancel_archive_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -365,7 +365,6 @@ class AmlFilesystemsOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.AmlFilesystem"]:
         """Returns all AML file systems the user has access to under a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AmlFilesystem or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storagecache.models.AmlFilesystem]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -387,15 +386,14 @@ class AmlFilesystemsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -407,13 +405,13 @@ class AmlFilesystemsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AmlFilesystemsListResult", pipeline_response)
@@ -423,11 +421,11 @@ class AmlFilesystemsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -438,8 +436,6 @@ class AmlFilesystemsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/amlFilesystems"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.AmlFilesystem"]:
@@ -448,7 +444,6 @@ class AmlFilesystemsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AmlFilesystem or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storagecache.models.AmlFilesystem]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -470,16 +465,15 @@ class AmlFilesystemsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -491,13 +485,13 @@ class AmlFilesystemsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AmlFilesystemsListResult", pipeline_response)
@@ -507,11 +501,11 @@ class AmlFilesystemsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -522,10 +516,6 @@ class AmlFilesystemsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems"
-    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any
@@ -544,21 +534,20 @@ class AmlFilesystemsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -575,11 +564,7 @@ class AmlFilesystemsOperations:
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -591,14 +576,6 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -625,7 +602,7 @@ class AmlFilesystemsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -636,17 +613,13 @@ class AmlFilesystemsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any) -> _models.AmlFilesystem:
@@ -658,7 +631,6 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AmlFilesystem or the result of cls(response)
         :rtype: ~azure.mgmt.storagecache.models.AmlFilesystem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -677,21 +649,20 @@ class AmlFilesystemsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.AmlFilesystem] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -703,19 +674,15 @@ class AmlFilesystemsOperations:
         deserialized = self._deserialize("AmlFilesystem", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, IO],
+        aml_filesystem: Union[_models.AmlFilesystem, IO[bytes]],
         **kwargs: Any
     ) -> _models.AmlFilesystem:
         error_map = {
@@ -741,7 +708,7 @@ class AmlFilesystemsOperations:
         else:
             _json = self._serialize.body(aml_filesystem, "AmlFilesystem")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
@@ -749,16 +716,15 @@ class AmlFilesystemsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -782,10 +748,6 @@ class AmlFilesystemsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -812,14 +774,6 @@ class AmlFilesystemsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -831,7 +785,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: IO,
+        aml_filesystem: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -847,18 +801,10 @@ class AmlFilesystemsOperations:
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: IO
+        :type aml_filesystem: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -870,7 +816,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, IO],
+        aml_filesystem: Union[_models.AmlFilesystem, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AmlFilesystem]:
         """Create or update an AML file system.
@@ -883,19 +829,8 @@ class AmlFilesystemsOperations:
         :type aml_filesystem_name: str
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
-         Is either a AmlFilesystem type or a IO type. Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a AmlFilesystem type or a IO[bytes] type. Required.
+        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem or IO[bytes]
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -927,7 +862,7 @@ class AmlFilesystemsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("AmlFilesystem", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -939,23 +874,21 @@ class AmlFilesystemsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.AmlFilesystem].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+        return LROPoller[_models.AmlFilesystem](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _update_initial(
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO],
+        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.AmlFilesystem]:
         error_map = {
@@ -981,7 +914,7 @@ class AmlFilesystemsOperations:
         else:
             _json = self._serialize.body(aml_filesystem, "AmlFilesystemUpdate")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
@@ -989,16 +922,15 @@ class AmlFilesystemsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1019,13 +951,9 @@ class AmlFilesystemsOperations:
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -1052,14 +980,6 @@ class AmlFilesystemsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -1071,7 +991,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: IO,
+        aml_filesystem: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1087,18 +1007,10 @@ class AmlFilesystemsOperations:
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: IO
+        :type aml_filesystem: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -1110,7 +1022,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO],
+        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AmlFilesystem]:
         """Update an AML file system instance.
@@ -1123,19 +1035,8 @@ class AmlFilesystemsOperations:
         :type aml_filesystem_name: str
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
-         Is either a AmlFilesystemUpdate type or a IO type. Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a AmlFilesystemUpdate type or a IO[bytes] type. Required.
+        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate or IO[bytes]
         :return: An instance of LROPoller that returns either AmlFilesystem or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -1167,7 +1068,7 @@ class AmlFilesystemsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("AmlFilesystem", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1179,17 +1080,15 @@ class AmlFilesystemsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.AmlFilesystem].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}"
-    }
+        return LROPoller[_models.AmlFilesystem](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     def archive(  # pylint: disable=inconsistent-return-statements
@@ -1214,7 +1113,6 @@ class AmlFilesystemsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1225,7 +1123,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        archive_info: Optional[IO] = None,
+        archive_info: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1239,11 +1137,10 @@ class AmlFilesystemsOperations:
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
         :param archive_info: Information about the archive operation. Default value is None.
-        :type archive_info: IO
+        :type archive_info: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1254,7 +1151,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        archive_info: Optional[Union[_models.AmlFilesystemArchiveInfo, IO]] = None,
+        archive_info: Optional[Union[_models.AmlFilesystemArchiveInfo, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Archive data from the AML file system.
@@ -1266,12 +1163,8 @@ class AmlFilesystemsOperations:
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
         :param archive_info: Information about the archive operation. Is either a
-         AmlFilesystemArchiveInfo type or a IO type. Default value is None.
-        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         AmlFilesystemArchiveInfo type or a IO[bytes] type. Default value is None.
+        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1302,7 +1195,7 @@ class AmlFilesystemsOperations:
             else:
                 _json = None
 
-        request = build_archive_request(
+        _request = build_archive_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
@@ -1310,16 +1203,15 @@ class AmlFilesystemsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.archive.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1329,11 +1221,7 @@ class AmlFilesystemsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    archive.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}/archive"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def cancel_archive(  # pylint: disable=inconsistent-return-statements
@@ -1347,7 +1235,6 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1366,21 +1253,20 @@ class AmlFilesystemsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_cancel_archive_request(
+        _request = build_cancel_archive_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.cancel_archive.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1390,8 +1276,4 @@ class AmlFilesystemsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel_archive.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/amlFilesystems/{amlFilesystemName}/cancelArchive"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

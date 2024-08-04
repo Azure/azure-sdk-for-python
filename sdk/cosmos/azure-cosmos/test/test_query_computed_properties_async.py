@@ -38,7 +38,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def test_computed_properties_query(self):
+    async def test_computed_properties_query_async(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
                                 'query': "SELECT VALUE POWER(c.val, 2) FROM c"},
@@ -65,8 +65,8 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             await created_collection.create_item(body=item)
 
         # Check if computed properties were set
-        container_properties = await created_collection._get_properties()
-        assert computed_properties == container_properties["computedProperties"]
+        container = await created_collection.read()
+        assert computed_properties == container["computedProperties"]
 
         # Test 0: Negative test, test if using non-existent computed property
         queried_items = [q async for q in

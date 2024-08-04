@@ -6,8 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
@@ -217,14 +216,14 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
-    def test_polling_interval(self, documentintelligence_endpoint, documentintelligence_api_key, **kwargs):
+    def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         assert client._config.polling_interval == 1
 
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
+            documentintelligence_endpoint, get_credential(), polling_interval=7
         )
         assert client._config.polling_interval == 7
         poller = client.begin_analyze_document(

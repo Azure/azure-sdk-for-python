@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -36,6 +37,10 @@ from ...operations._top_level_domains_operations import (
 )
 from .._vendor import WebSiteManagementClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -66,7 +71,6 @@ class TopLevelDomainsOperations:
 
         Get all top-level domains supported for registration.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TopLevelDomain or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.TopLevelDomain]
@@ -78,7 +82,7 @@ class TopLevelDomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.TopLevelDomainCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -89,15 +93,14 @@ class TopLevelDomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -108,14 +111,14 @@ class TopLevelDomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("TopLevelDomainCollection", pipeline_response)
@@ -125,11 +128,11 @@ class TopLevelDomainsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -142,8 +145,6 @@ class TopLevelDomainsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains"}
-
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.TopLevelDomain:
         """Get details of a top-level domain.
@@ -152,12 +153,11 @@ class TopLevelDomainsOperations:
 
         :param name: Name of the top-level domain. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TopLevelDomain or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TopLevelDomain
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -171,20 +171,19 @@ class TopLevelDomainsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.TopLevelDomain] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -197,13 +196,9 @@ class TopLevelDomainsOperations:
         deserialized = self._deserialize("TopLevelDomain", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def list_agreements(
@@ -225,7 +220,6 @@ class TopLevelDomainsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TldLegalAgreement or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.TldLegalAgreement]
@@ -234,7 +228,7 @@ class TopLevelDomainsOperations:
 
     @overload
     def list_agreements(
-        self, name: str, agreement_option: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, agreement_option: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncIterable["_models.TldLegalAgreement"]:
         """Gets all legal agreements that user needs to accept before purchasing a domain.
 
@@ -243,11 +237,10 @@ class TopLevelDomainsOperations:
         :param name: Name of the top-level domain. Required.
         :type name: str
         :param agreement_option: Domain agreement options. Required.
-        :type agreement_option: IO
+        :type agreement_option: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TldLegalAgreement or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.TldLegalAgreement]
@@ -256,7 +249,7 @@ class TopLevelDomainsOperations:
 
     @distributed_trace
     def list_agreements(
-        self, name: str, agreement_option: Union[_models.TopLevelDomainAgreementOption, IO], **kwargs: Any
+        self, name: str, agreement_option: Union[_models.TopLevelDomainAgreementOption, IO[bytes]], **kwargs: Any
     ) -> AsyncIterable["_models.TldLegalAgreement"]:
         """Gets all legal agreements that user needs to accept before purchasing a domain.
 
@@ -265,12 +258,9 @@ class TopLevelDomainsOperations:
         :param name: Name of the top-level domain. Required.
         :type name: str
         :param agreement_option: Domain agreement options. Is either a TopLevelDomainAgreementOption
-         type or a IO type. Required.
-        :type agreement_option: ~azure.mgmt.web.v2019_08_01.models.TopLevelDomainAgreementOption or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type agreement_option: ~azure.mgmt.web.v2019_08_01.models.TopLevelDomainAgreementOption or
+         IO[bytes]
         :return: An iterator like instance of either TldLegalAgreement or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.TldLegalAgreement]
@@ -283,7 +273,7 @@ class TopLevelDomainsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TldLegalAgreementCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -301,19 +291,18 @@ class TopLevelDomainsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_agreements_request(
+                _request = build_list_agreements_request(
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     content_type=content_type,
                     json=_json,
                     content=_content,
-                    template_url=self.list_agreements.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -324,14 +313,14 @@ class TopLevelDomainsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("TldLegalAgreementCollection", pipeline_response)
@@ -341,11 +330,11 @@ class TopLevelDomainsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -357,7 +346,3 @@ class TopLevelDomainsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_agreements.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}/listAgreements"
-    }

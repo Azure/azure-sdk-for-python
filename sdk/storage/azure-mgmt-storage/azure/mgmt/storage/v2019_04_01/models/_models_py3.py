@@ -8,15 +8,9 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -26,7 +20,7 @@ if TYPE_CHECKING:
 class AccountSasParameters(_serialization.Model):
     """The parameters to list SAS credentials of a storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar services: The signed services accessible with the account SAS. Possible values include:
      Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t", and "f".
@@ -128,7 +122,7 @@ class AccountSasParameters(_serialization.Model):
 class ActiveDirectoryProperties(_serialization.Model):
     """Settings properties for Active Directory (AD).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain_name: Specifies the primary domain that the AD DNS server is authoritative for.
      Required.
@@ -205,7 +199,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -240,7 +234,7 @@ class AzureEntityResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -274,7 +268,7 @@ class AzureEntityResource(Resource):
 class AzureFilesIdentityBasedAuthentication(_serialization.Model):
     """Settings for Azure Files identity based authentication.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar directory_service_options: Indicates the directory service used. Required. Known values
      are: "None", "AADDS", and "AD".
@@ -321,7 +315,7 @@ class BlobContainer(AzureEntityResource):  # pylint: disable=too-many-instance-a
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -450,7 +444,7 @@ class BlobServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -637,7 +631,7 @@ class CloudErrorBody(_serialization.Model):
 class CorsRule(_serialization.Model):
     """Specifies a CORS rule for the Blob service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allowed_origins: Required if CorsRule element is present. A list of origin domains that
      will be allowed via CORS, or "*" to allow all domains. Required.
@@ -734,7 +728,7 @@ class CorsRules(_serialization.Model):
 class CustomDomain(_serialization.Model):
     """The custom domain assigned to this storage account. This can be set via Update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets or sets the custom domain name assigned to the storage account. Name is the
      CNAME source. Required.
@@ -770,7 +764,7 @@ class CustomDomain(_serialization.Model):
 class DateAfterCreation(_serialization.Model):
     """Object to define the number of days after creation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar days_after_creation_greater_than: Value indicating the age in days after creation.
      Required.
@@ -798,7 +792,7 @@ class DateAfterCreation(_serialization.Model):
 class DateAfterModification(_serialization.Model):
     """Object to define the number of days after last modification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar days_after_modification_greater_than: Value indicating the age in days after last
      modification. Required.
@@ -884,7 +878,7 @@ class Dimension(_serialization.Model):
 class Encryption(_serialization.Model):
     """The encryption settings on the storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar services: List of services which support encryption.
     :vartype services: ~azure.mgmt.storage.v2019_04_01.models.EncryptionServices
@@ -1089,7 +1083,7 @@ class FileServiceProperties(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1132,7 +1126,7 @@ class FileShare(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1191,7 +1185,7 @@ class FileShareItem(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1321,7 +1315,7 @@ class Identity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
@@ -1358,10 +1352,10 @@ class ImmutabilityPolicy(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1459,7 +1453,7 @@ class ImmutabilityPolicyProperties(_serialization.Model):
 class IPRule(_serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
      allowed. Required.
@@ -1532,10 +1526,10 @@ class KeyVaultProperties(_serialization.Model):
 class LeaseContainerRequest(_serialization.Model):
     """Lease Container request schema.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", and "Break".
     :vartype action: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseContainerRequestAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
@@ -1574,7 +1568,7 @@ class LeaseContainerRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
         :paramtype action: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseContainerRequestAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
@@ -1631,7 +1625,7 @@ class LegalHold(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar has_legal_hold: The hasLegalHold public property is set to true by SRP if there are at
      least one existing tag. The hasLegalHold public property is set to false by SRP if all existing
@@ -1726,7 +1720,7 @@ class ListContainerItem(AzureEntityResource):  # pylint: disable=too-many-instan
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1885,7 +1879,7 @@ class ManagementPolicy(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2004,7 +1998,7 @@ class ManagementPolicyDefinition(_serialization.Model):
     """An object that defines the Lifecycle rule. Each definition is made up with a filters set and an
     actions set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar actions: An object that defines the action set. Required.
     :vartype actions: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyAction
@@ -2043,7 +2037,7 @@ class ManagementPolicyFilter(_serialization.Model):
     """Filters limit rule actions to a subset of blobs within the storage account. If multiple filters
     are defined, a logical AND is performed on all filters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar prefix_match: An array of strings for prefixes to be match.
     :vartype prefix_match: list[str]
@@ -2075,7 +2069,7 @@ class ManagementPolicyFilter(_serialization.Model):
 class ManagementPolicyRule(_serialization.Model):
     """An object that wraps the Lifecycle rule. Each rule is uniquely defined by name.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Rule is enabled if set to true.
     :vartype enabled: bool
@@ -2132,7 +2126,7 @@ class ManagementPolicySchema(_serialization.Model):
     """The Storage Account ManagementPolicies Rules. See more details in:
     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rules: The Storage Account ManagementPolicies Rules. See more details in:
      https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -2263,7 +2257,7 @@ class MetricSpecification(_serialization.Model):
 class NetworkRuleSet(_serialization.Model):
     """Network rule set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible
      values are any combination of Logging|Metrics|AzureServices (For example, "Logging, Metrics"),
@@ -2479,7 +2473,7 @@ class Restriction(_serialization.Model):
 class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters to list service SAS credentials of a specific resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar canonicalized_resource: The canonical path to the signed resource. Required.
     :vartype canonicalized_resource: str
@@ -2670,7 +2664,7 @@ class Sku(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets or sets the SKU name. Required for account creation; optional for update. Note
      that in older versions, SKU name was called accountType. Required. Known values are:
@@ -2778,10 +2772,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2826,10 +2820,10 @@ class StorageAccount(TrackedResource):  # pylint: disable=too-many-instance-attr
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3054,12 +3048,12 @@ class StorageAccount(TrackedResource):  # pylint: disable=too-many-instance-attr
         self.allow_shared_key_access = allow_shared_key_access
 
 
-class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
+class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
     """The parameters used to check the availability of the storage account name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The storage account name. Required.
     :vartype name: str
@@ -3092,7 +3086,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 class StorageAccountCreateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters used when creating a storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sku: Required. Gets or sets the SKU name. Required.
     :vartype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
@@ -3364,7 +3358,7 @@ class StorageAccountListResult(_serialization.Model):
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
     """The parameters used to regenerate the storage account key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: The name of storage keys that want to be regenerated, possible values are key1,
      key2, kerb1, kerb2. Required.
@@ -3757,10 +3751,10 @@ class UsageName(_serialization.Model):
 class VirtualNetworkRule(_serialization.Model):
     """Virtual Network rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
-     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
      Required.
     :vartype virtual_network_resource_id: str
     :ivar action: The action of virtual network rule. Default value is "Allow".
@@ -3790,7 +3784,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
-         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
          Required.
         :paramtype virtual_network_resource_id: str
         :keyword action: The action of virtual network rule. Default value is "Allow".

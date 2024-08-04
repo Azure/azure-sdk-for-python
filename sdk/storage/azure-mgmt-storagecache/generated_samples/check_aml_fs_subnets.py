@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagecache import StorageCacheManagementClient
 
 """
@@ -32,6 +33,6 @@ def main():
     client.check_aml_fs_subnets()
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/preview/2023-11-01-preview/examples/checkAmlFSSubnets.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/checkAmlFSSubnets.json
 if __name__ == "__main__":
     main()

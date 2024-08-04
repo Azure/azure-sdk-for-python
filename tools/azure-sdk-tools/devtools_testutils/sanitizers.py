@@ -458,6 +458,9 @@ def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], 
             data.append(sanitizer_definition)
 
     headers_to_send = {"Content-Type": "application/json"}
+    x_recording_id = get_recording_id()
+    if x_recording_id:
+        headers_to_send["x-recording-id"] = x_recording_id
     if headers is not None:
         for key in headers:
             if headers[key] is not None:
@@ -467,6 +470,38 @@ def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], 
     http_client.request(
         method="POST",
         url="{}/Admin/AddSanitizers".format(PROXY_URL),
+        headers=headers_to_send,
+        body=json.dumps(data).encode("utf-8"),
+    )
+
+
+def remove_batch_sanitizers(sanitizers: List[str], headers: Optional[Dict] = None) -> None:
+    """Removes a batch of sanitizers.
+
+    Sanitizers are denoted by their ID, which is a string. This method will remove all sanitizers with the provided
+    IDs.
+
+    :param sanitizers: A list of sanitizer IDs to remove.
+    :type sanitizers: list[str]
+    :param headers: Optional headers to include in the request.
+    :type headers: dict
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    data = {"Sanitizers" : sanitizers}
+
+    headers_to_send = {"Content-Type": "application/json"}
+    if headers is not None:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
+
+    http_client = get_http_client()
+    http_client.request(
+        method="POST",
+        url="{}/Admin/RemoveSanitizers".format(PROXY_URL),
         headers=headers_to_send,
         body=json.dumps(data).encode("utf-8"),
     )
@@ -520,7 +555,7 @@ def add_header_transform(**kwargs) -> None:
 
 def add_storage_request_id_transform() -> None:
     """Registers a transform that ensures a response's "x-ms-client-request-id" header matches the request's.
-    
+
     This method should be called during test case execution, rather than at a session, module, or class level.
     """
 
@@ -542,10 +577,10 @@ def set_function_recording_options(**kwargs) -> None:
     This must be called during test case execution, rather than at a session, module, or class level. To set recording
     options for all tests, use `set_session_recording_options` instead.
 
-    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+    :keyword bool handle_redirects: The test proxy performs transparent follow directs by default. That means
         that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
-        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
-        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+        follow. Setting `handle_redirects` to False will instead make the test proxy return that redirect response to
+        the client and allow it to handle the redirect.
     :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
     :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
     :type certificates: Iterable[PemCertificate]
@@ -564,10 +599,10 @@ def set_session_recording_options(**kwargs) -> None:
     This will set the specified recording options for an entire test session. To set recording options for a single test
     -- which is recommended -- use `set_function_recording_options` instead.
 
-    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+    :keyword bool handle_redirects: The test proxy performs transparent follow directs by default. That means
         that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
-        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
-        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+        follow. Setting `handle_redirects` to False will instead make the test proxy return that redirect response to
+        the client and allow it to handle the redirect.
     :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
     :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
     :type certificates: Iterable[PemCertificate]
@@ -703,10 +738,11 @@ def _send_recording_options_request(parameters: Dict, headers: Optional[Dict] = 
     if is_live_and_not_recording():
         return
 
-    headers_to_send = {}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    headers_to_send = {"Content-Type": "application/json"}
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(
@@ -752,9 +788,10 @@ def _send_sanitizer_request(sanitizer: str, parameters: Dict, headers: Optional[
         return
 
     headers_to_send = {"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(
@@ -778,9 +815,10 @@ def _send_transform_request(transform: str, parameters: Dict, headers: Optional[
         return
 
     headers_to_send = {"x-abstraction-identifier": transform, "Content-Type": "application/json"}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(

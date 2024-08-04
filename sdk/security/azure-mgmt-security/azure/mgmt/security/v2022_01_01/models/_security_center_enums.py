@@ -61,54 +61,54 @@ class Intent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unknown"""
     PRE_ATTACK = "PreAttack"
     """PreAttack could be either an attempt to access a certain resource regardless of a malicious
-    #: intent, or a failed attempt to gain access to a target system to gather information prior to
-    #: exploitation. This step is usually detected as an attempt, originating from outside the
-    #: network, to scan the target system and find a way in.  Further details on the PreAttack stage
-    #: can be read in `MITRE Pre-Att&ck matrix <https://attack.mitre.org/matrices/pre/>`_."""
+    intent, or a failed attempt to gain access to a target system to gather information prior to
+    exploitation. This step is usually detected as an attempt, originating from outside the
+    network, to scan the target system and find a way in.  Further details on the PreAttack stage
+    can be read in `MITRE Pre-Att&ck matrix <https://attack.mitre.org/matrices/pre/>`_."""
     INITIAL_ACCESS = "InitialAccess"
     """InitialAccess is the stage where an attacker manages to get foothold on the attacked resource."""
     PERSISTENCE = "Persistence"
     """Persistence is any access, action, or configuration change to a system that gives a threat
-    #: actor a persistent presence on that system."""
+    actor a persistent presence on that system."""
     PRIVILEGE_ESCALATION = "PrivilegeEscalation"
     """Privilege escalation is the result of actions that allow an adversary to obtain a higher level
-    #: of permissions on a system or network."""
+    of permissions on a system or network."""
     DEFENSE_EVASION = "DefenseEvasion"
     """Defense evasion consists of techniques an adversary may use to evade detection or avoid other
-    #: defenses."""
+    defenses."""
     CREDENTIAL_ACCESS = "CredentialAccess"
     """Credential access represents techniques resulting in access to or control over system, domain,
-    #: or service credentials that are used within an enterprise environment."""
+    or service credentials that are used within an enterprise environment."""
     DISCOVERY = "Discovery"
     """Discovery consists of techniques that allow the adversary to gain knowledge about the system
-    #: and internal network."""
+    and internal network."""
     LATERAL_MOVEMENT = "LateralMovement"
     """Lateral movement consists of techniques that enable an adversary to access and control remote
-    #: systems on a network and could, but does not necessarily, include execution of tools on remote
-    #: systems."""
+    systems on a network and could, but does not necessarily, include execution of tools on remote
+    systems."""
     EXECUTION = "Execution"
     """The execution tactic represents techniques that result in execution of adversary-controlled
-    #: code on a local or remote system."""
+    code on a local or remote system."""
     COLLECTION = "Collection"
     """Collection consists of techniques used to identify and gather information, such as sensitive
-    #: files, from a target network prior to exfiltration."""
+    files, from a target network prior to exfiltration."""
     EXFILTRATION = "Exfiltration"
     """Exfiltration refers to techniques and attributes that result or aid in the adversary removing
-    #: files and information from a target network."""
+    files and information from a target network."""
     COMMAND_AND_CONTROL = "CommandAndControl"
     """The command and control tactic represents how adversaries communicate with systems under their
-    #: control within a target network."""
+    control within a target network."""
     IMPACT = "Impact"
     """Impact events primarily try to directly reduce the availability or integrity of a system,
-    #: service, or network; including manipulation of data to impact a business or operational
-    #: process."""
+    service, or network; including manipulation of data to impact a business or operational
+    process."""
     PROBING = "Probing"
     """Probing could be either an attempt to access a certain resource regardless of a malicious
-    #: intent, or a failed attempt to gain access to a target system to gather information prior to
-    #: exploitation."""
+    intent, or a failed attempt to gain access to a target system to gather information prior to
+    exploitation."""
     EXPLOITATION = "Exploitation"
     """Exploitation is the stage where an attacker manages to get a foothold on the attacked resource.
-    #: This stage is relevant for compute hosts and resources such as user accounts, certificates etc."""
+    This stage is relevant for compute hosts and resources such as user accounts, certificates etc."""
 
 
 class KindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,7 +58,7 @@ class KqlScriptOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     async def _create_or_update_initial(
-        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO], **kwargs: Any
+        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO[bytes]], **kwargs: Any
     ) -> Optional[_models.KqlScriptResource]:
         error_map = {
             401: ClientAuthenticationError,
@@ -137,14 +137,6 @@ class KqlScriptOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -153,25 +145,17 @@ class KqlScriptOperations:
 
     @overload
     async def begin_create_or_update(
-        self, kql_script_name: str, kql_script: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, kql_script_name: str, kql_script: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.KqlScriptResource]:
         """Creates or updates a KQL Script.
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
         :param kql_script: KQL script. Required.
-        :type kql_script: IO
+        :type kql_script: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -180,25 +164,15 @@ class KqlScriptOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO], **kwargs: Any
+        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.KqlScriptResource]:
         """Creates or updates a KQL Script.
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
-        :param kql_script: KQL script. Is either a KqlScriptResource type or a IO type. Required.
-        :type kql_script: ~azure.synapse.artifacts.models.KqlScriptResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param kql_script: KQL script. Is either a KqlScriptResource type or a IO[bytes] type.
+         Required.
+        :type kql_script: ~azure.synapse.artifacts.models.KqlScriptResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -246,13 +220,15 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.KqlScriptResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.KqlScriptResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_by_name(self, kql_script_name: str, **kwargs: Any) -> _models.KqlScriptResource:
@@ -260,7 +236,6 @@ class KqlScriptOperations:
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KqlScriptResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.KqlScriptResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -360,14 +335,6 @@ class KqlScriptOperations:
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -409,13 +376,13 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _rename_initial(  # pylint: disable=inconsistent-return-statements
         self, kql_script_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -477,14 +444,6 @@ class KqlScriptOperations:
         :type kql_script_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -529,10 +488,10 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

@@ -67,6 +67,13 @@ def in_public() -> int:
 
     return 0
 
+def in_analyze_weekly() -> int:
+    # Returns 4 if the build originates from the tests-weekly analyze job
+    # 0 otherwise
+    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test":
+        return 4
+    return 0
+
 
 DEV_BUILD_IDENTIFIER = os.getenv("SDK_DEV_BUILD_IDENTIFIER", "a")
 DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "20220101.1")))

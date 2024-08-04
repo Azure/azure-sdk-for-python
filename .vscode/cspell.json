@@ -100,6 +100,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_model_base.py",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_serialization.py",
     "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
@@ -198,6 +200,7 @@
     "centraluseuap",
     "creds",
     "ctoring",
+    "ctxt",
     "ctypes",
     "curr",
     "dateutil",
@@ -207,6 +210,7 @@
     "dependened",
     "deque",
     "deserialization",
+    "deserializers",
     "disablecov",
     "distilbert",
     "distilroberta",
@@ -240,6 +244,7 @@
     "guids",
     "hanaonazure",
     "hdinsight",
+    "healthdataaiservices",
     "heapq",
     "hexlify",
     "himds",
@@ -295,6 +300,8 @@
     "mibps",
     "mgmt",
     "mhsm",
+    "mros",
+    "Nify",
     "mipsle",
     "mktime",
     "mlindex",
@@ -396,6 +403,7 @@
     "unpad",
     "unpadder",
     "unpartial",
+    "uniquifier",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -434,6 +442,7 @@
     "BUILDID",
     "documentdb",
     "chdir",
+    "radiculopathy",
     "reqs",
     "rgpy",
     "swaggertosdk",
@@ -447,6 +456,7 @@
     "yarl",
     "SDDL",
     "dacl",
+    "wday",
     "whls",
     "aiter",
     "solft",
@@ -942,7 +952,9 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte"
+        "Thawte",
+        "myalias",
+        "mydomain"
       ]
     },
     {
@@ -998,6 +1010,16 @@
         "semconv",
         "updown",
         "uvicorn"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/**/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday",
+        "Nify"
       ]
     },
     {
@@ -1277,6 +1299,16 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-inference/**",
+      "words": [
+        "ubinary",
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-generative/**",
       "words": [
         "tqdm",
@@ -1451,7 +1483,8 @@
         "mycontainer",
         "iscontinuationexpected",
         "aalapatirvbd",
-        "unconfigure"
+        "unconfigure",
+        "undoc"
       ]
     },
     {
@@ -1674,7 +1707,14 @@
         "ctxt",
         "unflattened",
         "deseralize",
-        "wday"
+        "wday",
+        "mros"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/models/*.py",
+      "words": [
+        "vcpus"
       ]
     },
     {
@@ -1762,6 +1802,15 @@
       ]
     },
     {
+      "filename": "sdk/translation/azure-ai-translation-document/azure/ai/translation/document/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
       "words": [
         "ctxt",
@@ -1769,7 +1818,46 @@
         "Nify",
         "loinc",
         "wday",
-        "SNOMED"
+        "SNOMED",
+        "lobulated",
+        "pericholecystic",
+        "craniocaudally",
+        "angiomyolipomas",
+        "Omnipaque"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/**",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday",
+        "faceid",
+        "facelistid",
+        "largefacelistid",
+        "persongroupid",
+        "largepersongroupid",
+        "dynamicpersongroupid",
+        "personid",
+        "maxnumofcandidatesreturned"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/tests/**",
+      "words": [
+        "dcid"
+      ]
+    },
+    {
+      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
+      "words": [
+        "deid",
+        "deidservices",
+        "deidentification",
+        "healthdataaiservices",
+        "deidentify",
+        "deidentified"
       ]
     }
   ],

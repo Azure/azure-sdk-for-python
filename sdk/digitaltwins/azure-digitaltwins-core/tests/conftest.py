@@ -9,7 +9,8 @@ from devtools_testutils.sanitizers import (
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
-    add_remove_header_sanitizer
+    add_remove_header_sanitizer,
+    remove_batch_sanitizers,
 )
 
 # Environment variable keys
@@ -38,6 +39,11 @@ def add_sanitizers(test_proxy, environment_variables):
     add_body_key_sanitizer(json_path="AccessToken", value="fake.eyJleHAiOjIxNDc0ODM2NDd9.fake")
     add_oauth_response_sanitizer()
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
 
 
 @pytest.fixture(scope="session")

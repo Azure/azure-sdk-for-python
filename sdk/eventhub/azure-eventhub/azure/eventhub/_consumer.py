@@ -159,7 +159,7 @@ class EventHubConsumer(
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
-            link_properties=self._link_properties,
+            link_properties=self._link_properties, # type: ignore
             timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
@@ -200,10 +200,10 @@ class EventHubConsumer(
         if not self.running:
             if self._handler:
                 self._handler.close()
-            auth = self._client._create_auth()
+            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)

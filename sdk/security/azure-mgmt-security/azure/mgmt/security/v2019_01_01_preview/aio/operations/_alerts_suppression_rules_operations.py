@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -36,6 +37,10 @@ from ...operations._alerts_suppression_rules_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -66,7 +71,6 @@ class AlertsSuppressionRulesOperations:
 
         :param alert_type: Type of the alert to get rules for. Default value is None.
         :type alert_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AlertsSuppressionRule or the result of
          cls(response)
         :rtype:
@@ -81,7 +85,7 @@ class AlertsSuppressionRulesOperations:
         )
         cls: ClsType[_models.AlertsSuppressionRulesList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -92,16 +96,15 @@ class AlertsSuppressionRulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     alert_type=alert_type,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -112,14 +115,14 @@ class AlertsSuppressionRulesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertsSuppressionRulesList", pipeline_response)
@@ -129,11 +132,11 @@ class AlertsSuppressionRulesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -145,20 +148,17 @@ class AlertsSuppressionRulesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules"}
-
     @distributed_trace_async
     async def get(self, alerts_suppression_rule_name: str, **kwargs: Any) -> _models.AlertsSuppressionRule:
         """Get dismiss rule, with name: {alertsSuppressionRuleName}, for the given subscription.
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AlertsSuppressionRule or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -174,20 +174,19 @@ class AlertsSuppressionRulesOperations:
         )
         cls: ClsType[_models.AlertsSuppressionRule] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             alerts_suppression_rule_name=alerts_suppression_rule_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -199,13 +198,9 @@ class AlertsSuppressionRulesOperations:
         deserialized = self._deserialize("AlertsSuppressionRule", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -226,7 +221,6 @@ class AlertsSuppressionRulesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AlertsSuppressionRule or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,7 +230,7 @@ class AlertsSuppressionRulesOperations:
     async def update(
         self,
         alerts_suppression_rule_name: str,
-        alerts_suppression_rule: IO,
+        alerts_suppression_rule: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -246,11 +240,10 @@ class AlertsSuppressionRulesOperations:
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
         :param alerts_suppression_rule: Suppression rule object. Required.
-        :type alerts_suppression_rule: IO
+        :type alerts_suppression_rule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AlertsSuppressionRule or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -260,7 +253,7 @@ class AlertsSuppressionRulesOperations:
     async def update(
         self,
         alerts_suppression_rule_name: str,
-        alerts_suppression_rule: Union[_models.AlertsSuppressionRule, IO],
+        alerts_suppression_rule: Union[_models.AlertsSuppressionRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.AlertsSuppressionRule:
         """Update existing rule or create new rule if it doesn't exist.
@@ -268,18 +261,14 @@ class AlertsSuppressionRulesOperations:
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
         :param alerts_suppression_rule: Suppression rule object. Is either a AlertsSuppressionRule type
-         or a IO type. Required.
+         or a IO[bytes] type. Required.
         :type alerts_suppression_rule:
-         ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule or IO[bytes]
         :return: AlertsSuppressionRule or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -304,23 +293,22 @@ class AlertsSuppressionRulesOperations:
         else:
             _json = self._serialize.body(alerts_suppression_rule, "AlertsSuppressionRule")
 
-        request = build_update_request(
+        _request = build_update_request(
             alerts_suppression_rule_name=alerts_suppression_rule_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -332,13 +320,9 @@ class AlertsSuppressionRulesOperations:
         deserialized = self._deserialize("AlertsSuppressionRule", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -348,12 +332,11 @@ class AlertsSuppressionRulesOperations:
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -369,20 +352,19 @@ class AlertsSuppressionRulesOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             alerts_suppression_rule_name=alerts_suppression_rule_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -392,8 +374,4 @@ class AlertsSuppressionRulesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

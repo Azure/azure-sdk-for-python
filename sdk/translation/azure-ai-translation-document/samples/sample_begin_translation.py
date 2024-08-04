@@ -63,5 +63,5 @@ def sample_translation():
     # [END begin_translation]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_translation()

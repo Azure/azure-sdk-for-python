@@ -26,22 +26,27 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
         pip install dist\azure_ai_vision_imageanalysis-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
-
 ### Set environment variables
 
 See [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/README.md#set-environment-variables).
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
-```
+
+```cmd
 set VISION_TENANT_ID=not-used
 set VISION_CLIENT_ID=not-used
 set VISION_CLIENT_SECRET=not-used
 ```
 
+### Log in to Azure
+
+Install the Azure CLI and run `az login`, so tests that use Entra ID authentication can pass.
+
 ### Configure test proxy
 
 Configure the test proxy to run live service tests without recordings:
-```
+
+```cmd
 set AZURE_TEST_RUN_LIVE=true
 set AZURE_SKIP_LIVE_RECORDING=true
 ```
@@ -49,7 +54,8 @@ set AZURE_SKIP_LIVE_RECORDING=true
 ### Run tests
 
 To run all tests, type:
-```
+
+```cmd
 pytest
 ```
 

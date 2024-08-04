@@ -30,7 +30,7 @@ class DistributeVersioner(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DistributeVersionerLatest, DistributeVersionerSource
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scheme: Version numbering scheme to be used. Required.
     :vartype scheme: str
@@ -55,7 +55,7 @@ class DistributeVersioner(_serialization.Model):
 class DistributeVersionerLatest(DistributeVersioner):
     """Generates version number that will be latest based on existing version numbers.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scheme: Version numbering scheme to be used. Required.
     :vartype scheme: str
@@ -88,7 +88,7 @@ class DistributeVersionerLatest(DistributeVersioner):
 class DistributeVersionerSource(DistributeVersioner):
     """Generates version number based on version number of source image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scheme: Version numbering scheme to be used. Required.
     :vartype scheme: str
@@ -206,7 +206,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -247,10 +247,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -300,10 +300,10 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -360,6 +360,12 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
      'stagingResourceGroup' only if the value specified in the 'stagingResourceGroup' field is
      empty.
     :vartype exact_staging_resource_group: str
+    :ivar auto_run: Indicates whether or not to automatically run the image template build on
+     template creation or update.
+    :vartype auto_run: ~azure.mgmt.imagebuilder.models.ImageTemplateAutoRun
+    :ivar managed_resource_tags: Tags that will be applied to the resource group and/or resources
+     created by the service.
+    :vartype managed_resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -397,6 +403,8 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         "vm_profile": {"key": "properties.vmProfile", "type": "ImageTemplateVmProfile"},
         "staging_resource_group": {"key": "properties.stagingResourceGroup", "type": "str"},
         "exact_staging_resource_group": {"key": "properties.exactStagingResourceGroup", "type": "str"},
+        "auto_run": {"key": "properties.autoRun", "type": "ImageTemplateAutoRun"},
+        "managed_resource_tags": {"key": "properties.managedResourceTags", "type": "{str}"},
     }
 
     def __init__(
@@ -414,6 +422,8 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         build_timeout_in_minutes: int = 0,
         vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
         staging_resource_group: Optional[str] = None,
+        auto_run: Optional["_models.ImageTemplateAutoRun"] = None,
+        managed_resource_tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -452,6 +462,12 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
          exist, but if the resource group specified exists the resources created in the resource group
          will be deleted during template deletion and the resource group itself will remain.
         :paramtype staging_resource_group: str
+        :keyword auto_run: Indicates whether or not to automatically run the image template build on
+         template creation or update.
+        :paramtype auto_run: ~azure.mgmt.imagebuilder.models.ImageTemplateAutoRun
+        :keyword managed_resource_tags: Tags that will be applied to the resource group and/or
+         resources created by the service.
+        :paramtype managed_resource_tags: dict[str, str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -468,6 +484,30 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.vm_profile = vm_profile
         self.staging_resource_group = staging_resource_group
         self.exact_staging_resource_group = None
+        self.auto_run = auto_run
+        self.managed_resource_tags = managed_resource_tags
+
+
+class ImageTemplateAutoRun(_serialization.Model):
+    """Indicates if the image template needs to be built on create/update.
+
+    :ivar state: Enabling this field will trigger an automatic build on image template creation or
+     update. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.imagebuilder.models.AutoRunState
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(self, *, state: Optional[Union[str, "_models.AutoRunState"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword state: Enabling this field will trigger an automatic build on image template creation
+         or update. Known values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.imagebuilder.models.AutoRunState
+        """
+        super().__init__(**kwargs)
+        self.state = state
 
 
 class ImageTemplateCustomizer(_serialization.Model):
@@ -477,7 +517,7 @@ class ImageTemplateCustomizer(_serialization.Model):
     ImageTemplateFileCustomizer, ImageTemplatePowerShellCustomizer, ImageTemplateShellCustomizer,
     ImageTemplateRestartCustomizer, ImageTemplateWindowsUpdateCustomizer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -522,7 +562,7 @@ class ImageTemplateDistributor(_serialization.Model):
     ImageTemplateManagedImageDistributor, ImageTemplateSharedImageDistributor,
     ImageTemplateVhdDistributor
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of distribution. Required.
     :vartype type: str
@@ -569,7 +609,7 @@ class ImageTemplateDistributor(_serialization.Model):
 class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
     """Uploads files to VMs (Linux, Windows). Corresponds to Packer file provisioner.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -632,7 +672,7 @@ class ImageTemplateInVMValidator(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ImageTemplateFileValidator, ImageTemplatePowerShellValidator, ImageTemplateShellValidator
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
      shell validation. Required.
@@ -672,7 +712,7 @@ class ImageTemplateFileValidator(ImageTemplateInVMValidator):
     """Uploads files required for validation to VMs (Linux, Windows). Corresponds to Packer file
     provisioner.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
      shell validation. Required.
@@ -737,7 +777,7 @@ class ImageTemplateIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
@@ -761,7 +801,7 @@ class ImageTemplateIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
@@ -859,7 +899,7 @@ class ImageTemplateListResult(_serialization.Model):
 class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
     """Distribute as a Managed Disk Image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of distribution. Required.
     :vartype type: str
@@ -923,7 +963,7 @@ class ImageTemplateSource(_serialization.Model):
     ImageTemplateManagedImageSource, ImageTemplatePlatformImageSource,
     ImageTemplateSharedImageVersionSource
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the type of source image you want to start with. Required.
     :vartype type: str
@@ -955,7 +995,7 @@ class ImageTemplateManagedImageSource(ImageTemplateSource):
     """Describes an image source that is a managed image in customer subscription. This image must
     reside in the same subscription and region as the Image Builder template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the type of source image you want to start with. Required.
     :vartype type: str
@@ -989,7 +1029,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the type of source image you want to start with. Required.
     :vartype type: str
@@ -1072,7 +1112,7 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
     """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer powershell
     provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -1158,7 +1198,7 @@ class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
     """Runs the specified PowerShell script during the validation phase (Windows). Corresponds to
     Packer powershell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
      shell validation. Required.
@@ -1385,7 +1425,7 @@ class ImageTemplateRestartCustomizer(ImageTemplateCustomizer):
     """Reboots a VM and waits for it to come back online (Windows). Corresponds to Packer
     windows-restart provisioner.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -1445,7 +1485,7 @@ class ImageTemplateRestartCustomizer(ImageTemplateCustomizer):
 class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     """Distribute via Azure Compute Gallery.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of distribution. Required.
     :vartype type: str
@@ -1552,7 +1592,7 @@ class ImageTemplateSharedImageVersionSource(ImageTemplateSource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the type of source image you want to start with. Required.
     :vartype type: str
@@ -1593,7 +1633,7 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     """Runs a shell script during the customization phase (Linux). Corresponds to Packer shell
     provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -1652,7 +1692,7 @@ class ImageTemplateShellValidator(ImageTemplateInVMValidator):
     """Runs the specified shell script during the validation phase (Linux). Corresponds to Packer
     shell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
      shell validation. Required.
@@ -1751,25 +1791,37 @@ class ImageTemplateUpdateParametersProperties(_serialization.Model):
 
     :ivar distribute: The distribution targets where the image output needs to go to.
     :vartype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+    :ivar vm_profile: Describes how virtual machine is set up to build images.
+    :vartype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
     """
 
     _attribute_map = {
         "distribute": {"key": "distribute", "type": "[ImageTemplateDistributor]"},
+        "vm_profile": {"key": "vmProfile", "type": "ImageTemplateVmProfile"},
     }
 
-    def __init__(self, *, distribute: Optional[List["_models.ImageTemplateDistributor"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        distribute: Optional[List["_models.ImageTemplateDistributor"]] = None,
+        vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword distribute: The distribution targets where the image output needs to go to.
         :paramtype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+        :keyword vm_profile: Describes how virtual machine is set up to build images.
+        :paramtype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
         """
         super().__init__(**kwargs)
         self.distribute = distribute
+        self.vm_profile = vm_profile
 
 
 class ImageTemplateVhdDistributor(ImageTemplateDistributor):
     """Distribute via VHD in a storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of distribution. Required.
     :vartype type: str
@@ -1886,7 +1938,7 @@ class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
     """Installs Windows Updates. Corresponds to Packer Windows Update Provisioner
     (https://github.com/rgl/packer-provisioner-windows-update).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of customization tool you want to use on the Image. For example, "Shell"
      can be shell customizer. Required.
@@ -2079,7 +2131,7 @@ class OperationListResult(_serialization.Model):
 class PlatformImagePurchasePlan(_serialization.Model):
     """Purchase plan configuration for platform image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar plan_name: Name of the purchase plan. Required.
     :vartype plan_name: str
@@ -2164,7 +2216,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2176,24 +2228,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.imagebuilder.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class RunOutput(ProxyResource):
     """Represents an output that was created by running an image template.
@@ -2201,7 +2235,7 @@ class RunOutput(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2287,7 +2321,7 @@ class TriggerProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The kind of trigger. Required.
     :vartype kind: str
@@ -2325,7 +2359,7 @@ class SourceImageTriggerProperties(TriggerProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The kind of trigger. Required.
     :vartype kind: str
@@ -2421,7 +2455,7 @@ class SystemData(_serialization.Model):
 class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the region. Required.
     :vartype name: str
@@ -2478,7 +2512,7 @@ class Trigger(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2527,7 +2561,7 @@ class Trigger(ProxyResource):
 class TriggerCollection(_serialization.Model):
     """The result of List triggers operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An array of triggers. Required.
     :vartype value: list[~azure.mgmt.imagebuilder.models.Trigger]
@@ -2620,26 +2654,51 @@ class UserAssignedIdentity(_serialization.Model):
 class VirtualNetworkConfig(_serialization.Model):
     """Virtual Network configuration.
 
-    :ivar subnet_id: Resource id of a pre-existing subnet.
+    :ivar subnet_id: Resource id of a pre-existing subnet on which the build VM and validation VM
+     will be deployed.
     :vartype subnet_id: str
+    :ivar container_instance_subnet_id: Resource id of a pre-existing subnet on which Azure
+     Container Instance will be deployed for Isolated Builds. This field may be specified only if
+     ``subnetId`` is also specified and must be on the same Virtual Network as the subnet specified
+     in ``subnetId``.
+    :vartype container_instance_subnet_id: str
     :ivar proxy_vm_size: Size of the proxy virtual machine used to pass traffic to the build VM and
-     validation VM. Omit or specify empty string to use the default (Standard_A1_v2).
+     validation VM. This must not be specified if ``containerInstanceSubnetId`` is specified because
+     no proxy virtual machine is deployed in that case. Omit or specify empty string to use the
+     default (Standard_A1_v2).
     :vartype proxy_vm_size: str
     """
 
     _attribute_map = {
         "subnet_id": {"key": "subnetId", "type": "str"},
+        "container_instance_subnet_id": {"key": "containerInstanceSubnetId", "type": "str"},
         "proxy_vm_size": {"key": "proxyVmSize", "type": "str"},
     }
 
-    def __init__(self, *, subnet_id: Optional[str] = None, proxy_vm_size: str = "", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        subnet_id: Optional[str] = None,
+        container_instance_subnet_id: Optional[str] = None,
+        proxy_vm_size: str = "",
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword subnet_id: Resource id of a pre-existing subnet.
+        :keyword subnet_id: Resource id of a pre-existing subnet on which the build VM and validation
+         VM will be deployed.
         :paramtype subnet_id: str
+        :keyword container_instance_subnet_id: Resource id of a pre-existing subnet on which Azure
+         Container Instance will be deployed for Isolated Builds. This field may be specified only if
+         ``subnetId`` is also specified and must be on the same Virtual Network as the subnet specified
+         in ``subnetId``.
+        :paramtype container_instance_subnet_id: str
         :keyword proxy_vm_size: Size of the proxy virtual machine used to pass traffic to the build VM
-         and validation VM. Omit or specify empty string to use the default (Standard_A1_v2).
+         and validation VM. This must not be specified if ``containerInstanceSubnetId`` is specified
+         because no proxy virtual machine is deployed in that case. Omit or specify empty string to use
+         the default (Standard_A1_v2).
         :paramtype proxy_vm_size: str
         """
         super().__init__(**kwargs)
         self.subnet_id = subnet_id
+        self.container_instance_subnet_id = container_instance_subnet_id
         self.proxy_vm_size = proxy_vm_size

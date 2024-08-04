@@ -243,7 +243,7 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATETIMEOFFSET = "datetimeoffset"
     TINYINT = "tinyint"
     SMALLINT = "smallint"
-    INT = "int"
+    INT_ENUM = "int"
     SMALLDATETIME = "smalldatetime"
     REAL = "real"
     MONEY = "money"
@@ -910,6 +910,15 @@ class PerformanceLevelUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V_CORES = "VCores"
 
 
+class Phase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation phase."""
+
+    COPYING = "Copying"
+    CATCHUP = "Catchup"
+    WAITING_FOR_CUTOVER = "WaitingForCutover"
+    CUTOVER_IN_PROGRESS = "CutoverInProgress"
+
+
 class PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The primary aggregation type defining how metric values are displayed."""
 
@@ -1065,9 +1074,8 @@ class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ReplicationModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Replication mode of the link."""
 
-    ASYNC = "Async"
-    SYNC = "Sync"
     ASYNC_ENUM = "Async"
+    SYNC = "Sync"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):

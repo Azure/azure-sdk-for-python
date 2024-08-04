@@ -466,7 +466,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         await self.dsc.create_file_system(file_system_name)
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
@@ -490,14 +490,13 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         await self.dsc.create_file_system(file_system_name)
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
             audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            dsc.list_file_systems()
-            await dsc.create_file_system(file_system_name + '1')
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        dsc.list_file_systems()
+        await dsc.create_file_system(file_system_name + '1')

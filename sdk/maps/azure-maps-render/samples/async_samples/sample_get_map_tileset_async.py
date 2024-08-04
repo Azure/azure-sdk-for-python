@@ -18,13 +18,13 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_map_tileset_async():
     # [START get_map_tileset_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render.aio import MapsRenderClient
-    from azure.maps.render.models import TilesetID
+    from azure.maps.render import TilesetID
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
@@ -32,10 +32,9 @@ async def get_map_tileset_async():
         result = await maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 
     print("Get map tileset result:")
-    print(result.map_attribution)
-    print(result.bounds)
-    print(result.version)
+    print(result.get("tiles", "tileset"))
     # [END get_map_tileset_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_map_tileset_async())

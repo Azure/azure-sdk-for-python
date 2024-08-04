@@ -17,10 +17,15 @@ import os
 import logging
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+
+storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT"]
+protocol = os.environ.get("PROTOCOL", "https")
+suffix = os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net")
+BLOB_ACCOUNT_URL = f"{protocol}://{storage_account_name}.blob.{suffix}"
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 logging.basicConfig(level=logging.INFO)
@@ -39,11 +44,16 @@ async def on_event_batch(partition_context, event_batch):
 
 
 async def receive_batch():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    client = EventHubConsumerClient.from_connection_string(
-        CONNECTION_STR,
-        consumer_group="$Default",
+    checkpoint_store = BlobCheckpointStore(
+        blob_account_url=BLOB_ACCOUNT_URL,
+        container_name=BLOB_CONTAINER_NAME,
+        credential=DefaultAzureCredential()
+    )
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+        consumer_group="$Default",
         checkpoint_store=checkpoint_store,
     )
     async with client:

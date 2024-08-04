@@ -7,6 +7,12 @@
         "alds",
         "entra",
         "restclient",
-        "SERP"
+        "SERP",
+        "mpnet",
+        "FAISS",
+        "faiss",
+        "Faiss",
+        "LLMRAG",
+        "expirable"
     ]
 }

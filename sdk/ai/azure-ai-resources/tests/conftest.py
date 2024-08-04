@@ -100,7 +100,7 @@ def fake_datastore_key() -> str:
     return str(b64_key, "ascii")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     """Register recording sanitizers for the function under test"""
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")

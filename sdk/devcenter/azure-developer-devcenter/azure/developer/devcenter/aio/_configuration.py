@@ -25,7 +25,7 @@ class DevCenterClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
     :param endpoint: The DevCenter-specific URI to operate on. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-04-01".
      Note that overriding this default value may result in unsupported behavior.

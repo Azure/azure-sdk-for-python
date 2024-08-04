@@ -3,6 +3,7 @@ parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
   EnvVars: {}
+  AdditionalTestArgs: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -32,5 +33,6 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="mypy"
         --disablecov
+        ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))

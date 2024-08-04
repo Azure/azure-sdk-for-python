@@ -217,7 +217,7 @@ class ActivityPolicy(_serialization.Model):
     :vartype additional_properties: dict[str, JSON]
     :ivar timeout: Specifies the timeout for the activity to run. The default timeout is 7 days.
      Type: string (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype timeout: JSON
     :ivar retry: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression with
      resultType integer), minimum: 0.
@@ -263,7 +263,7 @@ class ActivityPolicy(_serialization.Model):
         :paramtype additional_properties: dict[str, JSON]
         :keyword timeout: Specifies the timeout for the activity to run. The default timeout is 7 days.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype timeout: JSON
         :keyword retry: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression
          with resultType integer), minimum: 0.
@@ -1210,7 +1210,7 @@ class CopySource(_serialization.Model):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -1296,7 +1296,7 @@ class CopySource(_serialization.Model):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -1343,7 +1343,7 @@ class TabularSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -1352,7 +1352,7 @@ class TabularSource(CopySource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -1463,7 +1463,7 @@ class TabularSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -1472,7 +1472,7 @@ class TabularSource(CopySource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -1505,7 +1505,7 @@ class AmazonMWSSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -1514,7 +1514,7 @@ class AmazonMWSSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -1561,7 +1561,7 @@ class AmazonMWSSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -1570,7 +1570,7 @@ class AmazonMWSSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -1756,7 +1756,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -1768,7 +1768,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
      resultType string).
     :vartype oracle_reader_query: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar partition_option: The partition mechanism that will be used for AmazonRdsForOracle read
      in parallel. Type: string (or Expression with resultType string).
@@ -1822,7 +1822,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -1834,7 +1834,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
          resultType string).
         :paramtype oracle_reader_query: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword partition_option: The partition mechanism that will be used for AmazonRdsForOracle
          read in parallel. Type: string (or Expression with resultType string).
@@ -1994,9 +1994,92 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL" and "Windows".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AmazonRdsForSqlAuthenticationType
     :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
      with resultType string).
     :vartype user_name: JSON
@@ -2011,7 +2094,6 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -2021,7 +2103,27 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "encrypt": {"key": "typeProperties.encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "typeProperties.hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "typeProperties.applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "typeProperties.connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "typeProperties.connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "typeProperties.connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "typeProperties.loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "integrated_security": {"key": "typeProperties.integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "typeProperties.failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "typeProperties.maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "typeProperties.minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "typeProperties.multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "typeProperties.multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "typeProperties.packetSize", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
         "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
@@ -2031,15 +2133,35 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AmazonRdsForSqlAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -2058,9 +2180,92 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL" and "Windows".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AmazonRdsForSqlAuthenticationType
         :keyword user_name: The on-premises Windows authentication user name. Type: string (or
          Expression with resultType string).
         :paramtype user_name: JSON
@@ -2082,7 +2287,550 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
             **kwargs
         )
         self.type: str = "AmazonRdsForSqlServer"
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
         self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
+
+
+class SqlServerBaseLinkedServiceTypeProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Sql Server family connector common linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        """
+        super().__init__(**kwargs)
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
+
+
+class AmazonRdsForSqlServerLinkedServiceTypeProperties(
+    SqlServerBaseLinkedServiceTypeProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Amazon Rds for SQL Server linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    :ivar connection_string: The connection string. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL" and "Windows".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AmazonRdsForSqlAuthenticationType
+    :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
+     with resultType string).
+    :vartype user_name: JSON
+    :ivar password: The on-premises Windows authentication password.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "user_name": {"key": "userName", "type": "object"},
+        "password": {"key": "password", "type": "SecretBase"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AmazonRdsForSqlAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
+        password: Optional["_models.SecretBase"] = None,
+        encrypted_credential: Optional[str] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        :keyword connection_string: The connection string. Type: string, SecureString or
+         AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL" and "Windows".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AmazonRdsForSqlAuthenticationType
+        :keyword user_name: The on-premises Windows authentication user name. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
+        :keyword password: The on-premises Windows authentication password.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        """
+        super().__init__(
+            server=server,
+            database=database,
+            encrypt=encrypt,
+            trust_server_certificate=trust_server_certificate,
+            host_name_in_certificate=host_name_in_certificate,
+            application_intent=application_intent,
+            connect_timeout=connect_timeout,
+            connect_retry_count=connect_retry_count,
+            connect_retry_interval=connect_retry_interval,
+            load_balance_timeout=load_balance_timeout,
+            command_timeout=command_timeout,
+            integrated_security=integrated_security,
+            failover_partner=failover_partner,
+            max_pool_size=max_pool_size,
+            min_pool_size=min_pool_size,
+            multiple_active_result_sets=multiple_active_result_sets,
+            multi_subnet_failover=multi_subnet_failover,
+            packet_size=packet_size,
+            pooling=pooling,
+            **kwargs
+        )
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
         self.user_name = user_name
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -2103,7 +2851,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -2112,7 +2860,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -2188,7 +2936,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -2197,7 +2945,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -2492,7 +3240,7 @@ class AmazonRedshiftSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -2501,7 +3249,7 @@ class AmazonRedshiftSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -2553,7 +3301,7 @@ class AmazonRedshiftSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -2562,7 +3310,7 @@ class AmazonRedshiftSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -4386,13 +5134,13 @@ class CopySink(_serialization.Model):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -4486,13 +5234,13 @@ class CopySink(_serialization.Model):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -4526,13 +5274,13 @@ class AvroSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -4585,13 +5333,13 @@ class AvroSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -4633,7 +5381,7 @@ class AvroSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -4683,7 +5431,7 @@ class AvroSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -5699,13 +6447,13 @@ class AzureBlobFSSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -5760,13 +6508,13 @@ class AzureBlobFSSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -5810,7 +6558,7 @@ class AzureBlobFSSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -5866,7 +6614,7 @@ class AzureBlobFSSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -6996,13 +7744,13 @@ class AzureDatabricksDeltaLakeSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -7056,13 +7804,13 @@ class AzureDatabricksDeltaLakeSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -7106,7 +7854,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -7156,7 +7904,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -7617,7 +8365,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):  # pylint: disable=to
      string (or Expression with resultType string). Required.
     :vartype command: JSON
     :ivar command_timeout: Control command timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..).
     :vartype command_timeout: JSON
     """
 
@@ -7685,7 +8433,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):  # pylint: disable=to
          string (or Expression with resultType string). Required.
         :paramtype command: JSON
         :keyword command_timeout: Control command timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..).
         :paramtype command_timeout: JSON
         """
         super().__init__(
@@ -7842,13 +8590,13 @@ class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attr
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -7908,13 +8656,13 @@ class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attr
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -7962,7 +8710,7 @@ class AzureDataExplorerSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -7977,7 +8725,7 @@ class AzureDataExplorerSource(CopySource):
      to result-sets that go beyond a certain row-count limit.
     :vartype no_truncation: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -8024,7 +8772,7 @@ class AzureDataExplorerSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -8039,7 +8787,7 @@ class AzureDataExplorerSource(CopySource):
          applied to result-sets that go beyond a certain row-count limit.
         :paramtype no_truncation: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -8822,13 +9570,13 @@ class AzureDataLakeStoreSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -8882,13 +9630,13 @@ class AzureDataLakeStoreSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -8931,7 +9679,7 @@ class AzureDataLakeStoreSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -8977,7 +9725,7 @@ class AzureDataLakeStoreSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -10045,7 +10793,7 @@ class AzureMariaDBSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -10054,7 +10802,7 @@ class AzureMariaDBSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -10101,7 +10849,7 @@ class AzureMariaDBSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -10110,7 +10858,7 @@ class AzureMariaDBSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -11132,13 +11880,13 @@ class AzureMySqlSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -11188,13 +11936,13 @@ class AzureMySqlSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -11234,7 +11982,7 @@ class AzureMySqlSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -11243,7 +11991,7 @@ class AzureMySqlSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -11289,7 +12037,7 @@ class AzureMySqlSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -11298,7 +12046,7 @@ class AzureMySqlSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -11539,13 +12287,13 @@ class AzurePostgreSqlSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -11595,13 +12343,13 @@ class AzurePostgreSqlSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -11641,7 +12389,7 @@ class AzurePostgreSqlSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -11650,7 +12398,7 @@ class AzurePostgreSqlSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -11697,7 +12445,7 @@ class AzurePostgreSqlSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -11706,7 +12454,7 @@ class AzurePostgreSqlSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -11865,13 +12613,13 @@ class AzureQueueSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -11916,13 +12664,13 @@ class AzureQueueSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -12063,13 +12811,13 @@ class AzureSearchIndexSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -12120,13 +12868,13 @@ class AzureSearchIndexSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -12264,9 +13012,95 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlDatabaseAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
     :ivar password: The Azure key vault secret reference of password in connection string.
     :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
@@ -12275,6 +13109,16 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
     :ivar service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Database.
     :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
     :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
      (or Expression with resultType string).
     :vartype tenant: JSON
@@ -12293,7 +13137,6 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -12303,10 +13146,33 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "encrypt": {"key": "typeProperties.encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "typeProperties.hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "typeProperties.applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "typeProperties.connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "typeProperties.connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "typeProperties.connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "typeProperties.loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "integrated_security": {"key": "typeProperties.integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "typeProperties.failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "typeProperties.maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "typeProperties.minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "typeProperties.multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "typeProperties.multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "typeProperties.packetSize", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
@@ -12317,18 +13183,41 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlDatabaseAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
@@ -12348,9 +13237,95 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlDatabaseAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
         :keyword password: The Azure key vault secret reference of password in connection string.
         :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword service_principal_id: The ID of the service principal used to authenticate against
@@ -12359,6 +13334,16 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         :keyword service_principal_key: The key of the service principal used to authenticate against
          Azure SQL Database.
         :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
         :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
          string (or Expression with resultType string).
         :paramtype tenant: JSON
@@ -12384,10 +13369,394 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
             **kwargs
         )
         self.type: str = "AzureSqlDatabase"
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
         self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
         self.password = password
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
+        self.tenant = tenant
+        self.azure_cloud_type = azure_cloud_type
+        self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
+        self.credential = credential
+
+
+class AzureSqlDatabaseLinkedServiceTypeProperties(
+    SqlServerBaseLinkedServiceTypeProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Azure SQL Database linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    :ivar connection_string: The connection string. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlDatabaseAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string.
+    :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
+     SQL Database. Type: string (or Expression with resultType string).
+    :vartype service_principal_id: JSON
+    :ivar service_principal_key: The key of the service principal used to authenticate against
+     Azure SQL Database.
+    :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
+     (or Expression with resultType string).
+    :vartype tenant: JSON
+    :ivar azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
+     values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
+     factory regions’ cloud type. Type: string (or Expression with resultType string).
+    :vartype azure_cloud_type: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "user_name": {"key": "userName", "type": "object"},
+        "password": {"key": "password", "type": "AzureKeyVaultSecretReference"},
+        "service_principal_id": {"key": "servicePrincipalId", "type": "object"},
+        "service_principal_key": {"key": "servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "servicePrincipalCredential", "type": "SecretBase"},
+        "tenant": {"key": "tenant", "type": "object"},
+        "azure_cloud_type": {"key": "azureCloudType", "type": "object"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlDatabaseAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        service_principal_id: Optional[JSON] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
+        tenant: Optional[JSON] = None,
+        azure_cloud_type: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        :keyword connection_string: The connection string. Type: string, SecureString or
+         AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlDatabaseAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string.
+        :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword service_principal_id: The ID of the service principal used to authenticate against
+         Azure SQL Database. Type: string (or Expression with resultType string).
+        :paramtype service_principal_id: JSON
+        :keyword service_principal_key: The key of the service principal used to authenticate against
+         Azure SQL Database.
+        :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
+         string (or Expression with resultType string).
+        :paramtype tenant: JSON
+        :keyword azure_cloud_type: Indicates the azure cloud type of the service principle auth.
+         Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
+         the data factory regions’ cloud type. Type: string (or Expression with resultType string).
+        :paramtype azure_cloud_type: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        """
+        super().__init__(
+            server=server,
+            database=database,
+            encrypt=encrypt,
+            trust_server_certificate=trust_server_certificate,
+            host_name_in_certificate=host_name_in_certificate,
+            application_intent=application_intent,
+            connect_timeout=connect_timeout,
+            connect_retry_count=connect_retry_count,
+            connect_retry_interval=connect_retry_interval,
+            load_balance_timeout=load_balance_timeout,
+            command_timeout=command_timeout,
+            integrated_security=integrated_security,
+            failover_partner=failover_partner,
+            max_pool_size=max_pool_size,
+            min_pool_size=min_pool_size,
+            multiple_active_result_sets=multiple_active_result_sets,
+            multi_subnet_failover=multi_subnet_failover,
+            packet_size=packet_size,
+            pooling=pooling,
+            **kwargs
+        )
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
         self.encrypted_credential = encrypted_credential
@@ -12413,10 +13782,95 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
-     Required.
     :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlDWAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
     :ivar password: The Azure key vault secret reference of password in connection string.
     :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
@@ -12425,6 +13879,16 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :ivar service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Data Warehouse.
     :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
     :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
      (or Expression with resultType string).
     :vartype tenant: JSON
@@ -12441,7 +13905,6 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -12451,28 +13914,74 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "encrypt": {"key": "typeProperties.encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "typeProperties.hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "typeProperties.applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "typeProperties.connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "typeProperties.connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "typeProperties.connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "typeProperties.loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "integrated_security": {"key": "typeProperties.integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "typeProperties.failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "typeProperties.maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "typeProperties.minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "typeProperties.multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "typeProperties.multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "typeProperties.packetSize", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlDWAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
@@ -12491,10 +14000,95 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
          AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
-         Required.
         :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlDWAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
         :keyword password: The Azure key vault secret reference of password in connection string.
         :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword service_principal_id: The ID of the service principal used to authenticate against
@@ -12503,6 +14097,16 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword service_principal_key: The key of the service principal used to authenticate against
          Azure SQL Data Warehouse.
         :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
         :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
          string (or Expression with resultType string).
         :paramtype tenant: JSON
@@ -12525,10 +14129,386 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
             **kwargs
         )
         self.type: str = "AzureSqlDW"
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
         self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
         self.password = password
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
+        self.tenant = tenant
+        self.azure_cloud_type = azure_cloud_type
+        self.encrypted_credential = encrypted_credential
+        self.credential = credential
+
+
+class AzureSqlDWLinkedServiceTypeProperties(
+    SqlServerBaseLinkedServiceTypeProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Azure SQL Data Warehouse linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    :ivar connection_string: The connection string. Type: string, SecureString or
+     AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlDWAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string.
+    :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
+     SQL Data Warehouse. Type: string (or Expression with resultType string).
+    :vartype service_principal_id: JSON
+    :ivar service_principal_key: The key of the service principal used to authenticate against
+     Azure SQL Data Warehouse.
+    :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
+     (or Expression with resultType string).
+    :vartype tenant: JSON
+    :ivar azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
+     values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
+     factory regions’ cloud type. Type: string (or Expression with resultType string).
+    :vartype azure_cloud_type: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "user_name": {"key": "userName", "type": "object"},
+        "password": {"key": "password", "type": "AzureKeyVaultSecretReference"},
+        "service_principal_id": {"key": "servicePrincipalId", "type": "object"},
+        "service_principal_key": {"key": "servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "servicePrincipalCredential", "type": "SecretBase"},
+        "tenant": {"key": "tenant", "type": "object"},
+        "azure_cloud_type": {"key": "azureCloudType", "type": "object"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlDWAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        service_principal_id: Optional[JSON] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
+        tenant: Optional[JSON] = None,
+        azure_cloud_type: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        :keyword connection_string: The connection string. Type: string, SecureString or
+         AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlDWAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string.
+        :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword service_principal_id: The ID of the service principal used to authenticate against
+         Azure SQL Data Warehouse. Type: string (or Expression with resultType string).
+        :paramtype service_principal_id: JSON
+        :keyword service_principal_key: The key of the service principal used to authenticate against
+         Azure SQL Data Warehouse.
+        :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
+         string (or Expression with resultType string).
+        :paramtype tenant: JSON
+        :keyword azure_cloud_type: Indicates the azure cloud type of the service principle auth.
+         Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
+         the data factory regions’ cloud type. Type: string (or Expression with resultType string).
+        :paramtype azure_cloud_type: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        """
+        super().__init__(
+            server=server,
+            database=database,
+            encrypt=encrypt,
+            trust_server_certificate=trust_server_certificate,
+            host_name_in_certificate=host_name_in_certificate,
+            application_intent=application_intent,
+            connect_timeout=connect_timeout,
+            connect_retry_count=connect_retry_count,
+            connect_retry_interval=connect_retry_interval,
+            load_balance_timeout=load_balance_timeout,
+            command_timeout=command_timeout,
+            integrated_security=integrated_security,
+            failover_partner=failover_partner,
+            max_pool_size=max_pool_size,
+            min_pool_size=min_pool_size,
+            multiple_active_result_sets=multiple_active_result_sets,
+            multi_subnet_failover=multi_subnet_failover,
+            packet_size=packet_size,
+            pooling=pooling,
+            **kwargs
+        )
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
         self.encrypted_credential = encrypted_credential
@@ -12675,9 +14655,95 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlMIAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
     :ivar password: The Azure key vault secret reference of password in connection string.
     :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
@@ -12686,6 +14752,16 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
     :ivar service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Managed Instance.
     :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
     :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
      (or Expression with resultType string).
     :vartype tenant: JSON
@@ -12704,7 +14780,6 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -12714,10 +14789,33 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "encrypt": {"key": "typeProperties.encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "typeProperties.hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "typeProperties.applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "typeProperties.connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "typeProperties.connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "typeProperties.connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "typeProperties.loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "integrated_security": {"key": "typeProperties.integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "typeProperties.failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "typeProperties.maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "typeProperties.minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "typeProperties.multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "typeProperties.multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "typeProperties.packetSize", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
@@ -12728,18 +14826,41 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlMIAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
@@ -12759,9 +14880,95 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlMIAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
         :keyword password: The Azure key vault secret reference of password in connection string.
         :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword service_principal_id: The ID of the service principal used to authenticate against
@@ -12770,6 +14977,16 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword service_principal_key: The key of the service principal used to authenticate against
          Azure SQL Managed Instance.
         :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
         :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
          string (or Expression with resultType string).
         :paramtype tenant: JSON
@@ -12795,10 +15012,394 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
             **kwargs
         )
         self.type: str = "AzureSqlMI"
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
         self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
         self.password = password
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
+        self.tenant = tenant
+        self.azure_cloud_type = azure_cloud_type
+        self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
+        self.credential = credential
+
+
+class AzureSqlMILinkedServiceTypeProperties(
+    SqlServerBaseLinkedServiceTypeProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Azure SQL Managed Instance linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    :ivar connection_string: The connection string. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureSqlMIAuthenticationType
+    :ivar user_name: The user name to be used when connecting to server. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string.
+    :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar service_principal_id: The ID of the service principal used to authenticate against Azure
+     SQL Managed Instance. Type: string (or Expression with resultType string).
+    :vartype service_principal_id: JSON
+    :ivar service_principal_key: The key of the service principal used to authenticate against
+     Azure SQL Managed Instance.
+    :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
+     (or Expression with resultType string).
+    :vartype tenant: JSON
+    :ivar azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
+     values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
+     factory regions’ cloud type. Type: string (or Expression with resultType string).
+    :vartype azure_cloud_type: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "user_name": {"key": "userName", "type": "object"},
+        "password": {"key": "password", "type": "AzureKeyVaultSecretReference"},
+        "service_principal_id": {"key": "servicePrincipalId", "type": "object"},
+        "service_principal_key": {"key": "servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "servicePrincipalCredential", "type": "SecretBase"},
+        "tenant": {"key": "tenant", "type": "object"},
+        "azure_cloud_type": {"key": "azureCloudType", "type": "object"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AzureSqlMIAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        service_principal_id: Optional[JSON] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
+        tenant: Optional[JSON] = None,
+        azure_cloud_type: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        :keyword connection_string: The connection string. Type: string, SecureString or
+         AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL", "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureSqlMIAuthenticationType
+        :keyword user_name: The user name to be used when connecting to server. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string.
+        :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword service_principal_id: The ID of the service principal used to authenticate against
+         Azure SQL Managed Instance. Type: string (or Expression with resultType string).
+        :paramtype service_principal_id: JSON
+        :keyword service_principal_key: The key of the service principal used to authenticate against
+         Azure SQL Managed Instance.
+        :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
+         string (or Expression with resultType string).
+        :paramtype tenant: JSON
+        :keyword azure_cloud_type: Indicates the azure cloud type of the service principle auth.
+         Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
+         the data factory regions’ cloud type. Type: string (or Expression with resultType string).
+        :paramtype azure_cloud_type: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        """
+        super().__init__(
+            server=server,
+            database=database,
+            encrypt=encrypt,
+            trust_server_certificate=trust_server_certificate,
+            host_name_in_certificate=host_name_in_certificate,
+            application_intent=application_intent,
+            connect_timeout=connect_timeout,
+            connect_retry_count=connect_retry_count,
+            connect_retry_interval=connect_retry_interval,
+            load_balance_timeout=load_balance_timeout,
+            command_timeout=command_timeout,
+            integrated_security=integrated_security,
+            failover_partner=failover_partner,
+            max_pool_size=max_pool_size,
+            min_pool_size=min_pool_size,
+            multiple_active_result_sets=multiple_active_result_sets,
+            multi_subnet_failover=multi_subnet_failover,
+            packet_size=packet_size,
+            pooling=pooling,
+            **kwargs
+        )
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
         self.encrypted_credential = encrypted_credential
@@ -12942,13 +15543,13 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -13039,13 +15640,13 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -13115,7 +15716,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -13124,7 +15725,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -13201,7 +15802,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -13210,7 +15811,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -13704,13 +16305,13 @@ class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -13775,13 +16376,13 @@ class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -13833,7 +16434,7 @@ class AzureTableSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -13842,7 +16443,7 @@ class AzureTableSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -13894,7 +16495,7 @@ class AzureTableSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -13903,7 +16504,7 @@ class AzureTableSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -14287,13 +16888,13 @@ class BinarySink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -14342,13 +16943,13 @@ class BinarySink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -14387,7 +16988,7 @@ class BinarySource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -14436,7 +17037,7 @@ class BinarySource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -14737,13 +17338,13 @@ class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -14812,13 +17413,13 @@ class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -14873,7 +17474,7 @@ class BlobSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -14929,7 +17530,7 @@ class BlobSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -15188,7 +17789,7 @@ class CassandraSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -15197,7 +17798,7 @@ class CassandraSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -15254,7 +17855,7 @@ class CassandraSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -15263,7 +17864,7 @@ class CassandraSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -16141,13 +18742,13 @@ class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instan
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -16208,13 +18809,13 @@ class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instan
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -16262,7 +18863,7 @@ class CommonDataServiceForAppsSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -16313,7 +18914,7 @@ class CommonDataServiceForAppsSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -16678,7 +19279,7 @@ class ConcurSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -16687,7 +19288,7 @@ class ConcurSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -16734,7 +19335,7 @@ class ConcurSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -16743,7 +19344,7 @@ class ConcurSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -17561,13 +20162,13 @@ class CosmosDbMongoDbApiSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -17618,13 +20219,13 @@ class CosmosDbMongoDbApiSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -17665,7 +20266,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -17685,7 +20286,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
      Type: integer (or Expression with resultType integer).
     :vartype batch_size: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -17733,7 +20334,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -17753,7 +20354,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
          Type: integer (or Expression with resultType integer).
         :paramtype batch_size: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -17894,13 +20495,13 @@ class CosmosDbSqlApiSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -17950,13 +20551,13 @@ class CosmosDbSqlApiSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -17996,7 +20597,7 @@ class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-att
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -18061,7 +20662,7 @@ class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-att
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -18206,7 +20807,7 @@ class CouchbaseSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -18215,7 +20816,7 @@ class CouchbaseSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -18262,7 +20863,7 @@ class CouchbaseSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -18271,7 +20872,7 @@ class CouchbaseSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -21233,7 +23834,7 @@ class Db2Source(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -21242,7 +23843,7 @@ class Db2Source(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -21288,7 +23889,7 @@ class Db2Source(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -21297,7 +23898,7 @@ class Db2Source(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -21862,13 +24463,13 @@ class DelimitedTextSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -21921,13 +24522,13 @@ class DelimitedTextSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -21969,7 +24570,7 @@ class DelimitedTextSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -22023,7 +24624,7 @@ class DelimitedTextSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -22334,13 +24935,13 @@ class DocumentDbCollectionSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -22395,13 +24996,13 @@ class DocumentDbCollectionSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -22445,7 +25046,7 @@ class DocumentDbCollectionSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -22459,7 +25060,7 @@ class DocumentDbCollectionSource(CopySource):
      resultType string).
     :vartype nesting_separator: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -22505,7 +25106,7 @@ class DocumentDbCollectionSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -22519,7 +25120,7 @@ class DocumentDbCollectionSource(CopySource):
          resultType string).
         :paramtype nesting_separator: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -22646,7 +25247,7 @@ class DrillSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -22655,7 +25256,7 @@ class DrillSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -22702,7 +25303,7 @@ class DrillSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -22711,7 +25312,7 @@ class DrillSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -23176,7 +25777,7 @@ class DynamicsAXSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -23185,7 +25786,7 @@ class DynamicsAXSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -23196,7 +25797,7 @@ class DynamicsAXSource(TabularSource):
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -23239,7 +25840,7 @@ class DynamicsAXSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -23248,7 +25849,7 @@ class DynamicsAXSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -23259,7 +25860,7 @@ class DynamicsAXSource(TabularSource):
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:05:00.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -23440,6 +26041,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
      servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
      be AzureKeyVaultSecretReference.
     :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -23469,6 +26072,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
@@ -23491,6 +26095,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         service_principal_id: Optional[JSON] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -23548,6 +26153,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
          servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
          be AzureKeyVaultSecretReference.
         :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
@@ -23572,6 +26179,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.service_principal_id = service_principal_id
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
+        self.credential = credential
         self.encrypted_credential = encrypted_credential
 
 
@@ -23589,13 +26197,13 @@ class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -23656,13 +26264,13 @@ class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -23710,7 +26318,7 @@ class DynamicsCrmSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -23761,7 +26369,7 @@ class DynamicsCrmSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -24107,13 +26715,13 @@ class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -24174,13 +26782,13 @@ class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -24228,7 +26836,7 @@ class DynamicsSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -24279,7 +26887,7 @@ class DynamicsSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -24553,7 +27161,7 @@ class EloquaSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -24562,7 +27170,7 @@ class EloquaSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -24609,7 +27217,7 @@ class EloquaSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -24618,7 +27226,7 @@ class EloquaSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -24941,7 +27549,7 @@ class ExcelSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -24991,7 +27599,7 @@ class ExcelSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -26109,12 +28717,12 @@ class ExpressionV2(_serialization.Model):
     """Nested representation of a complex expression.
 
     :ivar type: Type of expressions supported by the system. Type: string. Known values are:
-     "Constant", "Field", "Unary", and "Binary".
+     "Constant", "Field", "Unary", "Binary", and "NAry".
     :vartype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
     :ivar value: Value for Constant/Field Type: string.
     :vartype value: str
-    :ivar operator: Expression operator value Type: string.
-    :vartype operator: str
+    :ivar operators: Expression operator value Type: list of strings.
+    :vartype operators: list[str]
     :ivar operands: List of nested expressions.
     :vartype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
     """
@@ -26122,7 +28730,7 @@ class ExpressionV2(_serialization.Model):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "value": {"key": "value", "type": "str"},
-        "operator": {"key": "operator", "type": "str"},
+        "operators": {"key": "operators", "type": "[str]"},
         "operands": {"key": "operands", "type": "[ExpressionV2]"},
     }
 
@@ -26131,25 +28739,25 @@ class ExpressionV2(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ExpressionV2Type"]] = None,
         value: Optional[str] = None,
-        operator: Optional[str] = None,
+        operators: Optional[List[str]] = None,
         operands: Optional[List["_models.ExpressionV2"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword type: Type of expressions supported by the system. Type: string. Known values are:
-         "Constant", "Field", "Unary", and "Binary".
+         "Constant", "Field", "Unary", "Binary", and "NAry".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
         :keyword value: Value for Constant/Field Type: string.
         :paramtype value: str
-        :keyword operator: Expression operator value Type: string.
-        :paramtype operator: str
+        :keyword operators: Expression operator value Type: list of strings.
+        :paramtype operators: list[str]
         :keyword operands: List of nested expressions.
         :paramtype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
         """
         super().__init__(**kwargs)
         self.type = type
         self.value = value
-        self.operator = operator
+        self.operators = operators
         self.operands = operands
 
 
@@ -27421,13 +30029,13 @@ class FileSystemSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -27476,13 +30084,13 @@ class FileSystemSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -27521,7 +30129,7 @@ class FileSystemSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -27572,7 +30180,7 @@ class FileSystemSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -28988,7 +31596,7 @@ class GoogleAdWordsSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -28997,7 +31605,7 @@ class GoogleAdWordsSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -29044,7 +31652,7 @@ class GoogleAdWordsSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -29053,7 +31661,7 @@ class GoogleAdWordsSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -29403,7 +32011,7 @@ class GoogleBigQuerySource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -29412,7 +32020,7 @@ class GoogleBigQuerySource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -29459,7 +32067,7 @@ class GoogleBigQuerySource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -29468,7 +32076,7 @@ class GoogleBigQuerySource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -29752,7 +32360,7 @@ class GoogleBigQueryV2Source(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -29761,7 +32369,7 @@ class GoogleBigQueryV2Source(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -29808,7 +32416,7 @@ class GoogleBigQueryV2Source(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -29817,7 +32425,7 @@ class GoogleBigQueryV2Source(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -30358,7 +32966,7 @@ class GreenplumSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -30367,7 +32975,7 @@ class GreenplumSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -30414,7 +33022,7 @@ class GreenplumSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -30423,7 +33031,7 @@ class GreenplumSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -30848,7 +33456,7 @@ class HBaseSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -30857,7 +33465,7 @@ class HBaseSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -30904,7 +33512,7 @@ class HBaseSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -30913,7 +33521,7 @@ class HBaseSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -31262,7 +33870,7 @@ class HdfsSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -31312,7 +33920,7 @@ class HdfsSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -33051,7 +35659,7 @@ class HiveSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -33060,7 +35668,7 @@ class HiveSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -33107,7 +35715,7 @@ class HiveSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -33116,7 +35724,7 @@ class HiveSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -33629,7 +36237,7 @@ class HttpSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -33640,7 +36248,7 @@ class HttpSource(CopySource):
     :ivar http_request_timeout: Specifies the timeout for a HTTP client to get HTTP response from
      HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -33677,7 +36285,7 @@ class HttpSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -33688,7 +36296,7 @@ class HttpSource(CopySource):
         :keyword http_request_timeout: Specifies the timeout for a HTTP client to get HTTP response
          from HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout. Type:
          string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -33957,7 +36565,7 @@ class HubspotSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -33966,7 +36574,7 @@ class HubspotSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -34013,7 +36621,7 @@ class HubspotSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -34022,7 +36630,7 @@ class HubspotSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -34467,7 +37075,7 @@ class ImpalaSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -34476,7 +37084,7 @@ class ImpalaSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -34523,7 +37131,7 @@ class ImpalaSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -34532,7 +37140,7 @@ class ImpalaSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -34693,13 +37301,13 @@ class InformixSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -34749,13 +37357,13 @@ class InformixSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -34795,7 +37403,7 @@ class InformixSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -34804,7 +37412,7 @@ class InformixSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -34850,7 +37458,7 @@ class InformixSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -34859,7 +37467,7 @@ class InformixSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -36464,7 +39072,7 @@ class JiraSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -36473,7 +39081,7 @@ class JiraSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -36520,7 +39128,7 @@ class JiraSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -36529,7 +39137,7 @@ class JiraSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -36840,13 +39448,13 @@ class JsonSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -36899,13 +39507,13 @@ class JsonSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -36947,7 +39555,7 @@ class JsonSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -37001,7 +39609,7 @@ class JsonSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -37417,7 +40025,7 @@ class LakeHouseReadSettings(StoreReadSettings):  # pylint: disable=too-many-inst
         self.modified_datetime_end = modified_datetime_end
 
 
-class LakeHouseTableDataset(Dataset):
+class LakeHouseTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric LakeHouse Table.
 
     All required parameters must be populated in order to send to server.
@@ -37444,6 +40052,9 @@ class LakeHouseTableDataset(Dataset):
     :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar schema_type_properties_schema: The schema name of Microsoft Fabric LakeHouse Table. Type:
+     string (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
     :ivar table: The name of Microsoft Fabric LakeHouse Table. Type: string (or Expression with
      resultType string).
     :vartype table: JSON
@@ -37464,6 +40075,7 @@ class LakeHouseTableDataset(Dataset):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "folder": {"key": "folder", "type": "DatasetFolder"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
         "table": {"key": "typeProperties.table", "type": "object"},
     }
 
@@ -37478,6 +40090,7 @@ class LakeHouseTableDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -37502,6 +40115,9 @@ class LakeHouseTableDataset(Dataset):
         :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
          the root level.
         :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword schema_type_properties_schema: The schema name of Microsoft Fabric LakeHouse Table.
+         Type: string (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
         :keyword table: The name of Microsoft Fabric LakeHouse Table. Type: string (or Expression with
          resultType string).
         :paramtype table: JSON
@@ -37518,6 +40134,7 @@ class LakeHouseTableDataset(Dataset):
             **kwargs
         )
         self.type: str = "LakeHouseTable"
+        self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
 
@@ -37535,13 +40152,13 @@ class LakeHouseTableSink(CopySink):  # pylint: disable=too-many-instance-attribu
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -37602,13 +40219,13 @@ class LakeHouseTableSink(CopySink):  # pylint: disable=too-many-instance-attribu
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -37657,7 +40274,7 @@ class LakeHouseTableSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -37713,7 +40330,7 @@ class LakeHouseTableSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -38663,7 +41280,7 @@ class MagentoSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -38672,7 +41289,7 @@ class MagentoSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -38719,7 +41336,7 @@ class MagentoSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -38728,7 +41345,7 @@ class MagentoSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -38765,6 +41382,8 @@ class ManagedIdentityCredential(Credential):
     :vartype description: str
     :ivar annotations: List of tags that can be used for describing the Credential.
     :vartype annotations: list[JSON]
+    :ivar resource_id: The resource id of user assigned managed identity.
+    :vartype resource_id: str
     """
 
     _validation = {
@@ -38776,6 +41395,7 @@ class ManagedIdentityCredential(Credential):
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "resource_id": {"key": "typeProperties.resourceId", "type": "str"},
     }
 
     def __init__(
@@ -38784,6 +41404,7 @@ class ManagedIdentityCredential(Credential):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
+        resource_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -38794,55 +41415,14 @@ class ManagedIdentityCredential(Credential):
         :paramtype description: str
         :keyword annotations: List of tags that can be used for describing the Credential.
         :paramtype annotations: list[JSON]
+        :keyword resource_id: The resource id of user assigned managed identity.
+        :paramtype resource_id: str
         """
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
         self.type: str = "ManagedIdentity"
-
-
-class ManagedIdentityCredentialResource(CredentialResource):
-    """Credential resource type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :ivar properties: Managed Identity Credential properties. Required.
-    :vartype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "properties": {"key": "properties", "type": "ManagedIdentityCredential"},
-    }
-
-    def __init__(self, *, properties: "_models.ManagedIdentityCredential", **kwargs: Any) -> None:
-        """
-        :keyword properties: Managed Identity Credential properties. Required.
-        :paramtype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
+        self.resource_id = resource_id
 
 
 class ManagedIntegrationRuntime(IntegrationRuntime):
@@ -40154,7 +42734,7 @@ class MariaDBSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -40163,7 +42743,7 @@ class MariaDBSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -40210,7 +42790,7 @@ class MariaDBSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -40219,7 +42799,7 @@ class MariaDBSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -40589,7 +43169,7 @@ class MarketoSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -40598,7 +43178,7 @@ class MarketoSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -40645,7 +43225,7 @@ class MarketoSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -40654,7 +43234,7 @@ class MarketoSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -40841,13 +43421,13 @@ class MicrosoftAccessSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -40897,13 +43477,13 @@ class MicrosoftAccessSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -40943,7 +43523,7 @@ class MicrosoftAccessSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -40993,7 +43573,7 @@ class MicrosoftAccessSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -41341,13 +43921,13 @@ class MongoDbAtlasSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -41398,13 +43978,13 @@ class MongoDbAtlasSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -41445,7 +44025,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -41465,7 +44045,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
      size. Type: integer (or Expression with resultType integer).
     :vartype batch_size: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -41513,7 +44093,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -41533,7 +44113,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
          size. Type: integer (or Expression with resultType integer).
         :paramtype batch_size: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -41902,7 +44482,7 @@ class MongoDbSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -41953,7 +44533,7 @@ class MongoDbSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -42189,13 +44769,13 @@ class MongoDbV2Sink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -42246,13 +44826,13 @@ class MongoDbV2Sink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -42293,7 +44873,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -42313,7 +44893,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
      Type: integer (or Expression with resultType integer).
     :vartype batch_size: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -42361,7 +44941,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -42381,7 +44961,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
          Type: integer (or Expression with resultType integer).
         :paramtype batch_size: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -42566,7 +45146,7 @@ class MySqlSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -42575,7 +45155,7 @@ class MySqlSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -42621,7 +45201,7 @@ class MySqlSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -42630,7 +45210,7 @@ class MySqlSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -42909,7 +45489,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -42918,7 +45498,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -42974,7 +45554,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -42983,7 +45563,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -43494,7 +46074,7 @@ class ODataSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -43508,7 +46088,7 @@ class ODataSource(CopySource):
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -43552,7 +46132,7 @@ class ODataSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -43566,7 +46146,7 @@ class ODataSource(CopySource):
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:05:00.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -43722,13 +46302,13 @@ class OdbcSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -43778,13 +46358,13 @@ class OdbcSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -43824,7 +46404,7 @@ class OdbcSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -43833,7 +46413,7 @@ class OdbcSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -43879,7 +46459,7 @@ class OdbcSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -43888,7 +46468,7 @@ class OdbcSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -44254,7 +46834,7 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -44326,7 +46906,7 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -45445,7 +48025,7 @@ class OracleServiceCloudSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -45454,7 +48034,7 @@ class OracleServiceCloudSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -45501,7 +48081,7 @@ class OracleServiceCloudSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -45510,7 +48090,7 @@ class OracleServiceCloudSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -45547,13 +48127,13 @@ class OracleSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -45603,13 +48183,13 @@ class OracleSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -45649,7 +48229,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -45661,7 +48241,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
      string).
     :vartype oracle_reader_query: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar partition_option: The partition mechanism that will be used for Oracle read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
@@ -45714,7 +48294,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -45726,7 +48306,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
          string).
         :paramtype oracle_reader_query: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword partition_option: The partition mechanism that will be used for Oracle read in
          parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
@@ -46051,13 +48631,13 @@ class OrcSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -46110,13 +48690,13 @@ class OrcSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -46158,7 +48738,7 @@ class OrcSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -46208,7 +48788,7 @@ class OrcSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -46598,13 +49178,13 @@ class ParquetSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -46657,13 +49237,13 @@ class ParquetSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -46705,7 +49285,7 @@ class ParquetSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -46759,7 +49339,7 @@ class ParquetSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -47089,7 +49669,7 @@ class PaypalSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -47098,7 +49678,7 @@ class PaypalSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -47145,7 +49725,7 @@ class PaypalSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -47154,7 +49734,7 @@ class PaypalSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -47492,7 +50072,7 @@ class PhoenixSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -47501,7 +50081,7 @@ class PhoenixSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -47548,7 +50128,7 @@ class PhoenixSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -47557,7 +50137,7 @@ class PhoenixSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -48241,7 +50821,7 @@ class PostgreSqlSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -48250,7 +50830,7 @@ class PostgreSqlSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -48296,7 +50876,7 @@ class PostgreSqlSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -48305,7 +50885,7 @@ class PostgreSqlSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -48689,7 +51269,7 @@ class PostgreSqlV2Source(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -48698,7 +51278,7 @@ class PostgreSqlV2Source(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -48744,7 +51324,7 @@ class PostgreSqlV2Source(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -48753,7 +51333,7 @@ class PostgreSqlV2Source(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -49400,7 +51980,7 @@ class PrestoSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -49409,7 +51989,7 @@ class PrestoSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -49456,7 +52036,7 @@ class PrestoSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -49465,7 +52045,7 @@ class PrestoSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -50206,7 +52786,7 @@ class QuickBooksSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -50215,7 +52795,7 @@ class QuickBooksSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -50262,7 +52842,7 @@ class QuickBooksSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -50271,7 +52851,7 @@ class QuickBooksSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -50512,7 +53092,7 @@ class RelationalSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -50562,7 +53142,7 @@ class RelationalSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -51086,7 +53666,7 @@ class ResponsysSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -51095,7 +53675,7 @@ class ResponsysSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -51142,7 +53722,7 @@ class ResponsysSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -51151,7 +53731,7 @@ class ResponsysSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -51562,13 +54142,13 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -51585,7 +54165,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     :ivar request_interval: The time to await before sending next request, in milliseconds.
     :vartype request_interval: JSON
@@ -51640,13 +54220,13 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -51663,7 +54243,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:01:40.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         :keyword request_interval: The time to await before sending next request, in milliseconds.
         :paramtype request_interval: JSON
@@ -51704,7 +54284,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -51727,7 +54307,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     :ivar request_interval: The time to await before sending next page request.
     :vartype request_interval: JSON
@@ -51781,7 +54361,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -51804,7 +54384,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:01:40.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         :keyword request_interval: The time to await before sending next page request.
         :paramtype request_interval: JSON
@@ -52409,7 +54989,7 @@ class SalesforceMarketingCloudSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -52418,7 +54998,7 @@ class SalesforceMarketingCloudSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -52465,7 +55045,7 @@ class SalesforceMarketingCloudSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -52474,7 +55054,7 @@ class SalesforceMarketingCloudSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -52849,13 +55429,13 @@ class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -52919,13 +55499,13 @@ class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -52978,7 +55558,7 @@ class SalesforceServiceCloudSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -53033,7 +55613,7 @@ class SalesforceServiceCloudSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -53314,13 +55894,13 @@ class SalesforceServiceCloudV2Sink(CopySink):  # pylint: disable=too-many-instan
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -53384,13 +55964,13 @@ class SalesforceServiceCloudV2Sink(CopySink):  # pylint: disable=too-many-instan
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -53443,7 +56023,7 @@ class SalesforceServiceCloudV2Source(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -53451,8 +56031,16 @@ class SalesforceServiceCloudV2Source(CopySource):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
-    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :ivar soql_query: Deprecating, please use 'query' property instead. Type: string (or Expression
+     with resultType string).
     :vartype soql_query: JSON
+    :ivar query: You can only use Salesforce Object Query Language (SOQL) query with limitations.
+     For SOQL limitations, see this article:
+     https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+     If query is not specified, all the data of the Salesforce object specified in
+     ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+     resultType string).
+    :vartype query: JSON
     :ivar include_deleted_objects: This property control whether query result contains Deleted
      objects. Default is false. Type: boolean (or Expression with resultType boolean).
     :vartype include_deleted_objects: JSON
@@ -53473,6 +56061,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
     }
@@ -53486,6 +56075,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         soql_query: Optional[JSON] = None,
+        query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         **kwargs: Any
@@ -53498,7 +56088,7 @@ class SalesforceServiceCloudV2Source(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -53506,8 +56096,16 @@ class SalesforceServiceCloudV2Source(CopySource):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
-        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :keyword soql_query: Deprecating, please use 'query' property instead. Type: string (or
+         Expression with resultType string).
         :paramtype soql_query: JSON
+        :keyword query: You can only use Salesforce Object Query Language (SOQL) query with
+         limitations. For SOQL limitations, see this article:
+         https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+         If query is not specified, all the data of the Salesforce object specified in
+         ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+         resultType string).
+        :paramtype query: JSON
         :keyword include_deleted_objects: This property control whether query result contains Deleted
          objects. Default is false. Type: boolean (or Expression with resultType boolean).
         :paramtype include_deleted_objects: JSON
@@ -53525,6 +56123,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         )
         self.type: str = "SalesforceServiceCloudV2Source"
         self.soql_query = soql_query
+        self.query = query
         self.include_deleted_objects = include_deleted_objects
         self.additional_columns = additional_columns
 
@@ -53543,13 +56142,13 @@ class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -53613,13 +56212,13 @@ class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -53672,7 +56271,7 @@ class SalesforceSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -53681,7 +56280,7 @@ class SalesforceSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -53732,7 +56331,7 @@ class SalesforceSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -53741,7 +56340,7 @@ class SalesforceSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -54017,13 +56616,13 @@ class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attribute
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -54087,13 +56686,13 @@ class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attribute
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -54132,7 +56731,7 @@ class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attribute
         self.ignore_null_values = ignore_null_values
 
 
-class SalesforceV2Source(TabularSource):
+class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce V2 source.
 
     All required parameters must be populated in order to send to server.
@@ -54146,7 +56745,7 @@ class SalesforceV2Source(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -54155,13 +56754,21 @@ class SalesforceV2Source(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
-    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :ivar soql_query: Deprecating, please use 'query' property instead. Type: string (or Expression
+     with resultType string).
     :vartype soql_query: JSON
+    :ivar query: You can only use Salesforce Object Query Language (SOQL) query with limitations.
+     For SOQL limitations, see this article:
+     https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+     If query is not specified, all the data of the Salesforce object specified in
+     ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+     resultType string).
+    :vartype query: JSON
     :ivar include_deleted_objects: This property control whether query result contains Deleted
      objects. Default is false. Type: boolean (or Expression with resultType boolean).
     :vartype include_deleted_objects: JSON
@@ -54181,6 +56788,7 @@ class SalesforceV2Source(TabularSource):
         "query_timeout": {"key": "queryTimeout", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
     }
 
@@ -54195,6 +56803,7 @@ class SalesforceV2Source(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         soql_query: Optional[JSON] = None,
+        query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -54206,7 +56815,7 @@ class SalesforceV2Source(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -54215,13 +56824,21 @@ class SalesforceV2Source(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
-        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :keyword soql_query: Deprecating, please use 'query' property instead. Type: string (or
+         Expression with resultType string).
         :paramtype soql_query: JSON
+        :keyword query: You can only use Salesforce Object Query Language (SOQL) query with
+         limitations. For SOQL limitations, see this article:
+         https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+         If query is not specified, all the data of the Salesforce object specified in
+         ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+         resultType string).
+        :paramtype query: JSON
         :keyword include_deleted_objects: This property control whether query result contains Deleted
          objects. Default is false. Type: boolean (or Expression with resultType boolean).
         :paramtype include_deleted_objects: JSON
@@ -54238,6 +56855,7 @@ class SalesforceV2Source(TabularSource):
         )
         self.type: str = "SalesforceV2Source"
         self.soql_query = soql_query
+        self.query = query
         self.include_deleted_objects = include_deleted_objects
 
 
@@ -54472,7 +57090,7 @@ class SapBwSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -54481,7 +57099,7 @@ class SapBwSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -54527,7 +57145,7 @@ class SapBwSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -54536,7 +57154,7 @@ class SapBwSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -54783,13 +57401,13 @@ class SapCloudForCustomerSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -54804,7 +57422,7 @@ class SapCloudForCustomerSink(CopySink):
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -54847,13 +57465,13 @@ class SapCloudForCustomerSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -54868,7 +57486,7 @@ class SapCloudForCustomerSink(CopySink):
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:05:00.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -54900,7 +57518,7 @@ class SapCloudForCustomerSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -54909,7 +57527,7 @@ class SapCloudForCustomerSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -54920,7 +57538,7 @@ class SapCloudForCustomerSource(TabularSource):
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -54963,7 +57581,7 @@ class SapCloudForCustomerSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -54972,7 +57590,7 @@ class SapCloudForCustomerSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -54983,7 +57601,7 @@ class SapCloudForCustomerSource(TabularSource):
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:05:00.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -55226,7 +57844,7 @@ class SapEccSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -55235,7 +57853,7 @@ class SapEccSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -55246,7 +57864,7 @@ class SapEccSource(TabularSource):
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -55289,7 +57907,7 @@ class SapEccSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -55298,7 +57916,7 @@ class SapEccSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -55309,7 +57927,7 @@ class SapEccSource(TabularSource):
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:05:00.
          Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -55482,7 +58100,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -55491,7 +58109,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -55551,7 +58169,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -55560,7 +58178,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -56066,7 +58684,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -56075,7 +58693,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -56137,7 +58755,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -56146,7 +58764,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -56364,7 +58982,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -56373,7 +58991,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -56437,7 +59055,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -56446,7 +59064,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -56998,7 +59616,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -57007,7 +59625,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -57096,7 +59714,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -57105,7 +59723,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -57385,7 +60003,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :ivar script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
      Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype script_block_execution_timeout: JSON
     :ivar scripts: Array of script blocks. Type: array.
     :vartype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
@@ -57456,7 +60074,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
         :keyword script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
          Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype script_block_execution_timeout: JSON
         :keyword scripts: Array of script blocks. Type: array.
         :paramtype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
@@ -57548,9 +60166,9 @@ class ScriptActivityScriptBlock(_serialization.Model):
 
     :ivar text: The query text. Type: string (or Expression with resultType string). Required.
     :vartype text: JSON
-    :ivar type: The type of the query. Type: string. Required. Known values are: "Query" and
-     "NonQuery".
-    :vartype type: str or ~azure.mgmt.datafactory.models.ScriptType
+    :ivar type: The type of the query. Please refer to the ScriptType for valid options. Type:
+     string (or Expression with resultType string). Required.
+    :vartype type: JSON
     :ivar parameters: Array of script parameters. Type: array.
     :vartype parameters: list[~azure.mgmt.datafactory.models.ScriptActivityParameter]
     """
@@ -57562,7 +60180,7 @@ class ScriptActivityScriptBlock(_serialization.Model):
 
     _attribute_map = {
         "text": {"key": "text", "type": "object"},
-        "type": {"key": "type", "type": "str"},
+        "type": {"key": "type", "type": "object"},
         "parameters": {"key": "parameters", "type": "[ScriptActivityParameter]"},
     }
 
@@ -57570,16 +60188,16 @@ class ScriptActivityScriptBlock(_serialization.Model):
         self,
         *,
         text: JSON,
-        type: Union[str, "_models.ScriptType"],
+        type: JSON,
         parameters: Optional[List["_models.ScriptActivityParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword text: The query text. Type: string (or Expression with resultType string). Required.
         :paramtype text: JSON
-        :keyword type: The type of the query. Type: string. Required. Known values are: "Query" and
-         "NonQuery".
-        :paramtype type: str or ~azure.mgmt.datafactory.models.ScriptType
+        :keyword type: The type of the query. Please refer to the ScriptType for valid options. Type:
+         string (or Expression with resultType string). Required.
+        :paramtype type: JSON
         :keyword parameters: Array of script parameters. Type: array.
         :paramtype parameters: list[~azure.mgmt.datafactory.models.ScriptActivityParameter]
         """
@@ -58355,7 +60973,7 @@ class ServiceNowSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -58364,7 +60982,7 @@ class ServiceNowSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -58411,7 +61029,7 @@ class ServiceNowSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -58420,7 +61038,7 @@ class ServiceNowSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -58696,7 +61314,7 @@ class ServiceNowV2Source(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -58705,7 +61323,7 @@ class ServiceNowV2Source(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -58751,7 +61369,7 @@ class ServiceNowV2Source(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -58760,7 +61378,7 @@ class ServiceNowV2Source(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -58851,50 +61469,6 @@ class ServicePrincipalCredential(Credential):
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
-
-
-class ServicePrincipalCredentialResource(CredentialResource):
-    """Credential resource type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :ivar properties: Service Principal Credential properties. Required.
-    :vartype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "properties": {"key": "properties", "type": "ServicePrincipalCredential"},
-    }
-
-    def __init__(self, *, properties: "_models.ServicePrincipalCredential", **kwargs: Any) -> None:
-        """
-        :keyword properties: Service Principal Credential properties. Required.
-        :paramtype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
 
 
 class SetVariableActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
@@ -59722,7 +62296,7 @@ class SharePointOnlineListSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -59735,7 +62309,7 @@ class SharePointOnlineListSource(CopySource):
     :vartype query: JSON
     :ivar http_request_timeout: The wait time to get a response from SharePoint Online. Default
      value is 5 minutes (00:05:00). Type: string (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype http_request_timeout: JSON
     """
 
@@ -59774,7 +62348,7 @@ class SharePointOnlineListSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -59787,7 +62361,7 @@ class SharePointOnlineListSource(CopySource):
         :paramtype query: JSON
         :keyword http_request_timeout: The wait time to get a response from SharePoint Online. Default
          value is 5 minutes (00:05:00). Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype http_request_timeout: JSON
         """
         super().__init__(
@@ -60041,7 +62615,7 @@ class ShopifySource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -60050,7 +62624,7 @@ class ShopifySource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -60097,7 +62671,7 @@ class ShopifySource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -60106,7 +62680,7 @@ class ShopifySource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -60589,13 +63163,13 @@ class SnowflakeSink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -60649,13 +63223,13 @@ class SnowflakeSink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -60698,7 +63272,7 @@ class SnowflakeSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -60748,7 +63322,7 @@ class SnowflakeSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -61079,13 +63653,13 @@ class SnowflakeV2Sink(CopySink):
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -61139,13 +63713,13 @@ class SnowflakeV2Sink(CopySink):
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -61188,7 +63762,7 @@ class SnowflakeV2Source(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -61238,7 +63812,7 @@ class SnowflakeV2Source(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -61631,7 +64205,7 @@ class SparkSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -61640,7 +64214,7 @@ class SparkSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -61687,7 +64261,7 @@ class SparkSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -61696,7 +64270,7 @@ class SparkSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -61795,13 +64369,13 @@ class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -61889,13 +64463,13 @@ class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -61965,7 +64539,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -61974,7 +64548,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -62049,7 +64623,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -62058,7 +64632,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -62150,13 +64724,13 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -62247,13 +64821,13 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -62323,7 +64897,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -62332,7 +64906,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -62409,7 +64983,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -62418,7 +64992,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -62541,9 +65115,91 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL" and "Windows".
+    :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
     :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
      with resultType string).
     :vartype user_name: JSON
@@ -62558,7 +65214,6 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -62568,7 +65223,27 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "encrypt": {"key": "typeProperties.encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "typeProperties.hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "typeProperties.applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "typeProperties.connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "typeProperties.connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "typeProperties.connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "typeProperties.loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "integrated_security": {"key": "typeProperties.integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "typeProperties.failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "typeProperties.maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "typeProperties.minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "typeProperties.multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "typeProperties.multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "typeProperties.packetSize", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
         "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
@@ -62578,15 +65253,35 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.SqlServerAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -62605,9 +65300,92 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL" and "Windows".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
         :keyword user_name: The on-premises Windows authentication user name. Type: string (or
          Expression with resultType string).
         :paramtype user_name: JSON
@@ -62629,7 +65407,316 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             **kwargs
         )
         self.type: str = "SqlServer"
+        self.server = server
+        self.database = database
+        self.encrypt = encrypt
+        self.trust_server_certificate = trust_server_certificate
+        self.host_name_in_certificate = host_name_in_certificate
+        self.application_intent = application_intent
+        self.connect_timeout = connect_timeout
+        self.connect_retry_count = connect_retry_count
+        self.connect_retry_interval = connect_retry_interval
+        self.load_balance_timeout = load_balance_timeout
+        self.command_timeout = command_timeout
+        self.integrated_security = integrated_security
+        self.failover_partner = failover_partner
+        self.max_pool_size = max_pool_size
+        self.min_pool_size = min_pool_size
+        self.multiple_active_result_sets = multiple_active_result_sets
+        self.multi_subnet_failover = multi_subnet_failover
+        self.packet_size = packet_size
+        self.pooling = pooling
         self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
+
+
+class SqlServerLinkedServiceTypeProperties(
+    SqlServerBaseLinkedServiceTypeProperties
+):  # pylint: disable=too-many-instance-attributes
+    """SQL Server linked service properties.
+
+    :ivar server: The name or network address of the instance of SQL Server to which to connect,
+     used by recommended version. Type: string (or Expression with resultType string).
+    :vartype server: JSON
+    :ivar database: The name of the database, used by recommended version. Type: string (or
+     Expression with resultType string).
+    :vartype database: JSON
+    :ivar encrypt: Indicate whether TLS encryption is required for all data sent between the client
+     and server, used by recommended version. Possible values are true/yes/mandatory,
+     false/no/optional and strict. Type: string (or Expression with resultType string).
+    :vartype encrypt: JSON
+    :ivar trust_server_certificate: Indicate whether the channel will be encrypted while bypassing
+     walking the certificate chain to validate trust, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype trust_server_certificate: JSON
+    :ivar host_name_in_certificate: The host name to use when validating the server certificate for
+     the connection. When not specified, the server name from the Data Source is used for
+     certificate validation, used by recommended version. Type: string (or Expression with
+     resultType string).
+    :vartype host_name_in_certificate: JSON
+    :ivar application_intent: The application workload type when connecting to a server, used by
+     recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+     with resultType string).
+    :vartype application_intent: JSON
+    :ivar connect_timeout: The length of time (in seconds) to wait for a connection to the server
+     before terminating the attempt and generating an error, used by recommended version. Type:
+     integer (or Expression with resultType integer).
+    :vartype connect_timeout: JSON
+    :ivar connect_retry_count: The number of re-connections attempted after identifying that there
+     was an idle connection failure, used by recommended version. This must be an integer between 0
+     and 255. Type: integer (or Expression with resultType integer).
+    :vartype connect_retry_count: JSON
+    :ivar connect_retry_interval: The amount of time (in seconds) between each re-connection
+     attempt after identifying that there was an idle connection failure, used by recommended
+     version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+     integer).
+    :vartype connect_retry_interval: JSON
+    :ivar load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+     connection pool before being destroyed, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype load_balance_timeout: JSON
+    :ivar command_timeout: The default wait time (in seconds) before terminating the attempt to
+     execute a command and generating an error, used by recommended version. Type: integer (or
+     Expression with resultType integer).
+    :vartype command_timeout: JSON
+    :ivar integrated_security: Indicate whether User ID and Password are specified in the
+     connection (when false) or whether the current Windows account credentials are used for
+     authentication (when true), used by recommended version. Type: Boolean (or Expression with
+     resultType boolean).
+    :vartype integrated_security: JSON
+    :ivar failover_partner: The name or address of the partner server to connect to if the primary
+     server is down, used by recommended version. Type: string (or Expression with resultType
+     string).
+    :vartype failover_partner: JSON
+    :ivar max_pool_size: The maximum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype max_pool_size: JSON
+    :ivar min_pool_size: The minimum number of connections allowed in the connection pool for this
+     specific connection string, used by recommended version. Type: integer (or Expression with
+     resultType integer).
+    :vartype min_pool_size: JSON
+    :ivar multiple_active_result_sets: When true, an application can maintain multiple active
+     result sets (MARS). When false, an application must process or cancel all result sets from one
+     batch before it can execute any other batch on that connection, used by recommended version.
+     Type: Boolean (or Expression with resultType boolean).
+    :vartype multiple_active_result_sets: JSON
+    :ivar multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+     group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+     and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+     Expression with resultType boolean).
+    :vartype multi_subnet_failover: JSON
+    :ivar packet_size: The size in bytes of the network packets used to communicate with an
+     instance of server, used by recommended version. Type: integer (or Expression with resultType
+     integer).
+    :vartype packet_size: JSON
+    :ivar pooling: Indicate whether the connection will be pooled or explicitly opened every time
+     that the connection is requested, used by recommended version. Type: Boolean (or Expression
+     with resultType boolean).
+    :vartype pooling: JSON
+    :ivar connection_string: The connection string. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "SQL" and "Windows".
+    :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
+    :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
+     with resultType string).
+    :vartype user_name: JSON
+    :ivar password: The on-premises Windows authentication password.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    """
+
+    _attribute_map = {
+        "server": {"key": "server", "type": "object"},
+        "database": {"key": "database", "type": "object"},
+        "encrypt": {"key": "encrypt", "type": "object"},
+        "trust_server_certificate": {"key": "trustServerCertificate", "type": "object"},
+        "host_name_in_certificate": {"key": "hostNameInCertificate", "type": "object"},
+        "application_intent": {"key": "applicationIntent", "type": "object"},
+        "connect_timeout": {"key": "connectTimeout", "type": "object"},
+        "connect_retry_count": {"key": "connectRetryCount", "type": "object"},
+        "connect_retry_interval": {"key": "connectRetryInterval", "type": "object"},
+        "load_balance_timeout": {"key": "loadBalanceTimeout", "type": "object"},
+        "command_timeout": {"key": "commandTimeout", "type": "object"},
+        "integrated_security": {"key": "integratedSecurity", "type": "object"},
+        "failover_partner": {"key": "failoverPartner", "type": "object"},
+        "max_pool_size": {"key": "maxPoolSize", "type": "object"},
+        "min_pool_size": {"key": "minPoolSize", "type": "object"},
+        "multiple_active_result_sets": {"key": "multipleActiveResultSets", "type": "object"},
+        "multi_subnet_failover": {"key": "multiSubnetFailover", "type": "object"},
+        "packet_size": {"key": "packetSize", "type": "object"},
+        "pooling": {"key": "pooling", "type": "object"},
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "user_name": {"key": "userName", "type": "object"},
+        "password": {"key": "password", "type": "SecretBase"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        encrypt: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        host_name_in_certificate: Optional[JSON] = None,
+        application_intent: Optional[JSON] = None,
+        connect_timeout: Optional[JSON] = None,
+        connect_retry_count: Optional[JSON] = None,
+        connect_retry_interval: Optional[JSON] = None,
+        load_balance_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        integrated_security: Optional[JSON] = None,
+        failover_partner: Optional[JSON] = None,
+        max_pool_size: Optional[JSON] = None,
+        min_pool_size: Optional[JSON] = None,
+        multiple_active_result_sets: Optional[JSON] = None,
+        multi_subnet_failover: Optional[JSON] = None,
+        packet_size: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.SqlServerAuthenticationType"]] = None,
+        user_name: Optional[JSON] = None,
+        password: Optional["_models.SecretBase"] = None,
+        encrypted_credential: Optional[str] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server: The name or network address of the instance of SQL Server to which to connect,
+         used by recommended version. Type: string (or Expression with resultType string).
+        :paramtype server: JSON
+        :keyword database: The name of the database, used by recommended version. Type: string (or
+         Expression with resultType string).
+        :paramtype database: JSON
+        :keyword encrypt: Indicate whether TLS encryption is required for all data sent between the
+         client and server, used by recommended version. Possible values are true/yes/mandatory,
+         false/no/optional and strict. Type: string (or Expression with resultType string).
+        :paramtype encrypt: JSON
+        :keyword trust_server_certificate: Indicate whether the channel will be encrypted while
+         bypassing walking the certificate chain to validate trust, used by recommended version. Type:
+         Boolean (or Expression with resultType boolean).
+        :paramtype trust_server_certificate: JSON
+        :keyword host_name_in_certificate: The host name to use when validating the server certificate
+         for the connection. When not specified, the server name from the Data Source is used for
+         certificate validation, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype host_name_in_certificate: JSON
+        :keyword application_intent: The application workload type when connecting to a server, used by
+         recommended version. Possible values are ReadOnly and ReadWrite. Type: string (or Expression
+         with resultType string).
+        :paramtype application_intent: JSON
+        :keyword connect_timeout: The length of time (in seconds) to wait for a connection to the
+         server before terminating the attempt and generating an error, used by recommended version.
+         Type: integer (or Expression with resultType integer).
+        :paramtype connect_timeout: JSON
+        :keyword connect_retry_count: The number of re-connections attempted after identifying that
+         there was an idle connection failure, used by recommended version. This must be an integer
+         between 0 and 255. Type: integer (or Expression with resultType integer).
+        :paramtype connect_retry_count: JSON
+        :keyword connect_retry_interval: The amount of time (in seconds) between each re-connection
+         attempt after identifying that there was an idle connection failure, used by recommended
+         version. This must be an integer between 1 and 60. Type: integer (or Expression with resultType
+         integer).
+        :paramtype connect_retry_interval: JSON
+        :keyword load_balance_timeout: The minimum time, in seconds, for the connection to live in the
+         connection pool before being destroyed, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype load_balance_timeout: JSON
+        :keyword command_timeout: The default wait time (in seconds) before terminating the attempt to
+         execute a command and generating an error, used by recommended version. Type: integer (or
+         Expression with resultType integer).
+        :paramtype command_timeout: JSON
+        :keyword integrated_security: Indicate whether User ID and Password are specified in the
+         connection (when false) or whether the current Windows account credentials are used for
+         authentication (when true), used by recommended version. Type: Boolean (or Expression with
+         resultType boolean).
+        :paramtype integrated_security: JSON
+        :keyword failover_partner: The name or address of the partner server to connect to if the
+         primary server is down, used by recommended version. Type: string (or Expression with
+         resultType string).
+        :paramtype failover_partner: JSON
+        :keyword max_pool_size: The maximum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype max_pool_size: JSON
+        :keyword min_pool_size: The minimum number of connections allowed in the connection pool for
+         this specific connection string, used by recommended version. Type: integer (or Expression with
+         resultType integer).
+        :paramtype min_pool_size: JSON
+        :keyword multiple_active_result_sets: When true, an application can maintain multiple active
+         result sets (MARS). When false, an application must process or cancel all result sets from one
+         batch before it can execute any other batch on that connection, used by recommended version.
+         Type: Boolean (or Expression with resultType boolean).
+        :paramtype multiple_active_result_sets: JSON
+        :keyword multi_subnet_failover: If your application is connecting to an AlwaysOn availability
+         group (AG) on different subnets, setting MultiSubnetFailover=true provides faster detection of
+         and connection to the (currently) active server, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype multi_subnet_failover: JSON
+        :keyword packet_size: The size in bytes of the network packets used to communicate with an
+         instance of server, used by recommended version. Type: integer (or Expression with resultType
+         integer).
+        :paramtype packet_size: JSON
+        :keyword pooling: Indicate whether the connection will be pooled or explicitly opened every
+         time that the connection is requested, used by recommended version. Type: Boolean (or
+         Expression with resultType boolean).
+        :paramtype pooling: JSON
+        :keyword connection_string: The connection string. Type: string, SecureString or
+         AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "SQL" and "Windows".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
+        :keyword user_name: The on-premises Windows authentication user name. Type: string (or
+         Expression with resultType string).
+        :paramtype user_name: JSON
+        :keyword password: The on-premises Windows authentication password.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        """
+        super().__init__(
+            server=server,
+            database=database,
+            encrypt=encrypt,
+            trust_server_certificate=trust_server_certificate,
+            host_name_in_certificate=host_name_in_certificate,
+            application_intent=application_intent,
+            connect_timeout=connect_timeout,
+            connect_retry_count=connect_retry_count,
+            connect_retry_interval=connect_retry_interval,
+            load_balance_timeout=load_balance_timeout,
+            command_timeout=command_timeout,
+            integrated_security=integrated_security,
+            failover_partner=failover_partner,
+            max_pool_size=max_pool_size,
+            min_pool_size=min_pool_size,
+            multiple_active_result_sets=multiple_active_result_sets,
+            multi_subnet_failover=multi_subnet_failover,
+            packet_size=packet_size,
+            pooling=pooling,
+            **kwargs
+        )
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
         self.user_name = user_name
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -62650,13 +65737,13 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -62747,13 +65834,13 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -62823,7 +65910,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -62832,7 +65919,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -62909,7 +65996,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -62918,7 +66005,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -63223,13 +66310,13 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -63320,13 +66407,13 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -63396,7 +66483,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -63405,7 +66492,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -63478,7 +66565,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -63487,7 +66574,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -63837,7 +66924,7 @@ class SquareSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -63846,7 +66933,7 @@ class SquareSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -63893,7 +66980,7 @@ class SquareSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -63902,7 +66989,7 @@ class SquareSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -64328,7 +67415,7 @@ class SSISLogLocation(_serialization.Model):
     :vartype access_credential: ~azure.mgmt.datafactory.models.SSISAccessCredential
     :ivar log_refresh_interval: Specifies the interval to refresh log. The default interval is 5
      minutes. Type: string (or Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype log_refresh_interval: JSON
     """
 
@@ -64363,7 +67450,7 @@ class SSISLogLocation(_serialization.Model):
         :paramtype access_credential: ~azure.mgmt.datafactory.models.SSISAccessCredential
         :keyword log_refresh_interval: Specifies the interval to refresh log. The default interval is 5
          minutes. Type: string (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype log_refresh_interval: JSON
         """
         super().__init__(**kwargs)
@@ -65288,7 +68375,7 @@ class SybaseSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -65297,7 +68384,7 @@ class SybaseSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -65343,7 +68430,7 @@ class SybaseSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -65352,7 +68439,7 @@ class SybaseSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -66515,7 +69602,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -66524,7 +69611,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -66579,7 +69666,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -66588,7 +69675,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -67290,7 +70377,7 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
     :vartype end_time: ~datetime.datetime
     :ivar delay: Specifies how long the trigger waits past due time before triggering new run. It
      doesn't alter window start and end time. The default is 0. Type: string (or Expression with
-     resultType string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     resultType string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype delay: JSON
     :ivar max_concurrency: The max number of parallel time windows (ready for execution) for which
      a new run is triggered. Required.
@@ -67371,7 +70458,7 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
         :paramtype end_time: ~datetime.datetime
         :keyword delay: Specifies how long the trigger waits past due time before triggering new run.
          It doesn't alter window start and end time. The default is 0. Type: string (or Expression with
-         resultType string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         resultType string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype delay: JSON
         :keyword max_concurrency: The max number of parallel time windows (ready for execution) for
          which a new run is triggered. Required.
@@ -67645,7 +70732,7 @@ class UntilActivity(ControlActivity):  # pylint: disable=too-many-instance-attri
     :ivar timeout: Specifies the timeout for the activity to run. If there is no value specified,
      it takes the value of TimeSpan.FromDays(7) which is 1 week as default. Type: string (or
      Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype timeout: JSON
     :ivar activities: List of activities to execute. Required.
     :vartype activities: list[~azure.mgmt.datafactory.models.Activity]
@@ -67712,7 +70799,7 @@ class UntilActivity(ControlActivity):  # pylint: disable=too-many-instance-attri
         :keyword timeout: Specifies the timeout for the activity to run. If there is no value
          specified, it takes the value of TimeSpan.FromDays(7) which is 1 week as default. Type: string
          (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype timeout: JSON
         :keyword activities: List of activities to execute. Required.
         :paramtype activities: list[~azure.mgmt.datafactory.models.Activity]
@@ -67920,7 +71007,7 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
     :ivar timeout: Specifies the timeout for the activity to run. If there is no value specified,
      it takes the value of TimeSpan.FromDays(7) which is 1 week as default. Type: string (or
      Expression with resultType string), pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype timeout: JSON
     :ivar sleep: A delay in seconds between validation attempts. If no value is specified, 10
      seconds will be used as the default. Type: integer (or Expression with resultType integer).
@@ -67997,7 +71084,7 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
         :keyword timeout: Specifies the timeout for the activity to run. If there is no value
          specified, it takes the value of TimeSpan.FromDays(7) which is 1 week as default. Type: string
          (or Expression with resultType string), pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype timeout: JSON
         :keyword sleep: A delay in seconds between validation attempts. If no value is specified, 10
          seconds will be used as the default. Type: integer (or Expression with resultType integer).
@@ -68170,7 +71257,7 @@ class VerticaSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -68179,7 +71266,7 @@ class VerticaSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -68226,7 +71313,7 @@ class VerticaSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -68235,7 +71322,7 @@ class VerticaSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -68650,13 +71737,13 @@ class WarehouseSink(CopySink):  # pylint: disable=too-many-instance-attributes
      integer), minimum: 0.
     :vartype write_batch_size: JSON
     :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype write_batch_timeout: JSON
     :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
     :vartype sink_retry_count: JSON
     :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype sink_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
@@ -68726,13 +71813,13 @@ class WarehouseSink(CopySink):  # pylint: disable=too-many-instance-attributes
          integer), minimum: 0.
         :paramtype write_batch_size: JSON
         :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype write_batch_timeout: JSON
         :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
          integer).
         :paramtype sink_retry_count: JSON
         :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype sink_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
@@ -68788,7 +71875,7 @@ class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attri
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -68797,7 +71884,7 @@ class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attri
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -68872,7 +71959,7 @@ class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attri
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -68881,7 +71968,7 @@ class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attri
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -69528,7 +72615,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
     :vartype url: JSON
     :ivar timeout: The timeout within which the webhook should be called back. If there is no value
      specified, it defaults to 10 minutes. Type: string. Pattern:
-     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype timeout: str
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
@@ -69620,7 +72707,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         :paramtype url: JSON
         :keyword timeout: The timeout within which the webhook should be called back. If there is no
          value specified, it defaults to 10 minutes. Type: string. Pattern:
-         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype timeout: str
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
@@ -69747,7 +72834,7 @@ class WebSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -69793,7 +72880,7 @@ class WebSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -70256,7 +73343,7 @@ class XeroSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -70265,7 +73352,7 @@ class XeroSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -70312,7 +73399,7 @@ class XeroSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -70321,7 +73408,7 @@ class XeroSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -70573,7 +73660,7 @@ class XmlSource(CopySource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -70627,7 +73714,7 @@ class XmlSource(CopySource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -71065,7 +74152,7 @@ class ZohoSource(TabularSource):
      integer).
     :vartype source_retry_count: JSON
     :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype source_retry_wait: JSON
     :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
@@ -71074,7 +74161,7 @@ class ZohoSource(TabularSource):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
     :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+     pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :vartype query_timeout: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -71121,7 +74208,7 @@ class ZohoSource(TabularSource):
          integer).
         :paramtype source_retry_count: JSON
         :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         string), pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype source_retry_wait: JSON
         :keyword max_concurrent_connections: The maximum concurrent connection count for the source
          data store. Type: integer (or Expression with resultType integer).
@@ -71130,7 +74217,7 @@ class ZohoSource(TabularSource):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
         :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
-         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+         pattern: ((\\d+).)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
         :paramtype query_timeout: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).

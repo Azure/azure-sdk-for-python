@@ -75,7 +75,7 @@ class JobRouterClient(JobRouterClientGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_authentication.py
+            .. literalinclude:: ../samples/sample_authentication_async.py
                 :start-after: [START auth_from_connection_string_async]
                 :end-before: [END auth_from_connection_string_async]
                 :language: python
@@ -141,7 +141,7 @@ class JobRouterAdministrationClient(JobRouterAdministrationClientGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_authentication.py
+            .. literalinclude:: ../samples/sample_authentication_async.py
                 :start-after: [START admin_auth_from_connection_string_async]
                 :end-before: [END admin_auth_from_connection_string_async]
                 :language: python

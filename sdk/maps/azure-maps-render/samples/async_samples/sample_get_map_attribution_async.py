@@ -19,13 +19,13 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_map_attribution_async():
     # [START get_map_attribution_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render.aio import MapsRenderClient
-    from azure.maps.render.models import TilesetID, BoundingBox
+    from azure.maps.render import TilesetID
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
@@ -33,17 +33,13 @@ async def get_map_attribution_async():
         result = await maps_render_client.get_map_attribution(
             tileset_id=TilesetID.MICROSOFT_BASE,
             zoom=6,
-            bounds=BoundingBox(
-                south=42.982261,
-                west=24.980233,
-                north=56.526017,
-                east=1.355233
-            )
+            bounds=[42.982261, 24.980233, 56.526017, 1.355233],
         )
 
     print("Get map attribution result:")
-    print(result.copyrights[0])
+    print(result["copyrights"][0] if len(result.get("copyrights", [])) > 0 else "no copyrights")
     # [END get_map_attribution_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_map_attribution_async())

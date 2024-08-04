@@ -85,3 +85,35 @@ def reduce_logging_volume(caplog, pytestconfig):
     if not (pytestconfig.getoption("log_level") or pytestconfig.getoption("log_cli_level")):
         caplog.set_level(30)
     yield
+
+
+@pytest.fixture(scope="session")
+def patch_async_sleep():
+    from unittest import mock
+    from devtools_testutils import is_live
+
+    async def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("asyncio.sleep", immediate_return):
+            yield
+
+    else:
+        yield
+
+
+@pytest.fixture(scope="session")
+def patch_sleep():
+    from unittest import mock
+    from devtools_testutils import is_live
+
+    def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("time.sleep", immediate_return):
+            yield
+
+    else:
+        yield
