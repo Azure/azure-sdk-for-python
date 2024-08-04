@@ -24,7 +24,7 @@ from azure.ai.ml.constants._common import (
     SHORT_URI_REGEX_FORMAT,
     STORAGE_ACCOUNT_URLS,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -191,15 +191,20 @@ def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = N
     if registry_name:
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
-            path_prefix = split_paths[0][3]
+            if split_paths[0][3] == "":
+                path_prefix = split_paths[0][2]
+            else:
+                path_prefix = split_paths[0][3]
         except Exception as e:
-            raise Exception("Registry asset URI could not be parsed.") from e
+            msg = "Registry asset URI could not be parsed."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
         ds_name = None
     else:
         try:
             ds_name = asset_uri.split("paths")[0].split("/")[-2]
             path_prefix = asset_uri.split("paths")[1][1:]
         except Exception as e:
-            raise Exception("Workspace asset URI could not be parsed.") from e
+            msg = "Workspace asset URI could not be parsed."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
     return ds_name, path_prefix

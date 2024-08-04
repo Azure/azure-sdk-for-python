@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -31,6 +32,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._settings_operations import build_get_request, build_list_request, build_update_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -59,7 +64,6 @@ class SettingsOperations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Setting"]:
         """Settings about different configurations in Microsoft Defender for Cloud.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Setting or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.v2021_06_01.models.Setting]
@@ -71,7 +75,7 @@ class SettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-06-01"))
         cls: ClsType[_models.SettingsList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -82,15 +86,14 @@ class SettingsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -101,14 +104,14 @@ class SettingsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SettingsList", pipeline_response)
@@ -118,11 +121,11 @@ class SettingsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -134,8 +137,6 @@ class SettingsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings"}
-
     @distributed_trace_async
     async def get(self, setting_name: Union[str, _models.Enum12], **kwargs: Any) -> _models.Setting:
         """Settings of different configurations in Microsoft Defender for Cloud.
@@ -143,12 +144,11 @@ class SettingsOperations:
         :param setting_name: The name of the setting. Known values are: "MCAS", "WDATP", and
          "Sentinel". Required.
         :type setting_name: str or ~azure.mgmt.security.v2021_06_01.models.Enum12
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Setting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_06_01.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -162,20 +162,19 @@ class SettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-06-01"))
         cls: ClsType[_models.Setting] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             setting_name=setting_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -187,11 +186,9 @@ class SettingsOperations:
         deserialized = self._deserialize("Setting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings/{settingName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -212,7 +209,6 @@ class SettingsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Setting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_06_01.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -222,7 +218,7 @@ class SettingsOperations:
     async def update(
         self,
         setting_name: Union[str, _models.Enum12],
-        setting: IO,
+        setting: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -233,11 +229,10 @@ class SettingsOperations:
          "Sentinel". Required.
         :type setting_name: str or ~azure.mgmt.security.v2021_06_01.models.Enum12
         :param setting: Setting object. Required.
-        :type setting: IO
+        :type setting: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Setting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_06_01.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -245,24 +240,20 @@ class SettingsOperations:
 
     @distributed_trace_async
     async def update(
-        self, setting_name: Union[str, _models.Enum12], setting: Union[_models.Setting, IO], **kwargs: Any
+        self, setting_name: Union[str, _models.Enum12], setting: Union[_models.Setting, IO[bytes]], **kwargs: Any
     ) -> _models.Setting:
         """updating settings about different configurations in Microsoft Defender for Cloud.
 
         :param setting_name: The name of the setting. Known values are: "MCAS", "WDATP", and
          "Sentinel". Required.
         :type setting_name: str or ~azure.mgmt.security.v2021_06_01.models.Enum12
-        :param setting: Setting object. Is either a Setting type or a IO type. Required.
-        :type setting: ~azure.mgmt.security.v2021_06_01.models.Setting or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param setting: Setting object. Is either a Setting type or a IO[bytes] type. Required.
+        :type setting: ~azure.mgmt.security.v2021_06_01.models.Setting or IO[bytes]
         :return: Setting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_06_01.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -285,23 +276,22 @@ class SettingsOperations:
         else:
             _json = self._serialize.body(setting, "Setting")
 
-        request = build_update_request(
+        _request = build_update_request(
             setting_name=setting_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -313,8 +303,6 @@ class SettingsOperations:
         deserialized = self._deserialize("Setting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings/{settingName}"}
+        return deserialized  # type: ignore

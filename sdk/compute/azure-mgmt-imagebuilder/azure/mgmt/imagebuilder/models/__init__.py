@@ -13,6 +13,7 @@ from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ImageTemplate
+from ._models_py3 import ImageTemplateAutoRun
 from ._models_py3 import ImageTemplateCustomizer
 from ._models_py3 import ImageTemplateDistributor
 from ._models_py3 import ImageTemplateFileCustomizer
@@ -61,6 +62,7 @@ from ._models_py3 import TriggerStatus
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VirtualNetworkConfig
 
+from ._image_builder_client_enums import AutoRunState
 from ._image_builder_client_enums import CreatedByType
 from ._image_builder_client_enums import OnBuildError
 from ._image_builder_client_enums import ProvisioningErrorCode
@@ -82,6 +84,7 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "ImageTemplate",
+    "ImageTemplateAutoRun",
     "ImageTemplateCustomizer",
     "ImageTemplateDistributor",
     "ImageTemplateFileCustomizer",
@@ -129,6 +132,7 @@ __all__ = [
     "TriggerStatus",
     "UserAssignedIdentity",
     "VirtualNetworkConfig",
+    "AutoRunState",
     "CreatedByType",
     "OnBuildError",
     "ProvisioningErrorCode",

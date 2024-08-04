@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -62,7 +63,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -82,11 +87,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Creating the QueueServiceClient with an account url and credential.
 
         .. literalinclude:: ../samples/queue_samples_authentication.py
-            :start-after: [START create_queue_service_client_token]
-            :end-before: [END create_queue_service_client_token]
+            :start-after: [START create_queue_service_client_oauth]
+            :end-before: [END create_queue_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the QueueServiceClient with Azure Identity credentials.
+            :caption: Creating the QueueServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(
@@ -131,7 +136,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential:
-            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.

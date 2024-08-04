@@ -1,3 +1,4 @@
+import sys
 from typing import List, Dict, Any
 import argparse
 import json
@@ -24,16 +25,22 @@ from .generate_utils import (
     init_new_service,
     update_servicemetadata,
     judge_tag_preview,
-    format_samples,
+    format_samples_and_tests,
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
     return_origin_path,
     check_api_version_in_subfolder,
     call_build_config,
+    del_outdated_generated_files,
 )
 from .conf import CONF_NAME
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -90,7 +97,7 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         _LOGGER.info(f"do not find {toml_file}")
 
 
-def del_outdated_folder(readme: str):
+def del_outdated_files(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
@@ -101,6 +108,12 @@ def del_outdated_folder(readme: str):
     sdk_folder = extract_sdk_folder(content)
     is_multiapi = is_multiapi_package(content)
     if sdk_folder:
+        # remove tsp-location.yaml
+        tsp_location = Path(f"sdk/{sdk_folder}/tsp-location.yaml")
+        if tsp_location.exists():
+            os.remove(str(tsp_location))
+            _LOGGER.info(f"remove tsp-location.yaml: {tsp_location}")
+        # remove generated_samples
         sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
         if sample_folder.exists():
             # rdbms is generated from different swagger folder;multiapi package may don't generate every time
@@ -268,24 +281,37 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        if "resource-manager" in input_readme:
-            relative_path_readme = str(Path(spec_folder, input_readme))
-            update_metadata_for_multiapi_package(spec_folder, input_readme)
-            del_outdated_folder(relative_path_readme)
-            config = generate(
-                CONFIG_FILE,
-                sdk_folder,
-                [],
-                relative_path_readme,
-                spec_folder,
-                force_generation=True,
-                python_tag=python_tag,
-            )
-        elif "data-plane" in input_readme:
-            config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
-        else:
-            config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
-        package_names = get_package_names(sdk_folder)
+        try:
+            if "resource-manager" in input_readme:
+                relative_path_readme = str(Path(spec_folder, input_readme))
+                update_metadata_for_multiapi_package(spec_folder, input_readme)
+                del_outdated_files(relative_path_readme)
+                config = generate(
+                    CONFIG_FILE,
+                    sdk_folder,
+                    [],
+                    relative_path_readme,
+                    spec_folder,
+                    force_generation=True,
+                    python_tag=python_tag,
+                )
+            elif "data-plane" in input_readme:
+                config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+            else:
+                del_outdated_generated_files(str(Path(spec_folder, input_readme)))
+                config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
+            package_names = get_package_names(sdk_folder)
+        except Exception as e:
+            _LOGGER.error(f"fail to generate sdk for {input_readme}: {str(e)}")
+            for hint_message in [
+                "======================================= Whant Can I do ========================================================================",
+                "If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
+                "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
+                "If it happens to Python alone, you can open an issue to https://github.com/Azure/autorest.python/issues. Please include the link of this Pull Request in the issue.",
+                "===============================================================================================================================",
+            ]:
+                _LOGGER.error(hint_message)
+            raise e
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
@@ -308,7 +334,7 @@ def main(generate_input, generate_output):
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
-            format_samples(sdk_code_path)
+            format_samples_and_tests(sdk_code_path)
 
             # Update metadata
             try:
@@ -322,7 +348,7 @@ def main(generate_input, generate_output):
                     input_readme,
                 )
             except Exception as e:
-                _LOGGER.info(f"fail to update meta: {str(e)}")
+                _LOGGER.error(f"fail to update meta: {str(e)}")
 
             # Setup package locally
             check_call(

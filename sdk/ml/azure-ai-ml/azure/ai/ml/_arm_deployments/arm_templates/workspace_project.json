@@ -122,7 +122,8 @@
             "defaultValue": "new",
             "allowedValues": [
                 "new",
-                "existing"
+                "existing",
+                "none"
             ],
             "metadata": {
                 "description": "Determines whether or not new ApplicationInsights should be provisioned."
@@ -162,7 +163,6 @@
             "defaultValue": "none",
             "allowedValues": [
                 "new",
-                "existing",
                 "none"
             ],
             "metadata": {
@@ -622,6 +622,25 @@
             ],
             "metadata": {
                 "description": "Whether to grant materialization identity permissions"
+            }
+        },
+        "allowRoleAssignmentOnRG": {
+            "type": "string",
+            "defaultValue": "true",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Unused for projects, but required due to interdependency of normal and project ARM templates."
+            }
+        },
+        
+        "systemDatastoresAuthMode": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Unused for projects, but required due to interdependency of normal and project ARM templates"
             }
         }
     },

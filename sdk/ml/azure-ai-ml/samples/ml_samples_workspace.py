@@ -38,21 +38,19 @@ class WorkspaceConfigurationOptions(object):
         )
         # [END load_workspace]
 
-        # [START load_workspace_hub]
-        from azure.ai.ml import load_workspace_hub
+        # [START load_hub]
+        from azure.ai.ml import load_hub
 
-        hub = load_workspace_hub(
+        hub = load_hub(
             "../tests/test_configs/workspace/workspacehub_min.yaml",
             params_override=[{"description": "loaded from workspacehub_min.yaml"}],
         )
-        # [END load_workspace_hub]
+        # [END load_hub]
 
         # [START load_workspace_connection]
-        from azure.ai.ml import load_workspace_connection
+        from azure.ai.ml import load_connection
 
-        wps_connection = load_workspace_connection(
-            source="../tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
-        )
+        wps_connection = load_connection(source="../tests/test_configs/connection/snowflake_user_pwd.yaml")
         # [END load_workspace_connection]
 
         # [START customermanagedkey]
@@ -145,9 +143,9 @@ class WorkspaceConfigurationOptions(object):
         # [END workspace]
 
         # [START workspace_hub]
-        from azure.ai.ml.entities import WorkspaceHub
+        from azure.ai.ml.entities import Hub
 
-        ws = WorkspaceHub(name="sample-ws", location="eastus", description="a sample workspace hub object")
+        ws = Hub(name="sample-ws", location="eastus", description="a sample workspace hub object")
         # [END workspace_hub]
 
     @handle_resource_exists_error
@@ -258,9 +256,9 @@ class WorkspaceConfigurationOptions(object):
         # [END hub_get]
 
         # [START hub_begin_create]
-        from azure.ai.ml.entities import WorkspaceHub
+        from azure.ai.ml.entities import Hub
 
-        hub = WorkspaceHub(
+        hub = Hub(
             name="test-hub1",
             description="a test hub",
             tags={"purpose": "demo"},

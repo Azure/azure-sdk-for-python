@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class AccountSasParameters(_serialization.Model):
     """The parameters to list SAS credentials of a storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar services: The signed services accessible with the account SAS. Possible values include:
      Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t", and "f".
@@ -165,7 +165,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
 class CustomDomain(_serialization.Model):
     """The custom domain assigned to this storage account. This can be set via Update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets or sets the custom domain name assigned to the storage account. Name is the
      CNAME source. Required.
@@ -201,7 +201,7 @@ class CustomDomain(_serialization.Model):
 class Encryption(_serialization.Model):
     """The encryption settings on the storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar services: List of services which support encryption.
     :vartype services: ~azure.mgmt.storage.v2016_12_01.models.EncryptionServices
@@ -454,7 +454,7 @@ class Resource(_serialization.Model):
 class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters to list service SAS credentials of a specific resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar canonicalized_resource: The canonical path to the signed resource. Required.
     :vartype canonicalized_resource: str
@@ -623,7 +623,7 @@ class Sku(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets or sets the sku name. Required for account creation; optional for update. Note
      that in older versions, sku name was called accountType. Required. Known values are:
@@ -797,10 +797,10 @@ class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
         self.enable_https_traffic_only = enable_https_traffic_only
 
 
-class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
+class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
     """The parameters used to check the availability of the storage account name.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -837,7 +837,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 class StorageAccountCreateParameters(_serialization.Model):
     """The parameters used when creating a storage account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sku: Required. Gets or sets the sku name. Required.
     :vartype sku: ~azure.mgmt.storage.v2016_12_01.models.Sku
@@ -1023,7 +1023,7 @@ class StorageAccountListResult(_serialization.Model):
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
     """The parameters used to regenerate the storage account key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Required.
     :vartype key_name: str

@@ -1,12 +1,79 @@
 # Release History
 
-## 1.16.0 (unreleased)
+## 1.20.0 (unreleased)
+
+## 1.19.0 (2024-07-29)
+
+### Feature Added
+
+  - Added enable_sso operation under compute operation that will allow user to enable sso setting of a compute instance without any write permission set on compute.
+  
+### Bugs Fixed
+- Workspace update no longer broken for older workspaces due to deprecated tags.
+- Support credential-less fileshare datastore
+
+## 1.18.0 (2024-07-09)
 
 ### Features Added
+
+ - Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+ - Uploads to account key access datastores will be authorized via a SAS token retrieved from a call to `DatastoreOperations._list_secrets`. Key-based authentication for uploads for such datastores is no longer used. Identity-based datastores will use user identity authentication retrieved from the MLClient.
+- Support `update_sso_settings` in `ComputeOperations`, to enable or disable single sign-on settings of a compute instance.
+
+### Bugs Fixed
+- InputTypes exported in constants module
+- WorkspaceConnection tags are now listed as deprecated, and the erroneously-deprecated metadata field has been un-deprecated and added as a initialization field. These two fields still point to the same underlying object property, and actual API usage of this value is unchanged.
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
+
+
+### Other Changes
+- WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
+
+## 1.17.1 (2024-07-04)
+
+### Bugs Fixed
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
+
+## 1.17.0 (2024-06-18)
+
+## 1.16.0 (2024-05-14)
+
+### Features Added
+- Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
+- Many changes to the Connection entity class and its associated operations.
+- Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
+- Many workspace connection subtypes added. The full list of subclasses is now:
+  - `AzureBlobStoreConnection`
+  - `AzureBlobStoreConnection`
+  - `MicrosoftOneLakeConnection`
+  - `AzureOpenAIConnection`
+  - `AzureAIServicesConnection`
+  - `AzureAISearchConnection`
+  - `AzureContentSafetyConnection`
+  - `AzureSpeechServicesConnection`
+  - `APIKeyConnection`
+  - `OpenAIConnection`
+  - `SerpConnection`
+  - `ServerlessConnection`
+- Many workspace connections only accept api keys or entra ids for credentials. Since Entra IDs require not inputs, these have been refactored to not required a full credential object. Instead they only accept an api_key as a top-level input, and default to an entra credential otherwise. Their YAML schemas have been similarly altered.
+- Client-side credential-type validation added for some workspace connection types.
+- Added new credential type: `AadCredentialConfiguration`
+- Renamed WorkspaceHub class as Hub.
+- Added Project entity class and YAML support.
+- Project and Hub operations supported by workspace operations.
+- workspace list operation supports type filtering.
+- Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
+- Add experimental support for working with indexes: `ml_client.indexes`
 
 ### Bugs Fixed
 
 ### Breaking Changes
+
+- Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
+- workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
+- Removed Workspace Hub Operations from ML Client.
 
 ### Other Changes
 
@@ -112,7 +179,7 @@
 
 ### Other Changes
 
-- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance.
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 - Removed references to deprecated "feature_store" workspace connection type.
 

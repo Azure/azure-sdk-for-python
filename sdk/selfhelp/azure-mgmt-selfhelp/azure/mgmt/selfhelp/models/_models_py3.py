@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 class AutomatedCheckResult(_serialization.Model):
     """Only for AutomatedStep type.
 
+    :ivar version: Version for automated check result.
+    :vartype version: str
+    :ivar status: Status for automated check result.
+    :vartype status: str
     :ivar result: Insight Article Content.
     :vartype result: str
     :ivar type: Type of Result. Known values are: "Success", "Warning", "Error", and "Information".
@@ -27,6 +31,8 @@ class AutomatedCheckResult(_serialization.Model):
     """
 
     _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+        "status": {"key": "status", "type": "str"},
         "result": {"key": "result", "type": "str"},
         "type": {"key": "type", "type": "str"},
     }
@@ -34,11 +40,17 @@ class AutomatedCheckResult(_serialization.Model):
     def __init__(
         self,
         *,
+        version: Optional[str] = None,
+        status: Optional[str] = None,
         result: Optional[str] = None,
         type: Optional[Union[str, "_models.AutomatedCheckResultType"]] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword version: Version for automated check result.
+        :paramtype version: str
+        :keyword status: Status for automated check result.
+        :paramtype status: str
         :keyword result: Insight Article Content.
         :paramtype result: str
         :keyword type: Type of Result. Known values are: "Success", "Warning", "Error", and
@@ -46,6 +58,8 @@ class AutomatedCheckResult(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.selfhelp.models.AutomatedCheckResultType
         """
         super().__init__(**kwargs)
+        self.version = version
+        self.status = status
         self.result = result
         self.type = type
 
@@ -117,6 +131,41 @@ class CheckNameAvailabilityResponse(_serialization.Model):
         self.name_available = name_available
         self.reason = reason
         self.message = message
+
+
+class ClassificationService(_serialization.Model):
+    """Service Classification result object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar service_id: Azure resource Id of the service.
+    :vartype service_id: str
+    :ivar display_name: Localized name of the azure service.
+    :vartype display_name: str
+    :ivar resource_types: List of applicable ARM resource types for this service.
+    :vartype resource_types: list[str]
+    """
+
+    _validation = {
+        "service_id": {"readonly": True},
+        "display_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "service_id": {"key": "serviceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_types: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_types: List of applicable ARM resource types for this service.
+        :paramtype resource_types: list[str]
+        """
+        super().__init__(**kwargs)
+        self.service_id = None
+        self.display_name = None
+        self.resource_types = resource_types
 
 
 class ContinueRequestBody(_serialization.Model):
@@ -237,7 +286,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -279,7 +328,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -291,24 +340,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class DiagnosticResource(ProxyResource):
     """Diagnostic resource.
@@ -316,7 +347,7 @@ class DiagnosticResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -382,6 +413,83 @@ class DiagnosticResource(ProxyResource):
         self.accepted_at = None
         self.provisioning_state = None
         self.diagnostics = None
+
+
+class DiscoveryNlpRequest(_serialization.Model):
+    """Discover NLP request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar issue_summary: Natural language description of the issue. Required.
+    :vartype issue_summary: str
+    :ivar resource_id: ARM resource Id of the resource that is having the issue. Only applicable
+     for Discovery Solution NLP Subscription Scope.
+    :vartype resource_id: str
+    :ivar service_id: ARM service Id of the service that is having the issue. For more information
+     on service Id see https://learn.microsoft.com/rest/api/support/services/list?tabs=HTTP.
+    :vartype service_id: str
+    :ivar additional_context: Additional information in the form of a string.
+    :vartype additional_context: str
+    """
+
+    _validation = {
+        "issue_summary": {"required": True},
+    }
+
+    _attribute_map = {
+        "issue_summary": {"key": "issueSummary", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "service_id": {"key": "serviceId", "type": "str"},
+        "additional_context": {"key": "additionalContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        issue_summary: str,
+        resource_id: Optional[str] = None,
+        service_id: Optional[str] = None,
+        additional_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword issue_summary: Natural language description of the issue. Required.
+        :paramtype issue_summary: str
+        :keyword resource_id: ARM resource Id of the resource that is having the issue. Only applicable
+         for Discovery Solution NLP Subscription Scope.
+        :paramtype resource_id: str
+        :keyword service_id: ARM service Id of the service that is having the issue. For more
+         information on service Id see
+         https://learn.microsoft.com/rest/api/support/services/list?tabs=HTTP.
+        :paramtype service_id: str
+        :keyword additional_context: Additional information in the form of a string.
+        :paramtype additional_context: str
+        """
+        super().__init__(**kwargs)
+        self.issue_summary = issue_summary
+        self.resource_id = resource_id
+        self.service_id = service_id
+        self.additional_context = additional_context
+
+
+class DiscoveryNlpResponse(_serialization.Model):
+    """Successfully fetched list of solution metadata.
+
+    :ivar value: The list of solution metadata.
+    :vartype value: list[~azure.mgmt.selfhelp.models.SolutionNlpMetadataResource]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SolutionNlpMetadataResource]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.SolutionNlpMetadataResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of solution metadata.
+        :paramtype value: list[~azure.mgmt.selfhelp.models.SolutionNlpMetadataResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
 
 
 class DiscoveryResponse(_serialization.Model):
@@ -900,6 +1008,47 @@ class ReplacementMaps(_serialization.Model):
         self.video_groups = video_groups
 
 
+class ReplacementMapsSelfHelp(_serialization.Model):
+    """Solution replacement maps.
+
+    :ivar web_results: Solution AzureKB results.
+    :vartype web_results: list[~azure.mgmt.selfhelp.models.WebResult]
+    :ivar videos: Video solutions, which have the power to engage the customer by stimulating their
+     senses.
+    :vartype videos: list[~azure.mgmt.selfhelp.models.Video]
+    :ivar video_groups: Group of Videos.
+    :vartype video_groups: list[~azure.mgmt.selfhelp.models.VideoGroup]
+    """
+
+    _attribute_map = {
+        "web_results": {"key": "webResults", "type": "[WebResult]"},
+        "videos": {"key": "videos", "type": "[Video]"},
+        "video_groups": {"key": "videoGroups", "type": "[VideoGroup]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        web_results: Optional[List["_models.WebResult"]] = None,
+        videos: Optional[List["_models.Video"]] = None,
+        video_groups: Optional[List["_models.VideoGroup"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword web_results: Solution AzureKB results.
+        :paramtype web_results: list[~azure.mgmt.selfhelp.models.WebResult]
+        :keyword videos: Video solutions, which have the power to engage the customer by stimulating
+         their senses.
+        :paramtype videos: list[~azure.mgmt.selfhelp.models.Video]
+        :keyword video_groups: Group of Videos.
+        :paramtype video_groups: list[~azure.mgmt.selfhelp.models.VideoGroup]
+        """
+        super().__init__(**kwargs)
+        self.web_results = web_results
+        self.videos = videos
+        self.video_groups = video_groups
+
+
 class ResponseOption(_serialization.Model):
     """The status of the resource.
 
@@ -931,6 +1080,9 @@ class ResponseValidationProperties(_serialization.Model):
 
     :ivar regex: Regex used for the input validation.
     :vartype regex: str
+    :ivar validation_scope: Validation scope. Known values are: "None", "URLFormat", "GuidFormat",
+     "IpAddressFormat", and "NumberOnlyFormat".
+    :vartype validation_scope: str or ~azure.mgmt.selfhelp.models.ValidationScope
     :ivar is_required: Default True.
     :vartype is_required: bool
     :ivar validation_error_message: Validation Error Message.
@@ -941,6 +1093,7 @@ class ResponseValidationProperties(_serialization.Model):
 
     _attribute_map = {
         "regex": {"key": "regex", "type": "str"},
+        "validation_scope": {"key": "validationScope", "type": "str"},
         "is_required": {"key": "isRequired", "type": "bool"},
         "validation_error_message": {"key": "validationErrorMessage", "type": "str"},
         "max_length": {"key": "maxLength", "type": "int"},
@@ -950,6 +1103,7 @@ class ResponseValidationProperties(_serialization.Model):
         self,
         *,
         regex: Optional[str] = None,
+        validation_scope: Optional[Union[str, "_models.ValidationScope"]] = None,
         is_required: Optional[bool] = None,
         validation_error_message: Optional[str] = None,
         max_length: Optional[int] = None,
@@ -958,6 +1112,9 @@ class ResponseValidationProperties(_serialization.Model):
         """
         :keyword regex: Regex used for the input validation.
         :paramtype regex: str
+        :keyword validation_scope: Validation scope. Known values are: "None", "URLFormat",
+         "GuidFormat", "IpAddressFormat", and "NumberOnlyFormat".
+        :paramtype validation_scope: str or ~azure.mgmt.selfhelp.models.ValidationScope
         :keyword is_required: Default True.
         :paramtype is_required: bool
         :keyword validation_error_message: Validation Error Message.
@@ -967,6 +1124,7 @@ class ResponseValidationProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.regex = regex
+        self.validation_scope = validation_scope
         self.is_required = is_required
         self.validation_error_message = validation_error_message
         self.max_length = max_length
@@ -1112,6 +1270,118 @@ class Section(_serialization.Model):
         self.replacement_maps = replacement_maps
 
 
+class SectionSelfHelp(_serialization.Model):
+    """Part of the solution and are dividers in the solution rendering.
+
+    :ivar title: Solution sections title.
+    :vartype title: str
+    :ivar content: Solution sections content.
+    :vartype content: str
+    :ivar replacement_maps: Solution replacement maps.
+    :vartype replacement_maps: ~azure.mgmt.selfhelp.models.ReplacementMapsSelfHelp
+    """
+
+    _attribute_map = {
+        "title": {"key": "title", "type": "str"},
+        "content": {"key": "content", "type": "str"},
+        "replacement_maps": {"key": "replacementMaps", "type": "ReplacementMapsSelfHelp"},
+    }
+
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        content: Optional[str] = None,
+        replacement_maps: Optional["_models.ReplacementMapsSelfHelp"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword title: Solution sections title.
+        :paramtype title: str
+        :keyword content: Solution sections content.
+        :paramtype content: str
+        :keyword replacement_maps: Solution replacement maps.
+        :paramtype replacement_maps: ~azure.mgmt.selfhelp.models.ReplacementMapsSelfHelp
+        """
+        super().__init__(**kwargs)
+        self.title = title
+        self.content = content
+        self.replacement_maps = replacement_maps
+
+
+class SimplifiedSolutionsResource(ProxyResource):
+    """Simplified Solutions response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
+    :ivar solution_id: Solution Id to identify single Simplified Solution.
+    :vartype solution_id: str
+    :ivar parameters: Client input parameters to run Simplified Solutions.
+    :vartype parameters: dict[str, str]
+    :ivar title: The title.
+    :vartype title: str
+    :ivar appendix: Additional parameter response for Simplified Solutions.
+    :vartype appendix: dict[str, str]
+    :ivar content: The HTML content that needs to be rendered and shown to customer.
+    :vartype content: str
+    :ivar provisioning_state: Status of Simplified Solution provisioning. Known values are:
+     "Succeeded", "PartialComplete", "Failed", "Running", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.selfhelp.models.SolutionProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "title": {"readonly": True},
+        "appendix": {"readonly": True},
+        "content": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "solution_id": {"key": "properties.solutionId", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "title": {"key": "properties.title", "type": "str"},
+        "appendix": {"key": "properties.appendix", "type": "{str}"},
+        "content": {"key": "properties.content", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, solution_id: Optional[str] = None, parameters: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_id: Solution Id to identify single Simplified Solution.
+        :paramtype solution_id: str
+        :keyword parameters: Client input parameters to run Simplified Solutions.
+        :paramtype parameters: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.solution_id = solution_id
+        self.parameters = parameters
+        self.title = None
+        self.appendix = None
+        self.content = None
+        self.provisioning_state = None
+
+
 class SolutionMetadataProperties(_serialization.Model):
     """Metadata Properties.
 
@@ -1119,7 +1389,8 @@ class SolutionMetadataProperties(_serialization.Model):
 
     :ivar solution_id: Solution Id.
     :vartype solution_id: str
-    :ivar solution_type: Solution Type. Known values are: "Diagnostics" and "Solutions".
+    :ivar solution_type: Solution Type. Known values are: "Diagnostics", "Solutions",
+     "Troubleshooters", and "SelfHelp".
     :vartype solution_type: str or ~azure.mgmt.selfhelp.models.SolutionType
     :ivar description: A detailed description of solution.
     :vartype description: str
@@ -1158,7 +1429,7 @@ class SolutionMetadataResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1198,8 +1469,104 @@ class SolutionMetadataResource(ProxyResource):
         self.solutions = solutions
 
 
+class SolutionNlpMetadataResource(ProxyResource):
+    """Nlp Metadata resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
+    :ivar problem_title: Title of the problem classification.
+    :vartype problem_title: str
+    :ivar problem_description: Description of the problem classification.
+    :vartype problem_description: str
+    :ivar service_id: Id of the service
+     (https://learn.microsoft.com/en-us/rest/api/support/services?view=rest-support-2020-04-01) that
+     may be used to create a support ticket.
+    :vartype service_id: str
+    :ivar problem_classification_id: Id of the ProblemClassification
+     (https://learn.microsoft.com/en-us/rest/api/support/problem-classifications?view=rest-support-2020-04-01)
+     that may be used to create a support ticket.
+    :vartype problem_classification_id: str
+    :ivar solutions: The list of solution metadata.
+    :vartype solutions: list[~azure.mgmt.selfhelp.models.SolutionMetadataProperties]
+    :ivar related_services: The set of services that are most likely related to the request. If
+     relatedServices is included in the response then solutions may not be discovered until the
+     client calls a second time specifying one of the service Ids in the relatedServices object.
+    :vartype related_services: list[~azure.mgmt.selfhelp.models.ClassificationService]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "problem_title": {"key": "properties.problemTitle", "type": "str"},
+        "problem_description": {"key": "properties.problemDescription", "type": "str"},
+        "service_id": {"key": "properties.serviceId", "type": "str"},
+        "problem_classification_id": {"key": "properties.problemClassificationId", "type": "str"},
+        "solutions": {"key": "properties.solutions", "type": "[SolutionMetadataProperties]"},
+        "related_services": {"key": "properties.relatedServices", "type": "[ClassificationService]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        problem_title: Optional[str] = None,
+        problem_description: Optional[str] = None,
+        service_id: Optional[str] = None,
+        problem_classification_id: Optional[str] = None,
+        solutions: Optional[List["_models.SolutionMetadataProperties"]] = None,
+        related_services: Optional[List["_models.ClassificationService"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword problem_title: Title of the problem classification.
+        :paramtype problem_title: str
+        :keyword problem_description: Description of the problem classification.
+        :paramtype problem_description: str
+        :keyword service_id: Id of the service
+         (https://learn.microsoft.com/en-us/rest/api/support/services?view=rest-support-2020-04-01) that
+         may be used to create a support ticket.
+        :paramtype service_id: str
+        :keyword problem_classification_id: Id of the ProblemClassification
+         (https://learn.microsoft.com/en-us/rest/api/support/problem-classifications?view=rest-support-2020-04-01)
+         that may be used to create a support ticket.
+        :paramtype problem_classification_id: str
+        :keyword solutions: The list of solution metadata.
+        :paramtype solutions: list[~azure.mgmt.selfhelp.models.SolutionMetadataProperties]
+        :keyword related_services: The set of services that are most likely related to the request. If
+         relatedServices is included in the response then solutions may not be discovered until the
+         client calls a second time specifying one of the service Ids in the relatedServices object.
+        :paramtype related_services: list[~azure.mgmt.selfhelp.models.ClassificationService]
+        """
+        super().__init__(**kwargs)
+        self.problem_title = problem_title
+        self.problem_description = problem_description
+        self.service_id = service_id
+        self.problem_classification_id = problem_classification_id
+        self.solutions = solutions
+        self.related_services = related_services
+
+
 class SolutionPatchRequestBody(_serialization.Model):
-    """Solution response.
+    """Solution PatchRequest body.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1272,7 +1639,7 @@ class SolutionResource(ProxyResource):  # pylint: disable=too-many-instance-attr
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1353,6 +1720,70 @@ class SolutionResource(ProxyResource):  # pylint: disable=too-many-instance-attr
         self.sections = None
 
 
+class SolutionResourceSelfHelp(ProxyResource):
+    """Self Help Solution response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
+    :ivar solution_id: SolutionId is a unique id to identify a solution. You can retrieve the
+     solution id using the Discovery api -
+     https://learn.microsoft.com/en-us/rest/api/help/discovery-solution/list?view=rest-help-2023-09-01-preview&tabs=HTTP.  # pylint: disable=line-too-long
+    :vartype solution_id: str
+    :ivar title: The title.
+    :vartype title: str
+    :ivar content: The HTML content that needs to be rendered and shown to customer.
+    :vartype content: str
+    :ivar replacement_maps: Solution replacement maps.
+    :vartype replacement_maps: ~azure.mgmt.selfhelp.models.ReplacementMapsSelfHelp
+    :ivar sections: List of section object.
+    :vartype sections: list[~azure.mgmt.selfhelp.models.SectionSelfHelp]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "solution_id": {"readonly": True},
+        "title": {"readonly": True},
+        "content": {"readonly": True},
+        "replacement_maps": {"readonly": True},
+        "sections": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "solution_id": {"key": "properties.solutionId", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "content": {"key": "properties.content", "type": "str"},
+        "replacement_maps": {"key": "properties.replacementMaps", "type": "ReplacementMapsSelfHelp"},
+        "sections": {"key": "properties.sections", "type": "[SectionSelfHelp]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.solution_id = None
+        self.title = None
+        self.content = None
+        self.replacement_maps = None
+        self.sections = None
+
+
 class SolutionsDiagnostic(_serialization.Model):
     """Solutions Diagnostic.
 
@@ -1365,6 +1796,8 @@ class SolutionsDiagnostic(_serialization.Model):
     :vartype status_details: str
     :ivar replacement_key: Place holder used in HTML Content replace control with the content.
     :vartype replacement_key: str
+    :ivar estimated_completion_time: Diagnostics estimated completion time in minutes.
+    :vartype estimated_completion_time: str
     :ivar required_parameters: Required parameters of this item.
     :vartype required_parameters: list[str]
     :ivar insights: Diagnostic insights.
@@ -1376,6 +1809,7 @@ class SolutionsDiagnostic(_serialization.Model):
         "status": {"key": "status", "type": "str"},
         "status_details": {"key": "statusDetails", "type": "str"},
         "replacement_key": {"key": "replacementKey", "type": "str"},
+        "estimated_completion_time": {"key": "estimatedCompletionTime", "type": "str"},
         "required_parameters": {"key": "requiredParameters", "type": "[str]"},
         "insights": {"key": "insights", "type": "[Insight]"},
     }
@@ -1387,6 +1821,7 @@ class SolutionsDiagnostic(_serialization.Model):
         status: Optional[Union[str, "_models.Status"]] = None,
         status_details: Optional[str] = None,
         replacement_key: Optional[str] = None,
+        estimated_completion_time: Optional[str] = None,
         required_parameters: Optional[List[str]] = None,
         insights: Optional[List["_models.Insight"]] = None,
         **kwargs: Any
@@ -1401,6 +1836,8 @@ class SolutionsDiagnostic(_serialization.Model):
         :paramtype status_details: str
         :keyword replacement_key: Place holder used in HTML Content replace control with the content.
         :paramtype replacement_key: str
+        :keyword estimated_completion_time: Diagnostics estimated completion time in minutes.
+        :paramtype estimated_completion_time: str
         :keyword required_parameters: Required parameters of this item.
         :paramtype required_parameters: list[str]
         :keyword insights: Diagnostic insights.
@@ -1411,6 +1848,7 @@ class SolutionsDiagnostic(_serialization.Model):
         self.status = status
         self.status_details = status_details
         self.replacement_key = replacement_key
+        self.estimated_completion_time = estimated_completion_time
         self.required_parameters = required_parameters
         self.insights = insights
 
@@ -1454,6 +1892,26 @@ class SolutionsTroubleshooters(_serialization.Model):
         self.summary = summary
 
 
+class SolutionWarmUpRequestBody(_serialization.Model):
+    """Solution WarmUpRequest body.
+
+    :ivar parameters: Dictionary of :code:`<string>`.
+    :vartype parameters: dict[str, str]
+    """
+
+    _attribute_map = {
+        "parameters": {"key": "parameters", "type": "{str}"},
+    }
+
+    def __init__(self, *, parameters: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword parameters: Dictionary of :code:`<string>`.
+        :paramtype parameters: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.parameters = parameters
+
+
 class Step(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Troubleshooter step.
 
@@ -1472,7 +1930,7 @@ class Step(_serialization.Model):  # pylint: disable=too-many-instance-attribute
      execution status.
     :vartype execution_status_description: str
     :ivar type: Type of Troubleshooting step. Known values are: "Decision", "Solution", "Insight",
-     and "AutomatedCheck".
+     "AutomatedCheck", and "Input".
     :vartype type: str or ~azure.mgmt.selfhelp.models.Type
     :ivar is_last_step: is this last step of the workflow.
     :vartype is_last_step: bool
@@ -1534,7 +1992,7 @@ class Step(_serialization.Model):  # pylint: disable=too-many-instance-attribute
          execution status.
         :paramtype execution_status_description: str
         :keyword type: Type of Troubleshooting step. Known values are: "Decision", "Solution",
-         "Insight", and "AutomatedCheck".
+         "Insight", "AutomatedCheck", and "Input".
         :paramtype type: str or ~azure.mgmt.selfhelp.models.Type
         :keyword is_last_step: is this last step of the workflow.
         :paramtype is_last_step: bool
@@ -1568,8 +2026,10 @@ class StepInput(_serialization.Model):
     :ivar question_id: Use Index as QuestionId.
     :vartype question_id: str
     :ivar question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
-     "TextInput", and "MultiLineInfoBox".
+     "TextInput", "MultiLineInfoBox", "DateTimePicker", and "MultiSelect".
     :vartype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
+    :ivar question_title: Question title.
+    :vartype question_title: str
     :ivar question_content: User question content.
     :vartype question_content: str
     :ivar question_content_type: Default is Text. Known values are: "Text", "Html", and "Markdown".
@@ -1590,6 +2050,7 @@ class StepInput(_serialization.Model):
     _attribute_map = {
         "question_id": {"key": "questionId", "type": "str"},
         "question_type": {"key": "questionType", "type": "str"},
+        "question_title": {"key": "questionTitle", "type": "str"},
         "question_content": {"key": "questionContent", "type": "str"},
         "question_content_type": {"key": "questionContentType", "type": "str"},
         "response_hint": {"key": "responseHint", "type": "str"},
@@ -1607,6 +2068,7 @@ class StepInput(_serialization.Model):
         *,
         question_id: Optional[str] = None,
         question_type: Optional[Union[str, "_models.QuestionType"]] = None,
+        question_title: Optional[str] = None,
         question_content: Optional[str] = None,
         question_content_type: Optional[Union[str, "_models.QuestionContentType"]] = None,
         response_hint: Optional[str] = None,
@@ -1620,8 +2082,10 @@ class StepInput(_serialization.Model):
         :keyword question_id: Use Index as QuestionId.
         :paramtype question_id: str
         :keyword question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
-         "TextInput", and "MultiLineInfoBox".
+         "TextInput", "MultiLineInfoBox", "DateTimePicker", and "MultiSelect".
         :paramtype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
+        :keyword question_title: Question title.
+        :paramtype question_title: str
         :keyword question_content: User question content.
         :paramtype question_content: str
         :keyword question_content_type: Default is Text. Known values are: "Text", "Html", and
@@ -1643,6 +2107,7 @@ class StepInput(_serialization.Model):
         super().__init__(**kwargs)
         self.question_id = question_id
         self.question_type = question_type
+        self.question_title = question_title
         self.question_content = question_content
         self.question_content_type = question_content_type
         self.response_hint = response_hint
@@ -1754,7 +2219,7 @@ class TroubleshooterResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1817,7 +2282,7 @@ class TroubleshooterResponse(_serialization.Model):
     :ivar question_id: id of the question.
     :vartype question_id: str
     :ivar question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
-     "TextInput", and "MultiLineInfoBox".
+     "TextInput", "MultiLineInfoBox", "DateTimePicker", and "MultiSelect".
     :vartype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
     :ivar response: Response key for SingleInput. For Multi-line test/open ended question it is
      free form text.
@@ -1842,7 +2307,7 @@ class TroubleshooterResponse(_serialization.Model):
         :keyword question_id: id of the question.
         :paramtype question_id: str
         :keyword question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
-         "TextInput", and "MultiLineInfoBox".
+         "TextInput", "MultiLineInfoBox", "DateTimePicker", and "MultiSelect".
         :paramtype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
         :keyword response: Response key for SingleInput. For Multi-line test/open ended question it is
          free form text.

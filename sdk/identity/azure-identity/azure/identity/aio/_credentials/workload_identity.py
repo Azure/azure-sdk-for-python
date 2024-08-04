@@ -67,6 +67,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                 "'token_file_path' is required. Please pass it in or set the "
                 f"{EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE} environment variable"
             )
+        self._token_file_path = token_file_path
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,

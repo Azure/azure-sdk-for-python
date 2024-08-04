@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.selfhelp import SelfHelpMgmtClient
 
 """
@@ -35,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/CreateDiagnosticForKeyVaultResource.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2024-03-01-preview/examples/CreateDiagnosticForKeyVaultResource.json
 if __name__ == "__main__":
     main()

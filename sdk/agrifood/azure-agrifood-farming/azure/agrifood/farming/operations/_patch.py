@@ -76,6 +76,7 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
 
         Example:
             .. code-block:: python
+
                 # JSON input template you can fill out and use as your body input.
                 attachment = {
                     "resourceId": "str", # Required. Id of the resource the attachment is associated with.
@@ -207,6 +208,7 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
 
         Example:
             .. code-block:: python
+
                 # JSON input template you can fill out and use as your body input.
                 insight_attachment = {
                     "insightId": "str", # Required. Id of insight resource.

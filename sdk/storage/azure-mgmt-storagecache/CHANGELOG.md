@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2024-05-20)
+
+### Features Added
+
+  - Added operation group ImportJobsOperations
+  - Model AmlFilesystem has a new parameter root_squash_settings
+  - Model AmlFilesystemHsmSettings has a new parameter import_prefixes_initial
+  - Model AmlFilesystemUpdate has a new parameter root_squash_settings
+  - Model ErrorResponse has a new parameter error
+  - Model AscOperation.error changes type from ErrorResponse to AscOperationErrorResponse
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter message
+
 ## 1.6.0b1 (2024-02-22)
 
 ### Features Added

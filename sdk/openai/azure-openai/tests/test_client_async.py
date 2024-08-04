@@ -8,7 +8,7 @@ import pytest
 import openai
 import httpx
 from devtools_testutils import AzureRecordedTestCase
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from conftest import (
     AZURE,
     ENV_AZURE_OPENAI_ENDPOINT,
@@ -46,7 +46,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
-            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=LATEST,
         )
         messages = [
@@ -82,7 +82,7 @@ class TestClientAsync(AzureRecordedTestCase):
 
         client = openai.AsyncAzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
-            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=LATEST,
         )
         messages = [

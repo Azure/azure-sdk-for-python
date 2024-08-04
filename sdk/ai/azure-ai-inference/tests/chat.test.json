@@ -1,0 +1,13 @@
+{
+    "messages":
+    [
+        {
+            "role": "system",
+            "content": "ou are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "How many feet are in a mile?"
+        }
+    ]
+}

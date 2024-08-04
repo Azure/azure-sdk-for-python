@@ -12,7 +12,7 @@ import signal
 import platform
 import shutil
 import tarfile
-from typing import Optional
+from typing import Optional, Generator, Any
 import zipfile
 
 import certifi
@@ -30,6 +30,7 @@ from .sanitizers import (
     add_batch_sanitizers,
     Sanitizer,
     set_custom_default_matcher,
+    remove_batch_sanitizers,
 )
 
 
@@ -93,10 +94,17 @@ discovered_roots = []
 def get_target_version(repo_root: str) -> str:
     """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
-    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location = os.path.relpath("eng/target_proxy_version.txt")
 
-    with open(version_file_location_from_root, "r") as f:
-        target_version = f.read().strip()
+    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location_from_root = os.path.abspath(os.path.join(repo_root, override_version_file_location))
+
+    if os.path.exists(override_version_file_location_from_root):
+        with open(override_version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
+    else:
+        with open(version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
 
     return target_version
 
@@ -138,7 +146,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
     raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
 
 
-def check_availability() -> None:
+def check_availability() -> int:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         http_client = get_http_client(raise_on_status=False)
@@ -296,144 +304,37 @@ def set_common_sanitizers() -> None:
     batch_sanitizers[Sanitizer.REMOVE_HEADER] = [{"headers": headers_to_ignore}]
 
     # Remove OAuth interactions, which can contain client secrets and aren't necessary for playback testing
-    batch_sanitizers[Sanitizer.OAUTH_RESPONSE] = [None]
+    # TODO: Determine why this breaks some test playbacks. Since sensitive info in OAuth responses is sanitized
+    # through other sanitizers, it's fine to keep this off for now.
+    # batch_sanitizers[Sanitizer.OAUTH_RESPONSE] = [None]
 
     # Body key sanitizers for sensitive fields in JSON requests/responses
-    batch_sanitizers[Sanitizer.BODY_KEY] = [
-        {"json_path": "$..access_token", "value": FAKE_ACCESS_TOKEN},
-        {"json_path": "$..AccessToken", "value": FAKE_ACCESS_TOKEN},
-        {"json_path": "$..targetModelLocation", "value": SANITIZED},
-        {"json_path": "$..targetResourceId", "value": SANITIZED},
-        {"json_path": "$..urlSource", "value": SANITIZED},
-        {"json_path": "$..azureBlobSource.containerUrl", "value": SANITIZED},
-        {"json_path": "$..source", "value": SANITIZED},
-        {"json_path": "$..resourceLocation", "value": SANITIZED},
-        {"json_path": "Location", "value": SANITIZED},
-        {"json_path": "$..to", "value": SANITIZED},
-        {"json_path": "$..from", "value": SANITIZED},
-        {"json_path": "$..sasUri", "value": SANITIZED},
-        {"json_path": "$..containerUri", "value": SANITIZED},
-        {"json_path": "$..inputDataUri", "value": SANITIZED},
-        {"json_path": "$..outputDataUri", "value": SANITIZED},
-        # {"json_path": "$..id", "value": SANITIZED},
-        {"json_path": "$..token", "value": SANITIZED},
-        {"json_path": "$..appId", "value": SANITIZED},
-        {"json_path": "$..userId", "value": SANITIZED},
-        {"json_path": "$..storageAccount", "value": SANITIZED},
-        {"json_path": "$..resourceGroup", "value": SANITIZED},
-        {"json_path": "$..guardian", "value": SANITIZED},
-        {"json_path": "$..scan", "value": SANITIZED},
-        {"json_path": "$..catalog", "value": SANITIZED},
-        {"json_path": "$..lastModifiedBy", "value": SANITIZED},
-        {"json_path": "$..managedResourceGroupName", "value": SANITIZED},
-        {"json_path": "$..friendlyName", "value": SANITIZED},
-        {"json_path": "$..createdBy", "value": SANITIZED},
-        {"json_path": "$..credential", "value": SANITIZED},
-        {"json_path": "$..aliasPrimaryConnectionString", "value": SANITIZED},
-        {"json_path": "$..aliasSecondaryConnectionString", "value": SANITIZED},
-        {"json_path": "$..connectionString", "value": SANITIZED},
-        {"json_path": "$..primaryConnectionString", "value": SANITIZED},
-        {"json_path": "$..secondaryConnectionString", "value": SANITIZED},
-        {"json_path": "$..sshPassword", "value": SANITIZED},
-        {"json_path": "$..primaryKey", "value": SANITIZED},
-        {"json_path": "$..secondaryKey", "value": SANITIZED},
-        {"json_path": "$..runAsPassword", "value": SANITIZED},
-        {"json_path": "$..adminPassword", "value": SANITIZED},
-        {"json_path": "$..adminPassword.value", "value": SANITIZED},
-        {"json_path": "$..administratorLoginPassword", "value": SANITIZED},
-        {"json_path": "$..accessSAS", "value": SANITIZED},
-        {"json_path": "$..WEBSITE_AUTH_ENCRYPTION_KEY", "value": SANITIZED},
-        {"json_path": "$..storageContainerWriteSas", "value": SANITIZED},
-        {"json_path": "$..storageContainerUri", "value": SANITIZED},
-        {"json_path": "$..storageContainerReadListSas", "value": SANITIZED},
-        {"json_path": "$..storageAccountPrimaryKey", "value": SANITIZED},
-        {"json_path": "$..uploadUrl", "value": SANITIZED},
-        {"json_path": "$..secondaryReadonlyMasterKey", "value": SANITIZED},
-        {"json_path": "$..primaryMasterKey", "value": SANITIZED},
-        {"json_path": "$..primaryReadonlyMasterKey", "value": SANITIZED},
-        {"json_path": "$..secondaryMasterKey", "value": SANITIZED},
-        {"json_path": "$..scriptUrlSasToken", "value": SANITIZED},
-        {"json_path": "$..privateKey", "value": SANITIZED},
-        {"json_path": "$..password", "value": SANITIZED},
-        {"json_path": "$..logLink", "value": SANITIZED},
-        {"json_path": "$..keyVaultClientSecret", "value": SANITIZED},
-        {"json_path": "$..httpHeader", "value": SANITIZED},
-        {"json_path": "$..functionKey", "value": SANITIZED},
-        {"json_path": "$..fencingClientPassword", "value": SANITIZED},
-        {"json_path": "$..encryptedCredential", "value": SANITIZED},
-        {"json_path": "$..clientSecret", "value": SANITIZED},
-        {"json_path": "$..certificatePassword", "value": SANITIZED},
-        {"json_path": "$..authHeader", "value": SANITIZED},
-        {"json_path": "$..atlasKafkaSecondaryEndpoint", "value": SANITIZED},
-        {"json_path": "$..atlasKafkaPrimaryEndpoint", "value": SANITIZED},
-        {"json_path": "$..appkey", "value": SANITIZED},
-        {"json_path": "$..acrToken", "value": SANITIZED},
-        {"json_path": "$..accountKey", "value": SANITIZED},
-        {"json_path": "$..accountName", "value": SANITIZED},
-        {"json_path": "$..decryptionKey", "value": SANITIZED},
-        {"json_path": "$..applicationId", "value": SANITIZED},
-        {"json_path": "$..apiKey", "value": SANITIZED},
-        {"json_path": "$..userName", "value": SANITIZED},
-        {"json_path": "$.properties.DOCKER_REGISTRY_SERVER_PASSWORD", "value": SANITIZED},
-        {"json_path": "$.value[*].key", "value": SANITIZED},
-        # {"json_path": "$.key", "value": SANITIZED},
-        {"json_path": "$..clientId", "value": FAKE_ID},
-        {"json_path": "$..principalId", "value": FAKE_ID},
-        {"json_path": "$..tenantId", "value": FAKE_ID},
-    ]
+    batch_sanitizers[Sanitizer.BODY_KEY] = []
 
     # Body regex sanitizers for sensitive patterns in request/response bodies
-    batch_sanitizers[Sanitizer.BODY_REGEX] = [
-        {"regex": "(client_id=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(client_secret=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(client_assertion=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(?:[\\?&](sv|sig|se|srt|ss|sp)=)(?<secret>(([^&\\s]*)))", "value": SANITIZED},
-        {"regex": "refresh_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
-        {"regex": "access_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
-        {"regex": "token=(?<token>[^\\u0026]+)($|\\u0026)", "group_for_replace": "token", "value": SANITIZED},
-        {"regex": "-----BEGIN PRIVATE KEY-----\\n(.+\\n)*-----END PRIVATE KEY-----\\n", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedTid>)(.*)(?:</SignedTid>)", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedOid>)(.*)(?:</SignedOid>)", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<Value>)(.*)(?:</Value>)", "value": SANITIZED},
-        {"regex": "(?:Password=)(.*?)(?:;)", "value": SANITIZED},
-        {"regex": "(?:User ID=)(.*?)(?:;)", "value": SANITIZED},
-        {"regex": "(?:<PrimaryKey>)(.*)(?:</PrimaryKey>)", "value": SANITIZED},
-        {"regex": "(?:<SecondaryKey>)(.*)(?:</SecondaryKey>)", "value": SANITIZED},
-    ]
+    batch_sanitizers[Sanitizer.BODY_REGEX] = []
 
     # General regex sanitizers for sensitive patterns throughout interactions
     batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
-        {"regex": "SharedAccessKey=(?<key>[^;\\\"]+)", "group_for_replace": "key", "value": SANITIZED},
-        {"regex": "AccountKey=(?<key>[^;\\\"]+)", "group_for_replace": "key", "value": SANITIZED},
-        {"regex": "accesskey=(?<key>[^;\\\"]+)", "group_for_replace": "key", "value": SANITIZED},
-        {"regex": "Accesskey=(?<key>[^;\\\"]+)", "group_for_replace": "key", "value": SANITIZED},
-        {"regex": "Secret=(?<key>[^;\\\"]+)", "group_for_replace": "key", "value": SANITIZED},
+        {
+            "regex": "(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\\"\\s]*)",
+            "group_for_replace": "secret",
+            "value": SANITIZED
+        },
     ]
 
     # Header regex sanitizers for sensitive patterns in request/response headers
-    batch_sanitizers[Sanitizer.HEADER_REGEX] = [
-        {"key": "subscription-key", "value": SANITIZED},
-        {"key": "x-ms-encryption-key", "value": SANITIZED},
-        {"key": "x-ms-rename-source", "value": SANITIZED},
-        {"key": "x-ms-file-rename-source", "value": SANITIZED},
-        {"key": "x-ms-copy-source", "value": SANITIZED},
-        {"key": "x-ms-copy-source-authorization", "value": SANITIZED},
-        {"key": "x-ms-file-rename-source-authorization", "value": SANITIZED},
-        {"key": "x-ms-encryption-key-sha256", "value": SANITIZED},
-        {"key": "api-key", "value": SANITIZED},
-        {"key": "aeg-sas-token", "value": SANITIZED},
-        {"key": "aeg-sas-key", "value": SANITIZED},
-        {"key": "aeg-channel-name", "value": SANITIZED},
-        {"key": "SupplementaryAuthorization", "value": SERVICEBUS_FAKE_SAS},
-    ]
+    batch_sanitizers[Sanitizer.HEADER_REGEX] = []
 
     # URI regex sanitizers for sensitive patterns in request/response URLs
-    batch_sanitizers[Sanitizer.URI_REGEX] = [
-        {"regex": "sig=(?<sig>[^&]+)", "group_for_replace": "sig", "value": SANITIZED}
-    ]
+    batch_sanitizers[Sanitizer.URI_REGEX] = []
 
     # Send all the above sanitizers to the test proxy in a single, batch request
     add_batch_sanitizers(sanitizers=batch_sanitizers)
+
+    # Remove certain sanitizers that are too aggressive and cause excessive playback failures
+    #  - AZSDK2030: operation-location
+    remove_batch_sanitizers(["AZSDK2030"])
 
 
 def start_test_proxy(request) -> None:
@@ -506,7 +407,7 @@ def stop_test_proxy() -> None:
 
 
 @pytest.fixture(scope="session")
-def test_proxy(request) -> None:
+def test_proxy(request) -> Generator[None, None, None]:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -30,6 +31,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -278,7 +283,6 @@ class IotSecuritySolutionOperations:
         :param filter: Filter the IoT Security solution with OData syntax. Supports filtering by
          iotHubs. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IoTSecuritySolutionModel or the result of
          cls(response)
         :rtype:
@@ -291,7 +295,7 @@ class IotSecuritySolutionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecuritySolutionsList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -302,16 +306,15 @@ class IotSecuritySolutionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -322,14 +325,14 @@ class IotSecuritySolutionOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IoTSecuritySolutionsList", pipeline_response)
@@ -339,11 +342,11 @@ class IotSecuritySolutionOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -354,10 +357,6 @@ class IotSecuritySolutionOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotSecuritySolutions"
-    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -371,7 +370,6 @@ class IotSecuritySolutionOperations:
         :param filter: Filter the IoT Security solution with OData syntax. Supports filtering by
          iotHubs. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IoTSecuritySolutionModel or the result of
          cls(response)
         :rtype:
@@ -384,7 +382,7 @@ class IotSecuritySolutionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecuritySolutionsList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -395,17 +393,16 @@ class IotSecuritySolutionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -416,14 +413,14 @@ class IotSecuritySolutionOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IoTSecuritySolutionsList", pipeline_response)
@@ -433,11 +430,11 @@ class IotSecuritySolutionOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -449,10 +446,6 @@ class IotSecuritySolutionOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions"
-    }
-
     @distributed_trace
     def get(self, resource_group_name: str, solution_name: str, **kwargs: Any) -> _models.IoTSecuritySolutionModel:
         """User this method to get details of a specific IoT Security solution based on solution name.
@@ -462,12 +455,11 @@ class IotSecuritySolutionOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -481,21 +473,20 @@ class IotSecuritySolutionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecuritySolutionModel] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -507,13 +498,9 @@ class IotSecuritySolutionOperations:
         deserialized = self._deserialize("IoTSecuritySolutionModel", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -538,7 +525,6 @@ class IotSecuritySolutionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -549,7 +535,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        iot_security_solution_data: IO,
+        iot_security_solution_data: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -562,11 +548,10 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param iot_security_solution_data: The security solution data. Required.
-        :type iot_security_solution_data: IO
+        :type iot_security_solution_data: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -577,7 +562,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        iot_security_solution_data: Union[_models.IoTSecuritySolutionModel, IO],
+        iot_security_solution_data: Union[_models.IoTSecuritySolutionModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.IoTSecuritySolutionModel:
         """Use this method to create or update yours IoT Security solution.
@@ -588,18 +573,14 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param iot_security_solution_data: The security solution data. Is either a
-         IoTSecuritySolutionModel type or a IO type. Required.
+         IoTSecuritySolutionModel type or a IO[bytes] type. Required.
         :type iot_security_solution_data:
-         ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel or IO[bytes]
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -622,7 +603,7 @@ class IotSecuritySolutionOperations:
         else:
             _json = self._serialize.body(iot_security_solution_data, "IoTSecuritySolutionModel")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
@@ -630,16 +611,15 @@ class IotSecuritySolutionOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -658,10 +638,6 @@ class IotSecuritySolutionOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}"
-    }
 
     @overload
     def update(
@@ -687,7 +663,6 @@ class IotSecuritySolutionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -698,7 +673,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        update_iot_security_solution_data: IO,
+        update_iot_security_solution_data: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -712,11 +687,10 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param update_iot_security_solution_data: The security solution data. Required.
-        :type update_iot_security_solution_data: IO
+        :type update_iot_security_solution_data: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -727,7 +701,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        update_iot_security_solution_data: Union[_models.UpdateIotSecuritySolutionData, IO],
+        update_iot_security_solution_data: Union[_models.UpdateIotSecuritySolutionData, IO[bytes]],
         **kwargs: Any
     ) -> _models.IoTSecuritySolutionModel:
         """Use this method to update existing IoT Security solution tags or user defined resources. To
@@ -739,18 +713,14 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param update_iot_security_solution_data: The security solution data. Is either a
-         UpdateIotSecuritySolutionData type or a IO type. Required.
+         UpdateIotSecuritySolutionData type or a IO[bytes] type. Required.
         :type update_iot_security_solution_data:
-         ~azure.mgmt.security.v2019_08_01.models.UpdateIotSecuritySolutionData or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2019_08_01.models.UpdateIotSecuritySolutionData or IO[bytes]
         :return: IoTSecuritySolutionModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -773,7 +743,7 @@ class IotSecuritySolutionOperations:
         else:
             _json = self._serialize.body(update_iot_security_solution_data, "UpdateIotSecuritySolutionData")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
@@ -781,16 +751,15 @@ class IotSecuritySolutionOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -802,13 +771,9 @@ class IotSecuritySolutionOperations:
         deserialized = self._deserialize("IoTSecuritySolutionModel", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -821,12 +786,11 @@ class IotSecuritySolutionOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -840,21 +804,20 @@ class IotSecuritySolutionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -864,8 +827,4 @@ class IotSecuritySolutionOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

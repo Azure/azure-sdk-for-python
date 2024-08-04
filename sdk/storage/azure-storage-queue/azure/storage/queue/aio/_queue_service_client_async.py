@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -58,7 +58,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -78,11 +82,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             :caption: Creating the QueueServiceClient with an account url and credential.
 
         .. literalinclude:: ../samples/queue_samples_authentication_async.py
-            :start-after: [START async_create_queue_service_client_token]
-            :end-before: [END async_create_queue_service_client_token]
+            :start-after: [START async_create_queue_service_client_oauth]
+            :end-before: [END async_create_queue_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the QueueServiceClient with Azure Identity credentials.
+            :caption: Creating the QueueServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(

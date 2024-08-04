@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -23,7 +23,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -65,7 +65,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -77,34 +77,16 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The Agent resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -136,9 +118,17 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype number_of_cores: int
     :ivar uptime_in_seconds: Uptime of the Agent in seconds.
     :vartype uptime_in_seconds: int
+    :ivar time_zone: The agent's local time zone represented in Windows format.
+    :vartype time_zone: str
+    :ivar upload_limit_schedule: The WAN-link upload limit schedule that applies to any Job Run the
+     agent executes. Data plane operations (migrating files) are affected. Control plane operations
+     ensure seamless migration functionality and are not limited by this schedule. The schedule is
+     interpreted with the agent's local time.
+    :vartype upload_limit_schedule: ~azure.mgmt.storagemover.models.UploadLimitSchedule
     :ivar error_details:
     :vartype error_details: ~azure.mgmt.storagemover.models.AgentPropertiesErrorDetails
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -156,6 +146,7 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "memory_in_mb": {"readonly": True},
         "number_of_cores": {"readonly": True},
         "uptime_in_seconds": {"readonly": True},
+        "time_zone": {"readonly": True},
         "error_details": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
@@ -175,12 +166,20 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "memory_in_mb": {"key": "properties.memoryInMB", "type": "int"},
         "number_of_cores": {"key": "properties.numberOfCores", "type": "int"},
         "uptime_in_seconds": {"key": "properties.uptimeInSeconds", "type": "int"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "upload_limit_schedule": {"key": "properties.uploadLimitSchedule", "type": "UploadLimitSchedule"},
         "error_details": {"key": "properties.errorDetails", "type": "AgentPropertiesErrorDetails"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self, *, arc_resource_id: str, arc_vm_uuid: str, description: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        arc_resource_id: str,
+        arc_vm_uuid: str,
+        description: Optional[str] = None,
+        upload_limit_schedule: Optional["_models.UploadLimitSchedule"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword description: A description for the Agent.
@@ -190,6 +189,11 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype arc_resource_id: str
         :keyword arc_vm_uuid: The VM UUID of the Hybrid Compute resource for the Agent. Required.
         :paramtype arc_vm_uuid: str
+        :keyword upload_limit_schedule: The WAN-link upload limit schedule that applies to any Job Run
+         the agent executes. Data plane operations (migrating files) are affected. Control plane
+         operations ensure seamless migration functionality and are not limited by this schedule. The
+         schedule is interpreted with the agent's local time.
+        :paramtype upload_limit_schedule: ~azure.mgmt.storagemover.models.UploadLimitSchedule
         """
         super().__init__(**kwargs)
         self.description = description
@@ -202,6 +206,8 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.memory_in_mb = None
         self.number_of_cores = None
         self.uptime_in_seconds = None
+        self.time_zone = None
+        self.upload_limit_schedule = upload_limit_schedule
         self.error_details = None
         self.provisioning_state = None
 
@@ -266,19 +272,37 @@ class AgentUpdateParameters(_serialization.Model):
 
     :ivar description: A description for the Agent.
     :vartype description: str
+    :ivar upload_limit_schedule: The WAN-link upload limit schedule that applies to any Job Run the
+     agent executes. Data plane operations (migrating files) are affected. Control plane operations
+     ensure seamless migration functionality and are not limited by this schedule. The schedule is
+     interpreted with the agent's local time.
+    :vartype upload_limit_schedule: ~azure.mgmt.storagemover.models.UploadLimitSchedule
     """
 
     _attribute_map = {
         "description": {"key": "properties.description", "type": "str"},
+        "upload_limit_schedule": {"key": "properties.uploadLimitSchedule", "type": "UploadLimitSchedule"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        upload_limit_schedule: Optional["_models.UploadLimitSchedule"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: A description for the Agent.
         :paramtype description: str
+        :keyword upload_limit_schedule: The WAN-link upload limit schedule that applies to any Job Run
+         the agent executes. Data plane operations (migrating files) are affected. Control plane
+         operations ensure seamless migration functionality and are not limited by this schedule. The
+         schedule is interpreted with the agent's local time.
+        :paramtype upload_limit_schedule: ~azure.mgmt.storagemover.models.UploadLimitSchedule
         """
         super().__init__(**kwargs)
         self.description = description
+        self.upload_limit_schedule = upload_limit_schedule
 
 
 class Credentials(_serialization.Model):
@@ -287,7 +311,7 @@ class Credentials(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureKeyVaultSmbCredentials
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The Credentials type. Required. "AzureKeyVaultSmb"
     :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
@@ -312,7 +336,7 @@ class Credentials(_serialization.Model):
 class AzureKeyVaultSmbCredentials(Credentials):
     """The Azure Key Vault secret URIs which store the credentials.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The Credentials type. Required. "AzureKeyVaultSmb"
     :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
@@ -360,14 +384,15 @@ class EndpointBaseProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -402,19 +427,20 @@ class EndpointBaseProperties(_serialization.Model):
         self.provisioning_state = None
 
 
-class AzureStorageBlobContainerEndpointProperties(EndpointBaseProperties):
+class AzureStorageBlobContainerEndpointProperties(EndpointBaseProperties):  # pylint: disable=name-too-long
     """The properties of Azure Storage blob container endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     :ivar storage_account_resource_id: The Azure Resource ID of the storage account that is the
      target destination. Required.
@@ -471,7 +497,7 @@ class EndpointBaseUpdateProperties(_serialization.Model):
     AzureStorageSmbFileShareEndpointUpdateProperties, NfsMountEndpointUpdateProperties,
     SmbMountEndpointUpdateProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
@@ -508,10 +534,10 @@ class EndpointBaseUpdateProperties(_serialization.Model):
         self.description = description
 
 
-class AzureStorageBlobContainerEndpointUpdateProperties(EndpointBaseUpdateProperties):
+class AzureStorageBlobContainerEndpointUpdateProperties(EndpointBaseUpdateProperties):  # pylint: disable=name-too-long
     """AzureStorageBlobContainerEndpointUpdateProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
@@ -538,19 +564,20 @@ class AzureStorageBlobContainerEndpointUpdateProperties(EndpointBaseUpdateProper
         self.endpoint_type: str = "AzureStorageBlobContainer"
 
 
-class AzureStorageSmbFileShareEndpointProperties(EndpointBaseProperties):
+class AzureStorageSmbFileShareEndpointProperties(EndpointBaseProperties):  # pylint: disable=name-too-long
     """The properties of Azure Storage SMB file share endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     :ivar storage_account_resource_id: The Azure Resource ID of the storage account. Required.
     :vartype storage_account_resource_id: str
@@ -595,10 +622,10 @@ class AzureStorageSmbFileShareEndpointProperties(EndpointBaseProperties):
         self.file_share_name = file_share_name
 
 
-class AzureStorageSmbFileShareEndpointUpdateProperties(EndpointBaseUpdateProperties):
+class AzureStorageSmbFileShareEndpointUpdateProperties(EndpointBaseUpdateProperties):  # pylint: disable=name-too-long
     """The properties of Azure Storage SMB file share endpoint to update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
@@ -630,10 +657,10 @@ class Endpoint(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -820,10 +847,10 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -856,14 +883,15 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :vartype latest_job_run_resource_id: str
     :ivar latest_job_run_status: The current status of the Job Run in a non-terminal state, if
      exists. Known values are: "Queued", "Started", "Running", "CancelRequested", "Canceling",
-     "Canceled", "Failed", and "Succeeded".
+     "Canceled", "Failed", "Succeeded", and "PausedByBandwidthManagement".
     :vartype latest_job_run_status: str or ~azure.mgmt.storagemover.models.JobRunStatus
     :ivar agent_name: Name of the Agent to assign for new Job Runs of this Job Definition.
     :vartype agent_name: str
     :ivar agent_resource_id: Fully qualified resource id of the Agent to assign for new Job Runs of
      this Job Definition.
     :vartype agent_resource_id: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -1025,7 +1053,7 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1036,7 +1064,8 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
      information.
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar status: The state of the job execution. Known values are: "Queued", "Started", "Running",
-     "CancelRequested", "Canceling", "Canceled", "Failed", and "Succeeded".
+     "CancelRequested", "Canceling", "Canceled", "Failed", "Succeeded", and
+     "PausedByBandwidthManagement".
     :vartype status: str or ~azure.mgmt.storagemover.models.JobRunStatus
     :ivar scan_status: The status of Agent's scanning of source. Known values are: "NotStarted",
      "Scanning", and "Completed".
@@ -1103,7 +1132,8 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype job_definition_properties: JSON
     :ivar error: Error details.
     :vartype error: ~azure.mgmt.storagemover.models.JobRunError
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -1301,14 +1331,15 @@ class NfsMountEndpointProperties(EndpointBaseProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     :ivar host: The host name or IP address of the server exporting the file system. Required.
     :vartype host: str
@@ -1364,7 +1395,7 @@ class NfsMountEndpointProperties(EndpointBaseProperties):
 class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties):
     """NfsMountEndpointUpdateProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
@@ -1518,7 +1549,7 @@ class Project(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1530,7 +1561,8 @@ class Project(ProxyResource):
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar description: A description for the Project.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -1610,19 +1642,57 @@ class ProjectUpdateParameters(_serialization.Model):
         self.description = description
 
 
+class Recurrence(_serialization.Model):
+    """The schedule recurrence.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
+     are supported. Required.
+    :vartype start_time: ~azure.mgmt.storagemover.models.Time
+    :ivar end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals are
+     supported. Required.
+    :vartype end_time: ~azure.mgmt.storagemover.models.Time
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "Time"},
+        "end_time": {"key": "endTime", "type": "Time"},
+    }
+
+    def __init__(self, *, start_time: "_models.Time", end_time: "_models.Time", **kwargs: Any) -> None:
+        """
+        :keyword start_time: The start time of the schedule recurrence. Full hour and 30-minute
+         intervals are supported. Required.
+        :paramtype start_time: ~azure.mgmt.storagemover.models.Time
+        :keyword end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals
+         are supported. Required.
+        :paramtype end_time: ~azure.mgmt.storagemover.models.Time
+        """
+        super().__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+
+
 class SmbMountEndpointProperties(EndpointBaseProperties):
     """The properties of SMB share endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     :ivar host: The host name or IP address of the server exporting the file system. Required.
     :vartype host: str
@@ -1679,7 +1749,7 @@ class SmbMountEndpointProperties(EndpointBaseProperties):
 class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties):
     """The properties of SMB share endpoint to update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
@@ -1726,10 +1796,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1780,10 +1850,10 @@ class StorageMover(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1799,7 +1869,8 @@ class StorageMover(TrackedResource):
     :vartype location: str
     :ivar description: A description for the Storage Mover.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
@@ -1958,3 +2029,221 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class Time(_serialization.Model):
+    """The time of day.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar hour: The hour element of the time. Allowed values range from 0 (start of the selected
+     day) to 24 (end of the selected day). Hour value 24 cannot be combined with any other minute
+     value but 0. Required.
+    :vartype hour: int
+    :ivar minute: The minute element of the time. Allowed values are 0 and 30. If not specified,
+     its value defaults to 0. Known values are: 0 and 30.
+    :vartype minute: int or ~azure.mgmt.storagemover.models.Minute
+    """
+
+    _validation = {
+        "hour": {"required": True, "maximum": 24, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "hour": {"key": "hour", "type": "int"},
+        "minute": {"key": "minute", "type": "int"},
+    }
+
+    def __init__(self, *, hour: int, minute: Union[int, "_models.Minute"] = 0, **kwargs: Any) -> None:
+        """
+        :keyword hour: The hour element of the time. Allowed values range from 0 (start of the selected
+         day) to 24 (end of the selected day). Hour value 24 cannot be combined with any other minute
+         value but 0. Required.
+        :paramtype hour: int
+        :keyword minute: The minute element of the time. Allowed values are 0 and 30. If not specified,
+         its value defaults to 0. Known values are: 0 and 30.
+        :paramtype minute: int or ~azure.mgmt.storagemover.models.Minute
+        """
+        super().__init__(**kwargs)
+        self.hour = hour
+        self.minute = minute
+
+
+class UploadLimit(_serialization.Model):
+    """The WAN-link upload limit.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits per
+     second. Value of 0 indicates no throughput is allowed and any running migration job is
+     effectively paused for the duration of this recurrence. Only data plane operations are governed
+     by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+     this limit with control messages, if necessary. Required.
+    :vartype limit_in_mbps: int
+    """
+
+    _validation = {
+        "limit_in_mbps": {"required": True, "maximum": 2147483647, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "limit_in_mbps": {"key": "limitInMbps", "type": "int"},
+    }
+
+    def __init__(self, *, limit_in_mbps: int, **kwargs: Any) -> None:
+        """
+        :keyword limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits
+         per second. Value of 0 indicates no throughput is allowed and any running migration job is
+         effectively paused for the duration of this recurrence. Only data plane operations are governed
+         by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+         this limit with control messages, if necessary. Required.
+        :paramtype limit_in_mbps: int
+        """
+        super().__init__(**kwargs)
+        self.limit_in_mbps = limit_in_mbps
+
+
+class UploadLimitSchedule(_serialization.Model):
+    """The WAN-link upload limit schedule. Overlapping recurrences are not allowed.
+
+    :ivar weekly_recurrences: The set of weekly repeating recurrences of the WAN-link upload limit
+     schedule.
+    :vartype weekly_recurrences: list[~azure.mgmt.storagemover.models.UploadLimitWeeklyRecurrence]
+    """
+
+    _attribute_map = {
+        "weekly_recurrences": {"key": "weeklyRecurrences", "type": "[UploadLimitWeeklyRecurrence]"},
+    }
+
+    def __init__(
+        self, *, weekly_recurrences: Optional[List["_models.UploadLimitWeeklyRecurrence"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword weekly_recurrences: The set of weekly repeating recurrences of the WAN-link upload
+         limit schedule.
+        :paramtype weekly_recurrences:
+         list[~azure.mgmt.storagemover.models.UploadLimitWeeklyRecurrence]
+        """
+        super().__init__(**kwargs)
+        self.weekly_recurrences = weekly_recurrences
+
+
+class WeeklyRecurrence(Recurrence):
+    """The weekly recurrence of the schedule.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
+     are supported. Required.
+    :vartype start_time: ~azure.mgmt.storagemover.models.Time
+    :ivar end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals are
+     supported. Required.
+    :vartype end_time: ~azure.mgmt.storagemover.models.Time
+    :ivar days: The set of days of week for the schedule recurrence. A day must not be specified
+     more than once in a recurrence. Required.
+    :vartype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "days": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "Time"},
+        "end_time": {"key": "endTime", "type": "Time"},
+        "days": {"key": "days", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time: "_models.Time",
+        end_time: "_models.Time",
+        days: List[Union[str, "_models.DayOfWeek"]],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_time: The start time of the schedule recurrence. Full hour and 30-minute
+         intervals are supported. Required.
+        :paramtype start_time: ~azure.mgmt.storagemover.models.Time
+        :keyword end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals
+         are supported. Required.
+        :paramtype end_time: ~azure.mgmt.storagemover.models.Time
+        :keyword days: The set of days of week for the schedule recurrence. A day must not be specified
+         more than once in a recurrence. Required.
+        :paramtype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+        """
+        super().__init__(start_time=start_time, end_time=end_time, **kwargs)
+        self.days = days
+
+
+class UploadLimitWeeklyRecurrence(WeeklyRecurrence, UploadLimit):
+    """The weekly recurrence of the WAN-link upload limit schedule. The start time must be earlier in
+    the day than the end time. The recurrence must not span across multiple days.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits per
+     second. Value of 0 indicates no throughput is allowed and any running migration job is
+     effectively paused for the duration of this recurrence. Only data plane operations are governed
+     by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+     this limit with control messages, if necessary. Required.
+    :vartype limit_in_mbps: int
+    :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
+     are supported. Required.
+    :vartype start_time: ~azure.mgmt.storagemover.models.Time
+    :ivar end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals are
+     supported. Required.
+    :vartype end_time: ~azure.mgmt.storagemover.models.Time
+    :ivar days: The set of days of week for the schedule recurrence. A day must not be specified
+     more than once in a recurrence. Required.
+    :vartype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+    """
+
+    _validation = {
+        "limit_in_mbps": {"required": True, "maximum": 2147483647, "minimum": 0},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "days": {"required": True},
+    }
+
+    _attribute_map = {
+        "limit_in_mbps": {"key": "limitInMbps", "type": "int"},
+        "start_time": {"key": "startTime", "type": "Time"},
+        "end_time": {"key": "endTime", "type": "Time"},
+        "days": {"key": "days", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        limit_in_mbps: int,
+        start_time: "_models.Time",
+        end_time: "_models.Time",
+        days: List[Union[str, "_models.DayOfWeek"]],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits
+         per second. Value of 0 indicates no throughput is allowed and any running migration job is
+         effectively paused for the duration of this recurrence. Only data plane operations are governed
+         by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+         this limit with control messages, if necessary. Required.
+        :paramtype limit_in_mbps: int
+        :keyword start_time: The start time of the schedule recurrence. Full hour and 30-minute
+         intervals are supported. Required.
+        :paramtype start_time: ~azure.mgmt.storagemover.models.Time
+        :keyword end_time: The end time of the schedule recurrence. Full hour and 30-minute intervals
+         are supported. Required.
+        :paramtype end_time: ~azure.mgmt.storagemover.models.Time
+        :keyword days: The set of days of week for the schedule recurrence. A day must not be specified
+         more than once in a recurrence. Required.
+        :paramtype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+        """
+        super().__init__(start_time=start_time, end_time=end_time, days=days, limit_in_mbps=limit_in_mbps, **kwargs)
+        self.limit_in_mbps = limit_in_mbps
+        self.start_time = start_time
+        self.end_time = end_time
+        self.days = days

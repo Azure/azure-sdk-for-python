@@ -34323,6 +34323,8 @@ class Workspace(Resource):
     :vartype discovery_url: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
+    :ivar allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+    :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
     :ivar existing_workspaces:
@@ -34439,6 +34441,7 @@ class Workspace(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
+        'allow_roleassignment_on_rg': {'key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
         'existing_workspaces': {'key': 'properties.existingWorkspaces', 'type': '[str]'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
@@ -34487,6 +34490,7 @@ class Workspace(Resource):
         description: Optional[str] = None,
         discovery_url: Optional[str] = None,
         enable_data_isolation: Optional[bool] = None,
+        allow_roleassignment_on_rg: Optional[bool] = None,
         encryption: Optional["EncryptionProperty"] = None,
         existing_workspaces: Optional[List[str]] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
@@ -34541,6 +34545,8 @@ class Workspace(Resource):
         :paramtype discovery_url: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
+        :keyword allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+        :paramtype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
         :keyword existing_workspaces:
@@ -34612,6 +34618,7 @@ class Workspace(Resource):
         self.description = description
         self.discovery_url = discovery_url
         self.enable_data_isolation = enable_data_isolation
+        self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
         self.encryption = encryption
         self.existing_workspaces = existing_workspaces
         self.feature_store_settings = feature_store_settings
@@ -35088,6 +35095,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype description: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
+    :ivar allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+    :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     :ivar feature_store_settings: Settings for feature store type workspace.
@@ -35117,6 +35126,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :ivar v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided by
      the v2 API.
     :vartype v1_legacy_mode: bool
+    :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+     the workspace.
+    :vartype system_datastores_auth_mode: str
     """
 
     _attribute_map = {
@@ -35138,6 +35150,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
+        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'allow_roleassignment_on_rg' : {'key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'}
     }
 
     def __init__(
@@ -35150,6 +35164,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         container_registry: Optional[str] = None,
         description: Optional[str] = None,
         enable_data_isolation: Optional[bool] = None,
+        allow_roleassignment_on_rg: Optional[bool] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
         friendly_name: Optional[str] = None,
@@ -35161,6 +35176,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
         soft_delete_retention_in_days: Optional[int] = None,
         v1_legacy_mode: Optional[bool] = None,
+        system_datastores_auth_mode: Optional[str] = None, 
         **kwargs
     ):
         """
@@ -35180,6 +35196,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype description: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
+        :keyword allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+        :paramtype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         :keyword feature_store_settings: Settings for feature store type workspace.
@@ -35210,6 +35228,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
@@ -35219,6 +35240,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.container_registry = container_registry
         self.description = description
         self.enable_data_isolation = enable_data_isolation
+        self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
         self.encryption = encryption
         self.feature_store_settings = feature_store_settings
         self.friendly_name = friendly_name
@@ -35230,3 +35252,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.service_managed_resources_settings = service_managed_resources_settings
         self.soft_delete_retention_in_days = soft_delete_retention_in_days
         self.v1_legacy_mode = v1_legacy_mode
+        self.system_datastores_auth_mode = system_datastores_auth_mode

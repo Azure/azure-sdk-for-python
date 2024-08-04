@@ -17,7 +17,7 @@ class DevcenterTest(AzureRecordedTestCase):
 
 
 DevcenterPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "devcenter",
     devcenter_endpoint="https://dddd3333-d3d3-3333-d3d3-dddddd333333-fake-dev-center.location.devcenter.azure.com",
     devcenter_project_name="fake-proj",

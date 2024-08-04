@@ -14,7 +14,6 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     AzureSasCredentialPolicy,
     ContentDecodePolicy,
@@ -34,7 +33,7 @@ from .policies import (
     StorageHosts,
     StorageRequestHook,
 )
-from .policies_async import AsyncStorageResponseHook
+from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
 
@@ -97,7 +96,7 @@ class AsyncStorageAccountHostsMixin(object):
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
-            Union[AsyncBearerTokenCredentialPolicy,
+            Union[AsyncStorageBearerTokenCredentialPolicy,
             SharedKeyCredentialPolicy,
             AzureSasCredentialPolicy]] = None
         if hasattr(credential, 'get_token'):
@@ -105,7 +104,8 @@ class AsyncStorageAccountHostsMixin(object):
                 audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(cast(AsyncTokenCredential, credential), audience)
+            self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
+                                        cast(AsyncTokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -201,7 +201,7 @@ class AsyncStorageAccountHostsMixin(object):
                     )
                     raise error
                 return AsyncList(parts_list)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 

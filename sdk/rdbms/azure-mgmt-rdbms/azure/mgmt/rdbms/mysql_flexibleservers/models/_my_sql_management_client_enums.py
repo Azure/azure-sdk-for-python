@@ -269,3 +269,10 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIVE7 = "5.7"
     EIGHT0_21 = "8.0.21"
+
+
+class StorageRedundancyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate whether storage sku value is 'ZoneRedundancy' or 'LocalRedundancy'."""
+
+    LOCAL_REDUNDANCY = "LocalRedundancy"
+    ZONE_REDUNDANCY = "ZoneRedundancy"

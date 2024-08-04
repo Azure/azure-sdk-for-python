@@ -496,7 +496,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewayFrontendIPConfiguration(SubResource):
+class ApplicationGatewayFrontendIPConfiguration(SubResource):  # pylint: disable=name-too-long
     """Frontend IP configuration of an application gateway.
 
     :ivar id: Resource Identifier.
@@ -2144,7 +2144,7 @@ class ExpressRouteCircuitPeeringListResult(_serialization.Model):
 class ExpressRouteCircuitRoutesTable(_serialization.Model):
     """The routes table associated with the ExpressRouteCircuit.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar address_prefix: Gets AddressPrefix.
     :vartype address_prefix: str
@@ -2227,7 +2227,7 @@ class ExpressRouteCircuitsArpTableListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):
+class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Contains ServiceProviderProperties in an ExpressRouteCircuit.
 
     :ivar service_provider_name: The serviceProviderName.
@@ -2309,7 +2309,7 @@ class ExpressRouteCircuitSku(_serialization.Model):
         self.family = family
 
 
-class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):
+class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListRoutesTable associated with the Express Route Circuits API.
 
     :ivar value: The list of routes table.
@@ -2474,7 +2474,7 @@ class ExpressRouteServiceProvider(Resource):
         self.provisioning_state = provisioning_state
 
 
-class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):
+class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):  # pylint: disable=name-too-long
     """Contains bandwidths offered in ExpressRouteServiceProvider resources.
 
     :ivar offer_name: The OfferName.
@@ -4696,7 +4696,7 @@ class SubnetListResult(_serialization.Model):
 class Usage(_serialization.Model):
     """Describes network resource usage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar unit: An enum describing the unit of measurement. Required. "Count"
     :vartype unit: str or ~azure.mgmt.network.v2015_06_15.models.UsageUnit
@@ -5216,7 +5216,7 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
         self.provisioning_state = provisioning_state
 
 
-class VirtualNetworkGatewayConnectionListResult(_serialization.Model):
+class VirtualNetworkGatewayConnectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for the ListVirtualNetworkGatewayConnections API service call.
 
     :ivar value: Gets a list of VirtualNetworkGatewayConnection resources that exists in a resource

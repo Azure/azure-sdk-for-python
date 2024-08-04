@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._scheduled_event_operations import ScheduledEventOperations
 from ._public_maintenance_configurations_operations import PublicMaintenanceConfigurationsOperations
 from ._apply_updates_operations import ApplyUpdatesOperations
 from ._configuration_assignments_operations import ConfigurationAssignmentsOperations
@@ -27,6 +28,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ScheduledEventOperations",
     "PublicMaintenanceConfigurationsOperations",
     "ApplyUpdatesOperations",
     "ConfigurationAssignmentsOperations",

@@ -17,7 +17,7 @@
         "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON36",
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       },
-      "macos-11": {
+      "macos-latest": {
         "OSVmImage": "env:MACVMIMAGE",
         "Pool": "env:MACPOOL",
         "AZURE_TEST_AGENT": "MACOS_1015_PYTHON37",

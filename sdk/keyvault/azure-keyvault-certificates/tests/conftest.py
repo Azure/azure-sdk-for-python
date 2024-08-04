@@ -27,7 +27,13 @@ import asyncio
 import os
 import pytest
 from unittest import mock
-from devtools_testutils import is_live, test_proxy, add_oauth_response_sanitizer, add_general_regex_sanitizer
+from devtools_testutils import (
+    is_live,
+    test_proxy,
+    add_oauth_response_sanitizer,
+    add_general_regex_sanitizer,
+    remove_batch_sanitizers,
+)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -41,6 +47,11 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_oauth_response_sanitizer()
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
 
 
 @pytest.fixture(scope="session", autouse=True)

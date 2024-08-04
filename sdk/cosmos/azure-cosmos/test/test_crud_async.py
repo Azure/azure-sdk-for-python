@@ -187,7 +187,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
-        assert PartitionKey(path='/pk', kind='Hash') == created_collection._properties['partitionKey']
+        assert PartitionKey(path='/pk', kind='Hash') == created_properties['partitionKey']
 
         # read collections after creation
         collections = [collection async for collection in created_db.list_containers()]
@@ -275,7 +275,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA"]'
+        assert self.last_headers[0] == '["WA"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -292,7 +292,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present as a leaf level property but a dict
         await created_collection1.create_item(document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == [{}]
+        assert self.last_headers[0] == [{}]
         del self.last_headers[:]
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
@@ -306,7 +306,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present in the document
         await created_collection2.create_item(document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == [{}]
+        assert self.last_headers[0] == [{}]
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection.id)
@@ -330,7 +330,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self._mock_execute_function
         await created_collection1.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val1"]'
+        assert self.last_headers[0] == '["val1"]'
         del self.last_headers[:]
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
@@ -349,7 +349,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         await created_collection2.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val2"]'
+        assert self.last_headers[0] == '["val2"]'
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection1.id)
@@ -881,8 +881,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
 
-    async def _test_spatial_index(self):
-
+    async def test_geospatial_index_async(self):
         db = self.database_for_test
         # partial policy specified
         collection = await db.create_container(
@@ -2226,50 +2225,52 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         read_permission = await created_user.get_permission(created_permission.properties)
         assert read_permission.id == created_permission.id
 
-    # Commenting out delete all items by pk until pipelines support it
-    #
-    # async def test_delete_all_items_by_partition_key(self):
-    #     # create database
-    #     created_db = self.database_for_test
-    #
-    #     # create container
-    #     created_collection = await created_db.create_container(
-    #         id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
-    #         partition_key=PartitionKey(path='/pk', kind='Hash')
-    #     )
-    #     # Create two partition keys
-    #     partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
-    #     partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
-    #
-    #     # add items for partition key 1
-    #     for i in range(1, 3):
-    #         await created_collection.upsert_item(
-    #             dict(id="item{}".format(i), pk=partition_key1)
-    #         )
-    #
-    #     # add items for partition key 2
-    #     pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
-    #
-    #     # delete all items for partition key 1
-    #     await created_collection.delete_all_items_by_partition_key(partition_key1)
-    #
-    #     # check that only items from partition key 1 have been deleted
-    #     items = [item async for item in created_collection.read_all_items()]
-    #
-    #     # items should only have 1 item, and it should equal pk2_item
-    #     self.assertDictEqual(pk2_item, items[0])
-    #
-    #     # attempting to delete a non-existent partition key or passing none should not delete
-    #     # anything and leave things unchanged
-    #     await created_collection.delete_all_items_by_partition_key(None)
-    #
-    #     # check that no changes were made by checking if the only item is still there
-    #     items = [item async for item in created_collection.read_all_items()]
-    #
-    #     # items should only have 1 item, and it should equal pk2_item
-    #     self.assertDictEqual(pk2_item, items[0])
-    #
-    #     await created_db.delete_container(created_collection)
+
+    async def test_delete_all_items_by_partition_key_async(self):
+        # enable the test only for the emulator
+        if "localhost" not in self.host and "127.0.0.1" not in self.host:
+            return
+        # create database
+        created_db = self.database_for_test
+
+        # create container
+        created_collection = await created_db.create_container(
+            id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/pk', kind='Hash')
+        )
+        # Create two partition keys
+        partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
+        partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
+
+        # add items for partition key 1
+        for i in range(1, 3):
+            await created_collection.upsert_item(
+                dict(id="item{}".format(i), pk=partition_key1)
+            )
+
+        # add items for partition key 2
+        pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+
+        # delete all items for partition key 1
+        await created_collection.delete_all_items_by_partition_key(partition_key1)
+
+        # check that only items from partition key 1 have been deleted
+        items = [item async for item in created_collection.read_all_items()]
+
+        # items should only have 1 item, and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
+
+        # attempting to delete a non-existent partition key or passing none should not delete
+        # anything and leave things unchanged
+        await created_collection.delete_all_items_by_partition_key(None)
+
+        # check that no changes were made by checking if the only item is still there
+        items = [item async for item in created_collection.read_all_items()]
+
+        # items should only have 1 item, and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
+
+        await created_db.delete_container(created_collection)
 
     async def test_patch_operations_async(self):
 
@@ -2500,8 +2501,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
     async def _mock_execute_function(self, function, *args, **kwargs):
-        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                 if HttpHeaders.PartitionKey in args[4].headers else '')
+        if HttpHeaders.PartitionKey in args[4].headers:
+            self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey])
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
 

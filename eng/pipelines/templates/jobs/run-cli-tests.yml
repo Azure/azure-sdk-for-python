@@ -40,7 +40,7 @@ jobs:
         #   imageName: 'windows-2022'
         #   poolName: 'azsdk-pool-mms-win-2022-general'
         # mac:
-        #   imageName: 'macos-11'
+        #   imageName: 'macos-latest'
         #   poolName: 'Azure Pipelines'
 
     pool:

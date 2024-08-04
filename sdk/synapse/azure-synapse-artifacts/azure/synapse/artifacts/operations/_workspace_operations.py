@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,6 @@ class WorkspaceOperations:
     def get(self, **kwargs: Any) -> _models.Workspace:
         """Get Workspace.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.Workspace
         :raises ~azure.core.exceptions.HttpResponseError:

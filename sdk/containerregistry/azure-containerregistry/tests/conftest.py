@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_uri_regex_sanitizer,
     test_proxy,
     is_live,
+    remove_batch_sanitizers,
 )
 from testcase import import_image, is_public_endpoint
 from constants import HELLO_WORLD
@@ -54,3 +55,10 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=client_id, value="client-id")
     client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET", "client-secret")
     add_general_regex_sanitizer(regex=client_secret, value="client-secret")
+    tenant_id = os.environ.get("CONTAINERREGISTRY_TENANT_ID", "tenant-id")
+    add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3493", "AZSDK2003"])

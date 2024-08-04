@@ -1,5 +1,13 @@
 # Azure Core client library for Python (conda)
 
+## 2024.06.01
+
+### Packages included
+
+- azure-common-1.1.28
+- azure-core-1.30.1
+- azure-mgmt-core-1.4.0
+
 ## 2024.03.01
 
 ### Packages included

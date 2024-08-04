@@ -1,3 +1,4 @@
 [tool.azure-sdk-build]
 pylint = false
 pyright = false
+sphinx = false

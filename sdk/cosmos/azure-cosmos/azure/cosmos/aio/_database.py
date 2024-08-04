@@ -172,6 +172,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -202,6 +203,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
+            embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
+            is generated for a particular distance function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -224,7 +228,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        definition: Dict[str, Any] = dict(id=id)
+        definition: Dict[str, Any] = {"id": id}
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
@@ -243,8 +247,10 @@ class DatabaseProxy(object):
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
         computed_properties = kwargs.pop('computed_properties', None)
-        if computed_properties:
+        if computed_properties is not None:
             definition["computedProperties"] = computed_properties
+        if vector_embedding_policy is not None:
+            definition["vectorEmbeddingPolicy"] = vector_embedding_policy
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -278,6 +284,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -310,6 +317,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -338,6 +348,7 @@ class DatabaseProxy(object):
                 match_condition=match_condition,
                 session_token=session_token,
                 initial_headers=initial_headers,
+                vector_embedding_policy=vector_embedding_policy,
                 **kwargs
             )
 
@@ -426,7 +437,7 @@ class DatabaseProxy(object):
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
 
-        :keyword Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
@@ -449,7 +460,7 @@ class DatabaseProxy(object):
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -700,7 +711,7 @@ class DatabaseProxy(object):
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

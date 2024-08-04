@@ -50,7 +50,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
-        audience = kwargs.pop("audience", None)
+        self._audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -58,7 +58,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
+            authentication_policy = get_authentication_policy(credential, audience=self._audience)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -90,7 +90,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.search.documents.SearchClient
 
         """
-        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
+        return SearchClient(
+            self._endpoint,
+            index_name,
+            self._credential,
+            audience=self._audience,
+            api_version=self._api_version,
+            **kwargs
+        )
 
     @distributed_trace
     def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> ItemPaged[SearchIndex]:

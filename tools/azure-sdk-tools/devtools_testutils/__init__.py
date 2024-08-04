@@ -1,6 +1,6 @@
 from .mgmt_testcase import AzureMgmtPreparer
 from .mgmt_recorded_testcase import AzureMgmtRecordedTestCase
-from .azure_recorded_testcase import AzureRecordedTestCase
+from .azure_recorded_testcase import AzureRecordedTestCase, get_credential
 from .azure_testcase import is_live, get_region_override
 from .resource_testcase import (
     FakeResource,
@@ -40,6 +40,7 @@ from .sanitizers import (
     add_uri_regex_sanitizer,
     add_uri_string_sanitizer,
     add_uri_subscription_id_sanitizer,
+    remove_batch_sanitizers,
     PemCertificate,
     Sanitizer,
     set_bodiless_matcher,
@@ -75,6 +76,8 @@ __all__ = [
     "add_uri_regex_sanitizer",
     "add_uri_string_sanitizer",
     "add_uri_subscription_id_sanitizer",
+    "get_credential",
+    "remove_batch_sanitizers",
     "AzureMgmtPreparer",
     "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",

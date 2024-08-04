@@ -9,12 +9,14 @@
 An example to show sending and receiving events behind a proxy.
 """
 import os
+from typing import Dict, Union
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-HTTP_PROXY = {
+HTTP_PROXY: Dict[str, Union[str, int]] = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     'username': 'admin',  # username used for proxy authentication if needed.
@@ -28,10 +30,19 @@ def on_event(partition_context, event):
     print(event)
 
 
-consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, consumer_group='$Default', eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
-producer_client = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
+consumer_client = EventHubConsumerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    consumer_group='$Default',
+    eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
+    http_proxy=HTTP_PROXY
+)
+producer_client = EventHubProducerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
+    http_proxy=HTTP_PROXY
+)
 
 with producer_client:
     event_data_batch = producer_client.create_batch(max_size_in_bytes=10000)

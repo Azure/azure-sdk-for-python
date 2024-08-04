@@ -6,7 +6,7 @@
 import logging
 import six
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import urllib.parse as url_parse
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -45,7 +45,7 @@ PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 
-def get_recording_assets(test_id: str) -> str:
+def get_recording_assets(test_id: str) -> Optional[str]:
     """Used to retrieve the assets.json given a PYTEST_CURRENT_TEST test id."""
     for root in discovered_roots:
         current_dir = os.path.dirname(test_id)

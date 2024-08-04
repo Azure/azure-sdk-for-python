@@ -1,5 +1,39 @@
 # Release History
 
+## 32.0.0 (2024-07-22)
+
+### Features Added
+
+  - Model DiskRestorePoint has a new parameter logical_sector_size
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model SecurityPostureReference has a new parameter is_overridable
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter security_posture_reference
+
+### Breaking Changes
+
+  - Parameter id of model SecurityPostureReference is now required
+
+## 31.0.0 (2024-04-22)
+
+### Features Added
+
+  - Model DataDisk has a new parameter source_resource
+  - Model DataDisksToAttach has a new parameter caching
+  - Model DataDisksToAttach has a new parameter delete_option
+  - Model DataDisksToAttach has a new parameter disk_encryption_set
+  - Model DataDisksToAttach has a new parameter write_accelerator_enabled
+  - Model VirtualMachine has a new parameter scheduled_events_policy
+  - Model VirtualMachineScaleSet has a new parameter scheduled_events_policy
+  - Model VirtualMachineScaleSetReimageParameters has a new parameter force_update_os_disk_for_ephemeral
+  - Model VirtualMachineScaleSetUpdateOSDisk has a new parameter diff_disk_settings
+  - Model VirtualMachineScaleSetVMReimageParameters has a new parameter force_update_os_disk_for_ephemeral
+  - Model VirtualMachineUpdate has a new parameter scheduled_events_policy
+  - Operation CapacityReservationGroupsOperations.list_by_subscription has a new optional parameter resource_ids_only
+
+### Breaking Changes
+
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 30.6.0 (2024-03-15)
 
 ### Features Added

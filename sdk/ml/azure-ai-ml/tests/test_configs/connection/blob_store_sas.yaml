@@ -1,0 +1,10 @@
+name: test_ws_conn_blob_store2
+type: azure_blob
+url: my_endpoint
+metadata:
+  four: five
+credentials:
+  type: sas
+  sas_token: "some_pat"
+container_name: some_container
+account_name: some_account

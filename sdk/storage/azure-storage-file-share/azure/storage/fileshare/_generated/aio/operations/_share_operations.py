@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -45,6 +46,10 @@ from ...operations._share_operations import (
     build_set_properties_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -77,6 +82,7 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -100,11 +106,13 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -126,6 +134,7 @@ class ShareOperations:
             access_tier=access_tier,
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -181,7 +190,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -261,6 +270,9 @@ class ShareOperations:
             "str", response.headers.get("x-ms-enabled-protocols")
         )
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
+        response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -294,7 +306,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -383,7 +395,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -472,7 +484,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -564,7 +576,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -653,7 +665,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -750,7 +762,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -832,7 +844,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -953,7 +965,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1033,7 +1045,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1093,6 +1105,7 @@ class ShareOperations:
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1111,13 +1124,15 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1143,6 +1158,7 @@ class ShareOperations:
             access_tier=access_tier,
             lease_id=_lease_id,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1198,7 +1214,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1273,7 +1289,7 @@ class ShareOperations:
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1354,7 +1370,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1438,7 +1454,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1526,7 +1542,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -7,6 +7,7 @@
 import time
 import logging
 from functools import partial
+from typing import Optional, Union
 
 from ..management_link import PendingManagementOperation
 from ._sender_async import SenderLink
@@ -189,7 +190,16 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         await self._response_link.attach()
         await self._request_link.attach()
 
-    async def execute_operation(self, message, on_execute_operation_complete, **kwargs):
+    async def execute_operation(
+            self,
+            message,
+            on_execute_operation_complete,
+            *,
+            operation: Optional[Union[bytes, str]] = None,
+            type: Optional[Union[bytes, str]] = None,
+            locales: Optional[str] = None,
+            timeout: Optional[float] = None
+        ):
         """Execute a request and wait on a response.
 
         :param message: The message to send in the management request.
@@ -212,11 +222,10 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
          to the management request must be received.
         :rtype: None
         """
-        timeout = kwargs.get("timeout")
-        message.application_properties["operation"] = kwargs.get("operation")
-        message.application_properties["type"] = kwargs.get("type")
-        if "locales" in kwargs:
-            message.application_properties["locales"] = kwargs.get("locales")
+        message.application_properties["operation"] = operation
+        message.application_properties["type"] = type
+        if locales:
+            message.application_properties["locales"] = locales
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
             new_properties = message.properties._replace(message_id=self.next_message_id)

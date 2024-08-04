@@ -92,20 +92,21 @@ class Extension(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar name: The extension name. Supported values are: :code:`<br>`:code:`<br>`\
+    :ivar name: The extension name. Supported values are: :code:`<br>`:code:`<br>`\\
      **AgentlessDiscoveryForKubernetes** - API-based discovery of information about Kubernetes
      cluster architecture, workload objects, and setup. Required for Kubernetes inventory, identity
      and network exposure detection, attack path analysis and risk hunting as part of the cloud
      security explorer.
-     Available for CloudPosture plan.:code:`<br>`:code:`<br>`\ **OnUploadMalwareScanning** - Limits
-     the GB to be scanned per month for each storage account within the subscription. Once this
-     limit reached on a given storage account, Blobs won't be scanned during current calendar month.
-     Available for StorageAccounts plan.:code:`<br>`:code:`<br>`\ **SensitiveDataDiscovery** -
+     Available for CloudPosture plan.:code:`<br>`:code:`<br>`\\ **OnUploadMalwareScanning** -
+     Limits the GB to be scanned per month for each storage account within the subscription. Once
+     this limit reached on a given storage account, Blobs won't be scanned during current calendar
+     month.
+     Available for StorageAccounts plan.:code:`<br>`:code:`<br>`\\ **SensitiveDataDiscovery** -
      Sensitive data discovery identifies Blob storage container with sensitive data such as
      credentials, credit cards, and more, to help prioritize and investigate security events.
-     Available for StorageAccounts and CloudPosture plans.:code:`<br>`:code:`<br>`\
+     Available for StorageAccounts and CloudPosture plans.:code:`<br>`:code:`<br>`\\
      **ContainerRegistriesVulnerabilityAssessments** - Provides vulnerability management for images
      stored in your container registries.
      Available for CloudPosture and Containers plans. Required.
@@ -142,18 +143,19 @@ class Extension(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: The extension name. Supported values are: :code:`<br>`:code:`<br>`\
+        :keyword name: The extension name. Supported values are: :code:`<br>`:code:`<br>`\\
          **AgentlessDiscoveryForKubernetes** - API-based discovery of information about Kubernetes
          cluster architecture, workload objects, and setup. Required for Kubernetes inventory, identity
          and network exposure detection, attack path analysis and risk hunting as part of the cloud
          security explorer.
-         Available for CloudPosture plan.:code:`<br>`:code:`<br>`\ **OnUploadMalwareScanning** - Limits
-         the GB to be scanned per month for each storage account within the subscription. Once this
-         limit reached on a given storage account, Blobs won't be scanned during current calendar month.
-         Available for StorageAccounts plan.:code:`<br>`:code:`<br>`\ **SensitiveDataDiscovery** -
+         Available for CloudPosture plan.:code:`<br>`:code:`<br>`\\ **OnUploadMalwareScanning** -
+         Limits the GB to be scanned per month for each storage account within the subscription. Once
+         this limit reached on a given storage account, Blobs won't be scanned during current calendar
+         month.
+         Available for StorageAccounts plan.:code:`<br>`:code:`<br>`\\ **SensitiveDataDiscovery** -
          Sensitive data discovery identifies Blob storage container with sensitive data such as
          credentials, credit cards, and more, to help prioritize and investigate security events.
-         Available for StorageAccounts and CloudPosture plans.:code:`<br>`:code:`<br>`\
+         Available for StorageAccounts and CloudPosture plans.:code:`<br>`:code:`<br>`\\
          **ContainerRegistriesVulnerabilityAssessments** - Provides vulnerability management for images
          stored in your container registries.
          Available for CloudPosture and Containers plans. Required.
@@ -256,7 +258,7 @@ class Pricing(Resource):
      ISO 8601 format (e.g. P3Y6M4DT12H30M5S).
     :vartype free_trial_remaining_time: ~datetime.timedelta
     :ivar enablement_time: Optional. If ``pricingTier`` is ``Standard`` then this property holds
-     the date of the last time the ``pricingTier`` was set to ``Standard``\ , when available (e.g
+     the date of the last time the ``pricingTier`` was set to ``Standard``\\ , when available (e.g
      2023-03-01T12:42:42.1921106Z).
     :vartype enablement_time: ~datetime.datetime
     :ivar deprecated: Optional. True if the plan is deprecated. If there are replacing plans they
@@ -325,7 +327,7 @@ class Pricing(Resource):
 class PricingList(_serialization.Model):
     """List of pricing configurations response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of pricing configurations. Required.
     :vartype value: list[~azure.mgmt.security.v2023_01_01.models.Pricing]

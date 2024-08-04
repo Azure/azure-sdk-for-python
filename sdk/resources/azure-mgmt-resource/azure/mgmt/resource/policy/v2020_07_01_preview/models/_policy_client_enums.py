@@ -26,4 +26,4 @@ class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This category of exemptions usually means the scope is not applicable for the policy."""
     MITIGATED = "Mitigated"
     """This category of exemptions usually means the mitigation actions have been applied to the
-    #: scope."""
+    scope."""

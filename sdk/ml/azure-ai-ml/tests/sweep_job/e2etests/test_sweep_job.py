@@ -209,7 +209,10 @@ class TestSweepJob(AzureRecordedTestCase):
 
         result = client.create_or_update(sweep_node)
         assert result.description == "new-description"
-        assert result.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        assert (
+            result.trial.environment
+            == "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33"
+        )
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"

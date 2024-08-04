@@ -1,0 +1,26 @@
+parameters:
+  - name: VirtualEnvironmentName
+    type: string
+    default: "venv"
+  - name: Activate
+    type: boolean
+    default: true
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  - pwsh: |
+      $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
+        -VenvName "${{ parameters.VirtualEnvironmentName }}" `
+        -RepoRoot "$(Build.SourcesDirectory)"
+    displayName: Create virtual environment
+    condition: ${{ parameters.Condition }}
+
+  - ${{ if eq(parameters.Activate, true) }}:
+    - pwsh: |
+        $(Build.SourcesDirectory)/eng/scripts/activate-venv.ps1 `
+          -VenvName "${{ parameters.VirtualEnvironmentName }}" `
+          -RepoRoot "$(Build.SourcesDirectory)"
+      displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment
+      condition: ${{ parameters.Condition }}

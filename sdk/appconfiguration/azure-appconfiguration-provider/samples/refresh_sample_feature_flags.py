@@ -44,7 +44,7 @@ config = load(
 
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"]["Beta"])
+print(config["feature_management"]["feature_flags"][1])
 
 # Updating the configuration setting
 feature_flag_setting.enabled = False
@@ -60,7 +60,7 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"]["Beta"])
+print(config["feature_management"]["feature_flags"][1])
 
 # Waiting for the refresh interval to pass
 time.sleep(2)
@@ -71,4 +71,4 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"]["Beta"])
+print(config["feature_management"]["feature_flags"][1])

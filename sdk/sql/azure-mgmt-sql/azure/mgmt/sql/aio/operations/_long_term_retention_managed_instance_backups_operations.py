@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,7 +46,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LongTermRetentionManagedInstanceBackupsOperations:
+class LongTermRetentionManagedInstanceBackupsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -79,7 +79,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedInstanceLongTermRetentionBackup or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionBackup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -98,23 +97,22 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
         cls: ClsType[_models.ManagedInstanceLongTermRetentionBackup] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             location_name=location_name,
             managed_instance_name=managed_instance_name,
             database_name=database_name,
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -126,13 +124,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, location_name: str, managed_instance_name: str, database_name: str, backup_name: str, **kwargs: Any
@@ -151,23 +145,22 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             location_name=location_name,
             managed_instance_name=managed_instance_name,
             database_name=database_name,
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -177,11 +170,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -197,14 +186,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -233,7 +214,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -242,17 +223,13 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_database(
@@ -278,7 +255,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -302,7 +278,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_database_request(
+                _request = build_list_by_database_request(
                     location_name=location_name,
                     managed_instance_name=managed_instance_name,
                     database_name=database_name,
@@ -310,19 +286,18 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_database.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -332,11 +307,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -347,10 +322,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_database.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"
-    }
 
     @distributed_trace
     def list_by_instance(
@@ -373,7 +344,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -397,26 +367,25 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_instance_request(
+                _request = build_list_by_instance_request(
                     location_name=location_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_instance.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -426,11 +395,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -441,10 +410,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"
-    }
 
     @distributed_trace
     def list_by_location(
@@ -464,7 +429,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -488,25 +452,24 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_location_request(
+                _request = build_list_by_location_request(
                     location_name=location_name,
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_location.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -516,11 +479,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -531,10 +494,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_location.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"
-    }
 
     @distributed_trace_async
     async def get_by_resource_group(
@@ -559,7 +518,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedInstanceLongTermRetentionBackup or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionBackup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -578,7 +536,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
         cls: ClsType[_models.ManagedInstanceLongTermRetentionBackup] = kwargs.pop("cls", None)
 
-        request = build_get_by_resource_group_request(
+        _request = build_get_by_resource_group_request(
             resource_group_name=resource_group_name,
             location_name=location_name,
             managed_instance_name=managed_instance_name,
@@ -586,16 +544,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_by_resource_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -607,13 +564,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_by_resource_group_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -638,7 +591,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_by_resource_group_request(
+        _request = build_delete_by_resource_group_request(
             resource_group_name=resource_group_name,
             location_name=location_name,
             managed_instance_name=managed_instance_name,
@@ -646,16 +599,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_by_resource_group_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -665,11 +617,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_by_resource_group_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_by_resource_group(
@@ -694,14 +642,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -731,7 +671,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -740,17 +680,13 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_resource_group_database(
@@ -780,7 +716,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -804,7 +739,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_database_request(
+                _request = build_list_by_resource_group_database_request(
                     resource_group_name=resource_group_name,
                     location_name=location_name,
                     managed_instance_name=managed_instance_name,
@@ -813,19 +748,18 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group_database.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -835,11 +769,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -850,10 +784,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group_database.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"
-    }
 
     @distributed_trace
     def list_by_resource_group_instance(
@@ -880,7 +810,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -904,7 +833,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_instance_request(
+                _request = build_list_by_resource_group_instance_request(
                     resource_group_name=resource_group_name,
                     location_name=location_name,
                     managed_instance_name=managed_instance_name,
@@ -912,19 +841,18 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group_instance.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -934,11 +862,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -949,10 +877,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"
-    }
 
     @distributed_trace
     def list_by_resource_group_location(
@@ -976,7 +900,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :param database_state: Whether to query against just live databases, just deleted databases, or
          all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceLongTermRetentionBackup or the
          result of cls(response)
         :rtype:
@@ -1000,26 +923,25 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_location_request(
+                _request = build_list_by_resource_group_location_request(
                     resource_group_name=resource_group_name,
                     location_name=location_name,
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group_location.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
@@ -1029,11 +951,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1044,7 +966,3 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group_location.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"
-    }

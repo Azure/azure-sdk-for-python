@@ -12,7 +12,8 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
-    test_proxy
+    test_proxy,
+    remove_batch_sanitizers,
 )
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -29,3 +30,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=tenant_id, value="MyTenantId")
     add_general_regex_sanitizer(regex=client_secret, value="MyClientSecret")
     # add_oauth_response_sanitizer()
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3493"])

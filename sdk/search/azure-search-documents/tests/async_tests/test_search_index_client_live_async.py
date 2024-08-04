@@ -8,7 +8,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.core import MatchConditions
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -26,8 +26,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
-    async def test_search_index_client(self, api_key, endpoint, index_name):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+    async def test_search_index_client(self, endpoint, index_name):
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
         index_name = "hotels"
         async with client:
             await self._test_get_service_statistics(client)

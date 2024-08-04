@@ -3180,6 +3180,34 @@ class ServerBackupV2ListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class ServerDetachVNetParameter(_serialization.Model):
+    """Parameters to detach Vnet.
+
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is 'Disabled' when server has VNet integration. Known values are: "Enabled" and
+     "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.EnableStatusEnum
+    """
+
+    _attribute_map = {
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+    }
+
+    def __init__(
+        self, *, public_network_access: Optional[Union[str, "_models.EnableStatusEnum"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is 'Disabled' when server has VNet integration. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.EnableStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.public_network_access = public_network_access
+
+
 class ServerEditionCapability(_serialization.Model):
     """Server edition capabilities.
 
@@ -3366,7 +3394,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
 
 
 class ServerGtidSetParameter(_serialization.Model):
-    """Server Gtid set parameters.
+    """Server Gtid set parameters: Replication with Global Transaction Identifiers.
 
     :ivar gtid_set: The Gtid set of server.
     :vartype gtid_set: str
@@ -3605,6 +3633,10 @@ class Storage(_serialization.Model):
      "Disabled".
     :vartype auto_io_scaling: str or
      ~azure.mgmt.rdbms.mysql_flexibleservers.models.EnableStatusEnum
+    :ivar storage_redundancy: The redundant type of the server storage. The parameter is used for
+     server creation. Known values are: "LocalRedundancy" and "ZoneRedundancy".
+    :vartype storage_redundancy: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.StorageRedundancyEnum
     """
 
     _validation = {
@@ -3618,6 +3650,7 @@ class Storage(_serialization.Model):
         "log_on_disk": {"key": "logOnDisk", "type": "str"},
         "storage_sku": {"key": "storageSku", "type": "str"},
         "auto_io_scaling": {"key": "autoIoScaling", "type": "str"},
+        "storage_redundancy": {"key": "storageRedundancy", "type": "str"},
     }
 
     def __init__(
@@ -3628,6 +3661,7 @@ class Storage(_serialization.Model):
         auto_grow: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
         log_on_disk: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
         auto_io_scaling: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
+        storage_redundancy: Optional[Union[str, "_models.StorageRedundancyEnum"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3644,6 +3678,10 @@ class Storage(_serialization.Model):
          "Disabled".
         :paramtype auto_io_scaling: str or
          ~azure.mgmt.rdbms.mysql_flexibleservers.models.EnableStatusEnum
+        :keyword storage_redundancy: The redundant type of the server storage. The parameter is used
+         for server creation. Known values are: "LocalRedundancy" and "ZoneRedundancy".
+        :paramtype storage_redundancy: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.StorageRedundancyEnum
         """
         super().__init__(**kwargs)
         self.storage_size_gb = storage_size_gb
@@ -3652,6 +3690,7 @@ class Storage(_serialization.Model):
         self.log_on_disk = log_on_disk
         self.storage_sku = None
         self.auto_io_scaling = auto_io_scaling
+        self.storage_redundancy = storage_redundancy
 
 
 class StorageEditionCapability(_serialization.Model):

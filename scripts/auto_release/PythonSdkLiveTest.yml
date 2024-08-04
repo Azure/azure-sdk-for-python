@@ -26,6 +26,8 @@ jobs:
     maxParallel: 5
   pool:
     vmImage: 'ubuntu-20.04'
+  variables:
+    Codeql.Enabled: false
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -62,6 +64,7 @@ jobs:
           # install autorest
           sudo npm init -f
           sudo npm install -g autorest --save
+          sudo npm install -g @azure-tools/typespec-client-generator-cli
 
           mkdir temp_folder
 
@@ -86,12 +89,11 @@ jobs:
         export SCRIPT_PATH=$script_path
         export BOT_TOKEN=$(azuresdk-github-pat)
         export GIT_TOKEN=$(Yuchao-GitToken)
-        export STORAGE_CONN_STR=$(storage-conn-str)
-        export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
         export TEST_FOLDER=$(TEST_FOLDER)
+        export ISSUE_OWNER=$(ISSUE_OWNER)
 
         # run
         cd azure-sdk-for-python
