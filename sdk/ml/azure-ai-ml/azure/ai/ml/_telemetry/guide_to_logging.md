@@ -10,7 +10,7 @@ This document explains the logging system for the Azure ML SDK for developers in
 Logging will be disabled if
  - Calls are not being made from a Jupyter notebook. As an Azure SDK, azure-ai-ml must comply with the Azure SDK for Python's guidelines around logging. The guidelines limit logging to interactive scenarios only, meaning that client-side logging can only be enabled when a user is running SDK code from a Jupyter notebook.
  - An incorrect user agent is passed. This prevents calls from other Azure SDKs being inadvertently logged under the azure-ai-ml namespace. Valid user agents for azure-ai-ml following this pattern: "azure-ai-ml/< version >"
- - The subscription ID is in the `test_subscriptions` list of internal developer subscription IDs declared in [`logging_handler.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-ml/azure/ai/ml/_telemetry/logging_handler.py). Those subscriptions can be used to prevent logging of test commands.
+ - The subscription ID is in the `test_subscriptions` list of internal developer subscription IDs declared in [`logging_handler.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ml/azure-ai-ml/azure/ai/ml/_telemetry/logging_handler.py). Those subscriptions can be used to prevent logging of test commands.
  - An exception is triggered while trying to set up and return the logging handler. Logging should never interfere with the execution of the code, so if an exception is triggered, we simply move on.
 
 Logging can also be explicitly disabled in any scenario by setting `MLClient`'s `enable_telemetry` parameter equal to `True`.
