@@ -30,7 +30,13 @@ def main(generate_input, generate_output):
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
             try:
-                md_output = change_log_generate(package_name, last_version, package["tagIsStable"], prefolder=prefolder)
+                md_output = change_log_generate(
+                    package_name,
+                    last_version,
+                    package["tagIsStable"],
+                    prefolder=prefolder,
+                    is_multiapi=package["isMultiapi"],
+                )
             except:
                 md_output = "change log generation failed!!!"
         else:

@@ -40,7 +40,14 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     return "\n".join(result[begin + 1 : end]).strip()
 
 
-def change_log_generate(package_name, last_version, tag_is_stable: bool = False, *, prefolder: Optional[str] = None):
+def change_log_generate(
+    package_name,
+    last_version,
+    tag_is_stable: bool = False,
+    *,
+    prefolder: Optional[str] = None,
+    is_multiapi: bool = False,
+):
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -57,7 +64,7 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False,
         return "### Other Changes\n\n  - Initial version"
 
     # try new changelog tool
-    if prefolder:
+    if prefolder and not is_multiapi:
         try:
             return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
         except Exception as e:
