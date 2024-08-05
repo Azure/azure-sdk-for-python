@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -20,7 +21,6 @@ from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
 from .operations import (
     AzureCommunicationCallAutomationServiceOperationsMixin,
     CallConnectionOperations,
-    CallDialogOperations,
     CallMediaOperations,
     CallRecordingOperations,
 )
@@ -36,8 +36,6 @@ class AzureCommunicationCallAutomationService(
      azure.communication.callautomation.aio.operations.CallConnectionOperations
     :ivar call_media: CallMediaOperations operations
     :vartype call_media: azure.communication.callautomation.aio.operations.CallMediaOperations
-    :ivar call_dialog: CallDialogOperations operations
-    :vartype call_dialog: azure.communication.callautomation.aio.operations.CallDialogOperations
     :ivar call_recording: CallRecordingOperations operations
     :vartype call_recording:
      azure.communication.callautomation.aio.operations.CallRecordingOperations
@@ -45,7 +43,7 @@ class AzureCommunicationCallAutomationService(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2023-10-03-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-06-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -81,7 +79,6 @@ class AzureCommunicationCallAutomationService(
         self._serialize.client_side_validation = False
         self.call_connection = CallConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.call_media = CallMediaOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.call_dialog = CallDialogOperations(self._client, self._config, self._serialize, self._deserialize)
         self.call_recording = CallRecordingOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
@@ -115,7 +112,7 @@ class AzureCommunicationCallAutomationService(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureCommunicationCallAutomationService":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
