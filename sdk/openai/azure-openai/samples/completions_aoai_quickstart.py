@@ -8,7 +8,7 @@
 FILE: completions_aoai_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started with Completions using the Azure OpenAI SDK for Python.
+    This sample demonstrates how to get started with Azure OpenAI Completions using the official OpenAI SDK for Python.
 
 USAGE:
     python completions_aoai_quickstart.py

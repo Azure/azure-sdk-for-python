@@ -5,7 +5,6 @@ extends:
     parameters:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
-      ToxTestEnv: optional
       MatrixFilters:
         - PythonVersion=3.11.*
       MatrixReplace:

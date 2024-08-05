@@ -8,7 +8,7 @@
 FILE: images_aoai_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started generating images with the Azure OpenAI SDK for Python.
+    This sample demonstrates how to get started generating images with the OpenAI SDK for Python.
 
 USAGE:
     python images_aoai_quickstart.py
@@ -16,7 +16,6 @@ USAGE:
     Before running the sample:
 
     pip install openai
-    pip install requests
     pip install pillow
 
     Set the environment variables with your own values:
@@ -31,10 +30,9 @@ os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
 
 def images_aoai_quickstart() -> None:
     import os
+    import httpx
     from openai import AzureOpenAI
-    import requests
     from PIL import Image
-    import json
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
     token_provider = get_bearer_token_provider(
@@ -49,11 +47,9 @@ def images_aoai_quickstart() -> None:
 
     result = client.images.generate(
         model=os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"],
-        prompt="a close-up of a bear walking throughthe forest",
+        prompt="a close-up of a bear walking through the forest",
         n=1
     )
-
-    json_response = json.loads(result.model_dump_json())
 
     # Set the directory for the stored image
     image_dir = os.path.join(os.curdir, 'images')
@@ -66,8 +62,10 @@ def images_aoai_quickstart() -> None:
     image_path = os.path.join(image_dir, 'generated_image.png')
 
     # Retrieve the generated image
-    image_url = json_response["data"][0]["url"]  # extract image URL from response
-    generated_image = requests.get(image_url).content  # download the image
+
+    image_url = result.data[0].url  # extract image URL from response
+    generated_image = httpx.get(image_url).content  # download the image
+
     with open(image_path, "wb") as image_file:
         image_file.write(generated_image)
 

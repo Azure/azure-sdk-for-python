@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call, getoutput
+from subprocess import check_output, CalledProcessError, check_call
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -43,26 +43,10 @@ def del_outdated_generated_files(readme: str):
         _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
         return
     generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
-    # remove outdated generate files
+    # remove outdated generated files
     if generated_files_dir.exists():
-        generated_files = [
-            file
-            for file in generated_files_dir.glob("**/*")
-            if all(
-                i not in str(file)
-                for i in (
-                    "__pycache__",
-                    "node_modules",
-                    ".tox",
-                    ".mypy_cache",
-                )
-            )
-            and file.suffix == ".py"
-        ]
-        for file in generated_files:
-            if file.stem != "_patch":
-                os.remove(file)
-        _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
+        shutil.rmtree(generated_files_dir)
+        _LOGGER.info(f"delete all outdated generated SDK files successfully")
 
     # remove outdated generated samples
     for item in ["generated_samples", "generated_tests"]:
@@ -386,32 +370,35 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
     return global_config
 
 
-def format_samples(sdk_code_path) -> None:
-    generate_sample_path = Path(sdk_code_path) / "generated_samples"
-    if not generate_sample_path.exists():
-        _LOGGER.info(f"not find generated_samples")
-        return
+def format_samples_and_tests(sdk_code_path) -> None:
+    for item in ["generated_samples", "generated_tests"]:
+        generate_path = Path(sdk_code_path) / item
+        if not generate_path.exists():
+            _LOGGER.info(f"not find {generate_path}")
+            continue
 
-    try:
-        import black
-    except Exception as e:
-        check_call("pip install black", shell=True)
-        import black
+        try:
+            import black
+        except Exception as e:
+            check_call("pip install black", shell=True)
+            import black
 
-    _BLACK_MODE = black.Mode()
-    _BLACK_MODE.line_length = 120
-    files = generate_sample_path.glob("**/*.py")
-    for path in files:
-        with open(path, "r") as fr:
-            file_content = fr.read()
+        _BLACK_MODE = black.Mode()
+        _BLACK_MODE.line_length = 120
+        files = generate_path.glob("**/*.py")
+        for path in files:
+            try:
+                with open(path, "r") as fr:
+                    file_content = fr.read()
 
-        with suppress(black.NothingChanged):
-            file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
+                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
-        with open(path, "w") as fw:
-            fw.write(file_content)
+                with open(path, "w") as fw:
+                    fw.write(file_content)
+            except Exception as e:
+                _LOGGER.warning(f"Failed to format {path}: {e}")
 
-    _LOGGER.info(f"format generated_samples successfully")
+        _LOGGER.info(f"format {generate_path} successfully")
 
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
