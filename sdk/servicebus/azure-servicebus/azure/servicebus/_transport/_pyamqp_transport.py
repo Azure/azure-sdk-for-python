@@ -19,6 +19,7 @@ from .._pyamqp import (
     __version__,
 )
 from .._pyamqp.error import (
+    AMQPLinkError,
     ErrorCondition,
     AMQPException,
     AMQPError,
@@ -718,7 +719,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._handler._received_messages.put((frame, message))
         else:
             # If receive_message or receive iterator is not being called, release message passed to callback.
-            receiver._handler.settle_messages(frame[1], 'released')
+            receiver._handler.settle_messages(frame[1], frame[2], 'released')
 
     @staticmethod
     def build_received_message(
@@ -780,10 +781,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, 'accepted')
+                return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=False
@@ -791,6 +793,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'rejected',
                     error=AMQPError(
                         condition=DEADLETTERNAME,
@@ -804,12 +807,23 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=True
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPLinkError as le:
+            if (
+                le.condition == ErrorCondition.InternalError
+                and isinstance(le.description, str)
+                and le.description.startswith("Delivery tag")
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from le
+
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
