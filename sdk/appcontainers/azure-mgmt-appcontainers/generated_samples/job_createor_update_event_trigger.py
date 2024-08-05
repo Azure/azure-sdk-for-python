@@ -29,6 +29,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
+        session_pool_name="SESSION_POOL_NAME",
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
@@ -36,6 +37,12 @@ def main():
         resource_group_name="rg",
         job_name="testcontainerAppsJob0",
         job_envelope={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                },
+            },
             "location": "East US",
             "properties": {
                 "configuration": {
@@ -48,6 +55,7 @@ def main():
                             "pollingInterval": 40,
                             "rules": [
                                 {
+                                    "identity": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
                                     "metadata": {"topicName": "my-topic"},
                                     "name": "servicebuscalingrule",
                                     "type": "azure-servicebus",
@@ -78,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/Job_CreateorUpdate_EventTrigger.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-02-02-preview/examples/Job_CreateorUpdate_EventTrigger.json
 if __name__ == "__main__":
     main()

@@ -29,6 +29,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
+        session_pool_name="SESSION_POOL_NAME",
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
@@ -36,6 +37,12 @@ def main():
         resource_group_name="rg",
         container_app_name="testcontainerApp0",
         container_app_envelope={
+            "identity": {
+                "type": "SystemAssigned,UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                },
+            },
             "location": "East US",
             "properties": {
                 "configuration": {
@@ -48,6 +55,13 @@ def main():
                         "httpReadBufferSize": 30,
                         "logLevel": "debug",
                     },
+                    "identitySettings": [
+                        {
+                            "identity": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+                            "lifecycle": "All",
+                        },
+                        {"identity": "system", "lifecycle": "Init"},
+                    ],
                     "ingress": {
                         "additionalPortMappings": [
                             {"external": True, "targetPort": 1234},
@@ -94,6 +108,18 @@ def main():
                         "traffic": [{"label": "production", "revisionName": "testcontainerApp0-ab1234", "weight": 100}],
                     },
                     "maxInactiveRevisions": 10,
+                    "runtime": {
+                        "dotnet": {"autoConfigureDataProtection": True},
+                        "java": {
+                            "enableMetrics": True,
+                            "javaAgent": {
+                                "enabled": True,
+                                "logging": {
+                                    "loggerSettings": [{"level": "debug", "logger": "org.springframework.boot"}]
+                                },
+                            },
+                        },
+                    },
                     "service": {"type": "redis"},
                 },
                 "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
@@ -136,7 +162,28 @@ def main():
                             {
                                 "custom": {"metadata": {"concurrentRequests": "50"}, "type": "http"},
                                 "name": "httpscalingrule",
-                            }
+                            },
+                            {
+                                "custom": {
+                                    "identity": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+                                    "metadata": {
+                                        "messageCount": "5",
+                                        "namespace": "mynamespace",
+                                        "queueName": "myqueue",
+                                    },
+                                    "type": "azure-servicebus",
+                                },
+                                "name": "servicebus",
+                            },
+                            {
+                                "azureQueue": {
+                                    "accountName": "account1",
+                                    "identity": "system",
+                                    "queueLength": 1,
+                                    "queueName": "queue1",
+                                },
+                                "name": "azure-queue",
+                            },
                         ],
                     },
                     "serviceBinds": [
@@ -159,6 +206,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-02-02-preview/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

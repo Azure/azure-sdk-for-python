@@ -1,5 +1,156 @@
 # Release History
 
+## 3.1.0b2 (2024-08-05)
+
+### Features Added
+
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'container_apps_builds_by_container_app' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'container_apps_builds' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'container_apps_patches' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'managed_environment_private_endpoint_connections' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'managed_environment_private_link_resources' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'functions_extension' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'logic_apps' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'container_apps_session_pools' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'container_apps_builds_by_container_app' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'container_apps_builds' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'container_apps_patches' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'managed_environment_private_endpoint_connections' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'managed_environment_private_link_resources' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'functions_extension' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'logic_apps' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'container_apps_session_pools' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ContainerAppsBuildsByContainerAppOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ContainerAppsBuildsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ContainerAppsPatchesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ContainerAppsSessionPoolsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.FunctionsExtensionOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.LogicAppsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentPrivateEndpointConnectionsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentPrivateLinkResourcesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ContainerAppsBuildsByContainerAppOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ContainerAppsBuildsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ContainerAppsPatchesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ContainerAppsSessionPoolsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.FunctionsExtensionOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.LogicAppsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ManagedEnvironmentPrivateEndpointConnectionsOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ManagedEnvironmentPrivateLinkResourcesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.BaseContainer' had property 'image_type' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.BillingMeter' had property 'id' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.BillingMeter' had property 'name' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.BillingMeter' had property 'type' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Configuration' had property 'runtime' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Configuration' had property 'identity_settings' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ConnectedEnvironmentStorageProperties' had property 'smb' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Container' had property 'image_type' added in the __init__ method in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerApp' had property 'kind' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerApp' had property 'patching_configuration' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.CustomScaleRule' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.HttpScaleRule' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.InitContainer' had property 'image_type' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponent' had property 'properties' added in the __init__ method in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponentType' had property 'NACOS' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JobConfiguration' had property 'identity_settings' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JobExecution' had property 'detailed_status' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JobScaleRule' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironment' had property 'peer_traffic_configuration' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironment' had property 'private_endpoint_connections' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironment' had property 'public_network_access' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.QueueScaleRule' had property 'account_name' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.QueueScaleRule' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.StorageType' had property 'SMB' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.TcpScaleRule' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerAppPropertiesPatchingConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerAppsBuildCollection' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerAppsBuildConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerAppsBuildResource' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerAppsPatchResource' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerExecutionStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ContainerType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.CustomContainerTemplate' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.DetectionStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.DynamicPoolConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ErrorEntity' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ExecutionStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ExecutionType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.IdentitySettings' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.IdentitySettingsLifeCycle' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ImageType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponentIngress' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponentProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Kind' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Level' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.LoggerSetting' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.LogicApp' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.LogicAppsProxyMethod' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerTrafficConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.NacosComponent' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchApplyStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchCollection' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchDetails' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchDetailsNewLayer' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchDetailsOldLayer' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchSkipConfig' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PatchingMode' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PoolManagementType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateEndpoint' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateEndpointConnection' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateEndpointConnectionListResult' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateEndpointConnectionProvisioningState' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateEndpointServiceConnectionStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateLinkResource' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateLinkResourceListResult' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PrivateLinkServiceConnectionState' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.PublicNetworkAccess' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ReplicaExecutionStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Runtime' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.RuntimeDotnet' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.RuntimeJava' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.RuntimeJavaAgent' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.RuntimeJavaAgentLogging' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ScaleConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionContainer' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionContainerResources' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionIngress' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionNetworkConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionNetworkStatus' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionPool' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionPoolCollection' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionPoolProvisioningState' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionPoolSecret' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionPoolUpdatableProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SessionRegistryCredentials' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SmbStorage' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SpringBootAdminComponent' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SpringCloudConfigComponent' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.SpringCloudEurekaComponent' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowArtifacts' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowEnvelope' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowEnvelopeCollection' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowEnvelopeProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowHealth' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowHealthState' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.WorkflowState' was added in the current version
+
+### Breaking Changes
+
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' method '__init__' had a 'positional_or_keyword' parameter 'session_pool_name' inserted in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' method '__init__' had a 'positional_or_keyword' parameter 'session_pool_name' inserted in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.ContainerAppsSourceControlsOperations' method 'begin_create_or_update' had a 'positional_or_keyword' parameter 'x_ms_github_auxiliary' inserted in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.ContainerAppsSourceControlsOperations' method 'begin_delete' had a 'positional_or_keyword' parameter 'x_ms_github_auxiliary' inserted in the current version
+  - The class 'azure.mgmt.appcontainers.aio.operations.JobsOperations' method 'list_detectors' changed from 'asynchronous' to 'synchronous' in the current version.
+  - The 'azure.mgmt.appcontainers.operations.ContainerAppsSourceControlsOperations' method 'begin_create_or_update' had a 'positional_or_keyword' parameter 'x_ms_github_auxiliary' inserted in the current version
+  - The 'azure.mgmt.appcontainers.operations.ContainerAppsSourceControlsOperations' method 'begin_delete' had a 'positional_or_keyword' parameter 'x_ms_github_auxiliary' inserted in the current version
+  - The 'azure.mgmt.appcontainers.models.DotNetComponentType' enum had its value 'ASPIRE_RESOURCE_SERVER_API' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponent' had its instance variable 'component_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponent' had its instance variable 'provisioning_state' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponent' had its instance variable 'configurations' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.JavaComponent' had its instance variable 'service_binds' deleted or renamed in the current version
+
 ## 3.1.0b1 (2024-03-18)
 
 ### Features Added

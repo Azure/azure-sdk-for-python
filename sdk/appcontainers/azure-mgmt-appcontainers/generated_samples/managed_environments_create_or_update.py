@@ -29,6 +29,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
+        session_pool_name="SESSION_POOL_NAME",
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
@@ -77,6 +78,7 @@ def main():
                     "tracesConfiguration": {"destinations": ["appInsights"]},
                 },
                 "peerAuthentication": {"mtls": {"enabled": True}},
+                "peerTrafficConfiguration": {"encryption": {"enabled": True}},
                 "vnetConfiguration": {
                     "infrastructureSubnetId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/RGName/providers/Microsoft.Network/virtualNetworks/VNetName/subnets/subnetName1"
                 },
@@ -108,6 +110,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-02-02-preview/examples/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
     pip install azure-identity
     pip install azure-mgmt-appcontainers
 # USAGE
-    python source_controls_delete.py
+    python logic_apps_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,16 +27,17 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
-        subscription_id="651f8027-33e8-4ec4-97b4-f6e9f3dc8744",
+        session_pool_name="SESSION_POOL_NAME",
+        subscription_id="8efdecc5-919e-44eb-b179-915dca89ebf9",
     )
 
-    client.container_apps_source_controls.begin_delete(
-        resource_group_name="workerapps-rg-xj",
-        container_app_name="testcanadacentral",
-        source_control_name="current",
-    ).result()
+    client.logic_apps.delete(
+        resource_group_name="examplerg",
+        container_app_name="testcontainerApp0",
+        logic_app_name="testcontainerApp0",
+    )
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/SourceControls_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-02-02-preview/examples/LogicApps_Delete.json
 if __name__ == "__main__":
     main()

@@ -27,6 +27,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
+        session_pool_name="SESSION_POOL_NAME",
         subscription_id="f07f3711-b45e-40fe-a941-4e6d93f851e6",
     )
 
@@ -34,9 +35,10 @@ def main():
         resource_group_name="mikono-workerapp-test-rg",
         job_name="mikonojob1",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/Job_ListDetectors.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-02-02-preview/examples/Job_ListDetectors.json
 if __name__ == "__main__":
     main()

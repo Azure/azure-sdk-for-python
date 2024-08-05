@@ -26,22 +26,29 @@ class ContainerAppsAPIClientConfiguration:  # pylint: disable=too-many-instance-
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param session_pool_name: Name of the session pool. Required.
+    :type session_pool_name: str
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-11-02-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-02-02-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-11-02-preview")
+    def __init__(
+        self, credential: "AsyncTokenCredential", session_pool_name: str, subscription_id: str, **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2024-02-02-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if session_pool_name is None:
+            raise ValueError("Parameter 'session_pool_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
 
         self.credential = credential
+        self.session_pool_name = session_pool_name
         self.subscription_id = subscription_id
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])

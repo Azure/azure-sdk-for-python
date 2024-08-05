@@ -66,12 +66,19 @@ from ._models_py3 import ContainerAppProbe
 from ._models_py3 import ContainerAppProbeHttpGet
 from ._models_py3 import ContainerAppProbeHttpGetHttpHeadersItem
 from ._models_py3 import ContainerAppProbeTcpSocket
+from ._models_py3 import ContainerAppPropertiesPatchingConfiguration
 from ._models_py3 import ContainerAppSecret
+from ._models_py3 import ContainerAppsBuildCollection
+from ._models_py3 import ContainerAppsBuildConfiguration
+from ._models_py3 import ContainerAppsBuildResource
+from ._models_py3 import ContainerAppsPatchResource
+from ._models_py3 import ContainerExecutionStatus
 from ._models_py3 import ContainerRegistry
 from ._models_py3 import ContainerRegistryWithCustomImage
 from ._models_py3 import ContainerResources
 from ._models_py3 import CookieExpiration
 from ._models_py3 import CorsPolicy
+from ._models_py3 import CustomContainerTemplate
 from ._models_py3 import CustomDomain
 from ._models_py3 import CustomDomainConfiguration
 from ._models_py3 import CustomHostnameAnalysisResult
@@ -122,13 +129,16 @@ from ._models_py3 import DotNetComponent
 from ._models_py3 import DotNetComponentConfigurationProperty
 from ._models_py3 import DotNetComponentServiceBind
 from ._models_py3 import DotNetComponentsCollection
+from ._models_py3 import DynamicPoolConfiguration
 from ._models_py3 import EncryptionSettings
 from ._models_py3 import EnvironmentAuthToken
 from ._models_py3 import EnvironmentVar
 from ._models_py3 import EnvironmentVariable
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorEntity
 from ._models_py3 import ErrorResponse
+from ._models_py3 import ExecutionStatus
 from ._models_py3 import ExtendedLocation
 from ._models_py3 import Facebook
 from ._models_py3 import ForwardProxy
@@ -145,6 +155,7 @@ from ._models_py3 import HttpScaleRule
 from ._models_py3 import HttpSettings
 from ._models_py3 import HttpSettingsRoutes
 from ._models_py3 import IdentityProviders
+from ._models_py3 import IdentitySettings
 from ._models_py3 import Ingress
 from ._models_py3 import IngressPortMapping
 from ._models_py3 import IngressStickySessions
@@ -152,6 +163,8 @@ from ._models_py3 import InitContainer
 from ._models_py3 import IpSecurityRestrictionRule
 from ._models_py3 import JavaComponent
 from ._models_py3 import JavaComponentConfigurationProperty
+from ._models_py3 import JavaComponentIngress
+from ._models_py3 import JavaComponentProperties
 from ._models_py3 import JavaComponentServiceBind
 from ._models_py3 import JavaComponentsCollection
 from ._models_py3 import Job
@@ -175,6 +188,8 @@ from ._models_py3 import JwtClaimChecks
 from ._models_py3 import KedaConfiguration
 from ._models_py3 import ListUsagesResult
 from ._models_py3 import LogAnalyticsConfiguration
+from ._models_py3 import LoggerSetting
+from ._models_py3 import LogicApp
 from ._models_py3 import Login
 from ._models_py3 import LoginRoutes
 from ._models_py3 import LoginScopes
@@ -185,6 +200,8 @@ from ._models_py3 import ManagedCertificatePatch
 from ._models_py3 import ManagedCertificateProperties
 from ._models_py3 import ManagedEnvironment
 from ._models_py3 import ManagedEnvironmentPropertiesPeerAuthentication
+from ._models_py3 import ManagedEnvironmentPropertiesPeerTrafficConfiguration
+from ._models_py3 import ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption
 from ._models_py3 import ManagedEnvironmentStorage
 from ._models_py3 import ManagedEnvironmentStorageProperties
 from ._models_py3 import ManagedEnvironmentStoragesCollection
@@ -192,6 +209,7 @@ from ._models_py3 import ManagedEnvironmentsCollection
 from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import MetricsConfiguration
 from ._models_py3 import Mtls
+from ._models_py3 import NacosComponent
 from ._models_py3 import NfsAzureFileProperties
 from ._models_py3 import Nonce
 from ._models_py3 import OpenIdConnectClientCredential
@@ -202,7 +220,19 @@ from ._models_py3 import OpenTelemetryConfiguration
 from ._models_py3 import OperationDetail
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OtlpConfiguration
+from ._models_py3 import PatchCollection
+from ._models_py3 import PatchDetails
+from ._models_py3 import PatchDetailsNewLayer
+from ._models_py3 import PatchDetailsOldLayer
+from ._models_py3 import PatchProperties
+from ._models_py3 import PatchSkipConfig
 from ._models_py3 import PreBuildStep
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import QueueScaleRule
 from ._models_py3 import RegistryCredentials
@@ -210,10 +240,17 @@ from ._models_py3 import RegistryInfo
 from ._models_py3 import Replica
 from ._models_py3 import ReplicaCollection
 from ._models_py3 import ReplicaContainer
+from ._models_py3 import ReplicaExecutionStatus
 from ._models_py3 import Resource
 from ._models_py3 import Revision
 from ._models_py3 import RevisionCollection
+from ._models_py3 import Runtime
+from ._models_py3 import RuntimeDotnet
+from ._models_py3 import RuntimeJava
+from ._models_py3 import RuntimeJavaAgent
+from ._models_py3 import RuntimeJavaAgentLogging
 from ._models_py3 import Scale
+from ._models_py3 import ScaleConfiguration
 from ._models_py3 import ScaleRule
 from ._models_py3 import ScaleRuleAuth
 from ._models_py3 import Secret
@@ -221,8 +258,21 @@ from ._models_py3 import SecretVolumeItem
 from ._models_py3 import SecretsCollection
 from ._models_py3 import Service
 from ._models_py3 import ServiceBind
+from ._models_py3 import SessionContainer
+from ._models_py3 import SessionContainerResources
+from ._models_py3 import SessionIngress
+from ._models_py3 import SessionNetworkConfiguration
+from ._models_py3 import SessionPool
+from ._models_py3 import SessionPoolCollection
+from ._models_py3 import SessionPoolSecret
+from ._models_py3 import SessionPoolUpdatableProperties
+from ._models_py3 import SessionRegistryCredentials
+from ._models_py3 import SmbStorage
 from ._models_py3 import SourceControl
 from ._models_py3 import SourceControlCollection
+from ._models_py3 import SpringBootAdminComponent
+from ._models_py3 import SpringCloudConfigComponent
+from ._models_py3 import SpringCloudEurekaComponent
 from ._models_py3 import SystemData
 from ._models_py3 import TcpConnectionPool
 from ._models_py3 import TcpRetryPolicy
@@ -241,6 +291,11 @@ from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VnetConfiguration
 from ._models_py3 import Volume
 from ._models_py3 import VolumeMount
+from ._models_py3 import WorkflowArtifacts
+from ._models_py3 import WorkflowEnvelope
+from ._models_py3 import WorkflowEnvelopeCollection
+from ._models_py3 import WorkflowEnvelopeProperties
+from ._models_py3 import WorkflowHealth
 from ._models_py3 import WorkloadProfile
 from ._models_py3 import WorkloadProfileStates
 from ._models_py3 import WorkloadProfileStatesCollection
@@ -263,14 +318,19 @@ from ._container_apps_api_client_enums import ConnectedEnvironmentProvisioningSt
 from ._container_apps_api_client_enums import ContainerAppContainerRunningState
 from ._container_apps_api_client_enums import ContainerAppProvisioningState
 from ._container_apps_api_client_enums import ContainerAppReplicaRunningState
+from ._container_apps_api_client_enums import ContainerType
 from ._container_apps_api_client_enums import CookieExpirationConvention
 from ._container_apps_api_client_enums import CreatedByType
+from ._container_apps_api_client_enums import DetectionStatus
 from ._container_apps_api_client_enums import DnsVerificationTestResult
 from ._container_apps_api_client_enums import DotNetComponentProvisioningState
 from ._container_apps_api_client_enums import DotNetComponentType
 from ._container_apps_api_client_enums import EnvironmentProvisioningState
+from ._container_apps_api_client_enums import ExecutionType
 from ._container_apps_api_client_enums import ExtendedLocationTypes
 from ._container_apps_api_client_enums import ForwardProxyConvention
+from ._container_apps_api_client_enums import IdentitySettingsLifeCycle
+from ._container_apps_api_client_enums import ImageType
 from ._container_apps_api_client_enums import IngressClientCertificateMode
 from ._container_apps_api_client_enums import IngressTargetPortHttpScheme
 from ._container_apps_api_client_enums import IngressTransportMethod
@@ -278,18 +338,32 @@ from ._container_apps_api_client_enums import JavaComponentProvisioningState
 from ._container_apps_api_client_enums import JavaComponentType
 from ._container_apps_api_client_enums import JobExecutionRunningState
 from ._container_apps_api_client_enums import JobProvisioningState
+from ._container_apps_api_client_enums import Kind
+from ._container_apps_api_client_enums import Level
 from ._container_apps_api_client_enums import LogLevel
+from ._container_apps_api_client_enums import LogicAppsProxyMethod
 from ._container_apps_api_client_enums import ManagedCertificateDomainControlValidation
 from ._container_apps_api_client_enums import ManagedServiceIdentityType
+from ._container_apps_api_client_enums import PatchApplyStatus
+from ._container_apps_api_client_enums import PatchType
+from ._container_apps_api_client_enums import PatchingMode
+from ._container_apps_api_client_enums import PoolManagementType
+from ._container_apps_api_client_enums import PrivateEndpointConnectionProvisioningState
+from ._container_apps_api_client_enums import PrivateEndpointServiceConnectionStatus
+from ._container_apps_api_client_enums import PublicNetworkAccess
 from ._container_apps_api_client_enums import RevisionHealthState
 from ._container_apps_api_client_enums import RevisionProvisioningState
 from ._container_apps_api_client_enums import RevisionRunningState
 from ._container_apps_api_client_enums import Scheme
+from ._container_apps_api_client_enums import SessionNetworkStatus
+from ._container_apps_api_client_enums import SessionPoolProvisioningState
 from ._container_apps_api_client_enums import SourceControlOperationState
 from ._container_apps_api_client_enums import StorageType
 from ._container_apps_api_client_enums import TriggerType
 from ._container_apps_api_client_enums import Type
 from ._container_apps_api_client_enums import UnauthenticatedClientActionV2
+from ._container_apps_api_client_enums import WorkflowHealthState
+from ._container_apps_api_client_enums import WorkflowState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -355,12 +429,19 @@ __all__ = [
     "ContainerAppProbeHttpGet",
     "ContainerAppProbeHttpGetHttpHeadersItem",
     "ContainerAppProbeTcpSocket",
+    "ContainerAppPropertiesPatchingConfiguration",
     "ContainerAppSecret",
+    "ContainerAppsBuildCollection",
+    "ContainerAppsBuildConfiguration",
+    "ContainerAppsBuildResource",
+    "ContainerAppsPatchResource",
+    "ContainerExecutionStatus",
     "ContainerRegistry",
     "ContainerRegistryWithCustomImage",
     "ContainerResources",
     "CookieExpiration",
     "CorsPolicy",
+    "CustomContainerTemplate",
     "CustomDomain",
     "CustomDomainConfiguration",
     "CustomHostnameAnalysisResult",
@@ -411,13 +492,16 @@ __all__ = [
     "DotNetComponentConfigurationProperty",
     "DotNetComponentServiceBind",
     "DotNetComponentsCollection",
+    "DynamicPoolConfiguration",
     "EncryptionSettings",
     "EnvironmentAuthToken",
     "EnvironmentVar",
     "EnvironmentVariable",
     "ErrorAdditionalInfo",
     "ErrorDetail",
+    "ErrorEntity",
     "ErrorResponse",
+    "ExecutionStatus",
     "ExtendedLocation",
     "Facebook",
     "ForwardProxy",
@@ -434,6 +518,7 @@ __all__ = [
     "HttpSettings",
     "HttpSettingsRoutes",
     "IdentityProviders",
+    "IdentitySettings",
     "Ingress",
     "IngressPortMapping",
     "IngressStickySessions",
@@ -441,6 +526,8 @@ __all__ = [
     "IpSecurityRestrictionRule",
     "JavaComponent",
     "JavaComponentConfigurationProperty",
+    "JavaComponentIngress",
+    "JavaComponentProperties",
     "JavaComponentServiceBind",
     "JavaComponentsCollection",
     "Job",
@@ -464,6 +551,8 @@ __all__ = [
     "KedaConfiguration",
     "ListUsagesResult",
     "LogAnalyticsConfiguration",
+    "LoggerSetting",
+    "LogicApp",
     "Login",
     "LoginRoutes",
     "LoginScopes",
@@ -474,6 +563,8 @@ __all__ = [
     "ManagedCertificateProperties",
     "ManagedEnvironment",
     "ManagedEnvironmentPropertiesPeerAuthentication",
+    "ManagedEnvironmentPropertiesPeerTrafficConfiguration",
+    "ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption",
     "ManagedEnvironmentStorage",
     "ManagedEnvironmentStorageProperties",
     "ManagedEnvironmentStoragesCollection",
@@ -481,6 +572,7 @@ __all__ = [
     "ManagedServiceIdentity",
     "MetricsConfiguration",
     "Mtls",
+    "NacosComponent",
     "NfsAzureFileProperties",
     "Nonce",
     "OpenIdConnectClientCredential",
@@ -491,7 +583,19 @@ __all__ = [
     "OperationDetail",
     "OperationDisplay",
     "OtlpConfiguration",
+    "PatchCollection",
+    "PatchDetails",
+    "PatchDetailsNewLayer",
+    "PatchDetailsOldLayer",
+    "PatchProperties",
+    "PatchSkipConfig",
     "PreBuildStep",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "QueueScaleRule",
     "RegistryCredentials",
@@ -499,10 +603,17 @@ __all__ = [
     "Replica",
     "ReplicaCollection",
     "ReplicaContainer",
+    "ReplicaExecutionStatus",
     "Resource",
     "Revision",
     "RevisionCollection",
+    "Runtime",
+    "RuntimeDotnet",
+    "RuntimeJava",
+    "RuntimeJavaAgent",
+    "RuntimeJavaAgentLogging",
     "Scale",
+    "ScaleConfiguration",
     "ScaleRule",
     "ScaleRuleAuth",
     "Secret",
@@ -510,8 +621,21 @@ __all__ = [
     "SecretsCollection",
     "Service",
     "ServiceBind",
+    "SessionContainer",
+    "SessionContainerResources",
+    "SessionIngress",
+    "SessionNetworkConfiguration",
+    "SessionPool",
+    "SessionPoolCollection",
+    "SessionPoolSecret",
+    "SessionPoolUpdatableProperties",
+    "SessionRegistryCredentials",
+    "SmbStorage",
     "SourceControl",
     "SourceControlCollection",
+    "SpringBootAdminComponent",
+    "SpringCloudConfigComponent",
+    "SpringCloudEurekaComponent",
     "SystemData",
     "TcpConnectionPool",
     "TcpRetryPolicy",
@@ -530,6 +654,11 @@ __all__ = [
     "VnetConfiguration",
     "Volume",
     "VolumeMount",
+    "WorkflowArtifacts",
+    "WorkflowEnvelope",
+    "WorkflowEnvelopeCollection",
+    "WorkflowEnvelopeProperties",
+    "WorkflowHealth",
     "WorkloadProfile",
     "WorkloadProfileStates",
     "WorkloadProfileStatesCollection",
@@ -551,14 +680,19 @@ __all__ = [
     "ContainerAppContainerRunningState",
     "ContainerAppProvisioningState",
     "ContainerAppReplicaRunningState",
+    "ContainerType",
     "CookieExpirationConvention",
     "CreatedByType",
+    "DetectionStatus",
     "DnsVerificationTestResult",
     "DotNetComponentProvisioningState",
     "DotNetComponentType",
     "EnvironmentProvisioningState",
+    "ExecutionType",
     "ExtendedLocationTypes",
     "ForwardProxyConvention",
+    "IdentitySettingsLifeCycle",
+    "ImageType",
     "IngressClientCertificateMode",
     "IngressTargetPortHttpScheme",
     "IngressTransportMethod",
@@ -566,18 +700,32 @@ __all__ = [
     "JavaComponentType",
     "JobExecutionRunningState",
     "JobProvisioningState",
+    "Kind",
+    "Level",
     "LogLevel",
+    "LogicAppsProxyMethod",
     "ManagedCertificateDomainControlValidation",
     "ManagedServiceIdentityType",
+    "PatchApplyStatus",
+    "PatchType",
+    "PatchingMode",
+    "PoolManagementType",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
+    "PublicNetworkAccess",
     "RevisionHealthState",
     "RevisionProvisioningState",
     "RevisionRunningState",
     "Scheme",
+    "SessionNetworkStatus",
+    "SessionPoolProvisioningState",
     "SourceControlOperationState",
     "StorageType",
     "TriggerType",
     "Type",
     "UnauthenticatedClientActionV2",
+    "WorkflowHealthState",
+    "WorkflowState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
