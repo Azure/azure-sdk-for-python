@@ -33,7 +33,6 @@ if TYPE_CHECKING:
             SendClientAsync as uamqp_SendClient,
         )
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuth
-        from uamqp.errors import AuthenticationException as uamqp_AuthenticationException
 
     except ImportError:
         pass
@@ -53,7 +52,6 @@ if TYPE_CHECKING:
     from ..._pyamqp.constants import (
         ConnectionState as pyamqp_ConnectionState,
     )
-    from ..._pyamqp.error import AuthenticationException as pyamqp_AuthenticationException
 
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
@@ -80,9 +78,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     PLATFORM_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["platform"]]
     USER_AGENT_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["user-agent"]]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal[b'x-opt-partition-key']]
-
-    # define exceptions
-    AUTHENTICATION_EXCEPTION: Union["uamqp_AuthenticationException", "pyamqp_AuthenticationException"]
 
     @staticmethod
     @abstractmethod
