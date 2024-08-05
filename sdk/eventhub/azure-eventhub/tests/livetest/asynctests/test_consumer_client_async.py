@@ -463,16 +463,20 @@ async def test_receive_batch_large_event_async(auth_credential_senders_async, ua
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_mimic_processing_async(connstr_senders, uamqp_transport):
-    connection_str, senders = connstr_senders
+async def test_receive_mimic_processing_async(auth_credential_senders_async, uamqp_transport):
+    fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     for i in range(305):
         senders[0].send(EventData("A"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
-
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        consumer_group="$default",
+        uamqp_transport=uamqp_transport
+    )
     async def on_event(partition_context, event):
         assert partition_context.partition_id == "0"
         assert partition_context.consumer_group == "$default"
-        assert partition_context.fully_qualified_namespace in connection_str
         assert partition_context.eventhub_name == senders[0]._client.eventhub_name
         on_event.received += 1
         # Mimic processing of event 
