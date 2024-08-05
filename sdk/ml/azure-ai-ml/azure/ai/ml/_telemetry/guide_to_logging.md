@@ -11,7 +11,7 @@ Logging will be disabled if
  - The subscription ID is in the `test_subscriptions` list of internal developer subscription IDs declared in [`logging_handler.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ml/azure-ai-ml/azure/ai/ml/_telemetry/logging_handler.py). Those subscriptions can be used to prevent logging of test commands.
  - An exception is triggered while trying to set up and return the logging handler. Logging should never interfere with the execution of the code, so if an exception is triggered, we simply move on.
 
-Logging can also be explicitly disabled in any scenario by setting `MLClient`'s `enable_telemetry` parameter equal to `True`.
+Logging can also be explicitly disabled in any scenario by setting `MLClient`'s `enable_telemetry` parameter equal to `False`.
 
 In all of these cases, a `logging.NullHandler` is returned from `get_appinsights_log_handler`.
 
