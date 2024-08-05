@@ -6,17 +6,17 @@
   },
   "initOptions": {
     "initScript": {
-      "path": "sh scripts/automation_init.sh"
+      "path": "sh scripts/automation_init.sh",
+      "stderr": {
+        "showInComment": false
+      }
     }
   },
   "generateOptions": {
     "generateScript": {
       "path": "sh scripts/automation_generate.sh",
-      "stderr": {
-        "showInComment": true
-      },
       "stdout": {
-        "showInComment": "^\\[Autorest\\]"
+        "showInComment": "(.*\\[ERROR\\]\\s*).*"
       }
     },
     "parseGenerateOutput": true

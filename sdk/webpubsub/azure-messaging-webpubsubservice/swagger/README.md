@@ -1,4 +1,4 @@
-# Azure Purview for Python
+# Azure WebPubsub for Python
 
 > see https://aka.ms/autorest
 
@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2022-11-01/webpubsub.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2024-01-01/webpubsub.json
 output-folder: ../
 namespace: azure.messaging.webpubsubservice
 package-name: azure-messaging-webpubsubservice
