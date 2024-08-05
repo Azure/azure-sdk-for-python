@@ -1,5 +1,15 @@
 # Release History
 
+## 12.0.0 (2024-08-19)
+
+### Features Added
+
+  - The model or publicly exposed class 'azure.mgmt.eventhub.v2022_10_01_preview.models.CleanupPolicyRetentionDescription' had property 'COMPACT' added in the current version
+
+### Breaking Changes
+
+  - The 'azure.mgmt.eventhub.v2022_10_01_preview.models.CleanupPolicyRetentionDescription' enum had its value 'COMPACTION' deleted or renamed in the current version
+
 ## 11.0.0 (2023-04-14)
 
 ### Features Added
