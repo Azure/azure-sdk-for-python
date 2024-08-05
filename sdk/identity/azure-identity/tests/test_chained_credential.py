@@ -85,6 +85,29 @@ def test_attempts_all_credentials():
         assert credential.get_token.call_count == 1
 
 
+def test_uses_successful_credential():
+    expected_token = AccessToken("expected_token", 0)
+    credentials = [
+        Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=Mock(return_value=expected_token)),
+    ]
+
+    chained_credential = ChainedTokenCredential(*credentials)
+    token = chained_credential.get_token("scope")
+    assert token is expected_token
+
+    for credential in credentials:
+        assert credential.get_token.call_count == 1
+
+    assert chained_credential._successful_credential is credentials[2]
+    token = chained_credential.get_token("scope")
+    assert token is expected_token
+    assert credentials[0].get_token.call_count == 1
+    assert credentials[1].get_token.call_count == 1
+    assert credentials[2].get_token.call_count == 2
+
+
 def test_raises_for_unexpected_error():
     """the chain should not continue after an unexpected error (i.e. anything but CredentialUnavailableError)"""
 

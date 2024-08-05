@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -76,6 +76,30 @@ async def test_chain_attempts_all_credentials():
 
     for credential in credentials[:-1]:
         assert credential.get_token.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_uses_successful_credential():
+    expected_token = AccessToken("expected_token", 0)
+    credentials = [
+        Mock(get_token=AsyncMock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=AsyncMock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=AsyncMock(return_value=expected_token)),
+    ]
+
+    chained_credential = ChainedTokenCredential(*credentials)
+    token = await chained_credential.get_token("scope")
+    assert token is expected_token
+
+    for credential in credentials:
+        assert credential.get_token.call_count == 1
+
+    assert chained_credential._successful_credential is credentials[2]
+    token = await chained_credential.get_token("scope")
+    assert token is expected_token
+    assert credentials[0].get_token.call_count == 1
+    assert credentials[1].get_token.call_count == 1
+    assert credentials[2].get_token.call_count == 2
 
 
 @pytest.mark.asyncio

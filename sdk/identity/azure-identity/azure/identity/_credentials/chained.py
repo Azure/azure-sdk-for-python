@@ -87,6 +87,13 @@ class ChainedTokenCredential:
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        if self._successful_credential:
+            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token
+
         within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
