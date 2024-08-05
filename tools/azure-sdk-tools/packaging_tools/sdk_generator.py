@@ -8,6 +8,7 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
+
 try:
     # py 311 adds this library natively
     import tomllib as toml
@@ -67,6 +68,7 @@ def multiapi_combiner(sdk_code_path: str, package_name: str):
     )
     check_call("pip install -e .", shell=True)
 
+
 @return_origin_path
 def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: str):
     toml_file = Path(sdk_code_path) / CONF_NAME
@@ -81,12 +83,14 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
             # azure-mgmt-resource has subfolders
             subfolder_path = Path(sdk_code_path) / package_name.replace("-", "/")
             subfolders_name = [s.name for s in subfolder_path.iterdir() if s.is_dir() and not s.name.startswith("_")]
-            content["packaging"]["exclude_folders"] = ",".join([exclude(f"{package_name}-{s}") for s in subfolders_name])
+            content["packaging"]["exclude_folders"] = ",".join(
+                [exclude(f"{package_name}-{s}") for s in subfolders_name]
+            )
 
         with open(toml_file, "wb") as file_out:
             tomlw.dump(content, file_out)
         call_build_config(package_name, folder_name)
-        
+
         # remove .egg-info to reinstall package
         for item in Path(sdk_code_path).iterdir():
             if item.suffix == ".egg-info":
@@ -95,7 +99,6 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         check_call("pip install -e .", shell=True)
     else:
         _LOGGER.info(f"do not find {toml_file}")
-
 
 
 # readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md or absolute path
@@ -157,7 +160,7 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
 
 
 def get_last_commit_info(files: List[str]) -> str:
-    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip('\n ') + " " + f for f in files]
+    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip("\n ") + " " + f for f in files]
     result.sort()
     return result[-1]
 
@@ -206,7 +209,9 @@ def extract_version_info(config: Dict[str, Any]) -> str:
 def if_need_regenerate(meta: Dict[str, Any]) -> bool:
     with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
         config = json.load(file_in)
-    current_info = config["meta"]["autorest_options"]["version"] + "".join(sorted(config["meta"]["autorest_options"]["use"]))
+    current_info = config["meta"]["autorest_options"]["version"] + "".join(
+        sorted(config["meta"]["autorest_options"]["use"])
+    )
     recorded_info = meta["autorest"] + "".join(sorted(meta["use"]))
     return recorded_info != current_info
 

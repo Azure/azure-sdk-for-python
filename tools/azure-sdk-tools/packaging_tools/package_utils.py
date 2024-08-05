@@ -40,7 +40,14 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     return "\n".join(result[begin + 1 : end]).strip()
 
 
-def change_log_generate(package_name, last_version, tag_is_stable: bool = False, *, prefolder: Optional[str] = None, is_multiapi: bool = False):
+def change_log_generate(
+    package_name,
+    last_version,
+    tag_is_stable: bool = False,
+    *,
+    prefolder: Optional[str] = None,
+    is_multiapi: bool = False,
+):
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
