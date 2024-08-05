@@ -221,11 +221,13 @@ def if_need_regenerate(meta: Dict[str, Any]) -> bool:
 @return_origin_path
 def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
     os.chdir(spec_folder)
-    python_md_content = get_readme_python_content(input_readme)
-    if not python_md_content:
+    python_readme = (Path(input_readme).parent / "readme.python.md").absolute()
+    if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
         return
 
+    with open(python_readme, "r") as file_in:
+        python_md_content = file_in.readlines()
     is_multiapi = is_multiapi_package(python_md_content)
     if not is_multiapi:
         _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
