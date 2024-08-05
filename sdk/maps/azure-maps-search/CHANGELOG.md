@@ -4,6 +4,8 @@
 
 ### New Features and Enhancements
 
+- Support Search API `2023-06-01`
+
 - **Geocoding APIs**
   - Introduced `get_geocoding` method to obtain longitude and latitude coordinates for a given address.
   - Introduced `get_geocoding_batch` method to handle batch geocoding queries, supporting up to 100 queries in a single request.
