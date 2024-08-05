@@ -314,7 +314,8 @@ def _buildprovider(
     # pylint:disable=protected-access
     if connection_string:
         endpoint = connection_string.split(";")[0].split("=")[1]
-    provider = AzureAppConfigurationProvider(endpoint, **kwargs)
+    if not endpoint:
+        raise ValueError("No endpoint specified.")
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
     replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
@@ -331,7 +332,7 @@ def _buildprovider(
     min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
     max_backoff: int = 600 if 600 <= interval else interval
 
-    provider._replica_client_manager = ConfigurationClientManager(
+    replica_client_manager = ConfigurationClientManager(
         connection_string,
         endpoint,
         credential,
@@ -343,6 +344,7 @@ def _buildprovider(
         max_backoff,
         **kwargs
     )
+    provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
     return provider
 
 
@@ -473,9 +475,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, **kwargs) -> None:
+    def __init__(self, endpoint, replica_client_manager, **kwargs) -> None:
         self._origin_endpoint = endpoint
-        self._replica_client_manager = None
+        self._replica_client_manager = replica_client_manager
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(

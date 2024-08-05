@@ -395,7 +395,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
 
-    def get_client_count(self):
+    def get_client_count(self) -> int:
         return len(self._replica_clients)
 
     def _calculate_backoff(self, attempts: int) -> float:
