@@ -127,12 +127,9 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=hosts, **kwargs),
