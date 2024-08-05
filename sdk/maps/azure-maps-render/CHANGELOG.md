@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Initial release V2
+- Support Render API `2024-04-01`
 
 ## 1.0.0b3 (2024-05-15)
 
