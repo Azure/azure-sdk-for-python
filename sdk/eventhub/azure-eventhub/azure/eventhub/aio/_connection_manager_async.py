@@ -62,7 +62,7 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
             **kwargs: Any
     ) -> None:
         self._loop = kwargs.get("loop")
-        self._lock = Lock(loop=self._loop)
+        self._lock = Lock(loop=self._loop) # pylint: disable=unexpected-keyword-arg
         self._conn: Optional[Union[uamqp_ConnectionAsync, ConnectionAsync]] = None
 
         self._container_id = container_id
