@@ -512,9 +512,6 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             exception, self, is_consumer=is_consumer
         )
 
-    def _is_non_retryable(self, exception):
-        return self._amqp_transport.is_non_retryable(exception)
-
     async def _do_retryable_operation(
         self,
         operation: Callable[..., Any],

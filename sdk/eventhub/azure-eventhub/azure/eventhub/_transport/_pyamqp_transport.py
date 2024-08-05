@@ -72,6 +72,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     ERROR_CONDITIONS = [condition.value for condition in errors.ErrorCondition]
 
+    # define exceptions
+    AUTHENTICATION_EXCEPTION = errors.AuthenticationException
+
     @staticmethod
     def build_message(**kwargs):
         """
@@ -727,13 +730,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             else:
                 error = EventHubError(str(exception), exception)
         return error
-
-    @staticmethod
-    def is_non_retryable(exception: Exception) -> bool:
-        try:
-            return cast("errors.AMQPException", exception).condition in NO_RETRY_ERRORS
-        except AttributeError:
-            return False
 
     @staticmethod
     def _handle_exception(

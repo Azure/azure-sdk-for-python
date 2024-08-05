@@ -122,6 +122,9 @@ if uamqp_installed:
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
         PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
+        # define exceptions
+        AUTHENTICATION_EXCEPTION = errors.AuthenticationException
+
         @staticmethod
         def build_message(**kwargs):
             """
@@ -766,11 +769,6 @@ if uamqp_installed:
             else:
                 error = EventHubError(str(exception), exception)
             return error
-
-        @staticmethod
-        def is_non_retryable(exception: Exception) -> bool:
-            # uamqp exceptions do not have a specific condition attribute to check if they are retryable, retry all
-            return False
 
         @staticmethod
         def _handle_exception(

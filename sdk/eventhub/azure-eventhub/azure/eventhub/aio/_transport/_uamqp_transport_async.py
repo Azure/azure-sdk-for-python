@@ -283,6 +283,12 @@ if uamqp_installed:
                     except asyncio.CancelledError:  # pylint: disable=try-except-raise
                         raise
                     except Exception as exception:  # pylint: disable=broad-except
+                        # If optional dependency is not installed, do not retry.
+                        if isinstance(exception, ImportError):
+                            raise exception
+                        # If authentication exception, do not retry.
+                        if isinstance(exception, errors.AuthenticationException):
+                            raise await consumer._handle_exception(exception)
                         if (
                             isinstance(exception, errors.LinkDetach)
                             and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member

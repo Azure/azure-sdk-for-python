@@ -601,9 +601,6 @@ class ConsumerProducerMixin():
             exception, self, is_consumer=is_consumer
         )
 
-    def _is_non_retryable(self, exception):
-        return self._amqp_transport.is_non_retryable(exception)
-
     def _do_retryable_operation(self, operation, timeout=None, **kwargs): # pylint:disable=inconsistent-return-statements
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None

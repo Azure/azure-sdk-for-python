@@ -314,8 +314,7 @@ class TokenAuthFailure(AuthenticationException):
                 message += "\nDescription: {}".format(self.status_description.decode(encoding))
             except (TypeError, AttributeError):
                 message += "\nDescription: {}".format(self.status_description)
-        condition = kwargs.get("condition") or ErrorCondition.ClientError
-        super(TokenAuthFailure, self).__init__(condition=condition, message=message)
+        super(TokenAuthFailure, self).__init__(condition=ErrorCondition.ClientError, message=message)
 
 
 class MessageException(AMQPException):

@@ -33,6 +33,7 @@ if TYPE_CHECKING:
             SendClientAsync as uamqp_SendClient,
         )
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuth
+        from uamqp.errors import AuthenticationException as uamqp_AuthenticationException
 
     except ImportError:
         pass
@@ -52,6 +53,7 @@ if TYPE_CHECKING:
     from ..._pyamqp.constants import (
         ConnectionState as pyamqp_ConnectionState,
     )
+    from ..._pyamqp.error import AuthenticationException as pyamqp_AuthenticationException
 
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
@@ -79,6 +81,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     USER_AGENT_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["user-agent"]]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal[b'x-opt-partition-key']]
 
+    # define exceptions
+    AUTHENTICATION_EXCEPTION: Union["uamqp_AuthenticationException", "pyamqp_AuthenticationException"]
 
     @staticmethod
     @abstractmethod
@@ -405,13 +409,5 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         """
         Checks if timeout exception.
         :param ~azure.eventhub._client_base.ClientBase base: ClientBase.
-        :param Exception exception: Exception to check.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def is_non_retryable(exception: Exception) -> bool:
-        """
-        Checks if the exception is retryable, if the exception includes error condition information.
         :param Exception exception: Exception to check.
         """

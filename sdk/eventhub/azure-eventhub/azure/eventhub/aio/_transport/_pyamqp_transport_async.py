@@ -269,27 +269,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     # If optional dependency is not installed, do not retry.
                     if isinstance(exception, ImportError):
                         raise exception
+                    # If authentication exception, do not retry.
+                    if isinstance(exception, errors.AuthenticationException):
+                        raise await consumer._handle_exception(exception)
                     if (
                         isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
                     ):
                         raise await consumer._handle_exception(exception)
-
-                    if consumer._last_received_event:
-                        consumer._offset = consumer._last_received_event.offset
-
-                    if consumer._is_non_retryable(exception):
-                        last_exception = await consumer._handle_exception(exception)
-                        _LOGGER.info(
-                            "%r operation has encountered an exception: %r.",
-                            consumer._name,
-                            last_exception,
-                        )
-                        raise last_exception from None
-
                     if not consumer.running:  # exit by close
                         return
-
+                    if consumer._last_received_event:
+                        consumer._offset = consumer._last_received_event.offset
                     last_exception = await consumer._handle_exception(exception)
                     retried_times += 1
                     if retried_times > max_retries:
