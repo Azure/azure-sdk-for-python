@@ -501,7 +501,8 @@ class CodegenTestPR:
         pr_body = "" if not self.check_package_size_result else "{}\n".format("\n".join(self.check_package_size_result))
         pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         if not self.is_single_path:
-            pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview\ntrue\nSkip.BreakingChanges\ntrue"
+            pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
+        pr_body += "\nSkip.BreakingChanges\ntrue"
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR
