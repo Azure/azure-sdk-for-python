@@ -97,14 +97,21 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         _LOGGER.info(f"do not find {toml_file}")
 
 
-def del_outdated_files(readme: str):
+
+# readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md or absolute path
+def get_readme_python_content(readme: str) -> List[str]:
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
-        return
+        return []
 
     with open(python_readme, "r") as file_in:
-        content = file_in.readlines()
+        return file_in.readlines()
+
+
+# readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md
+def del_outdated_files(readme: str):
+    content = get_readme_python_content(readme)
     sdk_folder = extract_sdk_folder(content)
     is_multiapi = is_multiapi_package(content)
     if sdk_folder:
@@ -209,13 +216,11 @@ def if_need_regenerate(meta: Dict[str, Any]) -> bool:
 @return_origin_path
 def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
     os.chdir(spec_folder)
-    python_readme = (Path(input_readme).parent / "readme.python.md").absolute()
-    if not python_readme.exists():
+    python_md_content = get_readme_python_content(input_readme)
+    if not python_md_content:
         _LOGGER.info(f"do not find python configuration: {python_readme}")
         return
 
-    with open(python_readme, "r") as file_in:
-        python_md_content = file_in.readlines()
     is_multiapi = is_multiapi_package(python_md_content)
     if not is_multiapi:
         _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
@@ -327,6 +332,8 @@ def main(generate_input, generate_output):
                 package_entry["path"] = [folder_name]
                 package_entry[spec_word] = [input_readme]
                 package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
+                readme_python_content = get_readme_python_content(str(Path(spec_folder) / input_readme))
+                package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
