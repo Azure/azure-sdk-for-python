@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 import datetime
 
+import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
@@ -20,7 +21,7 @@ import config
 # 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates Transactional Batch for Azure Cosmos DB Python SDK
+# Sample - demonstrates Transactional Batch for Azure Cosmos DB Python SDK async
 # ----------------------------------------------------------------------------------------------------------
 
 HOST = config.settings['host']
@@ -29,14 +30,14 @@ DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = "batch_container"
 
 
-def execute_item_batch(database, container):
+async def execute_item_batch(database, container):
     print('\n1.11 Executing Batch Item operations\n')
 
     # We create three items to use for the sample. These are not part of the batch operations
-    container.create_item(get_sales_order("read_item"))
-    container.create_item(get_sales_order("delete_item"))
-    container.create_item(get_sales_order("replace_item"))
-
+    await container.create_item(get_sales_order("read_item"))
+    await container.create_item(get_sales_order("delete_item"))
+    await container.create_item(get_sales_order("replace_item"))
+ 
     # We create our batch operations
     create_item_operation = ("create", (get_sales_order("create_item"),))
     upsert_item_operation = ("upsert", (get_sales_order("upsert_item"),))
@@ -69,7 +70,7 @@ def execute_item_batch(database, container):
     try:
         # Batch results are returned as a list of item operation results - or raise a CosmosBatchOperationError if
         # one of the operations failed within your batch request.
-        batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key="Account1")
+        batch_results = await container.execute_item_batch(batch_operations=batch_operations, partition_key="Account1")
         print("\nResults for the batch operations: {}\n".format(batch_results))
 
     # For error handling, use try/ except with CosmosBatchOperationError and use the information in the
@@ -109,29 +110,32 @@ def get_sales_order(item_id):
     return order1
 
 
-def run_sample():
-    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
-    try:
-        # setup database for this sample
-        db = client.create_database_if_not_exists(id=DATABASE_ID)
-        # setup container for this sample
-        container = db.create_container_if_not_exists(id=CONTAINER_ID,
-                                                        partition_key=PartitionKey(path='/account_number'))
-        execute_item_batch(db, container)
-
-        # cleanup database after sample
+async def run_sample():
+    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
         try:
-            client.delete_database(db)
+            # setup database for this sample
+            db = await client.create_database_if_not_exists(id=DATABASE_ID)
 
-        except exceptions.CosmosResourceNotFoundError:
-            pass
+            # setup container for this sample
+            container = await db.create_container_if_not_exists(id="batch_container",
+                                                              partition_key=PartitionKey(path='/account_number'))
+            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-    except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+            await execute_item_batch(db, container)
 
-    finally:
-        print("\nrun_sample done")
+            # cleanup database after sample
+            try:
+                await client.delete_database(db)
+
+            except exceptions.CosmosResourceNotFoundError:
+                pass
+
+        except exceptions.CosmosHttpResponseError as e:
+            print('\nrun_sample has caught an error. {0}'.format(e.message))
+
+        finally:
+            print("\nrun_sample done")
 
 
 if __name__ == '__main__':
-    run_sample()
+    asyncio.run(run_sample())
