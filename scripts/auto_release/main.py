@@ -428,10 +428,10 @@ class CodegenTestPR:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
 
     @property
-    def is_single_path(self) -> bool:
+    def has_multi_packages(self) -> bool:
         sdk_path = Path("sdk") / self.sdk_folder
-        num = sum([l for l in sdk_path.iterdir() if l.is_dir() and l.name.startswith("azure")])
-        return num == 1
+        packages = [l for l in sdk_path.iterdir() if l.is_dir() and l.name.startswith("azure")]
+        return len(packages) > 1
 
     @return_origin_path
     def install_package_locally(self):
@@ -500,7 +500,7 @@ class CodegenTestPR:
         pr_base = "main"
         pr_body = "" if not self.check_package_size_result else "{}\n".format("\n".join(self.check_package_size_result))
         pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
-        if not self.is_single_path:
+        if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
         pr_body += "\nSkip.BreakingChanges\ntrue"
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
