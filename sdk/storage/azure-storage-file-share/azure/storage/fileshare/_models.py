@@ -645,14 +645,14 @@ class Handle(DictMixin):
     :keyword str client_ip: Client IP that opened the handle.
     :keyword ~datetime.datetime open_time: Time when the session that previously opened
         the handle has last been reconnected. (UTC)
-    :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to. (UTC)
+    :keyword Optional[~datetime.datetime] last_reconnect_time: Time handle was last connected to. (UTC)
     :keyword access_rights: Access rights of the handle.
     :paramtype access_rights: List[Literal['Read', 'Write', 'Delete']]
     """
 
     client_name: str
     """Name of the client machine where the share is being mounted."""
-    client_id: str
+    id: str
     """XSMB service handle ID."""
     path: str
     """File or directory name including full path starting from share root."""
@@ -666,7 +666,7 @@ class Handle(DictMixin):
     """Client IP that opened the handle."""
     open_time: "datetime"
     """Time when the session that previously opened the handle was last been reconnected. (UTC)"""
-    last_reconnect_time: "datetime"
+    last_reconnect_time: Optional["datetime"]
     """Time handle that was last connected to. (UTC)"""
     access_rights: List[Literal['Read', 'Write', 'Delete']]
     """Access rights of the handle."""
@@ -680,7 +680,7 @@ class Handle(DictMixin):
         self.session_id = kwargs.get('session_id')  # type: ignore [assignment]
         self.client_ip = kwargs.get('client_ip')  # type: ignore [assignment]
         self.open_time = kwargs.get('open_time')  # type: ignore [assignment]
-        self.last_reconnect_time = kwargs.get('last_reconnect_time')  # type: ignore [assignment]
+        self.last_reconnect_time = kwargs.get('last_reconnect_time')
         self.access_rights = kwargs.get('access_right_list')  # type: ignore [assignment]
 
     @classmethod
