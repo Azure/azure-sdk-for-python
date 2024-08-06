@@ -819,7 +819,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
-        :keyword list[str] include:
+        :keyword List[str] include:
             Include this parameter to specify one or more datasets to include in the response.
             Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
 

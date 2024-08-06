@@ -34,13 +34,13 @@ def _parse_url(account_url: str, share_name: str) -> "ParseResult":
     return parsed_url
 
 
-def _format_url(scheme: str, hostname: str, share_name: str, query_str: str) -> str:
+def _format_url(scheme: str, hostname: str, share_name: Union[str, bytes], query_str: str) -> str:
     if isinstance(share_name, str):
         share_name = share_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(share_name)}{query_str}"
 
 
-def _from_share_url(share_url: str, snapshot: Optional[Union[str, Dict[str, Any]]]) -> Tuple[str, str, str]:
+def _from_share_url(share_url: str, snapshot: Optional[Union[str, Dict[str, Any]]]) -> Tuple[str, str, Optional[str]]:
     try:
         if not share_url.lower().startswith('http'):
             share_url = "https://" + share_url
