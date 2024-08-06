@@ -34,7 +34,7 @@ def main():
 
     response = client.container_apps.begin_create_or_update(
         resource_group_name="rg",
-        container_app_name="testcontainerApp0",
+        container_app_name="testcontainerapp0",
         container_app_envelope={
             "location": "East US",
             "properties": {
@@ -91,7 +91,7 @@ def main():
                         ],
                         "stickySessions": {"affinity": "sticky"},
                         "targetPort": 3000,
-                        "traffic": [{"label": "production", "revisionName": "testcontainerApp0-ab1234", "weight": 100}],
+                        "traffic": [{"label": "production", "revisionName": "testcontainerapp0-ab1234", "weight": 100}],
                     },
                     "maxInactiveRevisions": 10,
                     "service": {"type": "redis"},
@@ -100,8 +100,8 @@ def main():
                 "template": {
                     "containers": [
                         {
-                            "image": "repo/testcontainerApp0:v1",
-                            "name": "testcontainerApp0",
+                            "image": "repo/testcontainerapp0:v1",
+                            "name": "testcontainerapp0",
                             "probes": [
                                 {
                                     "httpGet": {
@@ -114,19 +114,15 @@ def main():
                                     "type": "Liveness",
                                 }
                             ],
-                            "volumeMounts": [
-                                {"mountPath": "/mnt/path1", "subPath": "subPath1", "volumeName": "azurefile"},
-                                {"mountPath": "/mnt/path2", "subPath": "subPath2", "volumeName": "nfsazurefile"},
-                            ],
                         }
                     ],
                     "initContainers": [
                         {
                             "args": ["-c", "while true; do echo hello; sleep 10;done"],
                             "command": ["/bin/sh"],
-                            "image": "repo/testcontainerApp0:v4",
+                            "image": "repo/testcontainerapp0:v4",
                             "name": "testinitcontainerApp0",
-                            "resources": {"cpu": 0.2, "memory": "100Mi"},
+                            "resources": {"cpu": 0.5, "memory": "1Gi"},
                         }
                     ],
                     "scale": {
@@ -141,15 +137,9 @@ def main():
                     },
                     "serviceBinds": [
                         {
-                            "clientType": "dotnet",
-                            "customizedKeys": {"DesiredKey": "defaultKey"},
                             "name": "redisService",
                             "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/redisService",
                         }
-                    ],
-                    "volumes": [
-                        {"name": "azurefile", "storageName": "storage", "storageType": "AzureFile"},
-                        {"name": "nfsazurefile", "storageName": "nfsStorage", "storageType": "NfsAzureFile"},
                     ],
                 },
                 "workloadProfileName": "My-GP-01",
@@ -159,6 +149,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
