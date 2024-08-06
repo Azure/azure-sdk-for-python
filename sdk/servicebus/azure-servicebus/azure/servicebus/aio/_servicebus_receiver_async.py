@@ -476,14 +476,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except SessionLockLostError as exception:
-                    _LOGGER.info(
-                        "Session Message settling: %r has encountered an exception (%r)."
-                        "Will not retry through management link.",
-                        settle_operation,
-                        exception,
-                    )
-                    raise
                 except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."

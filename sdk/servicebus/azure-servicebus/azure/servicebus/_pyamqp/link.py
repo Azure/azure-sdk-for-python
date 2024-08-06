@@ -229,9 +229,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
-            self._session.links.pop(self.name, None)
-            self._session._input_handles.pop(self.remote_handle, None)
-            self._session._output_handles.pop(self.handle, None)
+            # self._session.links.pop(self.name, None)
+            # self._session._input_handles.pop(self.remote_handle, None)
+            # self._session._output_handles.pop(self.handle, None)
 
     def _incoming_detach(self, frame) -> None:
         if self.network_trace:
@@ -264,6 +264,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._set_state(LinkState.ATTACH_SENT)
 
     def detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
+        print(error)
+        print(type(error))
         if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR):
             return
         try:
