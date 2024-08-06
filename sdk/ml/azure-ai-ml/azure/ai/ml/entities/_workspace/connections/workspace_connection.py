@@ -422,7 +422,10 @@ class WorkspaceConnection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
+        if not rest_obj:
+            return None
+        
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
         popped_metadata = conn_class._get_required_metadata_fields()
         rest_kwargs = cls._extract_kwargs_from_rest_obj(
