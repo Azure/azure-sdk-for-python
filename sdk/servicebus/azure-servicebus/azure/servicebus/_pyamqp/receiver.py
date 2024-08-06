@@ -75,7 +75,7 @@ class ReceiverLink(Link):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link", extra=self.network_trace_params)
-            self._remove_pending_receipts()
+            self._remove_pending_receipts(frame)
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -187,9 +187,9 @@ class ReceiverLink(Link):
         self._pending_receipts = unsettled
 
 
-    def _remove_pending_receipts(self):
-        for delivery in self._pending_receipts:
-            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
+    def _remove_pending_receipts(self, frame):
+        # for delivery in self._pending_receipts:
+        #     delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
         self._pending_receipts = []
         # TODO: Add in error handling
 
@@ -199,7 +199,7 @@ class ReceiverLink(Link):
 
     def _incoming_detach(self, frame):
         super(ReceiverLink, self)._incoming_detach(frame)
-        self._remove_pending_receipts()
+        self._remove_pending_receipts(frame)
 
     def send_disposition(
         self,

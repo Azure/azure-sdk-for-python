@@ -1098,7 +1098,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         # pylint: disable=protected-access
-        receive_drain_timeout = 2 # 200 ms
+        receive_drain_timeout = .2 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
@@ -1124,7 +1124,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                         and (time.time() - time_sent > receive_drain_timeout):
                         expired = True
                         receiver._handler._link.detach(close=True,
-                                                       error="Have not received back drain response in time")
+                                                       error=AMQPError(ErrorCondition.InternalError, "Drain response not received", None))
                         break
 
                     # if you have received the drain -> break out of the loop
@@ -1135,6 +1135,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = amqp_receive_client.do_work()
                 received = amqp_receive_client._received_messages.qsize() - before
+
+                if received > 0:
+                    # If we received messages, reset the drain timeout
+                    time_sent = time.time()
+
                 if (
                     not first_message_received
                     and amqp_receive_client._received_messages.qsize() > 0

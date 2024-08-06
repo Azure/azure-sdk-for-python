@@ -190,13 +190,14 @@ class ReceiverLink(Link):
         self._received_payload = bytearray()
 
     async def _remove_pending_receipts(self):
-        for delivery in self._pending_receipts:
-            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
+
+        # TODO: Coming from detach with an error do we want to raise in the callback?
+        # for delivery in self._pending_receipts:
+        #     await delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, frame[2])
         self._pending_receipts = []
-        # TODO: Add in error handling
 
     async def _incoming_detach(self, frame):
-        super(ReceiverLink, self)._incoming_detach(frame)
+        await super(ReceiverLink, self)._incoming_detach(frame)
         await self._remove_pending_receipts()
 
     async def send_disposition(
