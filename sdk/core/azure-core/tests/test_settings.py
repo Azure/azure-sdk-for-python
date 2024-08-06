@@ -168,6 +168,10 @@ class TestConverters(object):
         with pytest.raises(ValueError):
             m.convert_logging("junk")
 
+    def test_convert_azure_cloud(self):
+        with pytest.raises(ValueError):
+            m.convert_azure_cloud(10)
+
 
 _standard_settings = ["log_level", "tracing_enabled"]
 

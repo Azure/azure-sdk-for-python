@@ -125,6 +125,8 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
     :raises ValueError: If conversion to AzureClouds fails
 
     """
+    if isinstance(value, AzureClouds):
+        return value
     if isinstance(value, str):
         azure_clouds = {cloud.name: cloud for cloud in AzureClouds}
         if value in azure_clouds:
@@ -132,7 +134,7 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
         raise ValueError(
             "Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys()))
         )
-    return value
+    raise ValueError("Cannot convert {} to Azure Cloud".format(value))
 
 
 def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
