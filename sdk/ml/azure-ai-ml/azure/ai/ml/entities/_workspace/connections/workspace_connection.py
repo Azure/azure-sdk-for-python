@@ -425,7 +425,9 @@ class WorkspaceConnection(Resource):
     def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
         popped_metadata = conn_class._get_required_metadata_fields()
-        rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_metadata=popped_metadata)
+        rest_kwargs = cls._extract_kwargs_from_rest_obj(
+            rest_obj=rest_obj, popped_metadata=popped_metadata
+        )
         # Check for alternative name for custom connection type (added for client clarity).
         if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
             rest_kwargs["type"] = ConnectionTypes.CUSTOM
@@ -449,7 +451,9 @@ class WorkspaceConnection(Resource):
             # AI Services renames it's metadata field when surfaced to users and inputted
             # into it's initializer for clarity. ResourceId doesn't really tell much on its own.
             # No default in pop, this should fail if we somehow don't get a resource ID
-            rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
+            rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(
+                camel_to_snake(CONNECTION_RESOURCE_ID_KEY)
+            )
         connection = conn_class(**rest_kwargs)
         return cast(WorkspaceConnection, connection)
 
