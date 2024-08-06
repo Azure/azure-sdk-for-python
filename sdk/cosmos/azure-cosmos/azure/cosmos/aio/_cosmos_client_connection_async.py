@@ -46,6 +46,7 @@ from azure.core.pipeline.policies import (
     CustomHookPolicy,
     DistributedTracingPolicy,
     ProxyPolicy)
+from azure.core.utils import CaseInsensitiveDict
 
 from .. import _base as base
 from .._base import _set_properties_cache
@@ -886,7 +887,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'POST' async http request.
 
         :param str path: the url to be used for the request.
@@ -1183,7 +1184,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params: _request_object.RequestObject,
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'GET' async http request.
 
         :param str path: the url to be used for the request.
@@ -1547,7 +1548,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         body: Dict[str, Any],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'PUT' async http request.
 
         :param str path: the url to be used for the request.
@@ -1576,7 +1577,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_data: Dict[str, Any],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'PATCH' http request.
 
         :param str path: the url to be used for the request.
@@ -1959,7 +1960,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id: Optional[str],
         options: Mapping[str, Any],
         **kwargs: Any
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         initial_headers = self.default_headers.copy()
         base._populate_batch_headers(initial_headers)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)

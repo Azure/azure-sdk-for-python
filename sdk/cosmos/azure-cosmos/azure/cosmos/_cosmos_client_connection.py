@@ -44,6 +44,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     ProxyPolicy
 )
+from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
 from ._base import _set_properties_cache
@@ -2118,7 +2119,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id: Optional[str],
         options: Mapping[str, Any],
         **kwargs: Any
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         initial_headers = self.default_headers.copy()
         base._populate_batch_headers(initial_headers)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
@@ -2794,7 +2795,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params: RequestObject,
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'GET' http request.
 
         :param str path: the url to be used for the request.
@@ -2822,7 +2823,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'POST' http request.
 
         :param str path: the url to be used for the request.
@@ -2851,7 +2852,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         body: Dict[str, Any],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'PUT' http request.
 
         :param str path: the url to be used for the request.
@@ -2880,7 +2881,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_data: Dict[str, Any],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], CaseInsensitiveDict]:
         """Azure Cosmos 'PATCH' http request.
 
         :param str path: the url to be used for the request.
@@ -2888,7 +2889,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param Union[str, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
-        :rtype: tuple of (dict, dict)
+        :rtype: Tuple[Dict[str, Any], ~azure.core.CaseInsensitiveDict]
         """
         request = self.pipeline_client.patch(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
@@ -2972,7 +2973,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         is_query_plan: bool = False,
         **kwargs: Any
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
