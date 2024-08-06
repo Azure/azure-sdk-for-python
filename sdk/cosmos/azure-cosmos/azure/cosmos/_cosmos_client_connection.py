@@ -436,7 +436,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     "/dbs", "dbs", "", lambda r: r["Databases"],
                     lambda _, b: b, query, options, **kwargs)
@@ -494,7 +494,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path, "colls", database_id, lambda r: r["DocumentCollections"],
                     lambda _, body: body, query, options, **kwargs)
@@ -723,7 +723,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path, "users", database_id, lambda r: r["Users"],
                     lambda _, b: b, query, options, **kwargs)
@@ -901,7 +901,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path, "permissions", user_id, lambda r: r["Permissions"],
                     lambda _, b: b, query, options, **kwargs)
@@ -1084,7 +1084,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_or_container_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path,
                     "docs",
@@ -1174,7 +1174,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, resource_key)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
                 new_options = dict(options)
                 new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
@@ -1246,7 +1246,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "pkranges")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
                     lambda _, b: b, query, options, **kwargs)
@@ -1444,7 +1444,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "triggers")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                 path, "triggers", collection_id, lambda r: r["Triggers"],
                 lambda _, b: b, query, options, **kwargs)
@@ -1597,7 +1597,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "udfs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"],
                     lambda _, b: b, query, options, **kwargs)
@@ -1753,7 +1753,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "sprocs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                 path, "sprocs", collection_id, lambda r: r["StoredProcedures"],
                 lambda _, b: b, query, options, **kwargs)
@@ -1907,7 +1907,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "conflicts")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                 path, "conflicts", collection_id, lambda r: r["Conflicts"],
                 lambda _, b: b, query, options, **kwargs)
@@ -2125,7 +2125,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
         request_params = RequestObject("docs", documents._OperationType.Batch)
         return cast(
-            Tuple[List[Dict[str, Any]], Dict[str, Any]],
+            Tuple[List[Dict[str, Any]], CaseInsensitiveDict],
             self.__Post(path, request_params, batch_operations, headers, **kwargs)
         )
 
@@ -2522,7 +2522,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
                     "/offers", "offers", "", lambda r: r["Offers"],
                     lambda _, b: b, query, options, **kwargs)
@@ -2938,7 +2938,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         """Query Feed for Document Collection resource.
 
         :param str path: Path to the document collection.
