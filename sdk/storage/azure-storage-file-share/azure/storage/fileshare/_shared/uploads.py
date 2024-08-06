@@ -140,8 +140,11 @@ def upload_data_chunks(
     # If chunks have an id, return list of ids
     if chunks[0].id is not None:
         return [c.id for c in chunks]
-    # Else, return the last chunk's response headers
-    return chunks[-1].response_headers
+    # Else, return the response headers for the last chunk that had a response. (Page Blobs can have empty responses)
+    for c in reversed(chunks):
+        if c.response_headers:
+            return c.response_headers
+    return {}
 
 
 def upload_substream_blocks(
@@ -387,7 +390,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, data: bytes, chunk_info: ChunkInfo) -> ChunkInfo:
         # avoid uploading the empty pages
-        response_headers = {}
+        response_headers = None
         if not self._is_chunk_empty(data):
             chunk_end = chunk_info.offset + chunk_info.length - 1
             content_range = f"bytes={chunk_info.offset}-{chunk_end}"
