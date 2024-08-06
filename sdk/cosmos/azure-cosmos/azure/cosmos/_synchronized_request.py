@@ -79,7 +79,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :param azure.core.pipeline.transport.HttpRequest request:
         The request object to send through the pipeline
     :return: tuple of (result, headers)
-    :rtype: tuple of (dict, dict)
+    :rtype: Tuple[Dict[str, Any], ~azure.core.CaseInsensitiveDict]
 
     """
     # pylint: disable=protected-access
