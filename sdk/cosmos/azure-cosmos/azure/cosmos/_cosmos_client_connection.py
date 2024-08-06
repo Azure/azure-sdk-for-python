@@ -2889,7 +2889,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param Union[str, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
-        :rtype: Tuple[Dict[str, Any], ~azure.core.CaseInsensitiveDict]
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.patch(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
