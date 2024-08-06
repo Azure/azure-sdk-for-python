@@ -9,7 +9,6 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.appcontainers import ContainerAppsAPIClient
-
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,21 +21,20 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
         subscription_id="8efdecc5-919e-44eb-b179-915dca89ebf9",
     )
 
-    response = client.managed_environments_diagnostics.get_root(
-        resource_group_name="examplerg",
-        environment_name="jlaw-demo1",
+    response = client.managed_environments.get(
+        resource_group_name='examplerg',
+        environment_name='jlaw-demo1',
     )
     print(response)
 
-
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ManagedEnvironments_Get.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_Get.json
 if __name__ == "__main__":
+    main()
+n__":
     main()

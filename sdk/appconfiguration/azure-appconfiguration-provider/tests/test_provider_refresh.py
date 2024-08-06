@@ -34,12 +34,14 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        setting = client._client.get_configuration_setting(key="refresh_message")
+        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+
+        setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
-        feature_flag = client._client.get_configuration_setting(key=".appconfig.featureflag/Alpha")
+        feature_flag = appconfig_client.get_configuration_setting(key=".appconfig.featureflag/Alpha")
         feature_flag.enabled = True
-        client._client.set_configuration_setting(setting)
-        client._client.set_configuration_setting(feature_flag)
+        appconfig_client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(feature_flag)
 
         # Waiting for the refresh interval to pass
         time.sleep(2)
@@ -51,8 +53,8 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
 
         setting.value = "original value"
         feature_flag.enabled = False
-        client._client.set_configuration_setting(setting)
-        client._client.set_configuration_setting(feature_flag)
+        appconfig_client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(feature_flag)
 
         # Waiting for the refresh interval to pass
         time.sleep(2)
@@ -64,8 +66,8 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
 
         setting.value = "updated value 2"
         feature_flag.enabled = True
-        client._client.set_configuration_setting(setting)
-        client._client.set_configuration_setting(feature_flag)
+        appconfig_client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(feature_flag)
 
         # Not waiting for the refresh interval to pass
         client.refresh()
@@ -74,7 +76,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert mock_callback.call_count == 2
 
         setting.value = "original value"
-        client._client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(setting)
 
         client.refresh()
         assert client["refresh_message"] == "original value"
@@ -97,12 +99,14 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        setting = client._client.get_configuration_setting(key="refresh_message")
+        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+
+        setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
-        client._client.set_configuration_setting(setting)
-        static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
+        appconfig_client.set_configuration_setting(setting)
+        static_setting = appconfig_client.get_configuration_setting(key="non_refreshed_message")
         static_setting.value = "updated static"
-        client._client.set_configuration_setting(static_setting)
+        appconfig_client.set_configuration_setting(static_setting)
 
         # Waiting for the refresh interval to pass
         time.sleep(2)
@@ -113,6 +117,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert mock_callback.call_count == 0
 
         setting.value = "original value"
-        client._client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(setting)
         static_setting.value = "Static"
-        client._client.set_configuration_setting(static_setting)
+        appconfig_client.set_configuration_setting(static_setting)
