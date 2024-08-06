@@ -1,0 +1,75 @@
+name: Test Appconfig Samples
+
+on:
+  workflow_dispatch:
+    inputs:
+      rg:
+        description: 'Test Resource Group'
+        required: true
+permissions: 
+  id-token: write
+
+jobs:
+  testSamples:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          ref: main
+
+      - name: Login Azure context
+        uses: azure/login@v2.1.1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Prepare resource name
+        shell: bash
+        run: |
+          rn="appconfig-$(uuidgen | cut -c 1-8)"
+          echo "resource_name=$rn" >> $GITHUB_ENV
+      
+      - name: Create resource
+        shell: bash
+        run: |
+          az appconfig create -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -l westus
+          connString=$(az appconfig credential list --name ${{ env.resource_name }} --resource-group ${{ github.event.inputs.rg }} --query "[?name=='Primary'].connectionString" -o tsv)
+          echo "connString=$connString" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      
+      - name: Install dependencies
+        run: |
+          pip install aiohttp>=3.0
+          pip install --pre --upgrade azure-appconfiguration -i https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+
+      - name: Run samples
+        env:
+          APPCONFIGURATION_CONNECTION_STRING: ${{ env.connString }}
+        timeout-minutes: 30
+        working-directory: sdk/appconfiguration/azure-appconfiguration/samples
+        run: |
+          chmod +x ../../../../scripts/run-samples.sh
+          ../../../../scripts/run-samples.sh
+
+      - name: Clean up resource
+        if: always()
+        shell: bash
+        run: |
+          if [ $(az appconfig list -g ${{ github.event.inputs.rg }} --query "[?name=='${{ env.resource_name }}'] | length(@)") -gt 0 ]; then
+            echo "Delete appconfig..."
+            az appconfig delete -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -y
+            echo "Purge appconfig..."
+            az appconfig purge -n ${{ env.resource_name }} -y
+          fi
