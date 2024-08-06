@@ -13,7 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+@pytest.mark.live_test_only
 class TestHealthDataAIServicesMgmtDeidServicesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(HealthDataAIServicesMgmtClient)
