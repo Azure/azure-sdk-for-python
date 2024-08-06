@@ -95,30 +95,6 @@ def _parallel_uploads(executor, uploader, pending, running):
     return chunks
 
 
-class ChunkInfo:
-    offset: int
-    length: int
-    md5: Optional[bytes] = None
-    crc64: Optional[int] = None
-    id: Optional[str] = None
-    """The id of the chunk. Only set if chunk needs to be committed."""
-    response_headers: Dict[str, Any] = {}
-    """The response headers from the upload chunk operation."""
-
-    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
-        self.offset = offset
-        self.length = len(data)
-
-        if checksum_algorithm == ChecksumAlgorithm.MD5:
-            self.md5 = calculate_md5(data)
-        if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64(data, 0)
-
-    @property
-    def crc64_bytes(self) -> Optional[bytes]:
-        return get_crc64_bytes(self.crc64) if self.crc64 is not None else None
-
-
 def upload_data_chunks(
         service=None,
         uploader_class=None,
@@ -203,6 +179,30 @@ def upload_substream_blocks(
     if any(range_ids):
         return sorted(range_ids)
     return []
+
+
+class ChunkInfo:
+    offset: int
+    length: int
+    md5: Optional[bytes] = None
+    crc64: Optional[int] = None
+    id: Optional[str] = None
+    """The id of the chunk. Only set if chunk needs to be committed."""
+    response_headers: Dict[str, Any] = {}
+    """The response headers from the upload chunk operation."""
+
+    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
+        self.offset = offset
+        self.length = len(data)
+
+        if checksum_algorithm == ChecksumAlgorithm.MD5:
+            self.md5 = calculate_md5(data)
+        if checksum_algorithm == ChecksumAlgorithm.CRC64:
+            self.crc64 = calculate_crc64(data, 0)
+
+    @property
+    def crc64_bytes(self) -> Optional[bytes]:
+        return get_crc64_bytes(self.crc64) if self.crc64 is not None else None
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
