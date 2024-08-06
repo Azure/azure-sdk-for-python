@@ -680,4 +680,3 @@ class WorkspaceConnection(Resource):
         :rtype: Type
         """
         return WorkspaceConnectionSchema
-    
