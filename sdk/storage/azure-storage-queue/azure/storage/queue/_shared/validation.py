@@ -86,7 +86,7 @@ def combine_crc64(values: List[Tuple[int, int]]) -> int:
     from azure.storage.extensions import crc64
 
     if len(values) == 0:
-        raise ValueError("Must provide at elast one crc value.")
+        raise ValueError("Must provide at least one crc value.")
 
     crc = values[0][0]
     length = values[0][1]
