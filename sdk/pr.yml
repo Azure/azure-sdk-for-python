@@ -20,4 +20,4 @@ extends:
     BuildTargetingString: "*"
     ValidateFormatting: true
     TestProxy: true
-    TestTimeOutInMinutes: 120
+    TestTimeOutInMinutes: 180
