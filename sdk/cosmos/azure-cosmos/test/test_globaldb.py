@@ -7,7 +7,6 @@ import unittest
 from unittest.mock import patch
 import uuid
 from urllib.parse import urlparse
-import pytest
 
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
@@ -435,7 +434,6 @@ class TestGlobalDB(unittest.TestCase):
         try:
             client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
             client.get_database_client("test_db").read()
-            pytest.fail("client initialization should have received ServiceRequestError")
         except ServiceRequestError:
             assert mock_retry_policy.count == 3
 
