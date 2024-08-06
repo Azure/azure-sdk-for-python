@@ -18,7 +18,7 @@ from .import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
 from .streams import IterStreamer, StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
+from .validation import calculate_crc64, calculate_md5, ChecksumAlgorithm, combine_crc64, get_crc64_bytes
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -99,7 +99,7 @@ class ChunkInfo:
     offset: int
     length: int
     md5: Optional[bytes] = None
-    crc64: Optional[bytes] = None
+    crc64: Optional[int] = None
     id: Optional[str] = None
     """The id of the chunk. Only set if chunk needs to be committed."""
     response_headers: Dict[str, Any] = {}
@@ -112,7 +112,11 @@ class ChunkInfo:
         if checksum_algorithm == ChecksumAlgorithm.MD5:
             self.md5 = calculate_md5(data)
         if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64_bytes(data)
+            self.crc64 = calculate_crc64(data, 0)
+
+    @property
+    def crc64_bytes(self) -> Optional[bytes]:
+        return get_crc64_bytes(self.crc64) if self.crc64 is not None else None
 
 
 def upload_data_chunks(
@@ -151,6 +155,12 @@ def upload_data_chunks(
         chunks = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
 
     chunks.sort(key=lambda c: c.offset)
+    # If there is a crc64, do overall crc check
+    if chunks[0].crc64 is not None:
+        combined = combine_crc64([(c.crc64, c.length) for c in chunks])
+        if combined != uploader.overall_crc64:
+            raise ValueError("Checksum mismatch detected during upload. Any data written may be invalid.")
+
     # If chunks have an id, return list of ids
     if chunks[0].id is not None:
         return [c.id for c in chunks]
@@ -214,6 +224,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.stream = stream
         self.parallel = parallel
         self.validate_content = validate_content
+        self.overall_crc64 = 0
 
         # Stream management
         self.stream_lock = Lock() if parallel else None
@@ -251,6 +262,11 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 # of the buffer or we have read a full chunk.
                 if temp == b"" or len(data) == self.chunk_size:
                     break
+
+            # Content validation and encryption cannot be enabled at the same time,
+            # so this is safe to do here, before encryption
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                self.overall_crc64 = calculate_crc64(data, self.overall_crc64)
 
             if len(data) == self.chunk_size:
                 if self.padder:
@@ -336,7 +352,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             chunk_info.length,
             data,
             transactional_content_md5=chunk_info.md5,
-            transactional_content_crc64=chunk_info.crc64,
+            transactional_content_crc64=chunk_info.crc64_bytes,
             cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
@@ -380,7 +396,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
                 content_length=chunk_info.length,
                 range=content_range,
                 transactional_content_md5=chunk_info.md5,
-                transactional_content_crc64=chunk_info.crc64,
+                transactional_content_crc64=chunk_info.crc64_bytes,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -408,7 +424,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
                 body=data,
                 content_length=chunk_info.length,
                 transactional_content_md5=chunk_info.md5,
-                transactional_content_crc64=chunk_info.crc64,
+                transactional_content_crc64=chunk_info.crc64_bytes,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -422,7 +438,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
                 body=data,
                 content_length=chunk_info.length,
                 transactional_content_md5=chunk_info.md5,
-                transactional_content_crc64=chunk_info.crc64,
+                transactional_content_crc64=chunk_info.crc64_bytes,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -447,7 +463,7 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
             position=chunk_info.offset,
             content_length=chunk_info.length,
             path_http_headers=path_headers,  # type: ignore
-            transactional_content_crc64=chunk_info.crc64,
+            transactional_content_crc64=chunk_info.crc64_bytes,
             cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
