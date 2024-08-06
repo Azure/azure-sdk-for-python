@@ -580,14 +580,14 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                             expired = m._lock_expired
                         assert m.locked_until_utc is None
                         assert m.lock_token is not None
-                    time.sleep(5)
+                    await asyncio.sleep(5)
                     initial_expiry = receiver.session.locked_until_utc
                     await receiver.session.renew_lock(timeout=5)
                     assert (receiver.session.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     await receiver.complete_message(messages[0])
                     await receiver.complete_message(messages[1])
-                    time.sleep(40)
+                    await asyncio.sleep(40)
                     with pytest.raises(SessionLockLostError):
                         await receiver.complete_message(messages[2])
 
