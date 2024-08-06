@@ -109,7 +109,7 @@ $packageProperties = Get-ChildItem -Recurse -Force "$configFileDir" `
 foreach ($packagePropFile in $packageProperties)
 {
     $packageMetadata = Get-Content $packagePropFile | ConvertFrom-Json
-    Write-Host "Processing $($packageMetadata.Name)"
+    Write-Host "Processing $($packageMetadata.ArtifactName)"
 
     $packages = &$FindArtifactForApiReviewFn $ArtifactPath $packageMetadata.Name
 
@@ -121,20 +121,20 @@ foreach ($packagePropFile in $packageProperties)
         if ($isRequired -eq $True)
         {
             $filePath = $pkgPath.Replace($ArtifactPath , "").Replace("\", "/")
-            $respCode = Submit-Request -filePath $filePath -packageName $($packageMetadata.Name)
+            $respCode = Submit-Request -filePath $filePath -packageName $($packageMetadata.ArtifactName)
             if ($respCode -ne '200')
             {
-                $responses[$($packageMetadata.Name)] = $respCode
+                $responses[$($packageMetadata.ArtifactName)] = $respCode
             }
         }
         else
         {
-            Write-Host "Pull request does not have any change for $($packageMetadata.Name)). Skipping API change detect."
+            Write-Host "Pull request does not have any change for $($packageMetadata.ArtifactName)). Skipping API change detect."
         }
     }
     else
     {
-        Write-Host "No package is found in artifact path to find API changes for $($packageMetadata.Name)"
+        Write-Host "No package is found in artifact path to find API changes for $($packageMetadata.ArtifactName)"
     }
 }
 
