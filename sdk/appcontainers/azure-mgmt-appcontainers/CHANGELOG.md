@@ -1,5 +1,42 @@
 # Release History
 
+## 3.1.0 (2024-08-06)
+
+### Features Added
+
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client method 'get_custom_domain_verification_id' was added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'usages' added in the current version
+  - The 'azure.mgmt.appcontainers.ContainerAppsAPIClient' client had operation group 'managed_environment_usages' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client method 'get_custom_domain_verification_id' was added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'usages' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.ContainerAppsAPIClient' client had operation group 'managed_environment_usages' added in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.ContainerAppsAPIClientOperationsMixin' method 'get_custom_domain_verification_id' was added in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.JobsOperations' method 'get_detector' was added in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.JobsOperations' method 'list_detectors' was added in the current version
+  - The 'azure.mgmt.appcontainers.aio.operations.JobsOperations' method 'proxy_get' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentUsagesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.aio.operations.UsagesOperations' was added in the current version
+  - The 'azure.mgmt.appcontainers.operations.ContainerAppsAPIClientOperationsMixin' method 'get_custom_domain_verification_id' was added in the current version
+  - The 'azure.mgmt.appcontainers.operations.JobsOperations' method 'get_detector' was added in the current version
+  - The 'azure.mgmt.appcontainers.operations.JobsOperations' method 'list_detectors' was added in the current version
+  - The 'azure.mgmt.appcontainers.operations.JobsOperations' method 'proxy_get' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.ManagedEnvironmentUsagesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.operations.UsagesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.AuthConfig' had property 'encryption_settings' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.AvailableWorkloadProfileProperties' had property 'gpus' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Ingress' had property 'additional_port_mappings' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Login' had property 'token_store' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironment' had property 'peer_traffic_configuration' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.BlobStorageTokenStore' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.EncryptionSettings' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.IngressPortMapping' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ListUsagesResult' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerTrafficConfiguration' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.TokenStore' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.Usage' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.appcontainers.models.UsageName' was added in the current version
+
 ## 3.1.0b1 (2024-03-18)
 
 ### Features Added
