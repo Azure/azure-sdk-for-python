@@ -267,8 +267,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     await consumer._open() # pylint: disable=protected-access
                     async with consumer._message_buffer_lock:
                         buff_length = len(consumer._message_buffer)
-                    if buff_length < max_batch_size : # pylint: disable=protected-access
-                        running = await cast(ReceiveClientAsync, consumer._handler)._client_run_async(
+                    if buff_length <= max_batch_size:
+                        running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(
                             batch=consumer._prefetch
                         )
                     await asyncio.sleep(0.05)
