@@ -34,11 +34,11 @@ from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mi
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import (
+    WORKSPACE_PATCH_REJECTED_KEYS,
     ArmConstants,
     LROConfigurations,
     WorkspaceKind,
     WorkspaceResourceConstants,
-    WORKSPACE_PATCH_REJECTED_KEYS,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
@@ -85,11 +85,19 @@ class WorkspaceOperationsBase(ABC):
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
+        v2_service_context = {}
+        v2_service_context.subscription_id = self._subscription_id
+        v2_service_context.workspace_name = workspace_name
+        v2_service_context.resource_group_name = resource_group
+        v2_service_context.auth = self._credentials
+        # host_url=service_context._get_mlflow_url(),
+        # cloud=_get_cloud_or_default(
+        #     service_context.get_auth()._cloud_type.name
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.HUB:
-            return Hub._from_rest_object(obj)
+            return Hub._from_rest_object(obj, v2_service_context)
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
-            return Project._from_rest_object(obj)
-        return Workspace._from_rest_object(obj)
+            return Project._from_rest_object(obj, v2_service_context)
+        return Workspace._from_rest_object(obj, v2_service_context)
 
     def begin_create(
         self,
@@ -418,7 +426,7 @@ class WorkspaceOperationsBase(ABC):
             return (
                 deserialize_callback(deserialized)
                 if deserialize_callback
-                else Workspace._from_rest_object(deserialized)
+                else Workspace._from_rest_object(deserialized, None)
             )
 
         real_callback = callback
