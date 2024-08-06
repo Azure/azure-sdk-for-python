@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_timezone_by_coordinates():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.timezone import MapsTimezoneClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
         print(result)

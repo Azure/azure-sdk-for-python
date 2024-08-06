@@ -1,8 +1,10 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1 (2024-08-06)
 
 ### New Features and Enhancements
+
+- Support Search API `2023-06-01`
 
 - **Geocoding APIs**
   - Introduced `get_geocoding` method to obtain longitude and latitude coordinates for a given address.
