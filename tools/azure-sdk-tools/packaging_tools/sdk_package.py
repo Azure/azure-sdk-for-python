@@ -1,3 +1,4 @@
+import sys
 import argparse
 import json
 import logging
@@ -7,6 +8,11 @@ from subprocess import check_call
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -24,7 +30,13 @@ def main(generate_input, generate_output):
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
             try:
-                md_output = change_log_generate(package_name, last_version, package["tagIsStable"], prefolder=prefolder)
+                md_output = change_log_generate(
+                    package_name,
+                    last_version,
+                    package["tagIsStable"],
+                    prefolder=prefolder,
+                    is_multiapi=package["isMultiapi"],
+                )
             except:
                 md_output = "change log generation failed!!!"
         else:
