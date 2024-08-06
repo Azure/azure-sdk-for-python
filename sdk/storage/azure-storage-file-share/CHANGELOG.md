@@ -8,7 +8,7 @@
 - Added support to set `paid_bursting_enabled`, `paid_bursting_bandwidth_mibps`, and `paid_bursting_iops` for Share's
 `create_share` and `set_share_properties` APIs, and also retrieve them on the `get_share_properties` API.
 - Added `file_permission_format` to specify permission format for Share's `create_permission_for_share` and
-`get_permission_for_share` APIs; File's `creat_file`, `rename_file`, and `set_http_headers` APIs; and
+`get_permission_for_share` APIs; File's `create_file`, `rename_file`, and `set_http_headers` APIs; and
 Directory's `rename_directory` and `set_http_headers` APIs.
 
 ### Other Changes
