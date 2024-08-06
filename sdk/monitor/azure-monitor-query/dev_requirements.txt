@@ -3,3 +3,4 @@
 -e ../../identity/azure-identity
 azure-mgmt-loganalytics
 aiohttp>=3.0
+pandas>=2.0

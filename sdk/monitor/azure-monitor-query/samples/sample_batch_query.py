@@ -7,7 +7,7 @@ DESCRIPTION:
 USAGE:
     python sample_batch_query.py
     Set the environment variables with your own values before running the sample:
-    1) LOGS_WORKSPACE_ID - The The first (primary) workspace ID.
+    1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.

@@ -155,6 +155,12 @@ IGNORED_SAMPLES = {
     ],
 }
 
+# Projects where sample testing should not be run at all.
+IGNORED_PROJECTS = set([
+    "azure-monitor-opentelemetry-exporter",
+    "azure-monitor-opentelemetry",
+])
+
 def run_check_call_with_timeout(
     command_array,
     working_directory,
@@ -229,14 +235,18 @@ def resolve_sample_ignore(sample_file, package_name):
 
 
 def run_samples(targeted_package):
-    logging.info("running samples for {}".format(targeted_package))
+    package_name = os.path.basename(targeted_package)
+    if package_name in IGNORED_PROJECTS:
+        logging.info("Skipping samples for {}".format(targeted_package))
+        return
+
+    logging.info("Running samples for {}".format(targeted_package))
 
     samples_errors = []
     sample_paths = []
     timed_sample_paths = []
 
     samples_dir_path = os.path.abspath(os.path.join(targeted_package, "samples"))
-    package_name = os.path.basename(targeted_package)
     samples_need_timeout = TIMEOUT_SAMPLES.get(package_name, {})
 
     # install extra dependencies for samples if needed

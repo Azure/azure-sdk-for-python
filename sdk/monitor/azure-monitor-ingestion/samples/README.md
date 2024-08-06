@@ -59,7 +59,7 @@ Change and set the following environment variables to match your configuration:
 
 ```bash
 DATA_COLLECTION_ENDPOINT="your data collection endpoint"
-LOGS_DCR_RULE_ID="your data collection rule immutable ID"
+LOGS_DCR_ID="your data collection rule immutable ID"
 LOGS_DCR_STREAM_NAME="your data collection rule stream name"
 ```
 

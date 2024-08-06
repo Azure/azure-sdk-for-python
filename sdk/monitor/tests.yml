@@ -35,6 +35,8 @@ extends:
             - eng/common/TestResources/sub-config/AzureChinaMsft.json
           Location: chinanorth3
       UseFederatedAuth: true
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'

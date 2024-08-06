@@ -9,7 +9,7 @@ DESCRIPTION:
 USAGE:
     python sample_metrics_query.py
     Set the environment variables with your own values before running the sample:
-    1) METRICS_RESOURCE_URI - The resource uri of the resource for which the metrics are being queried.
+    1) METRICS_RESOURCE_ID - The resource ID/URI of the resource for which the metrics are being queried.
 
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
     For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
@@ -31,9 +31,9 @@ from azure.monitor.query import MetricsQueryClient, MetricAggregationType
 credential = DefaultAzureCredential()
 client = MetricsQueryClient(credential)
 
-metrics_uri = os.environ["METRICS_RESOURCE_URI"]
+resource_id = os.environ["METRICS_RESOURCE_ID"]
 response = client.query_resource(
-    metrics_uri,
+    resource_id,
     metric_names=["Ingress"],
     timespan=timedelta(hours=2),
     granularity=timedelta(minutes=5),
