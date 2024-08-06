@@ -6,7 +6,7 @@
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.timezone import TimezoneClient
+from azure.maps.timezone import MapsTimezoneClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 
 from timezone_preparer import MapsTimezonePreparer
@@ -15,7 +15,7 @@ from timezone_preparer import MapsTimezonePreparer
 # cSpell:disable
 class TestMapsTimezoneClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = TimezoneClient(
+        self.client = MapsTimezoneClient(
             credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
         )
         assert self.client is not None
