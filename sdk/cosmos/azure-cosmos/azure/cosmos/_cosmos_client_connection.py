@@ -157,7 +157,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         }
 
         # Keeps the latest response headers from the server.
-        self.last_response_headers: Dict[str, Any] = {}
+        self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
