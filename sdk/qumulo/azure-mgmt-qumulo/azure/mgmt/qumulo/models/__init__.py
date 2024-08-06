@@ -30,7 +30,6 @@ from ._qumulo_mgmt_client_enums import ManagedServiceIdentityType
 from ._qumulo_mgmt_client_enums import MarketplaceSubscriptionStatus
 from ._qumulo_mgmt_client_enums import Origin
 from ._qumulo_mgmt_client_enums import ProvisioningState
-from ._qumulo_mgmt_client_enums import StorageSku
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -59,7 +58,6 @@ __all__ = [
     "MarketplaceSubscriptionStatus",
     "Origin",
     "ProvisioningState",
-    "StorageSku",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -33,7 +33,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -78,14 +78,3 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File system resource creation canceled"""
     DELETED = "Deleted"
     """File system resource is deleted"""
-    NOT_SPECIFIED = "NotSpecified"
-    """File system resource state is unknown"""
-
-
-class StorageSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage Sku."""
-
-    STANDARD = "Standard"
-    """Standard Storage Sku"""
-    PERFORMANCE = "Performance"
-    """Performance Storage Sku"""
