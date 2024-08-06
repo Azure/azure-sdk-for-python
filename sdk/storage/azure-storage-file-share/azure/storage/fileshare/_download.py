@@ -14,16 +14,27 @@ from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from ._shared.streams import IterStreamer, StructuredMessageDecodeStream
+from ._shared.validation import ChecksumAlgorithm, SM_HEADER_V1_CRC64
 
 
-def process_content(data):
-    if data is None:
+def process_content(download, validate_content):
+    if download is None:
         raise ValueError("Response cannot be None.")
 
     try:
-        return b"".join(list(data))
+        if validate_content == ChecksumAlgorithm.CRC64:
+            # Wrap the download iterator in a stream and wrap the stream in a SMDecode stream
+            stream = StructuredMessageDecodeStream(IterStreamer(download), download.content_length)
+            content = stream.read()
+        else:
+            content = b"".join(list(download))
+        return content
     except Exception as error:
-        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
+        raise HttpResponseError(
+            message="Download stream interrupted.",
+            response=download.response, error=error
+        ) from error
 
 
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
@@ -111,15 +122,18 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             self.stream.write(chunk_data)
 
     def _download_chunk(self, chunk_start, chunk_end):
+        md5_validation = self.validate_content is True or self.validate_content == ChecksumAlgorithm.MD5
         range_header, range_validation = validate_and_format_range_headers(
-            chunk_start, chunk_end, check_content_md5=self.validate_content
+            chunk_start, chunk_end, check_content_md5=md5_validation
         )
+        structured_body_type = SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None
 
         try:
             _, response = self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
-                validate_content=self.validate_content,
+                validate_content=True if md5_validation else None,
+                structured_body_type=structured_body_type,
                 data_stream_total=self.total_size,
                 download_stream_current=self.progress_total,
                 **self.request_options
@@ -130,7 +144,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         except HttpResponseError as error:
             process_storage_error(error)
 
-        chunk_data = process_content(response)
+        chunk_data = process_content(response, self.validate_content)
         return chunk_data
 
 
@@ -240,12 +254,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._response = None
         self._etag = None
 
+        self._first_get_size = self._config.max_single_get_size
         # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = (
-            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
-        )
+        if self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5:
+            self._first_get_size = self._config.max_chunk_get_size
+
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -275,25 +290,27 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = process_content(self._response)
+            self._current_content = process_content(self._response, self._validate_content)
 
     def __len__(self):
         return self.size
 
     def _initial_request(self):
+        md5_validation = self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content
-        )
+            check_content_md5=md5_validation)
+        structured_body_type = SM_HEADER_V1_CRC64 if self._validate_content == ChecksumAlgorithm.CRC64 else None
 
         try:
             location_mode, response = self._client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
-                validate_content=self._validate_content,
+                validate_content=True if md5_validation else None,
+                structured_body_type=structured_body_type,
                 data_stream_total=None,
                 download_stream_current=0,
                 **self._request_options
@@ -324,7 +341,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # any properties.
                 try:
                     _, response = self._client.download(
-                        validate_content=self._validate_content,
+                        validate_content=True if md5_validation else None,
+                        structured_body_type=structured_body_type,
                         data_stream_total=0,
                         download_stream_current=0,
                         **self._request_options

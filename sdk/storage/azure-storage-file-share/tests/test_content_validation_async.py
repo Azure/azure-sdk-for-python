@@ -12,7 +12,12 @@ from azure.storage.fileshare.aio import ShareClient, ShareServiceClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
 from settings.testcase import FileSharePreparer
-from test_content_validation import assert_content_md5, assert_structured_message
+from test_content_validation import (
+    assert_content_md5,
+    assert_content_md5_get,
+    assert_structured_message,
+    assert_structured_message_get
+)
 
 
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
@@ -135,3 +140,86 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         content = await file.download_file()
         assert await content.readall() == data * len(data_list)
         await self._teardown()
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_file(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b'abc' * 512
+        await file.upload_file(data)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.readall()
+
+        stream = BytesIO()
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        await self._teardown()
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_file_chunks(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.share_client._config.max_single_get_size = 512
+        self.share_client._config.max_chunk_get_size = 512
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b'abc' * 512 + b'abcde'
+        await file.upload_file(data)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.readall()
+
+        stream = BytesIO()
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        await self._teardown()
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_file_boundary(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        data = b'abcde'
+        await self._setup(storage_account_name, storage_account_key)
+        # Set up so that the initial get is almost all data but structured message
+        # metadata length is more than remaining size
+        self.share_client._config.max_single_get_size = len(data) - 2
+        file = self.share_client.get_file_client(self._get_file_reference())
+        await file.upload_file(data)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        # Download almost all the data where the structured message metadata size will be greater than remaining data
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.readall()
+
+        # Assert
+        assert content == data

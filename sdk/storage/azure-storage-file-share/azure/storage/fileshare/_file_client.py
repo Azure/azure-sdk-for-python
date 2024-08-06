@@ -835,11 +835,10 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-        self, offset=None,  # type: Optional[int]
-        length=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> StorageStreamDownloader
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -852,15 +851,26 @@ class ShareFileClient(StorageAccountHostsMixin):
             should be supplied for optimal performance.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer.
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
