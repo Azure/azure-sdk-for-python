@@ -324,7 +324,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             for failover_endpoint in failover_endpoints:
                 self._replica_clients.append(
                     ConfigurationClientWrapper.from_credential(
-                        endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
+                        failover_endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                     )
                 )
             return
