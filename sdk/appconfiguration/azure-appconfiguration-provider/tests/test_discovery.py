@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from unittest.mock import patch, call
-from azure.appconfiguration.provider._discovery import _get_known_domain, _request_record, _find_replicas
+from azure.appconfiguration.provider._discovery import _get_known_domain, _request_record, _find_replicas, _find_origin, find_auto_failover_endpoints
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers, Answer  # cspell:disable-line
 
 AZCONFIG_IO = ".azconfig.io" # cspell:disable-line
@@ -17,7 +17,7 @@ class FakeAnswer:
         self.priority = priority
         self.weight = weight
         self.port = port
-        self.target = target
+        self.target = target.rstrip(".")
 
 
 @pytest.mark.usefixtures("caplog")
@@ -56,46 +56,130 @@ class TestDiscovery:
 
     def test_find_replicas(self):
         origin = "fake.endpoint"
-        with patch("azure.appconfiguration.provider._discovery._request_record") as mock_origin:
-            mock_origin.return_value = None
+        with patch("azure.appconfiguration.provider._discovery._request_record") as mock_request_record:
+            mock_request_record.return_value = None
             assert not _find_replicas(origin)
-            mock_origin.assert_called_once_with("_alt0._tcp.fake.endpoint")
+            mock_request_record.assert_called_once_with("_alt0._tcp.fake.endpoint")
 
-            mock_origin.reset_mock()
-            mock_origin.return_value = []
+            mock_request_record.reset_mock()
+            mock_request_record.return_value = []
             assert len(_find_replicas(origin)) == 0
-            mock_origin.assert_called_once_with("_alt0._tcp.fake.endpoint")
+            mock_request_record.assert_called_once_with("_alt0._tcp.fake.endpoint")
 
-            mock_origin.reset_mock()
-            mock_origin.side_effect = [[FakeAnswer(1, 99, 5000, "fake.endpoint.")], []]
+            mock_request_record.reset_mock()
+            mock_request_record.side_effect = [[FakeAnswer(1, 99, 5000, "fake.endpoint.")], []]
             result = _find_replicas(origin)
             assert len(result) == 1
             assert result[0].priority == 1
             assert result[0].weight == 99
             assert result[0].port == 5000
             assert result[0].target == "fake.endpoint"
-            assert mock_origin.call_count == 2
-            mock_origin.assert_has_calls([call("_alt0._tcp.fake.endpoint"), call("_alt1._tcp.fake.endpoint")])
+            assert mock_request_record.call_count == 2
+            mock_request_record.assert_has_calls([call("_alt0._tcp.fake.endpoint"), call("_alt1._tcp.fake.endpoint")])
 
-            mock_origin.reset_mock()
-            mock_origin.side_effect = [
+            mock_request_record.reset_mock()
+            mock_request_record.side_effect = [
                 [FakeAnswer(1, 99, 5000, "fake.endpoint."), FakeAnswer(2, 98, 5001, "fake.endpoint.")],
                 [],
             ]
             result = _find_replicas(origin)
             assert len(result) == 2
-            assert mock_origin.call_count == 2
-            mock_origin.assert_has_calls([call("_alt0._tcp.fake.endpoint"), call("_alt1._tcp.fake.endpoint")])
+            assert mock_request_record.call_count == 2
+            mock_request_record.assert_has_calls([call("_alt0._tcp.fake.endpoint"), call("_alt1._tcp.fake.endpoint")])
 
-            mock_origin.reset_mock()
-            mock_origin.side_effect = [
+            mock_request_record.reset_mock()
+            mock_request_record.side_effect = [
                 [FakeAnswer(1, 99, 5000, "fake.endpoint."), FakeAnswer(2, 98, 5001, "fake.endpoint.")],
                 [FakeAnswer(3, 99, 5000, "fake.endpoint.")],
                 [],
             ]
             result = _find_replicas(origin)
             assert len(result) == 3
-            assert mock_origin.call_count == 3
-            mock_origin.assert_has_calls(
+            assert mock_request_record.call_count == 3
+            mock_request_record.assert_has_calls(
                 [call("_alt0._tcp.fake.endpoint"), call("_alt1._tcp.fake.endpoint"), call("_alt2._tcp.fake.endpoint")]
             )
+
+    def test_find_origin(self):
+        endpoint = "https://fake.endpoint"
+        with patch("azure.appconfiguration.provider._discovery._request_record") as mock_request_record:
+            mock_request_record.return_value = None
+            assert not _find_origin(endpoint)
+            mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
+
+            mock_request_record.reset_mock()
+            mock_request_record.return_value = []
+            assert not _find_origin(endpoint)
+            mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
+
+            mock_request_record.reset_mock()
+            mock_request_record.return_value = [FakeAnswer(1, 99, 5000, "fake.endpoint.")]
+            result = _find_origin(endpoint)
+            assert result.priority == 1
+            assert result.weight == 99
+            assert result.port == 5000
+            assert result.target == "fake.endpoint"
+            mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
+
+            mock_request_record.reset_mock()
+            mock_request_record.return_value = [FakeAnswer(1, 99, 5000, "fake.endpoint1."), FakeAnswer(2, 98, 5001, "fake.endpoint2.")]
+            result = _find_origin(endpoint)
+            assert result.priority == 1
+            assert result.weight == 99
+            assert result.port == 5000
+            assert result.target == "fake.endpoint1"
+            mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
+
+    def test_find_auto_failover_endpoints(self):
+        endpoint = "https://fake.appconfig.io"
+        with patch("azure.appconfiguration.provider._discovery._find_origin") as mock_find_origin:
+            with patch("azure.appconfiguration.provider._discovery._find_replicas") as mock_find_replicas:
+                assert len(find_auto_failover_endpoints(endpoint, False)) == 0
+                mock_find_origin.assert_not_called()
+                mock_find_replicas.assert_not_called()
+
+                mock_find_origin.reset_mock()
+                mock_find_replicas.reset_mock()
+                assert len(find_auto_failover_endpoints("bad.endpoint", True)) == 0
+                mock_find_origin.assert_not_called()
+                mock_find_replicas.assert_not_called()
+
+                mock_find_origin.reset_mock()
+                mock_find_replicas.reset_mock()
+                mock_find_origin.return_value = FakeAnswer(1, 99, 5000, "fake.appconfig.io")
+                mock_find_replicas.return_value = []
+                assert not find_auto_failover_endpoints(endpoint, True)
+
+                mock_find_origin.reset_mock()
+                mock_find_replicas.reset_mock()
+                mock_find_origin.return_value = FakeAnswer(1, 99, 5000, "fake.appconfig.io")
+                mock_find_replicas.return_value = [FakeAnswer(2, 98, 5001, "fake1.appconfig.io.")]
+                result = find_auto_failover_endpoints(endpoint, True)
+                assert len(result) == 1
+                assert result[0] == "https://fake1.appconfig.io"
+                mock_find_origin.assert_called_once_with(endpoint)
+                mock_find_replicas.assert_called_once_with("fake.appconfig.io")
+
+                mock_find_origin.reset_mock()
+                mock_find_replicas.reset_mock()
+                mock_find_origin.return_value = FakeAnswer(1, 99, 5000,  "fake.appconfig.io")
+                mock_find_replicas.return_value = [FakeAnswer(2, 98, 5001, "fake1.appconfig.io."), FakeAnswer(3, 97, 5002, "fake2.appconfig.io.")]
+                result = find_auto_failover_endpoints(endpoint, True)
+                assert len(result) == 2
+                assert result[0] == "https://fake1.appconfig.io"
+                assert result[1] == "https://fake2.appconfig.io"
+                mock_find_origin.assert_called_once_with(endpoint)
+                mock_find_replicas.assert_called_once_with("fake.appconfig.io")
+
+                mock_find_origin.reset_mock()
+                mock_find_replicas.reset_mock()
+                mock_find_origin.return_value = FakeAnswer(1, 99, 5000,  "fake.appconfig.io")
+                mock_find_replicas.return_value = [FakeAnswer(2, 98, 5001, "fake1.appconfig.io."), FakeAnswer(3, 97, 5002, "fake2.appconfig.io.")]
+                result = find_auto_failover_endpoints("https://fake1.appconfig.io", True)
+                assert len(result) == 2
+                assert result[0] == "https://fake.appconfig.io"
+                assert result[1] == "https://fake2.appconfig.io"
+                mock_find_origin.assert_called_once_with("https://fake1.appconfig.io")
+                mock_find_replicas.assert_called_once_with("fake.appconfig.io")
+
+
