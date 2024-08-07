@@ -8,7 +8,7 @@
 ### Other Changes
 - Bumped minimum `azure-core` dependency to 1.30.0.
 
-## 12.22.0 (2024-08-05)
+## 12.22.0 (2024-08-06)
 
 ### Other Changes
 - Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
