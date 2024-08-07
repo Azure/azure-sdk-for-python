@@ -53,15 +53,15 @@ def _get_stats_long_export_interval() -> int:
     return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
 
 
-def _update_requests_map(type_name, value=None):
-    # value is either None, duration, status_code or exc_name
+def _update_requests_map(type_name, value):
+    # value can be either a count, duration, status_code or exc_name
     with _REQUESTS_MAP_LOCK:
-        if type_name in (_REQ_SUCCESS_NAME[1], "count"):  # success, count
-            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
-        elif type_name == _REQ_DURATION_NAME[1]:  # duration
+        # Mapping is {type_name: count/duration}
+        if type_name in (_REQ_SUCCESS_NAME[1], "count", _REQ_DURATION_NAME[1]):  # success, count, duration
             _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + value
         else:  # exception, failure, retry, throttle
             prev = 0
+            # Mapping is {type_name: {value: count}
             if _REQUESTS_MAP.get(type_name):
                 prev = _REQUESTS_MAP.get(type_name).get(value, 0)
             else:

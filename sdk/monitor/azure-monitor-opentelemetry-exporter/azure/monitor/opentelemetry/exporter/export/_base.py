@@ -140,12 +140,11 @@ class BaseExporter:
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get('instrumentation_collection', False)
 
-        self._cx_stats = kwargs.get('cx_stats', False)
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
-            collect_statsbeat_metrics(self, self._cx_stats)
+            collect_statsbeat_metrics(self)
 
     def _transmit_from_storage(self) -> None:
         if not self.storage:
@@ -199,7 +198,7 @@ class BaseExporter:
                         logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                     track_response.items_received, track_response.items_accepted)
                     if self._should_collect_stats():
-                        _update_requests_map(_REQ_SUCCESS_NAME[1])
+                        _update_requests_map(_REQ_SUCCESS_NAME[1], 1)
                     reach_ingestion = True
                     result = ExportResult.SUCCESS
                 else:  # 206
@@ -220,8 +219,6 @@ class BaseExporter:
                                     error.message,
                                     envelopes[error.index] if error.index is not None else "",
                                 )
-                            if self._should_collect_stats():
-                                _update_requests_map(_ITEM_DROPPED_NAME[1], value=error.status_code)
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict()
                                             for x in resend_envelopes]
@@ -240,7 +237,6 @@ class BaseExporter:
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
-                        _update_requests_map(_ITEM_DROPPED_NAME[1], value=response_error.status_code)
                     result = ExportResult.FAILED_NOT_RETRYABLE
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
@@ -262,8 +258,6 @@ class BaseExporter:
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
-                            if self._should_collect_stats():
-                                _update_requests_map(_ITEM_DROPPED_NAME[1], value=response_error.status_code)
                             result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
@@ -274,7 +268,6 @@ class BaseExporter:
                         # If redirect but did not return, exception occurred
                         if self._should_collect_stats():
                             _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
-                            _update_requests_map(_ITEM_DROPPED_NAME[1], value=response_error.status_code)
                         result = ExportResult.FAILED_NOT_RETRYABLE
                 else:
                     # Any other status code counts as failure (non-retryable)
@@ -282,7 +275,6 @@ class BaseExporter:
                     # 404 - Ingestion is allowed only from stamp specific endpoint - must update connection string
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
-                        _update_requests_map(_ITEM_DROPPED_NAME[1], value=response_error.status_code)
                     if not self._is_stats_exporter():
                         logger.error(
                             'Non-retryable server side error: %s.',
@@ -313,12 +305,11 @@ class BaseExporter:
                 )
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
-                    _update_requests_map(_ITEM_DROPPED_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
             finally:
                 if self._should_collect_stats():
                     end_time = time.time()
-                    _update_requests_map('count')
+                    _update_requests_map('count', 1)
                     _update_requests_map(_REQ_DURATION_NAME[1], value=end_time-start_time)
                 if self._is_statsbeat_initializing_state():
                     # Update statsbeat initial success state if reached ingestion
