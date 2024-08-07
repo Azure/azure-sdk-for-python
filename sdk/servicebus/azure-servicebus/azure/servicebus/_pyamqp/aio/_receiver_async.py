@@ -87,10 +87,11 @@ class ReceiverLink(Link):
     async def _incoming_flow(self, frame):
         drain = frame[8]  # drain
         # If we have sent an outgoing flow frame with drain, wait for the response
-        if self._drain_state and drain:
-            self._drain_state = False
-            self._received_drain_response = True
-            self.current_link_credit = frame[6]  # link_credit
+        async with self._drain_lock:
+            if self._drain_state and drain:
+                self._drain_state = False
+                self._received_drain_response = True
+                self.current_link_credit = frame[6]  # link_credit
 
     async def _incoming_transfer(self, frame):
         if self.network_trace:

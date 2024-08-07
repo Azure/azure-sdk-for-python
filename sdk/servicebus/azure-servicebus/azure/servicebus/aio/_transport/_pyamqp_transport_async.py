@@ -511,18 +511,19 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
                     # If we have sent a drain and we havent received messages in X time
                     # or gotten back the responding flow, lets close the link
-                    if (not receiver._handler._link._received_drain_response and sent_drain) \
-                        and (time.time() - time_sent > receive_drain_timeout):
-                        expired = True
-                        await receiver._handler._close_link_async()
-                        # await receiver._handler._link.detach(close=True,
-                        #                                     error= AMQPError(ErrorCondition.InternalError, 'The drain response was not received', None))
-                        break
+                    async with receiver._handler._link._drain_lock:
+                        if (not receiver._handler._link._received_drain_response and sent_drain) \
+                            and (time.time() - time_sent > receive_drain_timeout):
+                            expired = True
+                            await receiver._handler._close_link_async()
+                            # await receiver._handler._link.detach(close=True,
+                            #                                     error= AMQPError(ErrorCondition.InternalError, 'The drain response was not received', None))
+                            break
 
-                    # if you have received the drain -> break out of the loop
-                    if receiver._handler._link._received_drain_response:
-                        expired = True
-                        break
+                        # if you have received the drain -> break out of the loop
+                        if receiver._handler._link._received_drain_response:
+                            expired = True
+                            break
 
                     # TODO: Figure this out - getting stuck in receive if we are below max_message_count
                     #  and we are not exiting this loop to go to complete_message?
