@@ -1700,6 +1700,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             paid_bursting_iops=1000
         )
         share_props = await share.get_share_properties()
+        share_name = share_props.name
         assert share_props.paid_bursting_enabled
         assert share_props.paid_bursting_bandwidth_mibps == 5000
         assert share_props.paid_bursting_iops == 1000
@@ -1714,6 +1715,16 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert share_props.paid_bursting_enabled
         assert share_props.paid_bursting_bandwidth_mibps == mibps
         assert share_props.paid_bursting_iops == iops
+
+        async for share in self.fsc.list_shares():
+            if share.name == share_name:
+
+                assert share is not None
+                assert share.paid_bursting_enabled
+                assert share.paid_bursting_bandwidth_mibps == mibps
+                assert share.paid_bursting_iops == iops
+                break
+            raise ValueError("Share with modified bursting values not found.")
 
         await self._delete_shares()
 

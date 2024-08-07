@@ -1674,9 +1674,22 @@ class TestStorageShare(StorageRecordedTestCase):
             paid_bursting_iops=iops
         )
         share_props = share.get_share_properties()
+        share_name = share_props.name
         assert share_props.paid_bursting_enabled
         assert share_props.paid_bursting_bandwidth_mibps == mibps
         assert share_props.paid_bursting_iops == iops
+
+        shares = list(self.fsc.list_shares())
+        assert shares is not None
+        assert len(shares) >= 1
+        for share in shares:
+            if share.name == share_name:
+                assert share is not None
+                assert share.paid_bursting_enabled
+                assert share.paid_bursting_bandwidth_mibps == mibps
+                assert share.paid_bursting_iops == iops
+                break
+            raise ValueError("Share with modified bursting values not found.")
 
         self._delete_shares()
 
