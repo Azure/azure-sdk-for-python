@@ -280,3 +280,25 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_credential")
+    def test_calculate_backoff(self, mock_client, mock_find_auto_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+        mock_find_auto_failover_endpoints.return_value = []
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600)
+        manager_invalid = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 600, 30)
+
+        assert manager._calculate_backoff(0) == 30000.0
+        assert 30000.0 <= manager._calculate_backoff(1) <= 60000.0
+        assert 30000.0 <= manager._calculate_backoff(2) <= 120000.0
+        assert 30000.0 <= manager._calculate_backoff(3) <= 240000.0
+        assert 30000.0 <= manager._calculate_backoff(4) <= 480000.0
+        assert 30000.0 <= manager._calculate_backoff(5) <= 600000.0
+        assert 30000.0 <= manager._calculate_backoff(6) <= 600000.0
+        assert 30000.0 <= manager._calculate_backoff(7) <= 600000.0
+        assert 30000.0 <= manager._calculate_backoff(8) <= 600000.0
+        assert 30000.0 <= manager._calculate_backoff(9) <= 600000.0
+        assert 30000.0 <= manager._calculate_backoff(10) <= 600000.0
+
+        assert manager_invalid._calculate_backoff(0) == 600000
