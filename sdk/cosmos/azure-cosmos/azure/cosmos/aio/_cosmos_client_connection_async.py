@@ -1867,7 +1867,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params: _request_object.RequestObject,
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[None, Dict[str, Any]]:
+    ) -> Tuple[None, CaseInsensitiveDict]:
         """Azure Cosmos 'DELETE' async http request.
 
         :param str path: the url to be used for the request.
@@ -2740,7 +2740,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         """Query Feed for Document Collection resource.
 
         :param str path: Path to the document collection.
