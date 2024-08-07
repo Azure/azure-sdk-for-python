@@ -741,7 +741,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_add: JSON, **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -749,7 +749,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
         :param hub: Target hub name, which should start with alphabetic characters and only contain
          alpha-numeric characters or underscore. Required.
-        :type hub: str
         :param groups_to_add: Target groups and connection filter. Required.
         :type groups_to_add: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -773,7 +772,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_add: IO[bytes], **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -781,7 +780,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
         :param hub: Target hub name, which should start with alphabetic characters and only contain
          alpha-numeric characters or underscore. Required.
-        :type hub: str
         :param groups_to_add: Target groups and connection filter. Required.
         :type groups_to_add: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -794,7 +792,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @distributed_trace
     def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: Union[JSON, IO[bytes]], **kwargs: Any
+        self, groups_to_add: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -802,7 +800,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
         :param hub: Target hub name, which should start with alphabetic characters and only contain
          alpha-numeric characters or underscore. Required.
-        :type hub: str
         :param groups_to_add: Target groups and connection filter. Is either a JSON type or a IO[bytes]
          type. Required.
         :type groups_to_add: JSON or IO[bytes]
@@ -844,7 +841,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
             _json = groups_to_add
 
         _request = build_web_pub_sub_service_add_connections_to_groups_request(
-            hub=hub,
+            hub=self._config.hub,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1020,7 +1017,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_remove: JSON, **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -1028,7 +1025,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
         :param hub: Target hub name, which should start with alphabetic characters and only contain
          alpha-numeric characters or underscore. Required.
-        :type hub: str
         :param groups_to_remove: Target groups and connection filter. Required.
         :type groups_to_remove: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1052,7 +1048,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_remove: IO[bytes], **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -1060,7 +1056,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
         :param hub: Target hub name, which should start with alphabetic characters and only contain
          alpha-numeric characters or underscore. Required.
-        :type hub: str
         :param groups_to_remove: Target groups and connection filter. Required.
         :type groups_to_remove: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1073,7 +1068,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @distributed_trace
     def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: Union[JSON, IO[bytes]], **kwargs: Any
+        self, groups_to_remove: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -1123,7 +1118,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
             _json = groups_to_remove
 
         _request = build_web_pub_sub_service_remove_connections_from_groups_request(
-            hub=hub,
+            hub=self._config.hub,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
