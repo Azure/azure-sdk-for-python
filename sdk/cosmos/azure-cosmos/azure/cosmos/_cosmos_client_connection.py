@@ -2909,7 +2909,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params: RequestObject,
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[None, Dict[str, Any]]:
+    ) -> Tuple[None, CaseInsensitiveDict]:
         """Azure Cosmos 'DELETE' http request.
 
         :param str path: the url to be used for the request.
@@ -3061,7 +3061,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
         if isPrefixPartitionQuery:
-            last_response_headers = {}
+            last_response_headers = CaseInsensitiveDict()
             # here get the over lapping ranges
             partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
             pk_properties = partition_key_definition
