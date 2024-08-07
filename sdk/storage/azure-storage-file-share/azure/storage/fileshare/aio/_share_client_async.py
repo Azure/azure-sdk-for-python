@@ -223,6 +223,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :keyword bool paid_bursting_enabled: This property enables paid bursting.
+        :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+        :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
 
@@ -241,6 +244,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
         protocols = kwargs.pop('protocols', None)
+        paid_bursting_bandwidth_mibps = kwargs.pop('paid_bursting_bandwidth_mibps', None)
+        paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
         if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
@@ -256,6 +261,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 access_tier=access_tier,
                 root_squash=root_squash,
                 enabled_protocols=protocols,
+                paid_bursting_max_bandwidth_mibps=paid_bursting_bandwidth_mibps,
+                paid_bursting_max_iops=paid_bursting_iops,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -491,6 +498,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :keyword bool paid_bursting_enabled: This property enables paid bursting.
+        :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+        :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
@@ -508,6 +518,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         access_tier = kwargs.pop('access_tier', None)
         quota = kwargs.pop('quota', None)
         root_squash = kwargs.pop('root_squash', None)
+        paid_bursting_bandwidth_mibps = kwargs.pop('paid_bursting_bandwidth_mibps', None)
+        paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
@@ -517,6 +529,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 access_tier=access_tier,
                 root_squash=root_squash,
                 lease_access_conditions=access_conditions,
+                paid_bursting_max_bandwidth_mibps=paid_bursting_bandwidth_mibps,
+                paid_bursting_max_iops=paid_bursting_iops,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -777,6 +791,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :returns: A file permission key
         :rtype: str
         """
@@ -805,6 +822,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :returns: A file permission (a portable SDDL)
         :rtype: str
         """
