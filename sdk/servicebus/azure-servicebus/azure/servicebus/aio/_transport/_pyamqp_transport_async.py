@@ -514,8 +514,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     if (not receiver._handler._link._received_drain_response and sent_drain) \
                         and (time.time() - time_sent > receive_drain_timeout):
                         expired = True
-                        await receiver._handler._link.detach(close=True,
-                                                            error= AMQPError(ErrorCondition.InternalError, 'The drain response was not received', None))
+                        await receiver._handler._close_link_async()
+                        # await receiver._handler._link.detach(close=True,
+                        #                                     error= AMQPError(ErrorCondition.InternalError, 'The drain response was not received', None))
                         break
 
                     # if you have received the drain -> break out of the loop

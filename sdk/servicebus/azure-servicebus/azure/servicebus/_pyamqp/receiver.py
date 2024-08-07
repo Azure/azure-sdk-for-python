@@ -212,8 +212,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool] = None,
         on_disposition: Optional[Callable] = None,
     ):
-        if self._is_closed:
-            raise ValueError("Link already closed.")
+        self._check_if_closed()
         self._outgoing_disposition(
             first_delivery_id,
             last_delivery_id,

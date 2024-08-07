@@ -1123,8 +1123,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     if (not receiver._handler._link._received_drain_response and sent_drain) \
                         and (time.time() - time_sent > receive_drain_timeout):
                         expired = True
-                        receiver._handler._link.detach(close=True,
-                                                       error=AMQPError(ErrorCondition.InternalError, "Drain response not received", None))
+                        receiver._handler._close_link()
+                        # receiver._handler._link.detach(close=True,
+                        #                                error=AMQPError(ErrorCondition.InternalError, "Drain response not received", None))
                         break
 
                     # if you have received the drain -> break out of the loop
