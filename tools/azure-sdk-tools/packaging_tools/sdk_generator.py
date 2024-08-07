@@ -273,23 +273,22 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
-    spec_word = "readmeMd"
+    readme_files = []
     if "relatedReadmeMdFiles" in data:
-        readme_files = data["relatedReadmeMdFiles"]
-    elif "relatedReadmeMdFile" in data:
+        readme_files.extend(data["relatedReadmeMdFiles"])
+    if "relatedReadmeMdFile" in data:
         input_readme = data["relatedReadmeMdFile"]
         if "specification" in spec_folder:
             spec_folder = str(Path(spec_folder.split("specification")[0]))
         if "specification" not in input_readme:
             input_readme = str(Path("specification") / input_readme)
-        readme_files = [input_readme]
-    else:
+        readme_files.append(input_readme)
+    if "relatedTypeSpecProjectFolder" in data:
         # ["specification/confidentialledger/ConfientialLedger"]
         if isinstance(data["relatedTypeSpecProjectFolder"], str):
-            readme_files = [data["relatedTypeSpecProjectFolder"]]
+            readme_files.append(data["relatedTypeSpecProjectFolder"])
         else:
-            readme_files = data["relatedTypeSpecProjectFolder"]
-        spec_word = "typespecProject"
+            readme_files.extend(data["relatedTypeSpecProjectFolder"])
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
@@ -327,6 +326,7 @@ def main(generate_input, generate_output):
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
+        spec_word = "readmeMd" if "readme.md" in input_readme else "typespecProject"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
