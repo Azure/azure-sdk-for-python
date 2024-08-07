@@ -25,12 +25,11 @@ _STATSBEAT_LOCK = threading.Lock()
 
 # pylint: disable=global-statement
 # pylint: disable=protected-access
-def collect_statsbeat_metrics(exporter, cx=False) -> None:
+def collect_statsbeat_metrics(exporter) -> None:
     global _STATSBEAT_METRICS
     # Only start statsbeat if did not exist before
     if _STATSBEAT_METRICS is None:
         with _STATSBEAT_LOCK:
-            readers = []
             statsbeat_exporter = _StatsBeatExporter(
                 connection_string=_get_stats_connection_string(exporter._endpoint),
                 disable_offline_storage=exporter._disable_offline_storage,
@@ -39,22 +38,8 @@ def collect_statsbeat_metrics(exporter, cx=False) -> None:
                 statsbeat_exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
-            readers.append(reader)
-            cx_reader = None
-            if cx:
-                cx_exporter = _StatsBeatExporter(
-                    connection_string=exporter._connection_string,
-                    disable_offline_storage=True,
-                    cx_stats=True,
-                )
-                cx_reader = PeriodicExportingMetricReader(
-                    cx_exporter,
-                    export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
-                )
-            if cx_reader:
-                readers.append(cx_reader)
             mp = MeterProvider(
-                metric_readers=readers,
+                metric_readers=[reader],
                 resource=Resource.get_empty(),
             )
             # long_interval_threshold represents how many collects for short interval
