@@ -1,5 +1,37 @@
 # Release History
 
+## 9.1.0 (2024-07-03)
+
+### Features Added
+
+  - Added operation ConfigServersOperations.begin_delete
+  - Added operation ConfigServersOperations.list
+  - Added operation GatewaysOperations.begin_update_capacity
+  - Added operation group JobExecutionOperations
+  - Added operation group JobExecutionsOperations
+  - Added operation group JobOperations
+  - Added operation group JobsOperations
+  - Model AppResourceProperties has a new parameter secrets
+  - Model AppResourceProperties has a new parameter test_endpoint_auth_state
+  - Model AppResourceProperties has a new parameter workload_profile_name
+  - Model BuildpackProperties has a new parameter version
+  - Model ClusterResourceProperties has a new parameter infra_resource_group
+  - Model ClusterResourceProperties has a new parameter maintenance_schedule_configuration
+  - Model ClusterResourceProperties has a new parameter managed_environment_id
+  - Model ConfigServerProperties has a new parameter enabled_state
+  - Model ConfigServerProperties has a new parameter instances
+  - Model ConfigServerProperties has a new parameter resource_requests
+  - Model ConfigurationServiceSettings has a new parameter refresh_interval_in_seconds
+  - Model DeploymentSettings has a new parameter scale
+  - Model GatewayProperties has a new parameter addon_configs
+  - Model GatewayProperties has a new parameter apm_types
+  - Model GatewayProperties has a new parameter response_cache_properties
+  - Model ServiceResource has a new parameter identity
+  - Model ServiceVNetAddons has a new parameter private_dns_zone_id
+  - Model ServiceVNetAddons has a new parameter private_storage_access
+  - Model SupportedBuildpackResourceProperties has a new parameter version
+  - Operation DeploymentsOperations.list has a new optional parameter expand
+
 ## 9.0.0 (2024-01-26)
 
 ### Features Added

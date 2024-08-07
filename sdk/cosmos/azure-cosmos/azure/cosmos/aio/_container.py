@@ -39,8 +39,6 @@ from .._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from ..exceptions import CosmosResourceNotFoundError
-from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
 from ..partition_key import (
@@ -88,15 +86,15 @@ class ContainerProxy:
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))  # pylint: disable=protected-access, line-too-long
+                                                                   _set_properties_cache(properties))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     async def _get_properties(self) -> Dict[str, Any]:
-        if self.container_link not in self.client_connection._container_properties_cache:  # pylint: disable=protected-access, line-too-long
+        if self.container_link not in self.client_connection._container_properties_cache:
             await self.read()
-        return self.client_connection._container_properties_cache[self.container_link]  # pylint: disable=protected-access, line-too-long
+        return self.client_connection._container_properties_cache[self.container_link]
 
     @property
     async def is_system_key(self) -> bool:
@@ -106,6 +104,9 @@ class ContainerProxy:
                 properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
             )
         return self._is_system_key
+
+    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+        return self.client_connection._container_properties_cache
 
     @property
     def scripts(self) -> ScriptsProxy:
@@ -236,6 +237,8 @@ class ContainerProxy:
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -301,6 +304,8 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -346,6 +351,8 @@ class ContainerProxy:
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if hasattr(response_hook, "clear"):
             response_hook.clear()
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
@@ -458,6 +465,8 @@ class ContainerProxy:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
@@ -521,6 +530,8 @@ class ContainerProxy:
             feed_options["continuation"] = continuation
         if hasattr(response_hook, "clear"):
             response_hook.clear()
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
@@ -582,6 +593,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -648,6 +661,8 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -714,6 +729,8 @@ class ContainerProxy:
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
         return await self.client_connection.PatchItem(
@@ -775,6 +792,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -793,18 +812,16 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
+        throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
+        options = {"containerRID": properties["_rid"]}
         throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(throughput_properties) == 0:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for container " + self.container_link)
+                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -830,18 +847,16 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
+        throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
+        options = {"containerRID": properties["_rid"]}
         throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(throughput_properties) == 0:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
@@ -869,6 +884,8 @@ class ContainerProxy:
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -909,6 +926,8 @@ class ContainerProxy:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -941,6 +960,8 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -1016,6 +1037,8 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1070,6 +1093,8 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)

@@ -9,13 +9,10 @@ DEPENDENCIES = [
     "packaging",
     "wheel",
     "Jinja2",
-    "MarkupSafe",
     "json-delta>=2.0",
     # Tests
     "pytest-cov",
     "pytest>=3.5.1",
-    "readme_renderer",
-    "pyopenssl",
     "python-dotenv",
     "PyYAML",
     "urllib3",

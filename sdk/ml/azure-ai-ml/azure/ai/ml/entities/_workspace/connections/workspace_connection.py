@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
 )
 
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
@@ -72,7 +71,6 @@ CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoin
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
 # We avoid directly referencing it in the docs to avoid restclient references.
-@experimental
 class WorkspaceConnection(Resource):
     """Azure ML connection provides a secure way to store authentication and configuration information needed
     to connect and interact with the external resources.
@@ -85,7 +83,7 @@ class WorkspaceConnection(Resource):
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
     :param metadata: Metadata dictionary.
-    :type metadata: Optional[Dict[Any, Any]]
+    :type metadata: Optional[Dict[str, Any]]
     :param type: The category of external resource for this connection.
     :type type: The type of connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
@@ -315,41 +313,41 @@ class WorkspaceConnection(Resource):
         return self._credentials
 
     @property
-    def metadata(self) -> Optional[Dict[Any, Any]]:
+    def metadata(self) -> Optional[Dict[str, Any]]:
         """The connection's metadata dictionary.
         :return: This connection's metadata.
-        :rtype: Optional[Dict[Any, Any]]
+        :rtype: Optional[Dict[str, Any]]
         """
         return self._metadata if self._metadata is not None else {}
 
     @metadata.setter
-    def metadata(self, value: Optional[Dict[Any, Any]]) -> None:
+    def metadata(self, value: Optional[Dict[str, Any]]) -> None:
         """Set the metadata for the connection. Be warned that setting this will override
         ALL metadata values, including those implicitly set by certain connection types to manage their
         extra data. Usually, you should probably access the metadata dictionary, then add or remove values
         individually as needed.
         :param value: The new metadata for connection.
             This completely overwrites the existing metadata dictionary.
-        :type value: Optional[Dict[Any, Any]]
+        :type value: Optional[Dict[str, Any]]
         """
         if not value:
             return
         self._metadata = value
 
     @property
-    def tags(self) -> Optional[Dict[Any, Any]]:
+    def tags(self) -> Optional[Dict[str, Any]]:
         """Deprecated. Use metadata instead.
         :return: This connection's metadata.
-        :rtype: Optional[Dict[Any, Any]]
+        :rtype: Optional[Dict[str, Any]]
         """
         return self._metadata if self._metadata is not None else {}
 
     @tags.setter
-    def tags(self, value: Optional[Dict[Any, Any]]) -> None:
+    def tags(self, value: Optional[Dict[str, Any]]) -> None:
         """Deprecated use metadata instead
         :param value: The new metadata for connection.
             This completely overwrites the existing metadata dictionary.
-        :type value: Optional[Dict[Any, Any]]
+        :type value: Optional[Dict[str, Any]]
         """
         if not value:
             return

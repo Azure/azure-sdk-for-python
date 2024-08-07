@@ -52,11 +52,11 @@ from .._constants import (
     TARGETING_FILTER_KEY,
 )
 from .._azureappconfigurationprovider import (
-    _is_json_content_type,
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
+    _is_json_content_type,
 )
 from .._user_agent import USER_AGENT
 
@@ -220,7 +220,21 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    headers = _get_headers("Startup", **kwargs)
+    uses_key_vault = (
+        "keyvault_credential" in kwargs
+        or "keyvault_client_configs" in kwargs
+        or "secret_resolver" in kwargs
+        or kwargs.get("uses_key_vault", False)
+    )
+
+    headers = _get_headers(
+        kwargs.pop("headers", {}),
+        "Startup",
+        0,
+        kwargs.pop("uses_feature_flags", False),
+        kwargs.pop("feature_filters_used", {}),
+        uses_key_vault,
+    )
     provider = _buildprovider(
         connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
     )
@@ -417,11 +431,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         need_refresh = False
         updated_sentinel_keys = dict(self._refresh_on)
         headers = _get_headers(
+            kwargs.pop("headers", {}),
             "Watch",
-            uses_key_vault=self._uses_key_vault,
-            feature_filters_used=self._feature_filter_usage,
-            uses_feature_flags=self._feature_flag_enabled,
-            **kwargs
+            0,
+            self._feature_flag_enabled,
+            self._feature_filter_usage,
+            self._uses_key_vault,
         )
         for (key, label), etag in updated_sentinel_keys.items():
             changed, updated_sentinel = await self._check_configuration_setting(
@@ -444,11 +459,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     async def _refresh_feature_flags(self, **kwargs) -> bool:
         feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
         headers = _get_headers(
+            kwargs.pop("headers", {}),
             "Watch",
-            uses_key_vault=self._uses_key_vault,
-            feature_filters_used=self._feature_filter_usage,
-            uses_feature_flags=self._feature_flag_enabled,
-            **kwargs
+            0,
+            self._feature_flag_enabled,
+            self._feature_filter_usage,
+            self._uses_key_vault,
         )
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = await self._check_configuration_setting(

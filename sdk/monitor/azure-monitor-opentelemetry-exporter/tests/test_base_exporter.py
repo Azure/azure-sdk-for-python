@@ -16,10 +16,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_MAP,
-    _STATSBEAT_STATE,
-)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,

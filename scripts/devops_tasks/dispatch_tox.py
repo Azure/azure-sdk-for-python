@@ -11,6 +11,7 @@
 
 import argparse
 import os
+import sys
 import logging
 from tox_harness import prep_and_run_tox
 from ci_tools.functions import discover_targeted_packages
@@ -135,4 +136,5 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logging.info("No packages collected. Exit 0.")
         exit(0)
 
+    logging.info(f"Executing prep_and_run_tox with the executable {sys.executable}.")
     prep_and_run_tox(targeted_packages, args)
