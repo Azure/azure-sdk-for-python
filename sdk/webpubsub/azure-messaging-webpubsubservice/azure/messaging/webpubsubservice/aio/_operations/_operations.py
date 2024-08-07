@@ -63,7 +63,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     async def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_add: JSON, **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -95,7 +95,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     async def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_add: IO[bytes], **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -116,7 +116,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @distributed_trace_async
     async def add_connections_to_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_add: Union[JSON, IO[bytes]], **kwargs: Any
+        self, groups_to_add: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Add filtered connections to multiple groups.
 
@@ -166,7 +166,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
             _json = groups_to_add
 
         _request = build_web_pub_sub_service_add_connections_to_groups_request(
-            hub=hub,
+            hub=self._config.hub,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -342,7 +342,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     async def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_remove: JSON, **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -374,7 +374,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @overload
     async def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, groups_to_remove: IO[bytes], **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -395,7 +395,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
 
     @distributed_trace_async
     async def remove_connections_from_groups(  # pylint: disable=inconsistent-return-statements
-        self, hub: str, groups_to_remove: Union[JSON, IO[bytes]], **kwargs: Any
+        self, groups_to_remove: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Remove filtered connections from multiple groups.
 
@@ -445,7 +445,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientMixinABC):  # 
             _json = groups_to_remove
 
         _request = build_web_pub_sub_service_remove_connections_from_groups_request(
-            hub=hub,
+            hub=self._config.hub,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
