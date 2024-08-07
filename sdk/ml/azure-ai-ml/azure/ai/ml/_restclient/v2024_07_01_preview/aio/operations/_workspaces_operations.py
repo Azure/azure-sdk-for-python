@@ -47,6 +47,309 @@ class WorkspacesOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
+    def list_by_subscription(
+        self,
+        kind: Optional[str] = None,
+        skip: Optional[str] = None,
+        ai_capabilities: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.WorkspaceListResult"]:
+        """Lists all the available machine learning workspaces under the specified subscription.
+
+        Lists all the available machine learning workspaces under the specified subscription.
+
+        :param kind: Kind of workspace.
+        :type kind: str
+        :param skip: Continuation token for pagination.
+        :type skip: str
+        :param ai_capabilities:
+        :type ai_capabilities: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    kind=kind,
+                    skip=skip,
+                    ai_capabilities=ai_capabilities,
+                    template_url=self.list_by_subscription.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    kind=kind,
+                    skip=skip,
+                    ai_capabilities=ai_capabilities,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("WorkspaceListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/workspaces"}  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        kind: Optional[str] = None,
+        skip: Optional[str] = None,
+        ai_capabilities: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.WorkspaceListResult"]:
+        """Lists all the available machine learning workspaces under the specified resource group.
+
+        Lists all the available machine learning workspaces under the specified resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param kind: Kind of workspace.
+        :type kind: str
+        :param skip: Continuation token for pagination.
+        :type skip: str
+        :param ai_capabilities:
+        :type ai_capabilities: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    api_version=api_version,
+                    kind=kind,
+                    skip=skip,
+                    ai_capabilities=ai_capabilities,
+                    template_url=self.list_by_resource_group.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    api_version=api_version,
+                    kind=kind,
+                    skip=skip,
+                    ai_capabilities=ai_capabilities,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("WorkspaceListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces"}  # type: ignore
+
+    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        force_to_purge: Optional[bool] = False,
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        
+        request = build_delete_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            api_version=api_version,
+            force_to_purge=force_to_purge,
+            template_url=self._delete_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_delete(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        force_to_purge: Optional[bool] = False,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a machine learning workspace.
+
+        Deletes a machine learning workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :param force_to_purge: Flag to indicate delete is a purge request.
+        :type force_to_purge: bool
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                force_to_purge=force_to_purge,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
+
     @distributed_trace_async
     async def get(
         self,
@@ -56,9 +359,11 @@ class WorkspacesOperations:
     ) -> "_models.Workspace":
         """Gets the properties of the specified machine learning workspace.
 
+        Gets the properties of the specified machine learning workspace.
+
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace, or the result of cls(response)
@@ -106,11 +411,11 @@ class WorkspacesOperations:
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
 
 
-    async def _create_or_update_initial(
+    async def _update_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: "_models.Workspace",
+        body: "_models.WorkspaceUpdateParameters",
         **kwargs: Any
     ) -> Optional["_models.Workspace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Workspace"]]
@@ -122,7 +427,135 @@ class WorkspacesOperations:
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'Workspace')
+        _json = self._serialize.body(body, 'WorkspaceUpdateParameters')
+
+        request = build_update_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._update_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Workspace', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: "_models.WorkspaceUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Workspace"]:
+        """Updates a machine learning workspace with the specified parameters.
+
+        Updates a machine learning workspace with the specified parameters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :param body: The parameters for updating a machine learning workspace.
+        :type body: ~azure.mgmt.machinelearningservices.models.WorkspaceUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Workspace or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('Workspace', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: "_models.Workspace",
+        **kwargs: Any
+    ) -> Optional["_models.Workspace"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Workspace"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'Workspace')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -170,17 +603,19 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: "_models.Workspace",
+        body: "_models.Workspace",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.Workspace"]:
         """Creates or updates a workspace with the specified parameters.
 
+        Creates or updates a workspace with the specified parameters.
+
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
-        :param parameters: The parameters for creating or updating a machine learning workspace.
-        :type parameters: ~azure.mgmt.machinelearningservices.models.Workspace
+        :param body: The parameters for creating or updating a machine learning workspace.
+        :type body: ~azure.mgmt.machinelearningservices.models.Workspace
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -208,7 +643,7 @@ class WorkspacesOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                parameters=parameters,
+                body=body,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -224,7 +659,7 @@ class WorkspacesOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -238,336 +673,11 @@ class WorkspacesOperations:
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        force_to_purge: Optional[bool] = False,
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        
-        request = build_delete_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            force_to_purge=force_to_purge,
-            template_url=self._delete_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        force_to_purge: Optional[bool] = False,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Deletes a machine learning workspace.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param force_to_purge: Flag to indicate delete is a purge request.
-        :type force_to_purge: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-                force_to_purge=force_to_purge,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
-
-    async def _update_initial(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        parameters: "_models.WorkspaceUpdateParameters",
-        **kwargs: Any
-    ) -> Optional["_models.Workspace"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Workspace"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(parameters, 'WorkspaceUpdateParameters')
-
-        request = build_update_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._update_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize('Workspace', pipeline_response)
-
-        if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        parameters: "_models.WorkspaceUpdateParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.Workspace"]:
-        """Updates a machine learning workspace with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param parameters: The parameters for updating a machine learning workspace.
-        :type parameters: ~azure.mgmt.machinelearningservices.models.WorkspaceUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Workspace or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-                parameters=parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('Workspace', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
-
-    @distributed_trace
-    def list_by_resource_group(
-        self,
-        resource_group_name: str,
-        skip: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.WorkspaceListResult"]:
-        """Lists all the available machine learning workspaces under the specified resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_by_resource_group_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    api_version=api_version,
-                    skip=skip,
-                    template_url=self.list_by_resource_group.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_by_resource_group_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    api_version=api_version,
-                    skip=skip,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("WorkspaceListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces"}  # type: ignore
-
     async def _diagnose_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Optional["_models.DiagnoseWorkspaceParameters"] = None,
+        body: Optional["_models.DiagnoseWorkspaceParameters"] = None,
         **kwargs: Any
     ) -> Optional["_models.DiagnoseResponseResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DiagnoseResponseResult"]]
@@ -579,8 +689,8 @@ class WorkspacesOperations:
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        if parameters is not None:
-            _json = self._serialize.body(parameters, 'DiagnoseWorkspaceParameters')
+        if body is not None:
+            _json = self._serialize.body(body, 'DiagnoseWorkspaceParameters')
         else:
             _json = None
 
@@ -630,7 +740,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Optional["_models.DiagnoseWorkspaceParameters"] = None,
+        body: Optional["_models.DiagnoseWorkspaceParameters"] = None,
         **kwargs: Any
     ) -> AsyncLROPoller["_models.DiagnoseResponseResult"]:
         """Diagnose workspace setup issue.
@@ -639,10 +749,10 @@ class WorkspacesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
-        :param parameters: The parameter of diagnosing workspace health.
-        :type parameters: ~azure.mgmt.machinelearningservices.models.DiagnoseWorkspaceParameters
+        :param body: The parameter of diagnosing workspace health.
+        :type body: ~azure.mgmt.machinelearningservices.models.DiagnoseWorkspaceParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -670,7 +780,7 @@ class WorkspacesOperations:
             raw_result = await self._diagnose_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                parameters=parameters,
+                body=body,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -710,9 +820,12 @@ class WorkspacesOperations:
         """Lists all the keys associated with this workspace. This includes keys for the storage account,
         app insights and password for container registry.
 
+        Lists all the keys associated with this workspace. This includes keys for the storage account,
+        app insights and password for container registry.
+
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListWorkspaceKeysResult, or the result of cls(response)
@@ -760,195 +873,6 @@ class WorkspacesOperations:
     list_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listKeys"}  # type: ignore
 
 
-    async def _resync_keys_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        
-        request = build_resync_keys_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            template_url=self._resync_keys_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _resync_keys_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/resyncKeys"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_resync_keys(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Resync all the keys associated with this workspace. This includes keys for the storage account,
-        app insights and password for container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._resync_keys_initial(
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_resync_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/resyncKeys"}  # type: ignore
-
-    @distributed_trace
-    def list_by_subscription(
-        self,
-        skip: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.WorkspaceListResult"]:
-        """Lists all the available machine learning workspaces under the specified subscription.
-
-        :param skip: Continuation token for pagination.
-        :type skip: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    skip=skip,
-                    template_url=self.list_by_subscription.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    skip=skip,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("WorkspaceListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/workspaces"}  # type: ignore
-
     @distributed_trace_async
     async def list_notebook_access_token(
         self,
@@ -956,11 +880,13 @@ class WorkspacesOperations:
         workspace_name: str,
         **kwargs: Any
     ) -> "_models.NotebookAccessTokenResult":
-        """return notebook access token and refresh token.
+        """Get Azure Machine Learning Workspace notebook access token.
+
+        Get Azure Machine Learning Workspace notebook access token.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookAccessTokenResult, or the result of cls(response)
@@ -1006,6 +932,191 @@ class WorkspacesOperations:
         return deserialized
 
     list_notebook_access_token.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listNotebookAccessToken"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def list_notebook_keys(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        **kwargs: Any
+    ) -> "_models.ListNotebookKeysResult":
+        """Lists keys of Azure Machine Learning Workspaces notebook.
+
+        Lists keys of Azure Machine Learning Workspaces notebook.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListNotebookKeysResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListNotebookKeysResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        
+        request = build_list_notebook_keys_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            api_version=api_version,
+            template_url=self.list_notebook_keys.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ListNotebookKeysResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_notebook_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listNotebookKeys"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def list_storage_account_keys(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        **kwargs: Any
+    ) -> "_models.ListStorageAccountKeysResult":
+        """Lists keys of Azure Machine Learning Workspace's storage account.
+
+        Lists keys of Azure Machine Learning Workspace's storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListStorageAccountKeysResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.ListStorageAccountKeysResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListStorageAccountKeysResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        
+        request = build_list_storage_account_keys_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            api_version=api_version,
+            template_url=self.list_storage_account_keys.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ListStorageAccountKeysResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_storage_account_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listStorageAccountKeys"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def list_outbound_network_dependencies_endpoints(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        **kwargs: Any
+    ) -> "_models.ExternalFQDNResponse":
+        """Called by Client (Portal, CLI, etc) to get a list of all external outbound dependencies (FQDNs)
+        programmatically.
+
+        Called by Client (Portal, CLI, etc) to get a list of all external outbound dependencies (FQDNs)
+        programmatically.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ExternalFQDNResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.ExternalFQDNResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExternalFQDNResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        
+        request = build_list_outbound_network_dependencies_endpoints_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            api_version=api_version,
+            template_url=self.list_outbound_network_dependencies_endpoints.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ExternalFQDNResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_outbound_network_dependencies_endpoints.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundNetworkDependenciesEndpoints"}  # type: ignore
 
 
     async def _prepare_notebook_initial(
@@ -1069,11 +1180,13 @@ class WorkspacesOperations:
         workspace_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller["_models.NotebookResourceInfo"]:
-        """Prepare a notebook.
+        """Prepare Azure Machine Learning Workspace's notebook resource.
+
+        Prepare Azure Machine Learning Workspace's notebook resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1129,25 +1242,13 @@ class WorkspacesOperations:
 
     begin_prepare_notebook.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/prepareNotebook"}  # type: ignore
 
-    @distributed_trace_async
-    async def list_storage_account_keys(
+    async def _resync_keys_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         workspace_name: str,
         **kwargs: Any
-    ) -> "_models.ListStorageAccountKeysResult":
-        """List storage account keys of a workspace.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListStorageAccountKeysResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.ListStorageAccountKeysResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListStorageAccountKeysResult"]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1156,12 +1257,12 @@ class WorkspacesOperations:
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
 
         
-        request = build_list_storage_account_keys_request(
+        request = build_resync_keys_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             api_version=api_version,
-            template_url=self.list_storage_account_keys.metadata['url'],
+            template_url=self._resync_keys_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1173,139 +1274,84 @@ class WorkspacesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ListStorageAccountKeysResult', pipeline_response)
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized
-
-    list_storage_account_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listStorageAccountKeys"}  # type: ignore
+    _resync_keys_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/resyncKeys"}  # type: ignore
 
 
     @distributed_trace_async
-    async def list_notebook_keys(
+    async def begin_resync_keys(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         workspace_name: str,
         **kwargs: Any
-    ) -> "_models.ListNotebookKeysResult":
-        """List keys of a notebook.
+    ) -> AsyncLROPoller[None]:
+        """Resync all the keys associated with this workspace.This includes keys for the storage account,
+        app insights and password for container registry.
+
+        Resync all the keys associated with this workspace.This includes keys for the storage account,
+        app insights and password for container registry.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListNotebookKeysResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListNotebookKeysResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        
-        request = build_list_notebook_keys_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            template_url=self.list_notebook_keys.metadata['url'],
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._resync_keys_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ListNotebookKeysResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_notebook_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listNotebookKeys"}  # type: ignore
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
 
 
-    @distributed_trace_async
-    async def list_outbound_network_dependencies_endpoints(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        **kwargs: Any
-    ) -> "_models.ExternalFQDNResponse":
-        """Called by Client (Portal, CLI, etc) to get a list of all external outbound dependencies (FQDNs)
-        programmatically.
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-        Called by Client (Portal, CLI, etc) to get a list of all external outbound dependencies (FQDNs)
-        programmatically.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExternalFQDNResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.ExternalFQDNResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExternalFQDNResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        
-        request = build_list_outbound_network_dependencies_endpoints_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            template_url=self.list_outbound_network_dependencies_endpoints.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ExternalFQDNResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_outbound_network_dependencies_endpoints.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundNetworkDependenciesEndpoints"}  # type: ignore
-
+    begin_resync_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/resyncKeys"}  # type: ignore

@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AKSSchema
     from ._models_py3 import AKSSchemaProperties
     from ._models_py3 import AccessKeyAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import AccountApiKeys
     from ._models_py3 import AccountKeyAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import AccountKeyDatastoreCredentials
     from ._models_py3 import AccountKeyDatastoreSecrets
@@ -68,6 +69,7 @@ try:
     from ._models_py3 import BindOptions
     from ._models_py3 import BlobReferenceForConsumptionDto
     from ._models_py3 import BuildContext
+    from ._models_py3 import CapacityConfig
     from ._models_py3 import CategoricalDataDriftMetricThreshold
     from ._models_py3 import CategoricalDataQualityMetricThreshold
     from ._models_py3 import CategoricalPredictionDriftMetricThreshold
@@ -83,6 +85,8 @@ try:
     from ._models_py3 import CodeVersion
     from ._models_py3 import CodeVersionProperties
     from ._models_py3 import CodeVersionResourceArmPaginatedResult
+    from ._models_py3 import CognitiveServiceEndpointDeploymentResourceProperties
+    from ._models_py3 import CognitiveServicesSku
     from ._models_py3 import Collection
     from ._models_py3 import ColumnTransformer
     from ._models_py3 import CommandJob
@@ -96,6 +100,7 @@ try:
     from ._models_py3 import Compute
     from ._models_py3 import ComputeInstance
     from ._models_py3 import ComputeInstanceApplication
+    from ._models_py3 import ComputeInstanceAutologgerSettings
     from ._models_py3 import ComputeInstanceConnectivityEndpoints
     from ._models_py3 import ComputeInstanceContainer
     from ._models_py3 import ComputeInstanceCreatedBy
@@ -117,6 +122,8 @@ try:
     from ._models_py3 import ContainerResourceRequirements
     from ._models_py3 import ContainerResourceSettings
     from ._models_py3 import ContentSafety
+    from ._models_py3 import ContentSafetyEndpointDeploymentResourceProperties
+    from ._models_py3 import ContentSafetyEndpointResourceProperties
     from ._models_py3 import CosmosDbSettings
     from ._models_py3 import CreateMonitorAction
     from ._models_py3 import Cron
@@ -174,15 +181,30 @@ try:
     from ._models_py3 import Docker
     from ._models_py3 import DockerCredential
     from ._models_py3 import EarlyTerminationPolicy
-    from ._models_py3 import EncryptionKeyVaultProperties
     from ._models_py3 import EncryptionKeyVaultUpdateProperties
     from ._models_py3 import EncryptionProperty
     from ._models_py3 import EncryptionUpdateProperties
     from ._models_py3 import Endpoint
     from ._models_py3 import EndpointAuthKeys
     from ._models_py3 import EndpointAuthToken
+    from ._models_py3 import EndpointDeploymentModel
     from ._models_py3 import EndpointDeploymentPropertiesBase
+    from ._models_py3 import EndpointDeploymentResourceProperties
+    from ._models_py3 import EndpointDeploymentResourcePropertiesBasicResource
+    from ._models_py3 import EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult
+    from ._models_py3 import EndpointKeys
+    from ._models_py3 import EndpointModelDeprecationProperties
+    from ._models_py3 import EndpointModelProperties
+    from ._models_py3 import EndpointModelSkuCapacityProperties
+    from ._models_py3 import EndpointModelSkuProperties
+    from ._models_py3 import EndpointModelSkuRateLimitProperties
+    from ._models_py3 import EndpointModelSkuRateLimitRulePatternProperties
+    from ._models_py3 import EndpointModelSkuRateLimitRuleProperties
+    from ._models_py3 import EndpointModels
     from ._models_py3 import EndpointPropertiesBase
+    from ._models_py3 import EndpointResourceProperties
+    from ._models_py3 import EndpointResourcePropertiesBasicResource
+    from ._models_py3 import EndpointResourcePropertiesBasicResourceArmPaginatedResult
     from ._models_py3 import EndpointScheduleAction
     from ._models_py3 import EnvironmentContainer
     from ._models_py3 import EnvironmentContainerProperties
@@ -200,7 +222,7 @@ try:
     from ._models_py3 import FQDNEndpoint
     from ._models_py3 import FQDNEndpointDetail
     from ._models_py3 import FQDNEndpoints
-    from ._models_py3 import FQDNEndpointsProperties
+    from ._models_py3 import FQDNEndpointsPropertyBag
     from ._models_py3 import Feature
     from ._models_py3 import FeatureAttributionDriftMonitoringSignal
     from ._models_py3 import FeatureAttributionMetricThreshold
@@ -274,6 +296,8 @@ try:
     from ._models_py3 import JobResourceConfiguration
     from ._models_py3 import JobScheduleAction
     from ._models_py3 import JobService
+    from ._models_py3 import JupyterKernelConfig
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import Kubernetes
     from ._models_py3 import KubernetesOnlineDeployment
     from ._models_py3 import KubernetesProperties
@@ -299,6 +323,10 @@ try:
     from ._models_py3 import ManagedNetworkProvisionStatus
     from ._models_py3 import ManagedNetworkSettings
     from ._models_py3 import ManagedOnlineDeployment
+    from ._models_py3 import ManagedOnlineEndpointDeploymentResourceProperties
+    from ._models_py3 import ManagedOnlineEndpointResourceProperties
+    from ._models_py3 import ManagedResourceGroupAssignedIdentities
+    from ._models_py3 import ManagedResourceGroupSettings
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MarketplacePlan
     from ._models_py3 import MarketplaceSubscription
@@ -353,9 +381,12 @@ try:
     from ._models_py3 import OnlineEndpointTrackedResourceArmPaginatedResult
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
+    from ._models_py3 import OpenAIEndpointDeploymentResourceProperties
+    from ._models_py3 import OpenAIEndpointResourceProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import OsPatchingStatus
     from ._models_py3 import OutboundRule
     from ._models_py3 import OutboundRuleBasicResource
     from ._models_py3 import OutboundRuleListResult
@@ -394,11 +425,24 @@ try:
     from ._models_py3 import QueueSettings
     from ._models_py3 import QuotaBaseProperties
     from ._models_py3 import QuotaUpdateParameters
+    from ._models_py3 import RaiBlocklistConfig
+    from ._models_py3 import RaiBlocklistItemBulkRequest
+    from ._models_py3 import RaiBlocklistItemProperties
+    from ._models_py3 import RaiBlocklistItemPropertiesBasicResource
+    from ._models_py3 import RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult
+    from ._models_py3 import RaiBlocklistProperties
+    from ._models_py3 import RaiBlocklistPropertiesBasicResource
+    from ._models_py3 import RaiBlocklistPropertiesBasicResourceArmPaginatedResult
+    from ._models_py3 import RaiPolicyContentFilter
+    from ._models_py3 import RaiPolicyProperties
+    from ._models_py3 import RaiPolicyPropertiesBasicResource
+    from ._models_py3 import RaiPolicyPropertiesBasicResourceArmPaginatedResult
     from ._models_py3 import RandomSamplingAlgorithm
     from ._models_py3 import Recurrence
     from ._models_py3 import RecurrenceSchedule
     from ._models_py3 import RecurrenceTrigger
     from ._models_py3 import RegenerateEndpointKeysRequest
+    from ._models_py3 import RegenerateServiceAccountKeyContent
     from ._models_py3 import Registry
     from ._models_py3 import RegistryListCredentialsResult
     from ._models_py3 import RegistryPartialManagedServiceIdentity
@@ -409,6 +453,7 @@ try:
     from ._models_py3 import Regression
     from ._models_py3 import RegressionTrainingSettings
     from ._models_py3 import RequestLogging
+    from ._models_py3 import ResizeSchema
     from ._models_py3 import Resource
     from ._models_py3 import ResourceBase
     from ._models_py3 import ResourceConfiguration
@@ -436,9 +481,15 @@ try:
     from ._models_py3 import SecretExpiry
     from ._models_py3 import ServerlessComputeSettings
     from ._models_py3 import ServerlessEndpoint
+    from ._models_py3 import ServerlessEndpointCapacityReservation
+    from ._models_py3 import ServerlessEndpointContentSafety
+    from ._models_py3 import ServerlessEndpointInferenceEndpoint
+    from ._models_py3 import ServerlessEndpointModelSettings
     from ._models_py3 import ServerlessEndpointProperties
+    from ._models_py3 import ServerlessEndpointResourceProperties
     from ._models_py3 import ServerlessEndpointTrackedResourceArmPaginatedResult
     from ._models_py3 import ServerlessInferenceEndpoint
+    from ._models_py3 import ServerlessOffer
     from ._models_py3 import ServiceManagedResourcesSettings
     from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
@@ -457,6 +508,8 @@ try:
     from ._models_py3 import SparkJobPythonEntry
     from ._models_py3 import SparkJobScalaEntry
     from ._models_py3 import SparkResourceConfiguration
+    from ._models_py3 import SpeechEndpointDeploymentResourceProperties
+    from ._models_py3 import SpeechEndpointResourceProperties
     from ._models_py3 import SslConfiguration
     from ._models_py3 import StackEnsembleSettings
     from ._models_py3 import StaticInputData
@@ -528,9 +581,11 @@ try:
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult
     from ._models_py3 import WorkspaceConnectionServicePrincipal
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
+    from ._models_py3 import WorkspaceConnectionUpdateParameter
     from ._models_py3 import WorkspaceConnectionUsernamePassword
     from ._models_py3 import WorkspaceHubConfig
     from ._models_py3 import WorkspaceListResult
+    from ._models_py3 import WorkspacePrivateEndpointResource
     from ._models_py3 import WorkspaceUpdateParameters
 except (SyntaxError, ImportError):
     from ._models import AADAuthTypeWorkspaceConnectionProperties  # type: ignore
@@ -538,6 +593,7 @@ except (SyntaxError, ImportError):
     from ._models import AKSSchema  # type: ignore
     from ._models import AKSSchemaProperties  # type: ignore
     from ._models import AccessKeyAuthTypeWorkspaceConnectionProperties  # type: ignore
+    from ._models import AccountApiKeys  # type: ignore
     from ._models import AccountKeyAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import AccountKeyDatastoreCredentials  # type: ignore
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
@@ -594,6 +650,7 @@ except (SyntaxError, ImportError):
     from ._models import BindOptions  # type: ignore
     from ._models import BlobReferenceForConsumptionDto  # type: ignore
     from ._models import BuildContext  # type: ignore
+    from ._models import CapacityConfig  # type: ignore
     from ._models import CategoricalDataDriftMetricThreshold  # type: ignore
     from ._models import CategoricalDataQualityMetricThreshold  # type: ignore
     from ._models import CategoricalPredictionDriftMetricThreshold  # type: ignore
@@ -609,6 +666,8 @@ except (SyntaxError, ImportError):
     from ._models import CodeVersion  # type: ignore
     from ._models import CodeVersionProperties  # type: ignore
     from ._models import CodeVersionResourceArmPaginatedResult  # type: ignore
+    from ._models import CognitiveServiceEndpointDeploymentResourceProperties  # type: ignore
+    from ._models import CognitiveServicesSku  # type: ignore
     from ._models import Collection  # type: ignore
     from ._models import ColumnTransformer  # type: ignore
     from ._models import CommandJob  # type: ignore
@@ -622,6 +681,7 @@ except (SyntaxError, ImportError):
     from ._models import Compute  # type: ignore
     from ._models import ComputeInstance  # type: ignore
     from ._models import ComputeInstanceApplication  # type: ignore
+    from ._models import ComputeInstanceAutologgerSettings  # type: ignore
     from ._models import ComputeInstanceConnectivityEndpoints  # type: ignore
     from ._models import ComputeInstanceContainer  # type: ignore
     from ._models import ComputeInstanceCreatedBy  # type: ignore
@@ -643,6 +703,8 @@ except (SyntaxError, ImportError):
     from ._models import ContainerResourceRequirements  # type: ignore
     from ._models import ContainerResourceSettings  # type: ignore
     from ._models import ContentSafety  # type: ignore
+    from ._models import ContentSafetyEndpointDeploymentResourceProperties  # type: ignore
+    from ._models import ContentSafetyEndpointResourceProperties  # type: ignore
     from ._models import CosmosDbSettings  # type: ignore
     from ._models import CreateMonitorAction  # type: ignore
     from ._models import Cron  # type: ignore
@@ -700,15 +762,30 @@ except (SyntaxError, ImportError):
     from ._models import Docker  # type: ignore
     from ._models import DockerCredential  # type: ignore
     from ._models import EarlyTerminationPolicy  # type: ignore
-    from ._models import EncryptionKeyVaultProperties  # type: ignore
     from ._models import EncryptionKeyVaultUpdateProperties  # type: ignore
     from ._models import EncryptionProperty  # type: ignore
     from ._models import EncryptionUpdateProperties  # type: ignore
     from ._models import Endpoint  # type: ignore
     from ._models import EndpointAuthKeys  # type: ignore
     from ._models import EndpointAuthToken  # type: ignore
+    from ._models import EndpointDeploymentModel  # type: ignore
     from ._models import EndpointDeploymentPropertiesBase  # type: ignore
+    from ._models import EndpointDeploymentResourceProperties  # type: ignore
+    from ._models import EndpointDeploymentResourcePropertiesBasicResource  # type: ignore
+    from ._models import EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult  # type: ignore
+    from ._models import EndpointKeys  # type: ignore
+    from ._models import EndpointModelDeprecationProperties  # type: ignore
+    from ._models import EndpointModelProperties  # type: ignore
+    from ._models import EndpointModelSkuCapacityProperties  # type: ignore
+    from ._models import EndpointModelSkuProperties  # type: ignore
+    from ._models import EndpointModelSkuRateLimitProperties  # type: ignore
+    from ._models import EndpointModelSkuRateLimitRulePatternProperties  # type: ignore
+    from ._models import EndpointModelSkuRateLimitRuleProperties  # type: ignore
+    from ._models import EndpointModels  # type: ignore
     from ._models import EndpointPropertiesBase  # type: ignore
+    from ._models import EndpointResourceProperties  # type: ignore
+    from ._models import EndpointResourcePropertiesBasicResource  # type: ignore
+    from ._models import EndpointResourcePropertiesBasicResourceArmPaginatedResult  # type: ignore
     from ._models import EndpointScheduleAction  # type: ignore
     from ._models import EnvironmentContainer  # type: ignore
     from ._models import EnvironmentContainerProperties  # type: ignore
@@ -726,7 +803,7 @@ except (SyntaxError, ImportError):
     from ._models import FQDNEndpoint  # type: ignore
     from ._models import FQDNEndpointDetail  # type: ignore
     from ._models import FQDNEndpoints  # type: ignore
-    from ._models import FQDNEndpointsProperties  # type: ignore
+    from ._models import FQDNEndpointsPropertyBag  # type: ignore
     from ._models import Feature  # type: ignore
     from ._models import FeatureAttributionDriftMonitoringSignal  # type: ignore
     from ._models import FeatureAttributionMetricThreshold  # type: ignore
@@ -800,6 +877,8 @@ except (SyntaxError, ImportError):
     from ._models import JobResourceConfiguration  # type: ignore
     from ._models import JobScheduleAction  # type: ignore
     from ._models import JobService  # type: ignore
+    from ._models import JupyterKernelConfig  # type: ignore
+    from ._models import KeyVaultProperties  # type: ignore
     from ._models import Kubernetes  # type: ignore
     from ._models import KubernetesOnlineDeployment  # type: ignore
     from ._models import KubernetesProperties  # type: ignore
@@ -825,6 +904,10 @@ except (SyntaxError, ImportError):
     from ._models import ManagedNetworkProvisionStatus  # type: ignore
     from ._models import ManagedNetworkSettings  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
+    from ._models import ManagedOnlineEndpointDeploymentResourceProperties  # type: ignore
+    from ._models import ManagedOnlineEndpointResourceProperties  # type: ignore
+    from ._models import ManagedResourceGroupAssignedIdentities  # type: ignore
+    from ._models import ManagedResourceGroupSettings  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MarketplacePlan  # type: ignore
     from ._models import MarketplaceSubscription  # type: ignore
@@ -879,9 +962,12 @@ except (SyntaxError, ImportError):
     from ._models import OnlineEndpointTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import OpenAIEndpointDeploymentResourceProperties  # type: ignore
+    from ._models import OpenAIEndpointResourceProperties  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import OsPatchingStatus  # type: ignore
     from ._models import OutboundRule  # type: ignore
     from ._models import OutboundRuleBasicResource  # type: ignore
     from ._models import OutboundRuleListResult  # type: ignore
@@ -920,11 +1006,24 @@ except (SyntaxError, ImportError):
     from ._models import QueueSettings  # type: ignore
     from ._models import QuotaBaseProperties  # type: ignore
     from ._models import QuotaUpdateParameters  # type: ignore
+    from ._models import RaiBlocklistConfig  # type: ignore
+    from ._models import RaiBlocklistItemBulkRequest  # type: ignore
+    from ._models import RaiBlocklistItemProperties  # type: ignore
+    from ._models import RaiBlocklistItemPropertiesBasicResource  # type: ignore
+    from ._models import RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult  # type: ignore
+    from ._models import RaiBlocklistProperties  # type: ignore
+    from ._models import RaiBlocklistPropertiesBasicResource  # type: ignore
+    from ._models import RaiBlocklistPropertiesBasicResourceArmPaginatedResult  # type: ignore
+    from ._models import RaiPolicyContentFilter  # type: ignore
+    from ._models import RaiPolicyProperties  # type: ignore
+    from ._models import RaiPolicyPropertiesBasicResource  # type: ignore
+    from ._models import RaiPolicyPropertiesBasicResourceArmPaginatedResult  # type: ignore
     from ._models import RandomSamplingAlgorithm  # type: ignore
     from ._models import Recurrence  # type: ignore
     from ._models import RecurrenceSchedule  # type: ignore
     from ._models import RecurrenceTrigger  # type: ignore
     from ._models import RegenerateEndpointKeysRequest  # type: ignore
+    from ._models import RegenerateServiceAccountKeyContent  # type: ignore
     from ._models import Registry  # type: ignore
     from ._models import RegistryListCredentialsResult  # type: ignore
     from ._models import RegistryPartialManagedServiceIdentity  # type: ignore
@@ -935,6 +1034,7 @@ except (SyntaxError, ImportError):
     from ._models import Regression  # type: ignore
     from ._models import RegressionTrainingSettings  # type: ignore
     from ._models import RequestLogging  # type: ignore
+    from ._models import ResizeSchema  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceBase  # type: ignore
     from ._models import ResourceConfiguration  # type: ignore
@@ -962,9 +1062,15 @@ except (SyntaxError, ImportError):
     from ._models import SecretExpiry  # type: ignore
     from ._models import ServerlessComputeSettings  # type: ignore
     from ._models import ServerlessEndpoint  # type: ignore
+    from ._models import ServerlessEndpointCapacityReservation  # type: ignore
+    from ._models import ServerlessEndpointContentSafety  # type: ignore
+    from ._models import ServerlessEndpointInferenceEndpoint  # type: ignore
+    from ._models import ServerlessEndpointModelSettings  # type: ignore
     from ._models import ServerlessEndpointProperties  # type: ignore
+    from ._models import ServerlessEndpointResourceProperties  # type: ignore
     from ._models import ServerlessEndpointTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import ServerlessInferenceEndpoint  # type: ignore
+    from ._models import ServerlessOffer  # type: ignore
     from ._models import ServiceManagedResourcesSettings  # type: ignore
     from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
@@ -983,6 +1089,8 @@ except (SyntaxError, ImportError):
     from ._models import SparkJobPythonEntry  # type: ignore
     from ._models import SparkJobScalaEntry  # type: ignore
     from ._models import SparkResourceConfiguration  # type: ignore
+    from ._models import SpeechEndpointDeploymentResourceProperties  # type: ignore
+    from ._models import SpeechEndpointResourceProperties  # type: ignore
     from ._models import SslConfiguration  # type: ignore
     from ._models import StackEnsembleSettings  # type: ignore
     from ._models import StaticInputData  # type: ignore
@@ -1054,14 +1162,17 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult  # type: ignore
     from ._models import WorkspaceConnectionServicePrincipal  # type: ignore
     from ._models import WorkspaceConnectionSharedAccessSignature  # type: ignore
+    from ._models import WorkspaceConnectionUpdateParameter  # type: ignore
     from ._models import WorkspaceConnectionUsernamePassword  # type: ignore
     from ._models import WorkspaceHubConfig  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
+    from ._models import WorkspacePrivateEndpointResource  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
     ActionType,
     AllocationState,
+    AllowedContentLevel,
     ApplicationSharingPolicy,
     AssetProvisioningState,
     AutoRebuildSetting,
@@ -1098,6 +1209,8 @@ from ._azure_machine_learning_workspaces_enums import (
     DataReferenceCredentialType,
     DataType,
     DatastoreType,
+    DefaultResourceProvisioningState,
+    DeploymentModelVersionUpgradeOption,
     DeploymentProvisioningState,
     DiagnoseResultLevel,
     DistributionType,
@@ -1109,6 +1222,7 @@ from ._azure_machine_learning_workspaces_enums import (
     EndpointComputeType,
     EndpointProvisioningState,
     EndpointServiceConnectionStatus,
+    EndpointType,
     EnvironmentType,
     EnvironmentVariableType,
     FeatureAttributionMetric,
@@ -1137,10 +1251,14 @@ from ._azure_machine_learning_workspaces_enums import (
     LoadBalancerType,
     LogVerbosity,
     ManagedNetworkStatus,
+    ManagedPERequirement,
+    ManagedPEStatus,
     ManagedServiceIdentityType,
     MarketplaceSubscriptionProvisioningState,
     MarketplaceSubscriptionStatus,
     MaterializationStoreType,
+    MlflowAutologger,
+    ModelLifecycleStatus,
     ModelSize,
     ModelTaskType,
     MonitorComputeIdentityType,
@@ -1151,6 +1269,7 @@ from ._azure_machine_learning_workspaces_enums import (
     MonitoringNotificationType,
     MonitoringSignalType,
     MountAction,
+    MountMode,
     MountState,
     NCrossValidationsMode,
     Network,
@@ -1169,16 +1288,18 @@ from ._azure_machine_learning_workspaces_enums import (
     Origin,
     OsType,
     OutputDeliveryMode,
+    PatchStatus,
     PendingUploadCredentialType,
     PendingUploadType,
     PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
     Protocol,
     ProvisioningState,
     ProvisioningStatus,
-    PublicNetworkAccess,
     PublicNetworkAccessType,
     QuotaUnit,
+    RaiPolicyContentSource,
+    RaiPolicyMode,
+    RaiPolicyType,
     RandomSamplingAlgorithmRule,
     RecurrenceFrequency,
     ReferenceType,
@@ -1201,6 +1322,7 @@ from ._azure_machine_learning_workspaces_enums import (
     SecretsType,
     ServerlessEndpointState,
     ServerlessInferenceEndpointAuthMode,
+    ServiceAccountKeyName,
     ServiceDataAccessAuthIdentity,
     ShortSeriesHandlingConfiguration,
     SkuScaleType,
@@ -1225,7 +1347,6 @@ from ._azure_machine_learning_workspaces_enums import (
     VMPriceOSType,
     VMTier,
     ValidationMetricType,
-    ValueFormat,
     VmPriority,
     VolumeDefinitionType,
     WebhookType,
@@ -1238,6 +1359,7 @@ __all__ = [
     'AKSSchema',
     'AKSSchemaProperties',
     'AccessKeyAuthTypeWorkspaceConnectionProperties',
+    'AccountApiKeys',
     'AccountKeyAuthTypeWorkspaceConnectionProperties',
     'AccountKeyDatastoreCredentials',
     'AccountKeyDatastoreSecrets',
@@ -1294,6 +1416,7 @@ __all__ = [
     'BindOptions',
     'BlobReferenceForConsumptionDto',
     'BuildContext',
+    'CapacityConfig',
     'CategoricalDataDriftMetricThreshold',
     'CategoricalDataQualityMetricThreshold',
     'CategoricalPredictionDriftMetricThreshold',
@@ -1309,6 +1432,8 @@ __all__ = [
     'CodeVersion',
     'CodeVersionProperties',
     'CodeVersionResourceArmPaginatedResult',
+    'CognitiveServiceEndpointDeploymentResourceProperties',
+    'CognitiveServicesSku',
     'Collection',
     'ColumnTransformer',
     'CommandJob',
@@ -1322,6 +1447,7 @@ __all__ = [
     'Compute',
     'ComputeInstance',
     'ComputeInstanceApplication',
+    'ComputeInstanceAutologgerSettings',
     'ComputeInstanceConnectivityEndpoints',
     'ComputeInstanceContainer',
     'ComputeInstanceCreatedBy',
@@ -1343,6 +1469,8 @@ __all__ = [
     'ContainerResourceRequirements',
     'ContainerResourceSettings',
     'ContentSafety',
+    'ContentSafetyEndpointDeploymentResourceProperties',
+    'ContentSafetyEndpointResourceProperties',
     'CosmosDbSettings',
     'CreateMonitorAction',
     'Cron',
@@ -1400,15 +1528,30 @@ __all__ = [
     'Docker',
     'DockerCredential',
     'EarlyTerminationPolicy',
-    'EncryptionKeyVaultProperties',
     'EncryptionKeyVaultUpdateProperties',
     'EncryptionProperty',
     'EncryptionUpdateProperties',
     'Endpoint',
     'EndpointAuthKeys',
     'EndpointAuthToken',
+    'EndpointDeploymentModel',
     'EndpointDeploymentPropertiesBase',
+    'EndpointDeploymentResourceProperties',
+    'EndpointDeploymentResourcePropertiesBasicResource',
+    'EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult',
+    'EndpointKeys',
+    'EndpointModelDeprecationProperties',
+    'EndpointModelProperties',
+    'EndpointModelSkuCapacityProperties',
+    'EndpointModelSkuProperties',
+    'EndpointModelSkuRateLimitProperties',
+    'EndpointModelSkuRateLimitRulePatternProperties',
+    'EndpointModelSkuRateLimitRuleProperties',
+    'EndpointModels',
     'EndpointPropertiesBase',
+    'EndpointResourceProperties',
+    'EndpointResourcePropertiesBasicResource',
+    'EndpointResourcePropertiesBasicResourceArmPaginatedResult',
     'EndpointScheduleAction',
     'EnvironmentContainer',
     'EnvironmentContainerProperties',
@@ -1426,7 +1569,7 @@ __all__ = [
     'FQDNEndpoint',
     'FQDNEndpointDetail',
     'FQDNEndpoints',
-    'FQDNEndpointsProperties',
+    'FQDNEndpointsPropertyBag',
     'Feature',
     'FeatureAttributionDriftMonitoringSignal',
     'FeatureAttributionMetricThreshold',
@@ -1500,6 +1643,8 @@ __all__ = [
     'JobResourceConfiguration',
     'JobScheduleAction',
     'JobService',
+    'JupyterKernelConfig',
+    'KeyVaultProperties',
     'Kubernetes',
     'KubernetesOnlineDeployment',
     'KubernetesProperties',
@@ -1525,6 +1670,10 @@ __all__ = [
     'ManagedNetworkProvisionStatus',
     'ManagedNetworkSettings',
     'ManagedOnlineDeployment',
+    'ManagedOnlineEndpointDeploymentResourceProperties',
+    'ManagedOnlineEndpointResourceProperties',
+    'ManagedResourceGroupAssignedIdentities',
+    'ManagedResourceGroupSettings',
     'ManagedServiceIdentity',
     'MarketplacePlan',
     'MarketplaceSubscription',
@@ -1579,9 +1728,12 @@ __all__ = [
     'OnlineEndpointTrackedResourceArmPaginatedResult',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'OpenAIEndpointDeploymentResourceProperties',
+    'OpenAIEndpointResourceProperties',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'OsPatchingStatus',
     'OutboundRule',
     'OutboundRuleBasicResource',
     'OutboundRuleListResult',
@@ -1620,11 +1772,24 @@ __all__ = [
     'QueueSettings',
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
+    'RaiBlocklistConfig',
+    'RaiBlocklistItemBulkRequest',
+    'RaiBlocklistItemProperties',
+    'RaiBlocklistItemPropertiesBasicResource',
+    'RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult',
+    'RaiBlocklistProperties',
+    'RaiBlocklistPropertiesBasicResource',
+    'RaiBlocklistPropertiesBasicResourceArmPaginatedResult',
+    'RaiPolicyContentFilter',
+    'RaiPolicyProperties',
+    'RaiPolicyPropertiesBasicResource',
+    'RaiPolicyPropertiesBasicResourceArmPaginatedResult',
     'RandomSamplingAlgorithm',
     'Recurrence',
     'RecurrenceSchedule',
     'RecurrenceTrigger',
     'RegenerateEndpointKeysRequest',
+    'RegenerateServiceAccountKeyContent',
     'Registry',
     'RegistryListCredentialsResult',
     'RegistryPartialManagedServiceIdentity',
@@ -1635,6 +1800,7 @@ __all__ = [
     'Regression',
     'RegressionTrainingSettings',
     'RequestLogging',
+    'ResizeSchema',
     'Resource',
     'ResourceBase',
     'ResourceConfiguration',
@@ -1662,9 +1828,15 @@ __all__ = [
     'SecretExpiry',
     'ServerlessComputeSettings',
     'ServerlessEndpoint',
+    'ServerlessEndpointCapacityReservation',
+    'ServerlessEndpointContentSafety',
+    'ServerlessEndpointInferenceEndpoint',
+    'ServerlessEndpointModelSettings',
     'ServerlessEndpointProperties',
+    'ServerlessEndpointResourceProperties',
     'ServerlessEndpointTrackedResourceArmPaginatedResult',
     'ServerlessInferenceEndpoint',
+    'ServerlessOffer',
     'ServiceManagedResourcesSettings',
     'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
@@ -1683,6 +1855,8 @@ __all__ = [
     'SparkJobPythonEntry',
     'SparkJobScalaEntry',
     'SparkResourceConfiguration',
+    'SpeechEndpointDeploymentResourceProperties',
+    'SpeechEndpointResourceProperties',
     'SslConfiguration',
     'StackEnsembleSettings',
     'StaticInputData',
@@ -1754,12 +1928,15 @@ __all__ = [
     'WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult',
     'WorkspaceConnectionServicePrincipal',
     'WorkspaceConnectionSharedAccessSignature',
+    'WorkspaceConnectionUpdateParameter',
     'WorkspaceConnectionUsernamePassword',
     'WorkspaceHubConfig',
     'WorkspaceListResult',
+    'WorkspacePrivateEndpointResource',
     'WorkspaceUpdateParameters',
     'ActionType',
     'AllocationState',
+    'AllowedContentLevel',
     'ApplicationSharingPolicy',
     'AssetProvisioningState',
     'AutoRebuildSetting',
@@ -1796,6 +1973,8 @@ __all__ = [
     'DataReferenceCredentialType',
     'DataType',
     'DatastoreType',
+    'DefaultResourceProvisioningState',
+    'DeploymentModelVersionUpgradeOption',
     'DeploymentProvisioningState',
     'DiagnoseResultLevel',
     'DistributionType',
@@ -1807,6 +1986,7 @@ __all__ = [
     'EndpointComputeType',
     'EndpointProvisioningState',
     'EndpointServiceConnectionStatus',
+    'EndpointType',
     'EnvironmentType',
     'EnvironmentVariableType',
     'FeatureAttributionMetric',
@@ -1835,10 +2015,14 @@ __all__ = [
     'LoadBalancerType',
     'LogVerbosity',
     'ManagedNetworkStatus',
+    'ManagedPERequirement',
+    'ManagedPEStatus',
     'ManagedServiceIdentityType',
     'MarketplaceSubscriptionProvisioningState',
     'MarketplaceSubscriptionStatus',
     'MaterializationStoreType',
+    'MlflowAutologger',
+    'ModelLifecycleStatus',
     'ModelSize',
     'ModelTaskType',
     'MonitorComputeIdentityType',
@@ -1849,6 +2033,7 @@ __all__ = [
     'MonitoringNotificationType',
     'MonitoringSignalType',
     'MountAction',
+    'MountMode',
     'MountState',
     'NCrossValidationsMode',
     'Network',
@@ -1867,16 +2052,18 @@ __all__ = [
     'Origin',
     'OsType',
     'OutputDeliveryMode',
+    'PatchStatus',
     'PendingUploadCredentialType',
     'PendingUploadType',
     'PrivateEndpointConnectionProvisioningState',
-    'PrivateEndpointServiceConnectionStatus',
     'Protocol',
     'ProvisioningState',
     'ProvisioningStatus',
-    'PublicNetworkAccess',
     'PublicNetworkAccessType',
     'QuotaUnit',
+    'RaiPolicyContentSource',
+    'RaiPolicyMode',
+    'RaiPolicyType',
     'RandomSamplingAlgorithmRule',
     'RecurrenceFrequency',
     'ReferenceType',
@@ -1899,6 +2086,7 @@ __all__ = [
     'SecretsType',
     'ServerlessEndpointState',
     'ServerlessInferenceEndpointAuthMode',
+    'ServiceAccountKeyName',
     'ServiceDataAccessAuthIdentity',
     'ShortSeriesHandlingConfiguration',
     'SkuScaleType',
@@ -1923,7 +2111,6 @@ __all__ = [
     'VMPriceOSType',
     'VMTier',
     'ValidationMetricType',
-    'ValueFormat',
     'VmPriority',
     'VolumeDefinitionType',
     'WebhookType',

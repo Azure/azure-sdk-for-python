@@ -28,6 +28,14 @@ class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STEADY = "Steady"
     RESIZING = "Resizing"
 
+class AllowedContentLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Level at which content is filtered.
+    """
+
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
 class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
     Personal, only the creator can access applications on this compute instance. When Shared, any
@@ -286,6 +294,7 @@ class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     RUNNING = "Running"
     RESTARTING = "Restarting"
+    RESIZING = "Resizing"
     JOB_RUNNING = "JobRunning"
     SETTING_UP = "SettingUp"
     SETUP_FAILED = "SetupFailed"
@@ -298,7 +307,7 @@ class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNUSABLE = "Unusable"
 
 class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The compute power action.
+    """[Required] The compute power action.
     """
 
     START = "Start"
@@ -320,8 +329,6 @@ class ComputeRecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, En
     MONTH = "Month"
 
 class ComputeTriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Is the trigger type recurrence or cron.
-    """
 
     RECURRENCE = "Recurrence"
     CRON = "Cron"
@@ -394,6 +401,7 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REDIS = "Redis"
     API_KEY = "ApiKey"
     AZURE_OPEN_AI = "AzureOpenAI"
+    AI_SERVICES = "AIServices"
     COGNITIVE_SEARCH = "CognitiveSearch"
     COGNITIVE_SERVICE = "CognitiveService"
     CUSTOM_KEYS = "CustomKeys"
@@ -482,7 +490,6 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERP = "Serp"
     BING_LLM_SEARCH = "BingLLMSearch"
     SERVERLESS = "Serverless"
-    AI_SERVICES = "AIServices"
 
 class ConnectionGroup(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Group based on connection category
@@ -565,6 +572,27 @@ class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI_FILE = "uri_file"
     URI_FOLDER = "uri_folder"
     MLTABLE = "mltable"
+
+class DefaultResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOT_STARTED = "NotStarted"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    SCALING = "Scaling"
+    DISABLED = "Disabled"
+
+class DeploymentModelVersionUpgradeOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Deployment model version upgrade option.
+    """
+
+    ONCE_NEW_DEFAULT_VERSION_AVAILABLE = "OnceNewDefaultVersionAvailable"
+    ONCE_CURRENT_VERSION_EXPIRED = "OnceCurrentVersionExpired"
+    NO_AUTO_UPGRADE = "NoAutoUpgrade"
 
 class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Possible values for DeploymentProvisioningState.
@@ -658,6 +686,18 @@ class EndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, st
     PENDING = "Pending"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
+    TIMEOUT = "Timeout"
+
+class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of the endpoint.
+    """
+
+    AZURE_OPEN_AI = "Azure.OpenAI"
+    AZURE_SPEECH = "Azure.Speech"
+    AZURE_CONTENT_SAFETY = "Azure.ContentSafety"
+    AZURE_LLAMA = "Azure.Llama"
+    MANAGED_ONLINE_ENDPOINT = "managedOnlineEndpoint"
+    SERVERLESS_ENDPOINT = "serverlessEndpoint"
 
 class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Environment type is either user created or curated by Azure ML service
@@ -791,8 +831,8 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: It's an inexact but powerful technique.
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the “bagging”
-    #: method.
+    #: The "forest"\\   it builds, is an ensemble of decision trees, usually trained with the
+    #: “bagging”\\   method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -838,7 +878,7 @@ class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
 
 class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the image. Possible values are: docker - For docker images. azureml - For AzureML
-    images
+    Environment images (custom and curated)
     """
 
     DOCKER = "docker"
@@ -1010,6 +1050,18 @@ class ManagedNetworkStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INACTIVE = "Inactive"
     ACTIVE = "Active"
 
+class ManagedPERequirement(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    REQUIRED = "Required"
+    NOT_REQUIRED = "NotRequired"
+    NOT_APPLICABLE = "NotApplicable"
+
+class ManagedPEStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+    NOT_APPLICABLE = "NotApplicable"
+
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -1053,6 +1105,20 @@ class MaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     ONLINE = "Online"
     OFFLINE = "Offline"
     ONLINE_AND_OFFLINE = "OnlineAndOffline"
+
+class MlflowAutologger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether mlflow autologger is enabled for notebooks.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class ModelLifecycleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Model lifecycle status.
+    """
+
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+    PREVIEW = "Preview"
 
 class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Image model size.
@@ -1146,6 +1212,13 @@ class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MOUNT = "Mount"
     UNMOUNT = "Unmount"
+
+class MountMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Mount Mode.
+    """
+
+    READ_ONLY = "ReadOnly"
+    READ_WRITE = "ReadWrite"
 
 class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Mount state.
@@ -1253,6 +1326,7 @@ class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     START = "Start"
     STOP = "Stop"
     RESTART = "Restart"
+    RESIZE = "Resize"
     REIMAGE = "Reimage"
     DELETE = "Delete"
 
@@ -1266,6 +1340,7 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     START_FAILED = "StartFailed"
     STOP_FAILED = "StopFailed"
     RESTART_FAILED = "RestartFailed"
+    RESIZE_FAILED = "ResizeFailed"
     REIMAGE_FAILED = "ReimageFailed"
     DELETE_FAILED = "DeleteFailed"
 
@@ -1308,6 +1383,16 @@ class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPLOAD = "Upload"
     DIRECT = "Direct"
 
+class PatchStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The os patching status.
+    """
+
+    COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    UNKNOWN = "Unknown"
+
 class PendingUploadCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the PendingUpload credentials type.
     """
@@ -1330,16 +1415,6 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
-
-    PENDING = "Pending"
-    APPROVED = "Approved"
-    REJECTED = "Rejected"
-    DISCONNECTED = "Disconnected"
-    TIMEOUT = "Timeout"
-
 class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol over which communication will happen over this endpoint
     """
@@ -1349,8 +1424,8 @@ class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "http"
 
 class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of workspace resource. The provisioningState is to indicate states
-    for resource provisioning.
+    """The provision state of the cluster. Valid values are Unknown, Updating, Provisioning,
+    Succeeded, and Failed.
     """
 
     UNKNOWN = "Unknown"
@@ -1369,13 +1444,6 @@ class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether requests from Public Network are allowed.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
 class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine whether PublicNetworkAccess is Enabled or Disabled.
     """
@@ -1388,6 +1456,28 @@ class QuotaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     COUNT = "Count"
+
+class RaiPolicyContentSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Content source to apply the Content Filters.
+    """
+
+    PROMPT = "Prompt"
+    COMPLETION = "Completion"
+
+class RaiPolicyMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Content Filters mode.
+    """
+
+    DEFAULT = "Default"
+    DEFERRED = "Deferred"
+    BLOCKING = "Blocking"
+
+class RaiPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Content Filters policy type.
+    """
+
+    USER_MANAGED = "UserManaged"
+    SYSTEM_MANAGED = "SystemManaged"
 
 class RandomSamplingAlgorithmRule(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The specific type of random algorithm
@@ -1613,6 +1703,11 @@ class ServerlessEndpointState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
 class ServerlessInferenceEndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     KEY = "Key"
+
+class ServiceAccountKeyName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY1 = "Key1"
+    KEY2 = "Key2"
 
 class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -1859,12 +1954,6 @@ class ValidationMetricType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VOC = "Voc"
     #: CocoVoc metric.
     COCO_VOC = "CocoVoc"
-
-class ValueFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """format for the workspace connection value
-    """
-
-    JSON = "JSON"
 
 class VMPriceOSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operating system type used by the VM.

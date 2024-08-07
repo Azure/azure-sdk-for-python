@@ -35,6 +35,8 @@ def build_list_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     workspace_name,  # type: str
+    connection_name,  # type: str
+    rai_blocklist_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -42,11 +44,13 @@ def build_list_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/connections/{connectionName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "connectionName": _SERIALIZER.url("connection_name", connection_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "raiBlocklistName": _SERIALIZER.url("rai_blocklist_name", rai_blocklist_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -68,8 +72,8 @@ def build_list_request(
     )
 
 # fmt: on
-class PrivateLinkResourcesOperations(object):
-    """PrivateLinkResourcesOperations operations.
+class ConnectionRaiBlocklistItemsOperations(object):
+    """ConnectionRaiBlocklistItemsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -95,39 +99,33 @@ class PrivateLinkResourcesOperations(object):
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
+        connection_name,  # type: str
+        rai_blocklist_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
-        """Called by Client (Portal, CLI, etc) to get available "private link resources" for the
-        workspace.
-        Each "private link resource" is a connection endpoint (IP address) to the resource.
-        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
-        resolution.
-        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
-        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
+        # type: (...) -> Iterable["_models.RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult"]
+        """Gets the custom blocklist items associated with the Azure OpenAI connection.
 
-        Called by Client (Portal, CLI, etc) to get available "private link resources" for the
-        workspace.
-        Each "private link resource" is a connection endpoint (IP address) to the resource.
-        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
-        resolution.
-        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
-        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
+        Gets the custom blocklist items associated with the Azure OpenAI connection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
+        :param connection_name: Friendly name of the workspace connection.
+        :type connection_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist.
+        :type rai_blocklist_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of
-         cls(response)
+        :return: An iterator like instance of either
+         RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -139,6 +137,8 @@ class PrivateLinkResourcesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    connection_name=connection_name,
+                    rai_blocklist_name=rai_blocklist_name,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -151,6 +151,8 @@ class PrivateLinkResourcesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    connection_name=connection_name,
+                    rai_blocklist_name=rai_blocklist_name,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -160,11 +162,11 @@ class PrivateLinkResourcesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateLinkResourceListResult", pipeline_response)
+            deserialized = self._deserialize("RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -187,4 +189,4 @@ class PrivateLinkResourcesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/connections/{connectionName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems"}  # type: ignore
