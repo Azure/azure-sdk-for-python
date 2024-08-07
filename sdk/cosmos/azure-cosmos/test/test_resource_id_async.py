@@ -17,6 +17,8 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
+    is_emulator = configs.is_emulator
+    credential = configs.credential_async
     last_headers = []
     client: CosmosClient = None
     created_database: DatabaseProxy = None
@@ -31,7 +33,8 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
 
     async def asyncTearDown(self):
         await self.client.close()

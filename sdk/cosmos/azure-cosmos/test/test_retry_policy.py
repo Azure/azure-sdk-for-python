@@ -48,7 +48,10 @@ class TestRetryPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
+                                                connection_policy=cls.connectionPolicy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential,
+                                                                           consistency_level="Session",
+                                                                           connection_policy=cls.connectionPolicy)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.retry_after_in_milliseconds = 1000
 

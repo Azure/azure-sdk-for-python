@@ -13,9 +13,12 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
+    configs = test_config.TestConfig
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
+    is_emulator = configs.is_emulator
+    credential = configs.credential_async
 
     client: CosmosClient = None
     created_database: DatabaseProxy = None
@@ -32,7 +35,8 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.test_db = await self.client.create_database(str(uuid.uuid4()))
 

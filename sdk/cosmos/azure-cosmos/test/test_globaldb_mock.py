@@ -175,7 +175,11 @@ class TestGlobalDBMock(unittest.TestCase):
         write_location_client = cosmos_client.CosmosClient(TestGlobalDBMock.write_location_host,
                                                            TestGlobalDBMock.masterKey,
                                                            consistency_level="Session",
-                                                           connection_policy=connection_policy)
+                                                           connection_policy=connection_policy) if \
+            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(TestGlobalDBMock.write_location_host,
+                                                                               test_config.TestConfig.credential,
+                                                                               consistency_level="Session",
+                                                                               connection_policy=connection_policy)
         self.assertEqual(write_location_client.client_connection.WriteEndpoint,
                          TestGlobalDBMock.write_location_host)
 
@@ -187,7 +191,11 @@ class TestGlobalDBMock(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = True
 
         client = cosmos_client.CosmosClient(TestGlobalDBMock.host, TestGlobalDBMock.masterKey,
-                                            consistency_level="Session", connection_policy=connection_policy)
+                                            consistency_level="Session", connection_policy=connection_policy) if \
+            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(TestGlobalDBMock.host,
+                                                                               test_config.TestConfig.credential,
+                                                                               consistency_level="Session",
+                                                                               connection_policy=connection_policy)
 
         self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDBMock.write_location_host)
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDBMock.write_location_host)

@@ -26,6 +26,8 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
+    is_emulator = configs.is_emulator
+    credential = configs.credential_async
     connectionPolicy = configs.connectionPolicy
     database_for_test: DatabaseProxy = None
 
@@ -39,7 +41,8 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
         self.databaseForTest = await self.client.create_database_if_not_exists(self.configs.TEST_DATABASE_ID)
 
     async def tearDown(self):

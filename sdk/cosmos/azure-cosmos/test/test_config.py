@@ -4,6 +4,7 @@
 import collections
 import os
 import uuid
+from typing import Union
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -12,6 +13,8 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from devtools_testutils.azure_recorded_testcase import get_credential
+from azure.identity import DefaultAzureCredential
 
 try:
     import urllib3
@@ -27,7 +30,9 @@ class TestConfig(object):
                           'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
     host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
-
+    credential = get_credential()
+    credential_async = get_credential(is_async=True)
+    is_emulator = host == 'https://localhost:8081/'
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
 
@@ -178,6 +183,7 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
             }
         ]
     }
+
 
 class FakeResponse:
     def __init__(self, headers):
