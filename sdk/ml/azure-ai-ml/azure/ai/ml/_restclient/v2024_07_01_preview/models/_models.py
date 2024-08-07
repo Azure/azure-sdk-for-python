@@ -19040,6 +19040,58 @@ class ManagedOnlineEndpointResourceProperties(EndpointResourceProperties):
         self.traffic = kwargs.get('traffic', None)
 
 
+class ManagedResourceGroupAssignedIdentities(msrest.serialization.Model):
+    """Details for managed resource group assigned identities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Identity principal Id.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ManagedResourceGroupAssignedIdentities, self).__init__(**kwargs)
+        self.principal_id = None
+
+
+class ManagedResourceGroupSettings(msrest.serialization.Model):
+    """Managed resource group settings.
+
+    :ivar assigned_identities: List of assigned identities for the managed resource group.
+    :vartype assigned_identities:
+     list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+    """
+
+    _attribute_map = {
+        'assigned_identities': {'key': 'assignedIdentities', 'type': '[ManagedResourceGroupAssignedIdentities]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword assigned_identities: List of assigned identities for the managed resource group.
+        :paramtype assigned_identities:
+         list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+        """
+        super(ManagedResourceGroupSettings, self).__init__(**kwargs)
+        self.assigned_identities = kwargs.get('assigned_identities', None)
+
+
 class ManagedServiceIdentity(msrest.serialization.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -24196,6 +24248,9 @@ class Registry(TrackedResource):
     :ivar managed_resource_group: ResourceId of the managed RG if the registry has system created
      resources.
     :vartype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+    :ivar managed_resource_group_settings: Managed resource group specific settings.
+    :vartype managed_resource_group_settings:
+     ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
     :ivar ml_flow_registry_uri: MLFlow Registry URI for the Registry.
     :vartype ml_flow_registry_uri: str
     :ivar registry_private_endpoint_connections: Private endpoint connections info used for pending
@@ -24231,6 +24286,7 @@ class Registry(TrackedResource):
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'intellectual_property_publisher': {'key': 'properties.intellectualPropertyPublisher', 'type': 'str'},
         'managed_resource_group': {'key': 'properties.managedResourceGroup', 'type': 'ArmResourceId'},
+        'managed_resource_group_settings': {'key': 'properties.managedResourceGroupSettings', 'type': 'ManagedResourceGroupSettings'},
         'ml_flow_registry_uri': {'key': 'properties.mlFlowRegistryUri', 'type': 'str'},
         'registry_private_endpoint_connections': {'key': 'properties.registryPrivateEndpointConnections', 'type': '[RegistryPrivateEndpointConnection]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
@@ -24260,6 +24316,9 @@ class Registry(TrackedResource):
         :keyword managed_resource_group: ResourceId of the managed RG if the registry has system
          created resources.
         :paramtype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+        :keyword managed_resource_group_settings: Managed resource group specific settings.
+        :paramtype managed_resource_group_settings:
+         ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
         :keyword ml_flow_registry_uri: MLFlow Registry URI for the Registry.
         :paramtype ml_flow_registry_uri: str
         :keyword registry_private_endpoint_connections: Private endpoint connections info used for
@@ -24280,6 +24339,7 @@ class Registry(TrackedResource):
         self.discovery_url = kwargs.get('discovery_url', None)
         self.intellectual_property_publisher = kwargs.get('intellectual_property_publisher', None)
         self.managed_resource_group = kwargs.get('managed_resource_group', None)
+        self.managed_resource_group_settings = kwargs.get('managed_resource_group_settings', None)
         self.ml_flow_registry_uri = kwargs.get('ml_flow_registry_uri', None)
         self.registry_private_endpoint_connections = kwargs.get('registry_private_endpoint_connections', None)
         self.public_network_access = kwargs.get('public_network_access', None)

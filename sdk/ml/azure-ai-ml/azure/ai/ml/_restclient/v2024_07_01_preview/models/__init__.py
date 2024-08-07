@@ -325,6 +325,8 @@ try:
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedOnlineEndpointDeploymentResourceProperties
     from ._models_py3 import ManagedOnlineEndpointResourceProperties
+    from ._models_py3 import ManagedResourceGroupAssignedIdentities
+    from ._models_py3 import ManagedResourceGroupSettings
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MarketplacePlan
     from ._models_py3 import MarketplaceSubscription
@@ -904,6 +906,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedOnlineEndpointDeploymentResourceProperties  # type: ignore
     from ._models import ManagedOnlineEndpointResourceProperties  # type: ignore
+    from ._models import ManagedResourceGroupAssignedIdentities  # type: ignore
+    from ._models import ManagedResourceGroupSettings  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MarketplacePlan  # type: ignore
     from ._models import MarketplaceSubscription  # type: ignore
@@ -1668,6 +1672,8 @@ __all__ = [
     'ManagedOnlineDeployment',
     'ManagedOnlineEndpointDeploymentResourceProperties',
     'ManagedOnlineEndpointResourceProperties',
+    'ManagedResourceGroupAssignedIdentities',
+    'ManagedResourceGroupSettings',
     'ManagedServiceIdentity',
     'MarketplacePlan',
     'MarketplaceSubscription',
