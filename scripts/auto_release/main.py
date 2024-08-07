@@ -425,14 +425,14 @@ class CodegenTestPR:
                 _LOG.info("create pyproject.toml")
 
         def edit_toml(content: List[str]):
-            has_break = False
+            has_breaking = False
             for line in content:
-                if "break = false" in line:
-                    has_break = True
+                if "breaking = false" in line:
+                    has_breaking = True
                     break
-            if not has_break:
-                _LOG.info("add break = false to pyproject.toml")
-                content.append("break = false\n")
+            if not has_breaking:
+                _LOG.info("add breaking = false to pyproject.toml")
+                content.append("breaking = false\n")
 
         modify_file(str(toml), edit_toml)
 
