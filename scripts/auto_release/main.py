@@ -414,6 +414,28 @@ class CodegenTestPR:
                     issue.create_comment(f"@{assignee}, {message}")
                     raise Exception(message)
 
+    @return_origin_path
+    def check_pyproject_toml(self):
+        os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
+        # add `breaking = false` in pyproject.toml
+        toml = Path("pyproject.toml")
+        if not toml.exists():
+            with open(toml, "w") as file:
+                file.write("[tool.azure-sdk-build]\nbreaking = false\n")
+                _LOG.info("create pyproject.toml")
+
+        def edit_toml(content: List[str]):
+            has_break = False
+            for line in content:
+                if "break = false" in line:
+                    has_break = True
+                    break
+            if not has_break:
+                _LOG.info("add break = false to pyproject.toml")
+                content.append("break = false\n")
+
+        modify_file(str(toml), edit_toml)
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -423,6 +445,7 @@ class CodegenTestPR:
         self.check_dev_requirement()
         self.check_package_size()
         self.check_model_flatten()
+        self.check_pyproject_toml()
 
     def sdk_code_path(self) -> str:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
@@ -491,7 +514,7 @@ class CodegenTestPR:
         self.prepare_test_env()
         self.run_test_proc()
         self.clean_test_env()
-        self.upload_recording_files()
+        # self.upload_recording_files()
 
     def create_pr_proc(self):
         api = GhApi(owner="Azure", repo="azure-sdk-for-python", token=self.bot_token)
@@ -502,7 +525,6 @@ class CodegenTestPR:
         pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
-        pr_body += "\nSkip.BreakingChanges\ntrue"
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR
