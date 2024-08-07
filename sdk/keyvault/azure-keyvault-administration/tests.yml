@@ -12,7 +12,7 @@ extends:
       # Since we don't use HSMs in USGov or China clouds, just run Admin tests in Public.
       CloudConfig:
         Public:
-          Location: 'brazilsouth'
+          Location: 'westus2'
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:

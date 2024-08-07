@@ -11,7 +11,7 @@ extends:
       UseFederatedAuth: true
       CloudConfig:
         Public:
-          Location: 'brazilsouth'
+          Location: 'westus2'
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
