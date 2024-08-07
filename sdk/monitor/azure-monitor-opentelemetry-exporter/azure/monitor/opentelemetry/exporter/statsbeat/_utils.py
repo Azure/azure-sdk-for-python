@@ -11,6 +11,12 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
     _EU_ENDPOINTS,
+    _REQ_DURATION_NAME,
+    _REQ_SUCCESS_NAME,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP_LOCK,
+    _REQUESTS_MAP,
 )
 
 
@@ -45,3 +51,19 @@ def _get_stats_long_export_interval() -> int:
         except ValueError:
             return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
     return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
+
+
+def _update_requests_map(type_name, value=None):
+    # value is either None, duration, status_code or exc_name
+    with _REQUESTS_MAP_LOCK:
+        if type_name in (_REQ_SUCCESS_NAME[1], "count"):  # success, count
+            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
+        elif type_name == _REQ_DURATION_NAME[1]:  # duration
+            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + value
+        else:  # exception, failure, retry, throttle
+            prev = 0
+            if _REQUESTS_MAP.get(type_name):
+                prev = _REQUESTS_MAP.get(type_name).get(value, 0)
+            else:
+                _REQUESTS_MAP[type_name] = {}
+            _REQUESTS_MAP[type_name][value] = prev + 1
