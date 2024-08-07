@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch, call
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
 
+
 class MockClient:
 
     def __init__(self, endpoint, connection_string, credential, retry_total, retry_backoff):
@@ -188,10 +189,16 @@ class TestConfigurationClientManager(unittest.TestCase):
     def test_refresh_clients_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
-        mock_client.return_value = MockClient("https://fake.endpoint",  "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0)
+        mock_client.return_value = MockClient(
+            "https://fake.endpoint", "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0
+        )
         mock_find_auto_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager("Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret" , endpoint, None, "", 0, 0, True, 0, 0)
-        manager_disabled_refresh = ConfigurationClientManager( "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0
+        )
+        manager_disabled_refresh = ConfigurationClientManager(
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, False, 0, 0
+        )
 
         # Reset the mocks as they are called during initialization
         mock_find_auto_failover_endpoints.reset_mock()
@@ -225,12 +232,16 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
-        mock_client.return_value = MockClient("https://fake.endpoint2", "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0)
+        mock_client.return_value = MockClient(
+            "https://fake.endpoint2", "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0
+        )
         manager._next_update_time = 0
         manager.refresh_clients()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
-        mock_client.assert_called_once_with("https://fake.endpoint2", "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret", "", 0, 0)
+        mock_client.assert_called_once_with(
+            "https://fake.endpoint2", "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret", "", 0, 0
+        )
 
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()
@@ -248,12 +259,16 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # An additional auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
-        mock_client.return_value = MockClient("https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", None, 0, 0)
+        mock_client.return_value = MockClient(
+            "https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", None, 0, 0
+        )
         manager._next_update_time = 0
         manager.refresh_clients()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 3
-        mock_client.assert_called_once_with("https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", "", 0, 0)
+        mock_client.assert_called_once_with(
+            "https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", "", 0, 0
+        )
 
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()

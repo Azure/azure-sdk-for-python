@@ -378,10 +378,6 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._replica_clients = new_clients
         self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL
 
-    def set_clients(self, replica_clients: List[ConfigurationClientWrapper]):
-        self._replica_clients.clear()
-        self._replica_clients.extend(replica_clients)
-
     def get_active_clients(self):
         active_clients = []
         for client in self._replica_clients:
