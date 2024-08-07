@@ -131,7 +131,7 @@ class WorkspaceConnection(Resource):
     ):
 
         # Dev note: This initializer has an undocumented kwarg "from_child" to determine if this initialization
-        # is from a child class.
+        # is from a child class.Ok
         # This kwarg is required to allow instantiation of types that are associated with subtypes without a
         # warning printout.
         # The additional undocumented kwarg "strict_typing" turns the warning into a value error.
