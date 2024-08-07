@@ -386,7 +386,10 @@ def main(generate_input, generate_output):
     # remove duplicates
     for value in result.values():
         value["path"] = list(set(value["path"]))
-        value[spec_word] = list(set(value[spec_word]))
+        if value.get("typespecProject"):
+            value["typespecProject"] = list(set(value["typespecProject"]))
+        if value.get("readmeMd"):
+            value["readmeMd"] = list(set(value["readmeMd"]))
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
