@@ -2060,7 +2060,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 if uamqp_transport:
                     receiver._handler.message_handler.destroy()
                 else:
-                    receiver._handler._link.detach(close=True)
+                    receiver._handler._close_link()
                 assert len(messages) == 1
                 receiver.complete_message(messages[0])
 

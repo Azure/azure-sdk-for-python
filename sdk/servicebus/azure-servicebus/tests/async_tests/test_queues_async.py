@@ -1827,7 +1827,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 if uamqp_transport:
                     await receiver._handler.message_handler.destroy_async()
                 else:
-                    await receiver._handler._link.detach(close=True)
+                    await receiver._handler._close_link()
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
