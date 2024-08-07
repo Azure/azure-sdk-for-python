@@ -432,8 +432,7 @@ class TestGlobalDB(unittest.TestCase):
         )
         mock_connection_policy.ConnectionRetryConfiguration = mock_retry_policy
         try:
-            client = cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
-            client.get_database_client("test_db").read()
+            cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
         except ServiceRequestError:
             assert mock_retry_policy.count == 3
 
