@@ -30,9 +30,10 @@ def main():
         subscription_id="4adb32ad-8327-4cbb-b775-b84b4465bb38",
     )
 
-    response = client.resource_health_metadata.list_by_site(
+    response = client.resource_health_metadata.list_by_site_slot(
         resource_group_name="Default-Web-NorthCentralUS",
         name="newsiteinnewASE-NCUS",
+        slot="Production",
     )
     for item in response:
         print(item)
