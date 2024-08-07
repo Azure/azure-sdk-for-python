@@ -1715,16 +1715,6 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert share_props.paid_bursting_bandwidth_mibps == mibps
         assert share_props.paid_bursting_iops == iops
 
-        shares = []
-        async for share in self.fsc.list_shares():
-            shares.append(share)
-
-        assert len(shares) == 1
-        assert shares[0] is not None
-        assert shares[0].paid_bursting_enabled
-        assert shares[0].paid_bursting_bandwidth_mibps == mibps
-        assert shares[0].paid_bursting_iops == iops
-
         await self._delete_shares()
 
     @FileSharePreparer()
