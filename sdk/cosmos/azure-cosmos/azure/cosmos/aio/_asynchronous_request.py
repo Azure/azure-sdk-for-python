@@ -31,7 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
-from .._synchronized_request import _request_body_from_data
+from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
@@ -65,11 +65,14 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
-        base_url = request_params.endpoint_override
+        if request_params.location_endpoint_to_route:
+            base_url = request_params.location_endpoint_to_route
+        else:
+            base_url = request_params.endpoint_override
     else:
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
-    if base_url != pipeline_client._base_url:
-        request.url = request.url.replace(pipeline_client._base_url, base_url)
+    if base_url != request.url:
+        request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
 

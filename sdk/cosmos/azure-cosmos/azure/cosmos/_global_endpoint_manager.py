@@ -89,29 +89,29 @@ class _GlobalEndpointManager(object):
         self.refresh_endpoint_list(database_account)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
-        with self.refresh_lock:
-            # if refresh is not needed or refresh is already taking place, return
-            if not self.refresh_needed:
-                return
-            try:
-                self._refresh_endpoint_list_private(database_account, **kwargs)
-            except Exception as e:
-                raise e
+        if self.refresh_needed:
+            with self.refresh_lock:
+                # if refresh is not needed or refresh is already taking place, return
+                if not self.refresh_needed:
+                    return
+                try:
+                    self._refresh_endpoint_list_private(database_account, **kwargs)
+                except Exception as e:
+                    raise e
 
     def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
+        self.refresh_needed = False
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
-            self.refresh_needed = False
-
-        if (
-            self.location_cache.should_refresh_endpoints()
-            and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
-        ):
-            if not database_account:
+        else:
+            if (
+                self.location_cache.should_refresh_endpoints()
+                and
+                self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
+            ):
                 database_account = self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                self.refresh_needed = False
 
     def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
