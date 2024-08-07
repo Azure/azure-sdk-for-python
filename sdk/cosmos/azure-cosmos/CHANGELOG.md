@@ -3,7 +3,7 @@
 ### 4.7.1 (Unreleased)
 
 #### Features Added
-* SDK will now retry all ServiceRequestErrors (failing outgoing requests) three times before failing. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
+* SDK will now retry all ServiceRequestErrors (failing outgoing requests) before failing. Default number of retries is 3. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
 * Added Retry Policy for Container Recreate in the Python SDK. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Bugs Fixed
