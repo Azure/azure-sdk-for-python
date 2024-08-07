@@ -341,8 +341,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             return
 
-        new_clients = []
-        new_clients.append(self._replica_clients[0])  # Keep the original client
+        new_clients = [self._replica_clients[0]]  # Keep the original client
         for failover_endpoint in failover_endpoints:
             found_client = False
             for client in self._replica_clients:
@@ -355,7 +354,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     failover_connection_string = self._original_connection_string.replace(
                         self._original_endpoint, failover_endpoint
                     )
-                    self._replica_clients.append(
+                    new_clients.append(
                         ConfigurationClientWrapper.from_connection_string(
                             failover_endpoint,
                             failover_connection_string,
@@ -366,7 +365,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                         )
                     )
                 else:
-                    self._replica_clients.append(
+                    new_clients.append(
                         ConfigurationClientWrapper.from_credential(
                             failover_endpoint,
                             self._credential,
