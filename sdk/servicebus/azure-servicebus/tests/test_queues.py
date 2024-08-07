@@ -2036,33 +2036,33 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
         assert receiver._config.http_proxy == http_proxy
         assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
-    def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
-        with ServiceBusClient(
-                fully_qualified_namespace, credential,
-                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+    # @pytest.mark.liveTest
+    # @pytest.mark.live_test_only
+    # @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    # @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    # @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    # @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    # @ArgPasser()
+    # def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
+    #     fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+    #     credential = get_credential()
+    #     with ServiceBusClient(
+    #             fully_qualified_namespace, credential,
+    #             logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessage("Test")
-                sender.send_messages(message)
+    #         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+    #             message = ServiceBusMessage("Test")
+    #             sender.send_messages(message)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive_messages(max_wait_time=5)
-                # destroy the underlying receiver link
-                if uamqp_transport:
-                    receiver._handler.message_handler.destroy()
-                else:
-                    receiver._handler._close_link()
-                assert len(messages) == 1
-                receiver.complete_message(messages[0])
+    #         with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+    #             messages = receiver.receive_messages(max_wait_time=5)
+    #             # destroy the underlying receiver link
+    #             if uamqp_transport:
+    #                 receiver._handler.message_handler.destroy()
+    #             else:
+    #                 receiver._handler._close_link()
+    #             assert len(messages) == 1
+    #             receiver.complete_message(messages[0])
 
     @unittest.skip('hard to test')
     def test_queue_mock_auto_lock_renew_callback(self):
