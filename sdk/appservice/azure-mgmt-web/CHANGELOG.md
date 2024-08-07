@@ -1,8 +1,11 @@
 # Release History
 
-## 0.0.0(it should be stable) (2024-08-07)
+## 7.3.1 (2024-08-07)
 
+### Other Changes
 
+  - Fix for model FunctionsAlwaysReadyConfig
+  - Fix for model FunctionsScaleAndConcurrency
 
 ## 7.3.0 (2024-06-17)
 
