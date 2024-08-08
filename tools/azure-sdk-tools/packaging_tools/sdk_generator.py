@@ -273,24 +273,24 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
-    readme_files = []
+    readme_and_tsp = []
     if "relatedReadmeMdFiles" in data:
-        readme_files.extend(data["relatedReadmeMdFiles"])
+        readme_and_tsp.extend(data["relatedReadmeMdFiles"])
     if "relatedReadmeMdFile" in data:
         input_readme = data["relatedReadmeMdFile"]
         if "specification" in spec_folder:
             spec_folder = str(Path(spec_folder.split("specification")[0]))
         if "specification" not in input_readme:
             input_readme = str(Path("specification") / input_readme)
-        readme_files.append(input_readme)
+        readme_and_tsp.append(input_readme)
     if "relatedTypeSpecProjectFolder" in data:
         # ["specification/confidentialledger/ConfientialLedger"]
         if isinstance(data["relatedTypeSpecProjectFolder"], str):
-            readme_files.append(data["relatedTypeSpecProjectFolder"])
+            readme_and_tsp.append(data["relatedTypeSpecProjectFolder"])
         else:
-            readme_files.extend(data["relatedTypeSpecProjectFolder"])
+            readme_and_tsp.extend(data["relatedTypeSpecProjectFolder"])
 
-    for input_readme in readme_files:
+    for input_readme in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         try:
             if "resource-manager" in input_readme:
