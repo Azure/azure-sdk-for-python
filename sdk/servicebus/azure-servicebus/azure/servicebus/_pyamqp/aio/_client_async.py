@@ -932,9 +932,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 await self.close_async()
 
     async def _on_disposition_received_async(self, message_delivery, reason, state):
-        state_error = list(state.values())[0]
-        message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            state_error = list(state.values())[0]
+            message_delivery.reason = reason
             if state and (len(state_error) == 0 or state_error[0] is None):
                 message_delivery.state = MessageDeliveryState.Ok
             else:
@@ -1028,7 +1028,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             **kwargs
     ):
         batchable = kwargs.pop('batchable', None)
-        # TODO: timeout is not used, should it be?
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
@@ -1069,13 +1068,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             on_disposition = on_disposition_received,
         )
 
-        # Wait for the message to be settled
+        # Wait for the message to be settled without adding more link credit
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            # TODO: Confirm if this is the correct way to handle the do_work call
-            # calling do_work directly triggers Flow() calls which is not what we want
             running = await self.do_work_async(flow=False)
-        # await self._connection.listen(wait=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(

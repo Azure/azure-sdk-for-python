@@ -946,7 +946,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _process_receive_error(message_delivery, condition, description=None, info=None):
-        # TODO: Do we want to raise MessageSendFailed/MessageException here?
         try:
             amqp_condition = ErrorCondition(condition)
         except ValueError:
@@ -1046,9 +1045,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 self.close()
 
     def _on_disposition_received(self, message_delivery, reason, state):
-        state_error = list(state.values())[0]
-        message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            state_error = list(state.values())[0]
+            message_delivery.reason = reason
             if state and (len(state_error) == 0 or state_error[0] is None):
                 message_delivery.state = MessageDeliveryState.Ok
             else:
@@ -1140,7 +1139,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
-        # TODO: timeout is not used here, should it be?
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 

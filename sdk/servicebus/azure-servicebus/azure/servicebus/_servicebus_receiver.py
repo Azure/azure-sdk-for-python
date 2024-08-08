@@ -488,7 +488,7 @@ class ServiceBusReceiver(
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except (RuntimeError, ServiceBusConnectionError) as exception:
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
@@ -511,7 +511,7 @@ class ServiceBusReceiver(
             )
         except Exception as exception:
             _LOGGER.info(
-                "Message settling: %r has encountered an exception (%r)",
+                "Message settling: %r has encountered an exception (%r) through management link",
                 settle_operation,
                 exception,
             )

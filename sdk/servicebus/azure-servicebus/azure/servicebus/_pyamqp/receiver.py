@@ -115,7 +115,6 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = self._process_incoming_message(self._first_frame, message)
-
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -124,19 +123,6 @@ class ReceiverLink(Link):
                     state=delivery_state,
                     batchable=None
                 )
-
-    def _wait_for_response(self, wait: Union[bool, float]) -> None:
-        # TODO: Can we remove this method?
-        if wait is True:
-            self._session._connection.listen(wait=False) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
-        elif wait:
-            self._session._connection.listen(wait=wait) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
 
     def _outgoing_disposition(
         self,
@@ -155,7 +141,6 @@ class ReceiverLink(Link):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
-
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
 
@@ -192,7 +177,6 @@ class ReceiverLink(Link):
         # for delivery in self._pending_receipts:
         #     delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
         self._pending_receipts = []
-        # TODO: Add in error handling
 
     def attach(self):
         super().attach()

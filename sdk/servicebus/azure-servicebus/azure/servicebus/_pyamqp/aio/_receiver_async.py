@@ -78,7 +78,7 @@ class ReceiverLink(Link):
         await super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link", extra=self.network_trace_params)
-            await self._remove_pending_receipts()
+            await self._remove_pending_receipts(frame)
             await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -86,8 +86,8 @@ class ReceiverLink(Link):
 
     async def _incoming_flow(self, frame):
         drain = frame[8]  # drain
-        # If we have sent an outgoing flow frame with drain, wait for the response
         async with self._drain_lock:
+            # If the link is in drain mode, trigger if the drain is received
             if self._drain_state and drain:
                 self._drain_state = False
                 self._received_drain_response = True
@@ -116,7 +116,6 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = await self._process_incoming_message(self._first_frame, message)
-            # TODO: investigate if the following is needed
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -126,19 +125,6 @@ class ReceiverLink(Link):
                     state=delivery_state,
                     batchable=None
                 )
-
-    async def _wait_for_response(self, wait: Union[bool, float]) -> None:
-        # TODO: Can we remove this method?
-        if wait is True:
-            await self._session._connection.listen(wait=False) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
-        elif wait:
-            await self._session._connection.listen(wait=wait) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
 
     async def _outgoing_disposition(
         self,
@@ -190,7 +176,7 @@ class ReceiverLink(Link):
         await super().attach()
         self._received_payload = bytearray()
 
-    async def _remove_pending_receipts(self):
+    async def _remove_pending_receipts(self, frame):
 
         # TODO: Coming from detach with an error do we want to raise in the callback?
         # for delivery in self._pending_receipts:
@@ -199,7 +185,7 @@ class ReceiverLink(Link):
 
     async def _incoming_detach(self, frame):
         await super(ReceiverLink, self)._incoming_detach(frame)
-        await self._remove_pending_receipts()
+        await self._remove_pending_receipts(frame)
 
     async def send_disposition(
         self,
