@@ -6,3 +6,4 @@
 -e ../../storage/azure-mgmt-storage
 azure-mgmt-loganalytics==2.0.0
 -e ../../resources/azure-mgmt-msi/
+aiohttp
