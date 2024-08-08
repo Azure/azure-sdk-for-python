@@ -10,6 +10,7 @@ from io import IOBase
 import json
 import sys
 from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, cast, overload
+from .. import _model_base
 
 from azure.core.exceptions import (
     ClientAuthenticationError,

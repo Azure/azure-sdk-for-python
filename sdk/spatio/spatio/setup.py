@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "spatio"
-PACKAGE_PPRINT_NAME = "Spatio"
+PACKAGE_NAME = "spatiopackage"
+PACKAGE_PPRINT_NAME = "Spatiopackage"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -57,7 +57,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "spatio": ["py.typed"],
+        "spatiopackage": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",

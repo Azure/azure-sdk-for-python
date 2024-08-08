@@ -199,8 +199,8 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
         self.search_operations = SearchOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.get_operations = GetOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.create_operations = createOperationsOperations(
+        self.get_operations_collections = GetOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.create_operations_collections = createOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.update_operations = updateOperationsOperations(

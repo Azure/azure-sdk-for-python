@@ -10,6 +10,7 @@ from io import IOBase
 import json
 import sys
 from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, cast, overload
+from .. import _model_base
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -10225,12 +10226,14 @@ class GetOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200,204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+        #if cls:
+        #    return cls(pipeline_response, None, {})  # type: ignore
+
+        return response
 
     @distributed_trace
     def collection_thumbnail_api_collections_collection_id_thumbnail_get(  # pylint: disable=inconsistent-return-statements,name-too-long
@@ -11444,7 +11447,7 @@ class createOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200,201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -11697,6 +11700,7 @@ class createOperationsOperations:
             body = {"data": data, "file": file}
             body = {k: v for k, v in body.items() if v is not None}
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _body = body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -11721,7 +11725,7 @@ class createOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200,201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
