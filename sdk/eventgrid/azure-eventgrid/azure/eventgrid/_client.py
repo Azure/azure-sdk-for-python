@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -95,7 +96,7 @@ class EventGridPublisherClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "EventGridPublisherClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -175,7 +176,7 @@ class EventGridConsumerClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "EventGridConsumerClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

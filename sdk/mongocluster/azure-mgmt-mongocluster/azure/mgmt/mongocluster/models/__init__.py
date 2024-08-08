@@ -18,8 +18,6 @@ from ._models import ListConnectionStringsResult
 from ._models import MongoCluster
 from ._models import MongoClusterProperties
 from ._models import MongoClusterRestoreParameters
-from ._models import MongoClusterUpdate
-from ._models import MongoClusterUpdateProperties
 from ._models import NodeGroupSpec
 from ._models import Operation
 from ._models import OperationDisplay
@@ -63,8 +61,6 @@ __all__ = [
     "MongoCluster",
     "MongoClusterProperties",
     "MongoClusterRestoreParameters",
-    "MongoClusterUpdate",
-    "MongoClusterUpdateProperties",
     "NodeGroupSpec",
     "Operation",
     "OperationDisplay",

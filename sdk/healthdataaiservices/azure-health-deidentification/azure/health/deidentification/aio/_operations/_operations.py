@@ -33,6 +33,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -157,7 +159,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -221,30 +226,20 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            await response.read()  # Load the body in memory and close the socket
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1010,7 +1005,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1327,7 +1325,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

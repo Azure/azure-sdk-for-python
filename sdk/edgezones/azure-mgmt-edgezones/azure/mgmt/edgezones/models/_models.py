@@ -280,7 +280,7 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -294,7 +294,6 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        display: Optional["_models.OperationDisplay"] = None,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
     ): ...
 
@@ -312,6 +311,8 @@ class Operation(_model_base.Model):
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
@@ -326,38 +327,18 @@ class OperationDisplay(_model_base.Model):
     :vartype description: str
     """
 
-    provider: Optional[str] = rest_field()
+    provider: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
      Insights\" or \"Microsoft Compute\"."""
-    resource: Optional[str] = rest_field()
+    resource: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
      Machines\" or \"Job Schedule Collections\"."""
-    operation: Optional[str] = rest_field()
+    operation: Optional[str] = rest_field(visibility=["read"])
     """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
      or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class SystemData(_model_base.Model):

@@ -29,8 +29,12 @@ def sample_chat_completions_with_image_url():
     import os
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
-        SystemMessage, UserMessage, TextContentItem,
-        ImageContentItem, ImageUrl, ImageDetailLevel
+        SystemMessage,
+        UserMessage,
+        TextContentItem,
+        ImageContentItem,
+        ImageUrl,
+        ImageDetailLevel,
     )
     from azure.core.credentials import AzureKeyCredential
 

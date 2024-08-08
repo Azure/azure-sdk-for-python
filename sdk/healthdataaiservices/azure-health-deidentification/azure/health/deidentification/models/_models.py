@@ -70,7 +70,6 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of a job. Required.
     :vartype name: str
@@ -511,7 +510,6 @@ class PhiTaggerResult(_model_base.Model):
 class SourceStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str
@@ -598,7 +596,6 @@ class StringIndex(_model_base.Model):
 class TargetStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str

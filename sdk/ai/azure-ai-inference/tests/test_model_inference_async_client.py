@@ -159,7 +159,9 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         await client.close()
 
     @ServicePreparerEmbeddings()

@@ -29,13 +29,14 @@ from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
+
 def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """HISTORY: 49-year-old male with a history of tuberous sclerosis presenting with epigastric pain and diffuse tenderness. The patient was found to have pericholecystic haziness on CT; evaluation for acute cholecystitis.
     TECHNIQUE: Ultrasound evaluation of the abdomen was performed. Comparison is made to the prior abdominal ultrasound (2004) and to the enhanced CT of the abdomen and pelvis (2014).
@@ -114,6 +115,7 @@ def radiology_insights_sync() -> None:
     except Exception as ex:
         raise ex
 
+
 def display_limited_order_discrepancy(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
@@ -138,6 +140,7 @@ def display_limited_order_discrepancy(radiology_insights_result):
                             print(
                                 f"Limited Order Discrepancy: Present Body Part Measurement: {coding.system} {coding.code} {coding.display}"
                             )
+
 
 if __name__ == "__main__":
     radiology_insights_sync()

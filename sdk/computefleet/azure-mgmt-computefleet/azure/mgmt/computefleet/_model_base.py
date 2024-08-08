@@ -563,6 +563,7 @@ class Model(_MyMutableMapping):
         """
 
         result = {}
+        readonly_props = []
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():

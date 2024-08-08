@@ -27,7 +27,7 @@ class ContentSafetyClientConfiguration:  # pylint: disable=too-many-instance-att
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
@@ -82,7 +82,7 @@ class BlocklistClientConfiguration:  # pylint: disable=too-many-instance-attribu
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential

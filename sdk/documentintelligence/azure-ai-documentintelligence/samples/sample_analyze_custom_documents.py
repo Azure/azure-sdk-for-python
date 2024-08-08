@@ -33,8 +33,8 @@ from collections import Counter
 
 def analyze_custom_documents(custom_model_id):
     # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
-    # combined by DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
-    # or it can also be a test file with the format similar to the training dataset. 
+    # combined by DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX,
+    # or it can also be a test file with the format similar to the training dataset.
     # Put it here locally just for presenting documents visually in sample.
 
     # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
@@ -161,7 +161,9 @@ if __name__ == "__main__":
     try:
         load_dotenv(find_dotenv())
         model_id = None
-        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
+        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL") and not os.getenv(
+            "CUSTOM_BUILT_MODEL_ID"
+        ):
             import uuid
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient

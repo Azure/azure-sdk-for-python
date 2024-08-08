@@ -229,7 +229,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -714,7 +714,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -998,7 +998,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
