@@ -6,7 +6,11 @@ from __future__ import annotations
 from types import TracebackType
 from typing import Any, Optional, AsyncContextManager, Type
 from typing_extensions import Protocol, runtime_checkable
-from .credentials import AccessToken as _AccessToken
+from .credentials import (
+    AccessToken as _AccessToken,
+    AccessTokenInfo as _AccessTokenInfo,
+    TokenRequestOptions as _TokenRequestOptions,
+)
 
 
 @runtime_checkable
@@ -46,3 +50,23 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         traceback: Optional[TracebackType] = None,
     ) -> None:
         pass
+
+
+@runtime_checkable
+class AsyncSupportsTokenInfo(Protocol):
+    """Protocol for classes able to provide OAuth access tokens with additional properties."""
+
+    async def get_token_info(self, *scopes: str, options: Optional[_TokenRequestOptions] = None) -> _AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token.
+
+        :param str scopes: The type of access needed.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing the token string and its expiration time in Unix time.
+        """
+        ...
