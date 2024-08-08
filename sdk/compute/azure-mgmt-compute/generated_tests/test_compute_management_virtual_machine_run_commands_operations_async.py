@@ -24,7 +24,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
     async def test_list(self, resource_group):
         response = self.client.virtual_machine_run_commands.list(
             location="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,8 +36,160 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
         response = await self.client.virtual_machine_run_commands.get(
             location="str",
             command_id="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_run_commands.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                run_command_name="str",
+                run_command={
+                    "location": "str",
+                    "asyncExecution": False,
+                    "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    "errorBlobUri": "str",
+                    "id": "str",
+                    "instanceView": {
+                        "endTime": "2020-02-20 00:00:00",
+                        "error": "str",
+                        "executionMessage": "str",
+                        "executionState": "str",
+                        "exitCode": 0,
+                        "output": "str",
+                        "startTime": "2020-02-20 00:00:00",
+                        "statuses": [
+                            {
+                                "code": "str",
+                                "displayStatus": "str",
+                                "level": "str",
+                                "message": "str",
+                                "time": "2020-02-20 00:00:00",
+                            }
+                        ],
+                    },
+                    "name": "str",
+                    "outputBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    "outputBlobUri": "str",
+                    "parameters": [{"name": "str", "value": "str"}],
+                    "protectedParameters": [{"name": "str", "value": "str"}],
+                    "provisioningState": "str",
+                    "runAsPassword": "str",
+                    "runAsUser": "str",
+                    "source": {
+                        "commandId": "str",
+                        "script": "str",
+                        "scriptUri": "str",
+                        "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    },
+                    "tags": {"str": "str"},
+                    "timeoutInSeconds": 0,
+                    "treatFailureAsDeploymentFailure": False,
+                    "type": "str",
+                },
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_update(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_run_commands.begin_update(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                run_command_name="str",
+                run_command={
+                    "asyncExecution": False,
+                    "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    "errorBlobUri": "str",
+                    "instanceView": {
+                        "endTime": "2020-02-20 00:00:00",
+                        "error": "str",
+                        "executionMessage": "str",
+                        "executionState": "str",
+                        "exitCode": 0,
+                        "output": "str",
+                        "startTime": "2020-02-20 00:00:00",
+                        "statuses": [
+                            {
+                                "code": "str",
+                                "displayStatus": "str",
+                                "level": "str",
+                                "message": "str",
+                                "time": "2020-02-20 00:00:00",
+                            }
+                        ],
+                    },
+                    "outputBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    "outputBlobUri": "str",
+                    "parameters": [{"name": "str", "value": "str"}],
+                    "protectedParameters": [{"name": "str", "value": "str"}],
+                    "provisioningState": "str",
+                    "runAsPassword": "str",
+                    "runAsUser": "str",
+                    "source": {
+                        "commandId": "str",
+                        "script": "str",
+                        "scriptUri": "str",
+                        "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
+                    },
+                    "tags": {"str": "str"},
+                    "timeoutInSeconds": 0,
+                    "treatFailureAsDeploymentFailure": False,
+                },
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_delete(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_run_commands.begin_delete(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                run_command_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_get_by_virtual_machine(self, resource_group):
+        response = await self.client.virtual_machine_run_commands.get_by_virtual_machine(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            run_command_name="str",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_by_virtual_machine(self, resource_group):
+        response = self.client.virtual_machine_run_commands.list_by_virtual_machine(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-07-01",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

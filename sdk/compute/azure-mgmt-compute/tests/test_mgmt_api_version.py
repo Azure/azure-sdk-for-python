@@ -11,6 +11,7 @@ from azure.mgmt.compute import ComputeManagementClient
 
 AZURE_LOCATION = 'eastus'
 
+@pytest.mark.live_test_only
 class TestMgmtComputeApiVersion:
     
     def client(self, api_version):

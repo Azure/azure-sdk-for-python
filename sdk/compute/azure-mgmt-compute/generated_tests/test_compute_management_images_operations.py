@@ -26,35 +26,86 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
             image_name="str",
             parameters={
                 "location": "str",
+                "extendedLocation": {"name": "str", "type": "str"},
+                "hyperVGeneration": "str",
                 "id": "str",
                 "name": "str",
                 "provisioningState": "str",
                 "sourceVirtualMachine": {"id": "str"},
                 "storageProfile": {
-                    "osDisk": {
-                        "osState": "str",
-                        "osType": "str",
-                        "blobUri": "str",
-                        "caching": "str",
-                        "diskSizeGB": 0,
-                        "managedDisk": {"id": "str"},
-                        "snapshot": {"id": "str"},
-                    },
                     "dataDisks": [
                         {
                             "lun": 0,
                             "blobUri": "str",
                             "caching": "str",
+                            "diskEncryptionSet": {"id": "str"},
                             "diskSizeGB": 0,
                             "managedDisk": {"id": "str"},
                             "snapshot": {"id": "str"},
+                            "storageAccountType": "str",
                         }
                     ],
+                    "osDisk": {
+                        "osState": "str",
+                        "osType": "str",
+                        "blobUri": "str",
+                        "caching": "str",
+                        "diskEncryptionSet": {"id": "str"},
+                        "diskSizeGB": 0,
+                        "managedDisk": {"id": "str"},
+                        "snapshot": {"id": "str"},
+                        "storageAccountType": "str",
+                    },
+                    "zoneResilient": bool,
                 },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2016-04-30-preview",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_update(self, resource_group):
+        response = self.client.images.begin_update(
+            resource_group_name=resource_group.name,
+            image_name="str",
+            parameters={
+                "hyperVGeneration": "str",
+                "provisioningState": "str",
+                "sourceVirtualMachine": {"id": "str"},
+                "storageProfile": {
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "blobUri": "str",
+                            "caching": "str",
+                            "diskEncryptionSet": {"id": "str"},
+                            "diskSizeGB": 0,
+                            "managedDisk": {"id": "str"},
+                            "snapshot": {"id": "str"},
+                            "storageAccountType": "str",
+                        }
+                    ],
+                    "osDisk": {
+                        "osState": "str",
+                        "osType": "str",
+                        "blobUri": "str",
+                        "caching": "str",
+                        "diskEncryptionSet": {"id": "str"},
+                        "diskSizeGB": 0,
+                        "managedDisk": {"id": "str"},
+                        "snapshot": {"id": "str"},
+                        "storageAccountType": "str",
+                    },
+                    "zoneResilient": bool,
+                },
+                "tags": {"str": "str"},
+            },
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,7 +117,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.images.begin_delete(
             resource_group_name=resource_group.name,
             image_name="str",
-            api_version="2016-04-30-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,7 +129,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.images.get(
             resource_group_name=resource_group.name,
             image_name="str",
-            api_version="2016-04-30-preview",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +140,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.images.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2016-04-30-preview",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -99,7 +150,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list(self, resource_group):
         response = self.client.images.list(
-            api_version="2016-04-30-preview",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

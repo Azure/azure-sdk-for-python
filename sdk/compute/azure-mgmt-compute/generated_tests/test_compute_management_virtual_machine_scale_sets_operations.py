@@ -20,61 +20,423 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_list_by_location(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_by_location(
+            location="str",
+            api_version="2024-07-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_scale_sets.begin_create_or_update(
             resource_group_name=resource_group.name,
-            name="str",
+            vm_scale_set_name="str",
             parameters={
                 "location": "str",
+                "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
+                "constrainedMaximumCapacity": bool,
+                "doNotRunExtensionsOnOverprovisionedVMs": bool,
+                "etag": "str",
+                "extendedLocation": {"name": "str", "type": "str"},
+                "hostGroup": {"id": "str"},
                 "id": "str",
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
-                "overProvision": bool,
+                "orchestrationMode": "str",
+                "overprovision": bool,
+                "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
+                "platformFaultDomainCount": 0,
+                "priorityMixPolicy": {"baseRegularPriorityCount": 0, "regularPriorityPercentageAboveBase": 0},
                 "provisioningState": "str",
+                "proximityPlacementGroup": {"id": "str"},
+                "resiliencyPolicy": {
+                    "resilientVMCreationPolicy": {"enabled": bool},
+                    "resilientVMDeletionPolicy": {"enabled": bool},
+                },
+                "scaleInPolicy": {"forceDeletion": bool, "rules": ["str"]},
+                "scheduledEventsPolicy": {
+                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                    "userInitiatedReboot": {"automaticallyApprove": bool},
+                    "userInitiatedRedeploy": {"automaticallyApprove": bool},
+                },
+                "singlePlacementGroup": bool,
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
+                "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str"}]},
+                "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
                 "tags": {"str": "str"},
+                "timeCreated": "2020-02-20 00:00:00",
                 "type": "str",
-                "upgradePolicy": {"mode": "str"},
+                "uniqueId": "str",
+                "upgradePolicy": {
+                    "automaticOSUpgradePolicy": {
+                        "disableAutomaticRollback": bool,
+                        "enableAutomaticOSUpgrade": bool,
+                        "osRollingUpgradeDeferral": bool,
+                        "useRollingUpgradePolicy": bool,
+                    },
+                    "mode": "str",
+                    "rollingUpgradePolicy": {
+                        "enableCrossZoneUpgrade": bool,
+                        "maxBatchInstancePercent": 0,
+                        "maxSurge": bool,
+                        "maxUnhealthyInstancePercent": 0,
+                        "maxUnhealthyUpgradedInstancePercent": 0,
+                        "pauseTimeBetweenBatches": "str",
+                        "prioritizeUnhealthyInstances": bool,
+                        "rollbackFailedInstancesOnPolicyBreach": bool,
+                    },
+                },
                 "virtualMachineProfile": {
+                    "applicationProfile": {
+                        "galleryApplications": [
+                            {
+                                "packageReferenceId": "str",
+                                "configurationReference": "str",
+                                "enableAutomaticUpgrade": bool,
+                                "order": 0,
+                                "tags": "str",
+                                "treatFailureAsDeploymentFailure": bool,
+                            }
+                        ]
+                    },
+                    "billingProfile": {"maxPrice": 0.0},
+                    "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
+                    "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
+                    "evictionPolicy": "str",
                     "extensionProfile": {
                         "extensions": [
                             {
                                 "autoUpgradeMinorVersion": bool,
+                                "enableAutomaticUpgrade": bool,
+                                "forceUpdateTag": "str",
                                 "id": "str",
                                 "name": "str",
                                 "protectedSettings": {},
+                                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                                "provisionAfterExtensions": ["str"],
                                 "provisioningState": "str",
                                 "publisher": "str",
                                 "settings": {},
+                                "suppressFailures": bool,
                                 "type": "str",
                                 "typeHandlerVersion": "str",
                             }
-                        ]
+                        ],
+                        "extensionsTimeBudget": "str",
                     },
+                    "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "licenseType": "str",
                     "networkProfile": {
+                        "healthProbe": {"id": "str"},
+                        "networkApiVersion": "str",
                         "networkInterfaceConfigurations": [
                             {
                                 "name": "str",
-                                "id": "str",
+                                "auxiliaryMode": "str",
+                                "auxiliarySku": "str",
+                                "deleteOption": "str",
+                                "disableTcpStateTracking": bool,
+                                "dnsSettings": {"dnsServers": ["str"]},
+                                "enableAcceleratedNetworking": bool,
+                                "enableFpga": bool,
+                                "enableIPForwarding": bool,
                                 "ipConfigurations": [
                                     {
                                         "name": "str",
-                                        "id": "str",
+                                        "applicationGatewayBackendAddressPools": [{"id": "str"}],
+                                        "applicationSecurityGroups": [{"id": "str"}],
                                         "loadBalancerBackendAddressPools": [{"id": "str"}],
                                         "loadBalancerInboundNatPools": [{"id": "str"}],
+                                        "primary": bool,
+                                        "privateIPAddressVersion": "str",
+                                        "publicIPAddressConfiguration": {
+                                            "name": "str",
+                                            "deleteOption": "str",
+                                            "dnsSettings": {"domainNameLabel": "str", "domainNameLabelScope": "str"},
+                                            "idleTimeoutInMinutes": 0,
+                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "publicIPAddressVersion": "str",
+                                            "publicIPPrefix": {"id": "str"},
+                                            "sku": {"name": "str", "tier": "str"},
+                                        },
                                         "subnet": {"id": "str"},
                                     }
                                 ],
+                                "networkSecurityGroup": {"id": "str"},
                                 "primary": bool,
                             }
-                        ]
+                        ],
                     },
                     "osProfile": {
                         "adminPassword": "str",
                         "adminUsername": "str",
+                        "allowExtensionOperations": bool,
                         "computerNamePrefix": "str",
                         "customData": "str",
                         "linuxConfiguration": {
                             "disablePasswordAuthentication": bool,
+                            "enableVMAgentPlatformUpdates": bool,
+                            "patchSettings": {
+                                "assessmentMode": "str",
+                                "automaticByPlatformSettings": {
+                                    "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                    "rebootSetting": "str",
+                                },
+                                "patchMode": "str",
+                            },
+                            "provisionVMAgent": bool,
+                            "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
+                        },
+                        "requireGuestProvisionSignal": bool,
+                        "secrets": [
+                            {
+                                "sourceVault": {"id": "str"},
+                                "vaultCertificates": [{"certificateStore": "str", "certificateUrl": "str"}],
+                            }
+                        ],
+                        "windowsConfiguration": {
+                            "additionalUnattendContent": [
+                                {
+                                    "componentName": "Microsoft-Windows-Shell-Setup",
+                                    "content": "str",
+                                    "passName": "OobeSystem",
+                                    "settingName": "str",
+                                }
+                            ],
+                            "enableAutomaticUpdates": bool,
+                            "enableVMAgentPlatformUpdates": bool,
+                            "patchSettings": {
+                                "assessmentMode": "str",
+                                "automaticByPlatformSettings": {
+                                    "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                    "rebootSetting": "str",
+                                },
+                                "enableHotpatching": bool,
+                                "patchMode": "str",
+                            },
+                            "provisionVMAgent": bool,
+                            "timeZone": "str",
+                            "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
+                        },
+                    },
+                    "priority": "str",
+                    "scheduledEventsProfile": {
+                        "osImageNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                        "terminateNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                    },
+                    "securityPostureReference": {"id": "str", "excludeExtensions": ["str"], "isOverridable": bool},
+                    "securityProfile": {
+                        "encryptionAtHost": bool,
+                        "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                        "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                        "securityType": "str",
+                        "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
+                    },
+                    "serviceArtifactReference": {"id": "str"},
+                    "storageProfile": {
+                        "dataDisks": [
+                            {
+                                "createOption": "str",
+                                "lun": 0,
+                                "caching": "str",
+                                "deleteOption": "str",
+                                "diskIOPSReadWrite": 0,
+                                "diskMBpsReadWrite": 0,
+                                "diskSizeGB": 0,
+                                "managedDisk": {
+                                    "diskEncryptionSet": {"id": "str"},
+                                    "securityProfile": {
+                                        "diskEncryptionSet": {"id": "str"},
+                                        "securityEncryptionType": "str",
+                                    },
+                                    "storageAccountType": "str",
+                                },
+                                "name": "str",
+                                "writeAcceleratorEnabled": bool,
+                            }
+                        ],
+                        "diskControllerType": "str",
+                        "imageReference": {
+                            "communityGalleryImageId": "str",
+                            "exactVersion": "str",
+                            "id": "str",
+                            "offer": "str",
+                            "publisher": "str",
+                            "sharedGalleryImageId": "str",
+                            "sku": "str",
+                            "version": "str",
+                        },
+                        "osDisk": {
+                            "createOption": "str",
+                            "caching": "str",
+                            "deleteOption": "str",
+                            "diffDiskSettings": {"option": "str", "placement": "str"},
+                            "diskSizeGB": 0,
+                            "image": {"uri": "str"},
+                            "managedDisk": {
+                                "diskEncryptionSet": {"id": "str"},
+                                "securityProfile": {
+                                    "diskEncryptionSet": {"id": "str"},
+                                    "securityEncryptionType": "str",
+                                },
+                                "storageAccountType": "str",
+                            },
+                            "name": "str",
+                            "osType": "str",
+                            "vhdContainers": ["str"],
+                            "writeAcceleratorEnabled": bool,
+                        },
+                    },
+                    "timeCreated": "2020-02-20 00:00:00",
+                    "userData": "str",
+                },
+                "zonalPlatformFaultDomainAlignMode": "str",
+                "zoneBalance": bool,
+                "zones": ["str"],
+            },
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_update(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_update(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            parameters={
+                "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
+                "doNotRunExtensionsOnOverprovisionedVMs": bool,
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "overprovision": bool,
+                "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
+                "priorityMixPolicy": {"baseRegularPriorityCount": 0, "regularPriorityPercentageAboveBase": 0},
+                "proximityPlacementGroup": {"id": "str"},
+                "resiliencyPolicy": {
+                    "resilientVMCreationPolicy": {"enabled": bool},
+                    "resilientVMDeletionPolicy": {"enabled": bool},
+                },
+                "scaleInPolicy": {"forceDeletion": bool, "rules": ["str"]},
+                "singlePlacementGroup": bool,
+                "sku": {"capacity": 0, "name": "str", "tier": "str"},
+                "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str"}]},
+                "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
+                "tags": {"str": "str"},
+                "upgradePolicy": {
+                    "automaticOSUpgradePolicy": {
+                        "disableAutomaticRollback": bool,
+                        "enableAutomaticOSUpgrade": bool,
+                        "osRollingUpgradeDeferral": bool,
+                        "useRollingUpgradePolicy": bool,
+                    },
+                    "mode": "str",
+                    "rollingUpgradePolicy": {
+                        "enableCrossZoneUpgrade": bool,
+                        "maxBatchInstancePercent": 0,
+                        "maxSurge": bool,
+                        "maxUnhealthyInstancePercent": 0,
+                        "maxUnhealthyUpgradedInstancePercent": 0,
+                        "pauseTimeBetweenBatches": "str",
+                        "prioritizeUnhealthyInstances": bool,
+                        "rollbackFailedInstancesOnPolicyBreach": bool,
+                    },
+                },
+                "virtualMachineProfile": {
+                    "billingProfile": {"maxPrice": 0.0},
+                    "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "autoUpgradeMinorVersion": bool,
+                                "enableAutomaticUpgrade": bool,
+                                "forceUpdateTag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "protectedSettings": {},
+                                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                                "provisionAfterExtensions": ["str"],
+                                "provisioningState": "str",
+                                "publisher": "str",
+                                "settings": {},
+                                "suppressFailures": bool,
+                                "type": "str",
+                                "typeHandlerVersion": "str",
+                            }
+                        ],
+                        "extensionsTimeBudget": "str",
+                    },
+                    "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "licenseType": "str",
+                    "networkProfile": {
+                        "healthProbe": {"id": "str"},
+                        "networkApiVersion": "str",
+                        "networkInterfaceConfigurations": [
+                            {
+                                "auxiliaryMode": "str",
+                                "auxiliarySku": "str",
+                                "deleteOption": "str",
+                                "disableTcpStateTracking": bool,
+                                "dnsSettings": {"dnsServers": ["str"]},
+                                "enableAcceleratedNetworking": bool,
+                                "enableFpga": bool,
+                                "enableIPForwarding": bool,
+                                "ipConfigurations": [
+                                    {
+                                        "applicationGatewayBackendAddressPools": [{"id": "str"}],
+                                        "applicationSecurityGroups": [{"id": "str"}],
+                                        "loadBalancerBackendAddressPools": [{"id": "str"}],
+                                        "loadBalancerInboundNatPools": [{"id": "str"}],
+                                        "name": "str",
+                                        "primary": bool,
+                                        "privateIPAddressVersion": "str",
+                                        "publicIPAddressConfiguration": {
+                                            "deleteOption": "str",
+                                            "dnsSettings": {"domainNameLabel": "str", "domainNameLabelScope": "str"},
+                                            "idleTimeoutInMinutes": 0,
+                                            "name": "str",
+                                            "publicIPPrefix": {"id": "str"},
+                                        },
+                                        "subnet": {"id": "str"},
+                                    }
+                                ],
+                                "name": "str",
+                                "networkSecurityGroup": {"id": "str"},
+                                "primary": bool,
+                            }
+                        ],
+                    },
+                    "osProfile": {
+                        "customData": "str",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": bool,
+                            "enableVMAgentPlatformUpdates": bool,
+                            "patchSettings": {
+                                "assessmentMode": "str",
+                                "automaticByPlatformSettings": {
+                                    "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                    "rebootSetting": "str",
+                                },
+                                "patchMode": "str",
+                            },
+                            "provisionVMAgent": bool,
                             "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
                         },
                         "secrets": [
@@ -93,25 +455,90 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
                                 }
                             ],
                             "enableAutomaticUpdates": bool,
+                            "enableVMAgentPlatformUpdates": bool,
+                            "patchSettings": {
+                                "assessmentMode": "str",
+                                "automaticByPlatformSettings": {
+                                    "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                    "rebootSetting": "str",
+                                },
+                                "enableHotpatching": bool,
+                                "patchMode": "str",
+                            },
                             "provisionVMAgent": bool,
                             "timeZone": "str",
                             "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
                         },
                     },
+                    "scheduledEventsProfile": {
+                        "osImageNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                        "terminateNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                    },
+                    "securityPostureReference": {"excludeExtensions": ["str"], "id": "str", "isOverridable": bool},
+                    "securityProfile": {
+                        "encryptionAtHost": bool,
+                        "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                        "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                        "securityType": "str",
+                        "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
+                    },
                     "storageProfile": {
-                        "imageReference": {"offer": "str", "publisher": "str", "sku": "str", "version": "str"},
+                        "dataDisks": [
+                            {
+                                "createOption": "str",
+                                "lun": 0,
+                                "caching": "str",
+                                "deleteOption": "str",
+                                "diskIOPSReadWrite": 0,
+                                "diskMBpsReadWrite": 0,
+                                "diskSizeGB": 0,
+                                "managedDisk": {
+                                    "diskEncryptionSet": {"id": "str"},
+                                    "securityProfile": {
+                                        "diskEncryptionSet": {"id": "str"},
+                                        "securityEncryptionType": "str",
+                                    },
+                                    "storageAccountType": "str",
+                                },
+                                "name": "str",
+                                "writeAcceleratorEnabled": bool,
+                            }
+                        ],
+                        "diskControllerType": "str",
+                        "imageReference": {
+                            "communityGalleryImageId": "str",
+                            "exactVersion": "str",
+                            "id": "str",
+                            "offer": "str",
+                            "publisher": "str",
+                            "sharedGalleryImageId": "str",
+                            "sku": "str",
+                            "version": "str",
+                        },
                         "osDisk": {
-                            "createOption": "str",
-                            "name": "str",
                             "caching": "str",
+                            "deleteOption": "str",
+                            "diffDiskSettings": {"option": "str", "placement": "str"},
+                            "diskSizeGB": 0,
                             "image": {"uri": "str"},
-                            "osType": "str",
+                            "managedDisk": {
+                                "diskEncryptionSet": {"id": "str"},
+                                "securityProfile": {
+                                    "diskEncryptionSet": {"id": "str"},
+                                    "securityEncryptionType": "str",
+                                },
+                                "storageAccountType": "str",
+                            },
                             "vhdContainers": ["str"],
+                            "writeAcceleratorEnabled": bool,
                         },
                     },
+                    "userData": "str",
                 },
+                "zonalPlatformFaultDomainAlignMode": "str",
+                "zones": ["str"],
             },
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +550,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_delete(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -135,7 +562,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -147,7 +574,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_deallocate(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -160,7 +587,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vm_instance_i_ds={"instanceIds": ["str"]},
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -172,7 +599,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.get_instance_view(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -183,7 +610,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
     def test_list(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list(
             resource_group_name=resource_group.name,
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -193,7 +620,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_list_all(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list_all(
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -205,7 +632,19 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.list_skus(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_get_os_upgrade_history(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.get_os_upgrade_history(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -217,7 +656,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_power_off(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -229,7 +668,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_restart(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -241,7 +680,43 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_start(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_reapply(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_reapply(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_redeploy(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_redeploy(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_perform_maintenance(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_perform_maintenance(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -254,7 +729,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vm_instance_i_ds={"instanceIds": ["str"]},
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -266,7 +741,70 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
         response = self.client.virtual_machine_scale_sets.begin_reimage(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_reimage_all(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_reimage_all(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_approve_rolling_upgrade(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_force_recovery_service_fabric_platform_update_domain_walk(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            platform_update_domain=0,
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_convert_to_single_placement_group(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            parameters={"activePlacementGroupId": "str"},
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_set_orchestration_service_state(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_set_orchestration_service_state(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            parameters={"action": "str", "serviceName": "str"},
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

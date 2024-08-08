@@ -23,13 +23,20 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
     def test_create_or_update(self, resource_group):
         response = self.client.availability_sets.create_or_update(
             resource_group_name=resource_group.name,
-            name="str",
+            availability_set_name="str",
             parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
                 "platformFaultDomainCount": 0,
                 "platformUpdateDomainCount": 0,
+                "proximityPlacementGroup": {"id": "str"},
+                "scheduledEventsPolicy": {
+                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                    "userInitiatedReboot": {"automaticallyApprove": bool},
+                    "userInitiatedRedeploy": {"automaticallyApprove": bool},
+                },
+                "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "statuses": [
                     {
                         "code": "str",
@@ -43,7 +50,41 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_update(self, resource_group):
+        response = self.client.availability_sets.update(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            parameters={
+                "platformFaultDomainCount": 0,
+                "platformUpdateDomainCount": 0,
+                "proximityPlacementGroup": {"id": "str"},
+                "scheduledEventsPolicy": {
+                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                    "userInitiatedReboot": {"automaticallyApprove": bool},
+                    "userInitiatedRedeploy": {"automaticallyApprove": bool},
+                },
+                "sku": {"capacity": 0, "name": "str", "tier": "str"},
+                "statuses": [
+                    {
+                        "code": "str",
+                        "displayStatus": "str",
+                        "level": "str",
+                        "message": "str",
+                        "time": "2020-02-20 00:00:00",
+                    }
+                ],
+                "tags": {"str": "str"},
+                "virtualMachines": [{"id": "str"}],
+            },
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +96,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.delete(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -67,9 +108,19 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.get(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_list_by_subscription(self, resource_group):
+        response = self.client.availability_sets.list_by_subscription(
+            api_version="2024-07-01",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -78,7 +129,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
     def test_list(self, resource_group):
         response = self.client.availability_sets.list(
             resource_group_name=resource_group.name,
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -90,7 +141,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.list_available_sizes(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

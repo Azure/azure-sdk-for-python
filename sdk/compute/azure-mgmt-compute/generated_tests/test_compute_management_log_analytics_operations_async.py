@@ -30,11 +30,13 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "fromTime": "2020-02-20 00:00:00",
                     "intervalLength": "str",
                     "toTime": "2020-02-20 00:00:00",
+                    "groupByClientApplicationId": bool,
                     "groupByOperationName": bool,
                     "groupByResourceName": bool,
                     "groupByThrottlePolicy": bool,
+                    "groupByUserAgent": bool,
                 },
-                api_version="2017-12-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -51,11 +53,13 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "blobContainerSasUri": "str",
                     "fromTime": "2020-02-20 00:00:00",
                     "toTime": "2020-02-20 00:00:00",
+                    "groupByClientApplicationId": bool,
                     "groupByOperationName": bool,
                     "groupByResourceName": bool,
                     "groupByThrottlePolicy": bool,
+                    "groupByUserAgent": bool,
                 },
-                api_version="2017-12-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

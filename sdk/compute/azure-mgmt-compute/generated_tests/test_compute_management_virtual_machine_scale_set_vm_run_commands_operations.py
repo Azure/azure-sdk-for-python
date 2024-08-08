@@ -29,6 +29,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             run_command={
                 "location": "str",
                 "asyncExecution": False,
+                "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                 "errorBlobUri": "str",
                 "id": "str",
                 "instanceView": {
@@ -50,18 +51,25 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                     ],
                 },
                 "name": "str",
+                "outputBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                 "outputBlobUri": "str",
                 "parameters": [{"name": "str", "value": "str"}],
                 "protectedParameters": [{"name": "str", "value": "str"}],
                 "provisioningState": "str",
                 "runAsPassword": "str",
                 "runAsUser": "str",
-                "source": {"commandId": "str", "script": "str", "scriptUri": "str"},
+                "source": {
+                    "commandId": "str",
+                    "script": "str",
+                    "scriptUri": "str",
+                    "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
+                },
                 "tags": {"str": "str"},
                 "timeoutInSeconds": 0,
+                "treatFailureAsDeploymentFailure": False,
                 "type": "str",
             },
-            api_version="2020-06-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,6 +85,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             run_command_name="str",
             run_command={
                 "asyncExecution": False,
+                "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                 "errorBlobUri": "str",
                 "instanceView": {
                     "endTime": "2020-02-20 00:00:00",
@@ -96,17 +105,24 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                         }
                     ],
                 },
+                "outputBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                 "outputBlobUri": "str",
                 "parameters": [{"name": "str", "value": "str"}],
                 "protectedParameters": [{"name": "str", "value": "str"}],
                 "provisioningState": "str",
                 "runAsPassword": "str",
                 "runAsUser": "str",
-                "source": {"commandId": "str", "script": "str", "scriptUri": "str"},
+                "source": {
+                    "commandId": "str",
+                    "script": "str",
+                    "scriptUri": "str",
+                    "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
+                },
                 "tags": {"str": "str"},
                 "timeoutInSeconds": 0,
+                "treatFailureAsDeploymentFailure": False,
             },
-            api_version="2020-06-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -120,7 +136,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2020-06-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -134,7 +150,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2020-06-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -147,7 +163,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2020-06-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

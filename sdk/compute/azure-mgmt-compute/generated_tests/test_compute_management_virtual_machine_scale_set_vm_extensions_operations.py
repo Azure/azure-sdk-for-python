@@ -27,8 +27,8 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
             instance_id="str",
             vm_extension_name="str",
             extension_parameters={
-                "location": "str",
                 "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
                 "id": "str",
                 "instanceView": {
@@ -54,16 +54,19 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
+                "location": "str",
                 "name": "str",
                 "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                "provisionAfterExtensions": ["str"],
                 "provisioningState": "str",
                 "publisher": "str",
                 "settings": {},
-                "tags": {"str": "str"},
+                "suppressFailures": bool,
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2019-07-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -79,15 +82,19 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
             vm_extension_name="str",
             extension_parameters={
                 "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
+                "id": "str",
+                "name": "str",
                 "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
                 "publisher": "str",
                 "settings": {},
-                "tags": {"str": "str"},
+                "suppressFailures": bool,
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2019-07-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +108,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
             vm_scale_set_name="str",
             instance_id="str",
             vm_extension_name="str",
-            api_version="2019-07-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -115,7 +122,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
             vm_scale_set_name="str",
             instance_id="str",
             vm_extension_name="str",
-            api_version="2019-07-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +135,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2019-07-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

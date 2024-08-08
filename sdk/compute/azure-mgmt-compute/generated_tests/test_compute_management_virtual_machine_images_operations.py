@@ -27,7 +27,7 @@ class TestComputeManagementVirtualMachineImagesOperations(AzureMgmtRecordedTestC
             offer="str",
             skus="str",
             version="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestComputeManagementVirtualMachineImagesOperations(AzureMgmtRecordedTestC
             publisher_name="str",
             offer="str",
             skus="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestComputeManagementVirtualMachineImagesOperations(AzureMgmtRecordedTestC
         response = self.client.virtual_machine_images.list_offers(
             location="str",
             publisher_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestComputeManagementVirtualMachineImagesOperations(AzureMgmtRecordedTestC
     def test_list_publishers(self, resource_group):
         response = self.client.virtual_machine_images.list_publishers(
             location="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,19 @@ class TestComputeManagementVirtualMachineImagesOperations(AzureMgmtRecordedTestC
             location="str",
             publisher_name="str",
             offer="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_list_by_edge_zone(self, resource_group):
+        response = self.client.virtual_machine_images.list_by_edge_zone(
+            location="str",
+            edge_zone="str",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

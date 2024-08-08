@@ -1,12 +1,12 @@
 {
-  "commit": "50ed4464b0e2a90e5d313b83bcb00a28762dd80f",
+  "commit": "3d87a71fb30062a70d5adf9cd7653639f00c3b92",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.15.0",
+    "@autorest/python@6.17.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.17.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/compute/resource-manager/readme.md",
   "package-2024-03-02-only": "2024-07-16 12:23:13 -0400 602fb5144a226577186e35845422c11db9067cf8 Microsoft.Compute/DiskRP/stable/2024-03-02/snapshot.json",
   "package-2024-03-01-only": "2024-06-05 15:03:47 -0700 491e00d17f24909ecf5e1030b3833bed51224e92 Microsoft.Compute/ComputeRP/stable/2024-03-01/virtualMachineScaleSet.json",
@@ -54,5 +54,6 @@
   "package-compute-2017-03": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/DiskRP/stable/2017-03-30/disk.json",
   "package-compute-2016-04-preview": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/DiskRP/preview/2016-04-30-preview/disk.json",
   "package-compute-2016-03": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2016-03-30/compute.json",
-  "package-compute-2015-06": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2015-06-15/compute.json"
+  "package-compute-2015-06": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2015-06-15/compute.json",
+  "package-2024-07-01-only": "2024-07-30 04:25:27 -0400 4f68529971f845e8757c2b2a746d78ceb91854cd Microsoft.Compute/ComputeRP/stable/2024-07-01/virtualMachineScaleSet.json"
 }
