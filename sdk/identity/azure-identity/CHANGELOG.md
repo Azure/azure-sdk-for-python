@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the `send_certificate_chain` keyword argument was not being honored when using certs with the synchronous `OnBehalfOfCredential`. ([#36810](https://github.com/Azure/azure-sdk-for-python/pull/36810))
+
 ### Other Changes
 
 - `AzurePowerShellCredential` now supports using secure strings when authenticating with PowerShell. ([#36653](https://github.com/Azure/azure-sdk-for-python/pull/36653))
