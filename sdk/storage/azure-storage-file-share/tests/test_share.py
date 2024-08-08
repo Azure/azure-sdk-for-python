@@ -1651,47 +1651,53 @@ class TestStorageShare(StorageRecordedTestCase):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        # Arrange
-        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
-        mibps = 10340
-        iops = 102400
+        try:
+            # Arrange
+            self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+            mibps = 10340
+            iops = 102400
 
-        # Act / Assert
-        share = self._create_share(
-            paid_bursting_enabled=True,
-            paid_bursting_bandwidth_mibps=5000,
-            paid_bursting_iops=1000
-        )
-        share_props = share.get_share_properties()
-        assert share_props.paid_bursting_enabled
-        assert share_props.paid_bursting_bandwidth_mibps == 5000
-        assert share_props.paid_bursting_iops == 1000
+            # Act / Assert
+            share = self._create_share(
+                paid_bursting_enabled=True,
+                paid_bursting_bandwidth_mibps=5000,
+                paid_bursting_iops=1000
+            )
+            share_props = share.get_share_properties()
+            assert share_props.paid_bursting_enabled
+            assert share_props.paid_bursting_bandwidth_mibps == 5000
+            assert share_props.paid_bursting_iops == 1000
 
-        share.set_share_properties(
-            root_squash="NoRootSquash",
-            paid_bursting_enabled=True,
-            paid_bursting_bandwidth_mibps=mibps,
-            paid_bursting_iops=iops
-        )
-        share_props = share.get_share_properties()
-        share_name = share_props.name
-        assert share_props.paid_bursting_enabled
-        assert share_props.paid_bursting_bandwidth_mibps == mibps
-        assert share_props.paid_bursting_iops == iops
+            share.set_share_properties(
+                root_squash="NoRootSquash",
+                paid_bursting_enabled=True,
+                paid_bursting_bandwidth_mibps=mibps,
+                paid_bursting_iops=iops
+            )
+            share_props = share.get_share_properties()
+            share_name = share_props.name
+            assert share_props.paid_bursting_enabled
+            assert share_props.paid_bursting_bandwidth_mibps == mibps
+            assert share_props.paid_bursting_iops == iops
 
-        shares = list(self.fsc.list_shares())
-        assert shares is not None
-        assert len(shares) >= 1
-        for share in shares:
-            if share.name == share_name:
-                assert share is not None
-                assert share.paid_bursting_enabled
-                assert share.paid_bursting_bandwidth_mibps == mibps
-                assert share.paid_bursting_iops == iops
-                break
-            raise ValueError("Share with modified bursting values not found.")
+            shares = list(self.fsc.list_shares())
+            assert shares is not None
+            assert len(shares) >= 1
 
-        self._delete_shares()
+            share_exists = False
+            for share in shares:
+                if share.name == share_name:
+                    assert share is not None
+                    assert share.paid_bursting_enabled
+                    assert share.paid_bursting_bandwidth_mibps == mibps
+                    assert share.paid_bursting_iops == iops
+                    share_exists = True
+                    break
+
+            if not share_exists:
+                raise ValueError("Share with modified bursting values not found.")
+        finally:
+            self._delete_shares()
 
     @FileSharePreparer()
     @recorded_by_proxy
