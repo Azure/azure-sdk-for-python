@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -36,7 +37,7 @@ class DocumentIntelligenceClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
@@ -94,7 +95,7 @@ class DocumentIntelligenceClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -103,7 +104,7 @@ class DocumentIntelligenceClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DocumentIntelligenceClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -118,7 +119,7 @@ class DocumentIntelligenceAdministrationClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
@@ -178,7 +179,7 @@ class DocumentIntelligenceAdministrationClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -187,7 +188,7 @@ class DocumentIntelligenceAdministrationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DocumentIntelligenceAdministrationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, line-too-long, too-many-locals
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -40,11 +40,11 @@ class RadiologyInsightsInference(_model_base.Model):
     LateralityDiscrepancyInference, LimitedOrderDiscrepancyInference, RadiologyProcedureInference,
     SexMismatchInference
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Known values are: "ageMismatch", "lateralityDiscrepancy", "sexMismatch",
-     "completeOrderDiscrepancy", "limitedOrderDiscrepancy", "finding", "criticalResult",
-     "followupRecommendation", "followupCommunication", and "radiologyProcedure".
+    :ivar kind: Discriminator property for RadiologyInsightsInference. Required. Known values are:
+     "ageMismatch", "lateralityDiscrepancy", "sexMismatch", "completeOrderDiscrepancy",
+     "limitedOrderDiscrepancy", "finding", "criticalResult", "followupRecommendation",
+     "followupCommunication", and "radiologyProcedure".
     :vartype kind: str or
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType
     :ivar extension: Additional Content defined by implementations.
@@ -53,9 +53,10 @@ class RadiologyInsightsInference(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Known values are: \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\",
-     \"completeOrderDiscrepancy\", \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\",
-     \"followupRecommendation\", \"followupCommunication\", and \"radiologyProcedure\"."""
+    """Discriminator property for RadiologyInsightsInference. Required. Known values are:
+     \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\", \"completeOrderDiscrepancy\",
+     \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\", \"followupRecommendation\",
+     \"followupCommunication\", and \"radiologyProcedure\"."""
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
@@ -82,7 +83,6 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
     """A notification for age mismatch is displayed when the age mentioned in a document for a
     specific patient does not match the age specified in the patient information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -113,7 +113,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
 
 class Element(_model_base.Model):
     """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -149,7 +149,6 @@ class Annotation(Element):
     """A text note which also  contains information about who made the statement and when
     Based on `FHIR Annotation <https://www.hl7.org/fhir/R4/datatypes.html#Annotation>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -280,7 +279,6 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -337,7 +335,6 @@ class Resource(_model_base.Model):
     Parameters, and Binary extend Resource directly.
     Based on [FHIR Resource](https://www.hl7.org/fhir/r4/resource.html.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar resource_type: The type of resource. Required.
     :vartype resource_type: str
@@ -391,7 +388,6 @@ class DomainResource(Resource):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     Condition, Observation, ResearchStudy
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -401,7 +397,8 @@ class DomainResource(Resource):
     :vartype implicit_rules: str
     :ivar language: Language of the resource content.
     :vartype language: str
-    :ivar resource_type: Required. Default value is None.
+    :ivar resource_type: Discriminator property for DomainResource. Required. Default value is
+     None.
     :vartype resource_type: str
     :ivar text: Text summary of the resource, for human interpretation.
     :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
@@ -415,7 +412,7 @@ class DomainResource(Resource):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     resource_type: str = rest_discriminator(name="resourceType")
-    """Required. Default value is None."""
+    """Discriminator property for DomainResource. Required. Default value is None."""
     text: Optional["_models.Narrative"] = rest_field()
     """Text summary of the resource, for human interpretation."""
     contained: Optional[List["_models.Resource"]] = rest_field()
@@ -741,7 +738,6 @@ class ContactPoint(_model_base.Model):
 class CriticalResult(_model_base.Model):
     """Critical Result consists of two properties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar description: Description : medical problem. Required.
     :vartype description: str
@@ -777,7 +773,6 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
     """Critical results refer to findings of utmost importance that may require timely attention due
     to their potential impact on patient care.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -883,7 +878,6 @@ class DocumentAuthor(_model_base.Model):
 class DocumentContent(_model_base.Model):
     """The content of the patient document.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar source_type: The type of the content's source.
      In case the source type is 'inline', the content is given as a string (for instance, text).
@@ -979,7 +973,6 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
     Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
@@ -1070,7 +1063,6 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     """Findings in a radiology report typically describe abnormalities, lesions, or other notable
     observations related to the anatomy or pathology of the imaged area.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1142,7 +1134,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1191,7 +1182,6 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1331,9 +1321,9 @@ class ProcedureRecommendation(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GenericProcedureRecommendation, ImagingProcedureRecommendation
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for ProcedureRecommendation. Required. Default value is
+     None.
     :vartype kind: str
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1341,7 +1331,7 @@ class ProcedureRecommendation(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for ProcedureRecommendation. Required. Default value is None."""
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
@@ -1367,7 +1357,6 @@ class ProcedureRecommendation(_model_base.Model):
 class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
     """Generic procedure information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1412,7 +1401,6 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
 class HealthInsightsErrorResponse(_model_base.Model):
     """A response containing error details.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar error: The error object. Required.
     :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
@@ -1496,7 +1484,6 @@ class Identifier(Element):
 class ImagingProcedure(_model_base.Model):
     """Imaging procedure.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar modality: Modality : SNOMED CT code. Required.
     :vartype modality: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
@@ -1546,7 +1533,6 @@ class ImagingProcedure(_model_base.Model):
 class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
     """Imaging procedures.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1627,7 +1613,6 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1676,7 +1661,6 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1806,7 +1790,6 @@ class Narrative(Element):
     represent the content of the resource to a human.
     Based on `FHIR Narrative <https://www.hl7.org/fhir/R4/narrative.html#Narrative>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -1848,7 +1831,6 @@ class Observation(DomainResource, discriminator="Observation"):  # pylint: disab
     """Detailed information about observations
     Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2058,7 +2040,6 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
     """Component results
     Based on `FHIR Observation.component <https://www.hl7.org/fhir/R4/observation.html>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -2302,7 +2283,6 @@ class PatientDocument(_model_base.Model):
     """A clinical document related to a patient. Document here is in the wide sense - not just a text
     document (note).
 
-    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the patient document, such as 'note' (text document) or 'fhirBundle'
      (FHIR JSON document). Required. Known values are: "note", "fhirBundle", "dicom", and
@@ -2387,7 +2367,6 @@ class PatientDocument(_model_base.Model):
 class PatientEncounter(_model_base.Model):
     """visit/encounter information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the visit. Required.
     :vartype id: str
@@ -2433,7 +2412,6 @@ class PatientEncounter(_model_base.Model):
 class PatientRecord(_model_base.Model):
     """A patient record, including their clinical information and data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
      request. Required.
@@ -2566,7 +2544,6 @@ class Quantity(Element):
 class RadiologyCodeWithTypes(_model_base.Model):
     """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
      in the case of contrast, and in the case of views, it denotes the number of views. Required.
@@ -2607,7 +2584,6 @@ class RadiologyCodeWithTypes(_model_base.Model):
 class RadiologyInsightsData(_model_base.Model):
     """Contains the list of patients, and configuration data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patients: The list of patients, including their clinical information and data. Required.
     :vartype patients: list[~azure.healthinsights.radiologyinsights.models.PatientRecord]
@@ -2680,7 +2656,6 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patient_results: Results for the patients given in the request. Required.
     :vartype patient_results:
@@ -2719,7 +2694,6 @@ class RadiologyInsightsJob(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar job_data: The request data for the operation.
     :vartype job_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
@@ -2839,7 +2813,6 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
 class RadiologyInsightsPatientResult(_model_base.Model):
     """Results of the model's work for a single patient.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patient_id: Identifier given for the patient in the request. Required.
     :vartype patient_id: str
@@ -2876,7 +2849,6 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
     extracted from the document information and text.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -2993,7 +2965,6 @@ class Ratio(Element):
 class RecommendationFinding(_model_base.Model):
     """Finding reference for recommendation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
@@ -3351,7 +3322,6 @@ class SampledData(Element):
     """A series of measurements taken by a device
     Based on `FHIR SampledData <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
@@ -3414,7 +3384,6 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
     document are either inconsistent or do not match the gender specified in the patient
     information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]

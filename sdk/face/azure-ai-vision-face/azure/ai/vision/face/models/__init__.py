@@ -10,7 +10,6 @@ from ._models import AccessoryItem
 from ._models import AuditLivenessResponseInfo
 from ._models import AuditRequestInfo
 from ._models import BlurProperties
-from ._models import CreateLivenessSessionContent
 from ._models import CreateLivenessSessionResult
 from ._models import CreateLivenessWithVerifySessionResult
 from ._models import ExposureProperties
@@ -58,23 +57,15 @@ from ._enums import MaskType
 from ._enums import NoiseLevel
 from ._enums import QualityForRecognition
 from ._enums import Versions
-
-from ._patch import FaceAttributeTypeDetection01
-from ._patch import FaceAttributeTypeDetection03
-from ._patch import FaceAttributeTypeRecognition03
-from ._patch import FaceAttributeTypeRecognition04
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "FaceAttributeTypeDetection01",
-    "FaceAttributeTypeDetection03",
-    "FaceAttributeTypeRecognition03",
-    "FaceAttributeTypeRecognition04",
     "AccessoryItem",
     "AuditLivenessResponseInfo",
     "AuditRequestInfo",
     "BlurProperties",
-    "CreateLivenessSessionContent",
     "CreateLivenessSessionResult",
     "CreateLivenessWithVerifySessionResult",
     "ExposureProperties",
@@ -122,5 +113,5 @@ __all__ = [
     "QualityForRecognition",
     "Versions",
 ]
-
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

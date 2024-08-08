@@ -101,8 +101,7 @@ class TestModelClient(ModelClientTestBase):
         for _ in range(2):
             try:
                 response = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    raw_request_hook=self.request_callback
+                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
                 )
             except ServiceRequestError as _:
                 # The test should throw this exception!

@@ -18,6 +18,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -381,7 +383,7 @@ def build_firewall_rules_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_firewall_rules_list_by_mongo_cluster_request(  # pylint: disable=name-too-long
+def build_firewall_rules_list_by_parent_request(  # pylint: disable=name-too-long
     resource_group_name: str, mongo_cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -409,7 +411,7 @@ def build_firewall_rules_list_by_mongo_cluster_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_private_endpoint_connections_list_by_mongo_cluster_request(  # pylint: disable=name-too-long
+def build_private_endpoint_connections_list_connections_request(  # pylint: disable=name-too-long
     resource_group_name: str, mongo_cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -545,7 +547,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_private_links_list_by_mongo_cluster_request(  # pylint: disable=name-too-long
+def build_private_links_list_request(
     resource_group_name: str, mongo_cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -818,7 +820,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -881,19 +886,19 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1505,7 +1510,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoCluster, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -1549,20 +1554,20 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1574,7 +1579,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: _models.MongoClusterUpdate,
+        properties: _models.MongoCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1588,7 +1593,7 @@ class MongoClustersOperations:
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate
+        :type properties: ~azure.mgmt.mongocluster.models.MongoCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1602,9 +1607,16 @@ class MongoClustersOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 properties = {
+                    "location": "str",
+                    "id": "str",
+                    "name": "str",
                     "properties": {
                         "administratorLogin": "str",
                         "administratorLoginPassword": "str",
+                        "clusterStatus": "str",
+                        "connectionString": "str",
+                        "createMode": "str",
+                        "earliestRestoreTime": "str",
                         "nodeGroupSpecs": [
                             {
                                 "diskSizeGB": 0,
@@ -1614,12 +1626,55 @@ class MongoClustersOperations:
                                 "sku": "str"
                             }
                         ],
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
                         "publicNetworkAccess": "str",
+                        "restoreParameters": {
+                            "pointInTimeUTC": "2020-02-20 00:00:00",
+                            "sourceResourceId": "str"
+                        },
                         "serverVersion": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
                     "tags": {
                         "str": "str"
-                    }
+                    },
+                    "type": "str"
                 }
 
                 # response body for status code(s): 200, 202
@@ -1908,7 +1963,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoCluster, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
         """Updates an existing mongo cluster. The request body can contain one to many of the properties
@@ -1920,8 +1975,8 @@ class MongoClustersOperations:
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         MongoClusterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate or JSON or IO[bytes]
+         MongoCluster, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.mongocluster.models.MongoCluster or JSON or IO[bytes]
         :return: An instance of LROPoller that returns MongoCluster. The MongoCluster is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1932,9 +1987,16 @@ class MongoClustersOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 properties = {
+                    "location": "str",
+                    "id": "str",
+                    "name": "str",
                     "properties": {
                         "administratorLogin": "str",
                         "administratorLoginPassword": "str",
+                        "clusterStatus": "str",
+                        "connectionString": "str",
+                        "createMode": "str",
+                        "earliestRestoreTime": "str",
                         "nodeGroupSpecs": [
                             {
                                 "diskSizeGB": 0,
@@ -1944,12 +2006,55 @@ class MongoClustersOperations:
                                 "sku": "str"
                             }
                         ],
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
                         "publicNetworkAccess": "str",
+                        "restoreParameters": {
+                            "pointInTimeUTC": "2020-02-20 00:00:00",
+                            "sourceResourceId": "str"
+                        },
                         "serverVersion": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
                     "tags": {
                         "str": "str"
-                    }
+                    },
+                    "type": "str"
                 }
 
                 # response body for status code(s): 200, 202
@@ -2102,7 +2207,10 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2112,10 +2220,7 @@ class MongoClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2537,7 +2642,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2723,7 +2831,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2829,7 +2940,10 @@ class FirewallRulesOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2894,23 +3008,20 @@ class FirewallRulesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3250,7 +3361,10 @@ class FirewallRulesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3260,10 +3374,7 @@ class FirewallRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3327,7 +3438,7 @@ class FirewallRulesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_mongo_cluster(
+    def list_by_parent(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.FirewallRule"]:
         """List all the firewall rules in a given mongo cluster.
@@ -3380,7 +3491,7 @@ class FirewallRulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_firewall_rules_list_by_mongo_cluster_request(
+                _request = build_firewall_rules_list_by_parent_request(
                     resource_group_name=resource_group_name,
                     mongo_cluster_name=mongo_cluster_name,
                     subscription_id=self._config.subscription_id,
@@ -3451,7 +3562,7 @@ class PrivateEndpointConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_mongo_cluster(
+    def list_connections(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.PrivateEndpointConnectionResource"]:
         """List existing private connections.
@@ -3514,7 +3625,7 @@ class PrivateEndpointConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_private_endpoint_connections_list_by_mongo_cluster_request(
+                _request = build_private_endpoint_connections_list_connections_request(
                     resource_group_name=resource_group_name,
                     mongo_cluster_name=mongo_cluster_name,
                     subscription_id=self._config.subscription_id,
@@ -3650,7 +3761,10 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3715,23 +3829,20 @@ class PrivateEndpointConnectionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4138,7 +4249,10 @@ class PrivateEndpointConnectionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4148,10 +4262,7 @@ class PrivateEndpointConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4234,7 +4345,7 @@ class PrivateLinksOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_mongo_cluster(
+    def list(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.PrivateLinkResource"]:
         """list private links on the given resource.
@@ -4291,7 +4402,7 @@ class PrivateLinksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_private_links_list_by_mongo_cluster_request(
+                _request = build_private_links_list_request(
                     resource_group_name=resource_group_name,
                     mongo_cluster_name=mongo_cluster_name,
                     subscription_id=self._config.subscription_id,

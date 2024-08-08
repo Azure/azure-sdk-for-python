@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -83,7 +85,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         *,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -96,7 +98,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -119,7 +121,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -127,28 +129,19 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.HealthInsightsErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-            deserialized = _deserialize(JSON, response.json())
-
-        if response.status_code == 201:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = _deserialize(JSON, response.json())
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -165,7 +158,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
-        # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
         Creates a Radiology Insights job with the given request body.
@@ -190,978 +182,489 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 resource = {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -1169,1058 +672,536 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -2228,82 +1209,49 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
         """
 
@@ -2317,7 +1265,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
-        # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
         Creates a Radiology Insights job with the given request body.
@@ -2342,978 +1289,489 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -3321,82 +1779,49 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
         """
 
@@ -3410,7 +1835,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
-        # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
         Creates a Radiology Insights job with the given request body.
@@ -3435,978 +1859,489 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -4414,82 +2349,49 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
         """
 
@@ -4502,7 +2404,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
-        # pylint: disable=line-too-long
         """Create Radiology Insights job.
 
         Creates a Radiology Insights job with the given request body.
@@ -4526,978 +2427,489 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 resource = {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -5505,1058 +2917,536 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "id": "str",  # The unique ID of the job. Required.
-                    "status": "str",  # The status of the job. Required. Known values are:
-                      "notStarted", "running", "succeeded", "failed", and "canceled".
-                    "createdAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job was created.
+                    "id": "str",
+                    "status": "str",
+                    "createdAt": "2020-02-20 00:00:00",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "expiresAt": "2020-02-20 00:00:00",  # Optional. The date and time when the
-                      processing job is set to expire.
+                    "expiresAt": "2020-02-20 00:00:00",
                     "jobData": {
                         "patients": [
                             {
-                                "id": "str",  # A given identifier for the patient.
-                                  Has to be unique across all patients in a single request. Required.
+                                "id": "str",
                                 "details": {
-                                    "birthDate": "2020-02-20",  # Optional. The
-                                      patient's date of birth.
+                                    "birthDate": "2020-02-20",
                                     "clinicalInfo": [
                                         {
-                                            "resourceType": "str",  # The
-                                              type of resource. Required.
-                                            "id": "str",  # Optional.
-                                              Resource Id.
-                                            "implicitRules": "str",  #
-                                              Optional. A set of rules under which this content was
-                                              created.
-                                            "language": "str",  #
-                                              Optional. Language of the resource content.
+                                            "resourceType": "str",
+                                            "id": "str",
+                                            "implicitRules": "str",
+                                            "language": "str",
                                             "meta": {
                                                 "lastUpdated": "str",
-                                                  # Optional. When the resource last changed - e.g.
-                                                  when the version changed.
                                                 "profile": [
-                                                    "str"  #
-                                                      Optional. A list of profiles (references to
-                                                      `StructureDefinition
-                                                      <https://www.hl7.org/fhir/structuredefinition.html>`_
-                                                      resources) that this resource claims to conform
-                                                      to. The URL is a reference to
-                                                      `StructureDefinition.url
-                                                      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_.
+                                                    "str"
                                                 ],
                                                 "security": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "source": "str",  #
-                                                  Optional. A uri that identifies the source system of
-                                                  the resource. This provides a minimal amount of
-                                                  Provenance information that can be used to track or
-                                                  differentiate the source of information in the
-                                                  resource. The source may identify another FHIR
-                                                  server, document, message, database, etc.
+                                                "source": "str",
                                                 "tag": [
                                                     {
-                "code": "str",  # Optional. Symbol in syntax
-                                                          defined by the system.
-                "display": "str",  # Optional. Representation
-                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of the
-                                                                  definition for the extension code - a
-                                                                  logical name or a URL. Required.
-                "valueBoolean": bool,  # Optional.
-                                                                  Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  # Optional. Plain
-                                                                      text representation of the
-                                                                      concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                                  Value as dateTime.
-                "valueInteger": 0,  # Optional. Value
-                                                                  as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End
-                                                                      time with inclusive boundary, if
-                                                                      not ongoing.
-                "start": "str"  # Optional.
-                                                                      Starting time with inclusive
-                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional.
-                                                                      Text alternative for the
-                                                                      resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional.
-                                                                          The namespace for the
-                                                                          identifier value.
+                "system": "str",
                 "type": {
                 "coding": [
                 ...
                 ],
-                "text": "str"  #
-                                                                              Optional. Plain text
-                                                                              representation of the
-                                                                              concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional.
-                                                                          usual | official | temp |
-                                                                          secondary | old (If known).
-                "value": "str"  # Optional.
-                                                                          The value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                      Literal reference, Relative,
-                                                                      internal or absolute URL.
-                "type": "str"  # Optional. Type
-                                                                      the reference refers to (e.g.
-                                                                      "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of
-                                                                      sample points at each time point.
-                                                                      Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional.
-                                                                          Coded form of the unit.
-                "comparator": "str",  #
-                                                                          Optional. < | <= | >= | > -
-                                                                          how to understand the value.
-                "system": "str",  # Optional.
-                                                                          System that defines coded
-                                                                          unit form.
-                "unit": "str",  # Optional.
-                                                                          Unit representation.
-                "value": 0.0  # Optional.
-                                                                          Numerical value (with
-                                                                          implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                      milliseconds between samples.
-                                                                      Required.
-                "data": "str",  # Optional.
-                                                                      Decimal values with spaces, or
-                                                                      "E" | "U" | "L".
-                "factor": 0.0,  # Optional.
-                                                                      Multiply data by this before
-                                                                      adding to origin.
-                "lowerLimit": 0.0,  # Optional.
-                                                                      Lower limit of detection.
-                "upperLimit": 0.0  # Optional.
-                                                                      Upper limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional.
-                                                                  Value as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                                  Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                                                         ],
                                                         "id":
-                                                          "str",  # Optional. Unique id for
-                                                          inter-element referencing.
-                "system": "str",  # Optional. Identity of the
-                                                          terminology system.
-                "version": "str"  # Optional. Version of the
-                                                          system - if relevant.
+                                                          "str",
+                "system": "str",
+                "version": "str"
                                                     }
                                                 ],
-                                                "versionId": "str"  #
-                                                  Optional. The version specific identifier, as it
-                                                  appears in the version portion of the URL. This value
-                                                  changes when the resource is created, updated, or
-                                                  deleted.
+                                                "versionId": "str"
                                             }
                                         }
                                     ],
-                                    "sex": "str"  # Optional. The patient's sex.
-                                      Known values are: "female", "male", and "unspecified".
+                                    "sex": "str"
                                 },
                                 "encounters": [
                                     {
-                                        "id": "str",  # The id of the visit.
-                                          Required.
-                                        "class": "str",  # Optional. The
-                                          class of the encounter. Known values are: "inpatient",
-                                          "ambulatory", "observation", "emergency", "virtual", and
-                                          "healthHome".
+                                        "id": "str",
+                                        "class": "str",
                                         "period": {
                                             "end": "2020-02-20 00:00:00",
-                                              # Optional. End time with inclusive boundary, if not
-                                              ongoing.
                                             "start": "2020-02-20
-                                              00:00:00"  # Optional. Starting time with inclusive
-                                              boundary.
+                                              00:00:00"
                                         }
                                     }
                                 ],
                                 "patientDocuments": [
                                     {
                                         "content": {
-                                            "sourceType": "str",  # The
-                                              type of the content's source. In case the source type is
-                                              'inline', the content is given as a string (for instance,
-                                              text). In case the source type is 'reference', the
-                                              content is given as a URI. Required. Known values are:
-                                              "inline" and "reference".
-                                            "value": "str"  # The content
-                                              of the document, given either inline (as a string) or as
-                                              a reference (URI). Required.
+                                            "sourceType": "str",
+                                            "value": "str"
                                         },
-                                        "id": "str",  # A given identifier
-                                          for the document. Has to be unique across all documents for a
-                                          single patient. Required.
-                                        "type": "str",  # The type of the
-                                          patient document, such as 'note' (text document) or
-                                          'fhirBundle' (FHIR JSON document). Required. Known values
-                                          are: "note", "fhirBundle", "dicom", and "genomicSequencing".
+                                        "id": "str",
+                                        "type": "str",
                                         "administrativeMetadata": {
-                                            "encounterId": "str",  #
-                                              Optional. Reference to the encounter associated with the
-                                              document.
+                                            "encounterId": "str",
                                             "orderedProcedures": [
                                                 {
                                                     "code": {
                 "coding": [
                 {
-                "code": "str",  # Optional. Symbol in
-                                                                  syntax defined by the system.
-                "display": "str",  # Optional.
-                                                                  Representation defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 {
-                "url": "str",  # Source of
-                                                                          the definition for the
-                                                                          extension code - a logical
-                                                                          name or a URL. Required.
-                "valueBoolean": bool,  #
-                                                                          Optional. Value as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": ...,
-                "valueDateTime": "str",  #
-                                                                          Optional. Value as dateTime.
-                "valueInteger": 0,  #
-                                                                          Optional. Value as integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  #
-                                                                              Optional. End time with
-                                                                              inclusive boundary, if
-                                                                              not ongoing.
-                "start": "str"  #
-                                                                              Optional. Starting time
-                                                                              with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  #
-                                                                              Optional. Coded form of
-                                                                              the unit.
-                "comparator": "str",  #
-                                                                              Optional. < | <= | >= | >
-                                                                              - how to understand the
-                                                                              value.
-                "system": "str",  #
-                                                                              Optional. System that
-                                                                              defines coded unit form.
-                "unit": "str",  #
-                                                                              Optional. Unit
-                                                                              representation.
-                "value": 0.0  # Optional.
-                                                                              Numerical value (with
-                                                                              implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  #
-                                                                              Optional. Text
-                                                                              alternative for the
-                                                                              resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  #
-                                                                                      Optional. End
-                                                                                      time with
-                                                                                      inclusive
-                                                                                      boundary, if not
-                                                                                      ongoing.
-                "start": "str"  #
-                                                                                      Optional.
-                                                                                      Starting time
-                                                                                      with inclusive
-                                                                                      boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  #
-                                                                                  Optional. The
-                                                                                  namespace for the
-                                                                                  identifier value.
+                "system": "str",
                 "type": ...,
-                "use": "str",  #
-                                                                                  Optional. usual |
-                                                                                  official | temp |
-                                                                                  secondary | old (If
-                                                                                  known).
-                "value": "str"  #
-                                                                                  Optional. The value
-                                                                                  that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  #
-                                                                              Optional. Literal
-                                                                              reference, Relative,
-                                                                              internal or absolute URL.
-                "type": "str"  #
-                                                                              Optional. Type the
-                                                                              reference refers to (e.g.
-                                                                              "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  #
-                                                                              Number of sample points
-                                                                              at each time point.
-                                                                              Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  #
-                                                                                  Optional. Coded form
-                                                                                  of the unit.
+                "code": "str",
                 "comparator": "str",
-                                                                                  # Optional. < | <= |
-                                                                                  >= | > - how to
-                                                                                  understand the value.
-                "system": "str",  #
-                                                                                  Optional. System that
-                                                                                  defines coded unit
-                                                                                  form.
-                "unit": "str",  #
-                                                                                  Optional. Unit
-                                                                                  representation.
-                "value": 0.0  #
-                                                                                  Optional. Numerical
-                                                                                  value (with implicit
-                                                                                  precision).
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number
-                                                                              of milliseconds between
-                                                                              samples. Required.
-                "data": "str",  #
-                                                                              Optional. Decimal values
-                                                                              with spaces, or "E" | "U"
-                                                                              | "L".
-                "factor": 0.0,  #
-                                                                              Optional. Multiply data
-                                                                              by this before adding to
-                                                                              origin.
-                "lowerLimit": 0.0,  #
-                                                                              Optional. Lower limit of
-                                                                              detection.
-                "upperLimit": 0.0  #
-                                                                              Optional. Upper limit of
-                                                                              detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  #
-                                                                          Optional. Value as string.
-                "valueTime": "12:30:00"  #
-                                                                          Optional. Value as time
-                                                                          (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                 }
                 ],
-                "id": "str",  # Optional. Unique id
-                                                                  for inter-element referencing.
-                "system": "str",  # Optional.
-                                                                  Identity of the terminology system.
-                "version": "str"  # Optional. Version
-                                                                  of the system - if relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                                                         ],
-                "text": "str"  # Optional. Plain text
-                                                          representation of the concept.
+                "text": "str"
                                                     },
-                "description": "str",  # Optional. Procedure
-                                                      description.
+                "description": "str",
                                                     "extension":
                                                       [
                                                         {
-                "url": "str",  # Source of the definition
-                                                              for the extension code - a logical name
-                                                              or a URL. Required.
-                "valueBoolean": bool,  # Optional. Value
-                                                              as boolean.
+                "url": "str",
+                "valueBoolean": bool,
                 "valueCodeableConcept": {
                 "coding": [
                 {
-                "code": "str",  # Optional.
-                                                                          Symbol in syntax defined by
-                                                                          the system.
-                "display": "str",  #
-                                                                          Optional. Representation
-                                                                          defined by the system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  # Optional.
-                                                                          Unique id for inter-element
-                                                                          referencing.
-                "system": "str",  # Optional.
-                                                                          Identity of the terminology
-                                                                          system.
-                "version": "str"  # Optional.
-                                                                          Version of the system - if
-                                                                          relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional. Plain text
-                                                                  representation of the concept.
+                "text": "str"
                 },
-                "valueDateTime": "str",  # Optional.
-                                                              Value as dateTime.
-                "valueInteger": 0,  # Optional. Value as
-                                                              integer.
+                "valueDateTime": "str",
+                "valueInteger": 0,
                 "valuePeriod": {
-                "end": "str",  # Optional. End time
-                                                                  with inclusive boundary, if not
-                                                                  ongoing.
-                "start": "str"  # Optional. Starting
-                                                                  time with inclusive boundary.
+                "end": "str",
+                "start": "str"
                 },
                 "valueQuantity": {
-                "code": "str",  # Optional. Coded
-                                                                  form of the unit.
-                "comparator": "str",  # Optional. < |
-                                                                  <= | >= | > - how to understand the
-                                                                  value.
-                "system": "str",  # Optional. System
-                                                                  that defines coded unit form.
-                "unit": "str",  # Optional. Unit
-                                                                  representation.
-                "value": 0.0  # Optional. Numerical
-                                                                  value (with implicit precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "valueRange": {
                 "high": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "low": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueRatio": {
                 "denominator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
                 "numerator": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 }
                 },
                 "valueReference": {
-                "display": "str",  # Optional. Text
-                                                                  alternative for the resource.
+                "display": "str",
                 "identifier": {
                 "assigner": ...,
                 "period": {
-                "end": "str",  # Optional.
-                                                                          End time with inclusive
-                                                                          boundary, if not ongoing.
-                "start": "str"  # Optional.
-                                                                          Starting time with inclusive
-                                                                          boundary.
+                "end": "str",
+                "start": "str"
                 },
-                "system": "str",  # Optional. The
-                                                                      namespace for the identifier
-                                                                      value.
+                "system": "str",
                 "type": {
                 "coding": [
                 {
-                "code": "str",  #
-                                                                                  Optional. Symbol in
-                                                                                  syntax defined by the
-                                                                                  system.
-                "display": "str",  #
-                                                                                  Optional.
-                                                                                  Representation
-                                                                                  defined by the
-                                                                                  system.
+                "code": "str",
+                "display": "str",
                 "extension": [
                 ...
                 ],
-                "id": "str",  #
-                                                                                  Optional. Unique id
-                                                                                  for inter-element
-                                                                                  referencing.
-                "system": "str",  #
-                                                                                  Optional. Identity of
-                                                                                  the terminology
-                                                                                  system.
-                "version": "str"  #
-                                                                                  Optional. Version of
-                                                                                  the system - if
-                                                                                  relevant.
+                "id": "str",
+                "system": "str",
+                "version": "str"
                 }
                 ],
-                "text": "str"  # Optional.
-                                                                          Plain text representation of
-                                                                          the concept.
+                "text": "str"
                 },
-                "use": "str",  # Optional. usual
-                                                                      | official | temp | secondary |
-                                                                      old (If known).
-                "value": "str"  # Optional. The
-                                                                      value that is unique.
+                "use": "str",
+                "value": "str"
                 },
-                "reference": "str",  # Optional.
-                                                                  Literal reference, Relative, internal
-                                                                  or absolute URL.
-                "type": "str"  # Optional. Type the
-                                                                  reference refers to (e.g. "Patient").
+                "reference": "str",
+                "type": "str"
                 },
                 "valueSampledData": {
-                "dimensions": 0,  # Number of sample
-                                                                  points at each time point. Required.
+                "dimensions": 0,
                 "origin": {
-                "code": "str",  # Optional. Coded
-                                                                      form of the unit.
-                "comparator": "str",  # Optional.
-                                                                      < | <= | >= | > - how to
-                                                                      understand the value.
-                "system": "str",  # Optional.
-                                                                      System that defines coded unit
-                                                                      form.
-                "unit": "str",  # Optional. Unit
-                                                                      representation.
-                "value": 0.0  # Optional.
-                                                                      Numerical value (with implicit
-                                                                      precision).
+                "code": "str",
+                "comparator": "str",
+                "system": "str",
+                "unit": "str",
+                "value": 0.0
                 },
-                "period": 0.0,  # Number of
-                                                                  milliseconds between samples.
-                                                                  Required.
-                "data": "str",  # Optional. Decimal
-                                                                  values with spaces, or "E" | "U" |
-                                                                  "L".
-                "factor": 0.0,  # Optional. Multiply
-                                                                  data by this before adding to origin.
-                "lowerLimit": 0.0,  # Optional. Lower
-                                                                  limit of detection.
-                "upperLimit": 0.0  # Optional. Upper
-                                                                  limit of detection.
+                "period": 0.0,
+                "data": "str",
+                "factor": 0.0,
+                "lowerLimit": 0.0,
+                "upperLimit": 0.0
                 },
-                "valueString": "str",  # Optional. Value
-                                                              as string.
-                "valueTime": "12:30:00"  # Optional.
-                                                              Value as time (hh:mm:ss).
+                "valueString": "str",
+                "valueTime": "12:30:00"
                                                         }
                                                     ]
                                                 }
@@ -6564,82 +3454,49 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                                         },
                                         "authors": [
                                             {
-                                                "fullName": "str",  #
-                                                  Optional. Text representation of the full name.
-                                                "id": "str"  #
-                                                  Optional. author id.
+                                                "fullName": "str",
+                                                "id": "str"
                                             }
                                         ],
-                                        "clinicalType": "str",  # Optional.
-                                          The type of the clinical document. Known values are:
-                                          "consultation", "dischargeSummary", "historyAndPhysical",
-                                          "radiologyReport", "procedure", "progress", "laboratory", and
-                                          "pathologyReport".
+                                        "clinicalType": "str",
                                         "createdAt": "2020-02-20 00:00:00",
-                                          # Optional. The date and time when the document was created.
-                                        "language": "str",  # Optional. A 2
-                                          letter ISO 639-1 representation of the language of the
-                                          document.
-                                        "specialtyType": "str"  # Optional.
-                                          specialty type the document. Known values are: "pathology"
-                                          and "radiology".
+                                        "language": "str",
+                                        "specialtyType": "str"
                                     }
                                 ]
                             }
                         ],
                         "configuration": {
-                            "includeEvidence": bool,  # Optional. An indication whether
-                              the model's output should include evidence for the inferences.
+                            "includeEvidence": bool,
                             "inferenceOptions": {
                                 "findingOptions": {
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide the sentence that contains the
-                                      first token of the finding's clinical indicator (i.e. the medical
-                                      problem), if there is one. This sentence is provided as an
-                                      extension with url 'ci_sentence', next to the token evidence.
-                                      Default is false.
+                                    "provideFocusedSentenceEvidence": bool
                                 },
                                 "followupRecommendationOptions": {
                                     "includeRecommendationsInReferences": bool,
-                                      # Optional. Include/Exclude follow-up recommendations in
-                                      references to a guideline or article. Default is false.
-                "includeRecommendationsWithNoSpecifiedModality": bool,  #
-                                      Optional. Include/Exclude follow-up recommendations without a
-                                      specific radiology procedure. Default is false.
-                                    "provideFocusedSentenceEvidence": bool  #
-                                      Optional. If this is true, provide one or more sentences as
-                                      evidence for the recommendation, next to the token evidence. The
-                                      start and end positions of these sentences will be put in an
-                                      extension with url 'modality_sentences'. Default is false.
+                "includeRecommendationsWithNoSpecifiedModality": bool,
+                                    "provideFocusedSentenceEvidence": bool
                                 }
                             },
                             "inferenceTypes": [
-                                "str"  # Optional. This is a list of inference types
-                                  to be inferred for the current request. It could be used if only part
-                                  of the Radiology Insights inferences are required. If this list is
-                                  omitted or empty, the model will return all the inference types.
+                                "str"
                             ],
-                            "locale": "str",  # Optional. Local for the model to use. If
-                              not specified, the model will use the default locale.
-                            "verbose": bool  # Optional. An indication whether the model
-                              should produce verbose output.
+                            "locale": "str",
+                            "verbose": bool
                         }
                     },
                     "result": {
-                        "modelVersion": "str",  # The version of the model used for
-                          inference, expressed as the model date. Required.
+                        "modelVersion": "str",
                         "patientResults": [
                             {
                                 "inferences": [
                                     radiology_insights_inference
                                 ],
-                                "patientId": "str"  # Identifier given for the
-                                  patient in the request. Required.
+                                "patientId": "str"
                             }
                         ]
                     },
-                    "updatedAt": "2020-02-20 00:00:00"  # Optional. The date and time when the
-                      processing job was last updated.
+                    "updatedAt": "2020-02-20 00:00:00"
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6661,6 +3518,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -6671,7 +3529,7 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
+            deserialized = _deserialize(_models.RadiologyInsightsJob, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized

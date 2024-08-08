@@ -28,13 +28,14 @@ from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
+
 def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -112,6 +113,7 @@ def radiology_insights_sync() -> None:
         display_sex_mismatch(radiology_insights_result)
     except Exception as ex:
         raise ex
+
 
 def display_sex_mismatch(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:

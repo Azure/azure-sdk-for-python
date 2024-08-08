@@ -44,10 +44,7 @@ def sample_image_embeddings_with_defaults():
 
     # Create a client with default embeddings settings
     client = ImageEmbeddingsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        dimensions=1024,
-        input_type=EmbeddingInputType.QUERY
+        endpoint=endpoint, credential=AzureKeyCredential(key), dimensions=1024, input_type=EmbeddingInputType.QUERY
     )
 
     # Call the service with the defaults specified above

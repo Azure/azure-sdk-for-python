@@ -180,10 +180,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
         return async_sdk.ChatCompletionsClient(
-            endpoint=endpoint,
-            credential=credential,
-            logging_enable=LOGGING_ENABLED,
-            **kwargs
+            endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
         )
 
     def _create_async_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
@@ -199,10 +196,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
         return sdk.ChatCompletionsClient(
-            endpoint=endpoint,
-            credential=credential,
-            logging_enable=LOGGING_ENABLED,
-            **kwargs
+            endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
         )
 
     def _create_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
@@ -218,20 +212,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
         return async_sdk.EmbeddingsClient(
-            endpoint=endpoint,
-            credential=credential,
-            logging_enable=LOGGING_ENABLED,
-             **kwargs
+            endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
         )
 
     def _create_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
-        return sdk.EmbeddingsClient(
-            endpoint=endpoint,
-            credential=credential,
-            logging_enable=LOGGING_ENABLED,
-            **kwargs
-        )
+        return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs)
 
     def _create_embeddings_client_with_chat_completions_credentials(self, **kwargs) -> sdk.EmbeddingsClient:
         endpoint = kwargs.pop("azure_ai_chat_endpoint")
