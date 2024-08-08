@@ -42,10 +42,15 @@ def main():
                 "clusterProfile": {
                     "authorizationProfile": {"userIds": ["testuser1", "testuser2"]},
                     "clusterVersion": "0.0.1",
-                    "identityProfile": {
-                        "msiClientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
-                        "msiObjectId": "40491351-c240-4042-91e0-f644a1d2b441",
-                        "msiResourceId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-msi",
+                    "managedIdentityProfile": {
+                        "identityList": [
+                            {
+                                "clientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
+                                "objectId": "40491351-c240-4042-91e0-f644a1d2b441",
+                                "resourceId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-msi",
+                                "type": "cluster",
+                            }
+                        ]
                     },
                     "ossVersion": "2.2.3",
                     "serviceConfigsProfiles": [
@@ -86,16 +91,19 @@ def main():
                         },
                     ],
                     "sparkProfile": {},
-                    "sshProfile": {"count": 2},
+                    "sshProfile": {"count": 2, "vmSize": "Standard_D3_v2"},
                 },
                 "clusterType": "spark",
-                "computeProfile": {"nodes": [{"count": 4, "type": "worker", "vmSize": "Standard_D3_v2"}]},
+                "computeProfile": {
+                    "availabilityZones": ["1", "2", "3"],
+                    "nodes": [{"count": 4, "type": "worker", "vmSize": "Standard_D3_v2"}],
+                },
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateSparkCluster.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/CreateSparkCluster.json
 if __name__ == "__main__":
     main()

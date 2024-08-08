@@ -1,5 +1,94 @@
 # Release History
 
+## 1.0.0b3 (2024-08-18)
+
+### Features Added
+
+  - The 'azure.mgmt.hdinsightcontainers.HDInsightContainersMgmtClient' client had operation group 'cluster_pool_upgrade_histories' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.HDInsightContainersMgmtClient' client had operation group 'cluster_upgrade_histories' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.HDInsightContainersMgmtClient' client had operation group 'cluster_libraries' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.operations.ClustersOperations' method 'begin_upgrade_manual_rollback' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.operations.ClusterLibrariesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.operations.ClusterPoolUpgradeHistoriesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.operations.ClusterUpgradeHistoriesOperations' was added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.aio.HDInsightContainersMgmtClient' client had operation group 'cluster_pool_upgrade_histories' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.aio.HDInsightContainersMgmtClient' client had operation group 'cluster_upgrade_histories' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.aio.HDInsightContainersMgmtClient' client had operation group 'cluster_libraries' added in the current version
+  - The 'azure.mgmt.hdinsightcontainers.aio.operations.ClustersOperations' method 'begin_upgrade_manual_rollback' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.aio.operations.ClusterLibrariesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.aio.operations.ClusterPoolUpgradeHistoriesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.aio.operations.ClusterUpgradeHistoriesOperations' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType' had property 'PATCH_VERSION_UPGRADE' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolProfile' had property 'public_ip_tag' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesClusterPoolProfile' had property 'public_ip_tag' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterProfile' had property 'managed_identity_profile' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType' had property 'PATCH_VERSION_UPGRADE' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.SshProfile' had property 'vm_size' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.UpdatableClusterProfile' had property 'secrets_profile' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.UpdatableClusterProfile' had property 'trino_profile' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.Category' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAksPatchUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableInPlaceUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradePatchVersionUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeRollbackHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterInPlaceUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterInPlaceUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterLibrary' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterLibraryList' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterLibraryManagementOperation' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterLibraryManagementOperationProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPatchVersionUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPatchVersionUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPatchVersionUpgradeRollbackHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolAksPatchUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolNodeOsUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistory' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryListResult' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistory' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryListResult' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeRollback' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterUpgradeRollbackProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.IpTag' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.LibraryManagementAction' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ManagedIdentityProfile' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ManagedIdentitySpec' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ManagedIdentityType' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.MavenLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.PyPiLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.Status' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.Type' was added in the current version
+
+### Breaking Changes
+
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'description' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'component_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'severity' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'extended_properties' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'created_time' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeProperties' had its instance variable 'target_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeProperties' had its instance variable 'target_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeProperties' had its instance variable 'target_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.ClusterHotfixUpgradeProperties' had its instance variable 'component_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsightcontainers.models.KafkaProfile' had its instance variable 'cluster_identity' deleted or renamed in the current version
+
 ## 1.0.0b2 (2024-04-07)
 
 ### Features Added

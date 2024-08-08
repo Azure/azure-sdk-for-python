@@ -39,7 +39,7 @@ def main():
             "location": "West US 2",
             "properties": {
                 "clusterPoolProfile": {"clusterPoolVersion": "1.2"},
-                "computeProfile": {"vmSize": "Standard_D3_v2"},
+                "computeProfile": {"availabilityZones": ["1", "2", "3"], "vmSize": "Standard_D3_v2"},
                 "networkProfile": {
                     "outboundType": "userDefinedRouting",
                     "subnetId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateClusterPoolWithUDRAks.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/CreateClusterPoolWithUDRAks.json
 if __name__ == "__main__":
     main()

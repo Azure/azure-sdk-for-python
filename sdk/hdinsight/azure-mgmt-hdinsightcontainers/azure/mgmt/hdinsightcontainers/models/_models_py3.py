@@ -444,16 +444,138 @@ class ClusterAccessProfile(_serialization.Model):
         self.private_link_service_id = None
 
 
+class ClusterUpgradeHistoryProperties(_serialization.Model):
+    """Properties of cluster upgrade history.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterAksPatchUpgradeHistoryProperties, ClusterInPlaceUpgradeHistoryProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterAksPatchUpgradeHistoryProperties",
+            "ClusterInPlaceUpgradeHistoryProperties": "ClusterInPlaceUpgradeHistoryProperties",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+        self.utc_time = utc_time
+        self.upgrade_result = upgrade_result
+
+
+class ClusterAksPatchUpgradeHistoryProperties(ClusterUpgradeHistoryProperties):
+    """Cluster aks patch upgrade history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar original_version: Version before update.
+    :vartype original_version: str
+    :ivar new_version: Version going to update.
+    :vartype new_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "original_version": {"key": "originalVersion", "type": "str"},
+        "new_version": {"key": "newVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        original_version: Optional[str] = None,
+        new_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword original_version: Version before update.
+        :paramtype original_version: str
+        :keyword new_version: Version going to update.
+        :paramtype new_version: str
+        """
+        super().__init__(utc_time=utc_time, upgrade_result=upgrade_result, **kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+        self.original_version = original_version
+        self.new_version = new_version
+
+
 class ClusterUpgradeProperties(_serialization.Model):
     """Properties of upgrading cluster.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ClusterAKSPatchVersionUpgradeProperties, ClusterHotfixUpgradeProperties
+    ClusterAKSPatchVersionUpgradeProperties, ClusterInPlaceUpgradeProperties
 
     All required parameters must be populated in order to send to server.
 
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
     :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
     """
 
@@ -468,7 +590,7 @@ class ClusterUpgradeProperties(_serialization.Model):
     _subtype_map = {
         "upgrade_type": {
             "AKSPatchUpgrade": "ClusterAKSPatchVersionUpgradeProperties",
-            "HotfixUpgrade": "ClusterHotfixUpgradeProperties",
+            "ClusterInPlaceUpgradeProperties": "ClusterInPlaceUpgradeProperties",
         }
     }
 
@@ -483,8 +605,8 @@ class ClusterAKSPatchVersionUpgradeProperties(ClusterUpgradeProperties):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
     :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
     """
 
@@ -500,6 +622,163 @@ class ClusterAKSPatchVersionUpgradeProperties(ClusterUpgradeProperties):
         """ """
         super().__init__(**kwargs)
         self.upgrade_type: str = "AKSPatchUpgrade"
+
+
+class ClusterAvailableUpgradeProperties(_serialization.Model):
+    """Cluster available upgrade properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterAvailableUpgradeAksPatchUpgradeProperties, ClusterAvailableInPlaceUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterAvailableUpgradeAksPatchUpgradeProperties",
+            "ClusterAvailableInPlaceUpgradeProperties": "ClusterAvailableInPlaceUpgradeProperties",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+
+
+class ClusterAvailableInPlaceUpgradeProperties(
+    ClusterAvailableUpgradeProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Cluster available in-place upgrade.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterAvailableUpgradeHotfixUpgradeProperties,
+    ClusterAvailableUpgradePatchVersionUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    :ivar description: Hotfix version upgrade description.
+    :vartype description: str
+    :ivar source_oss_version: Source OSS version of current cluster component.
+    :vartype source_oss_version: str
+    :ivar source_cluster_version: Source cluster version of current cluster component.
+    :vartype source_cluster_version: str
+    :ivar source_build_number: Source build number of current cluster component.
+    :vartype source_build_number: str
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+    :ivar extended_properties: Extended properties of current available upgrade version.
+    :vartype extended_properties: str
+    :ivar created_time: Created time of current available upgrade version.
+    :vartype created_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "extended_properties": {"key": "extendedProperties", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "HotfixUpgrade": "ClusterAvailableUpgradeHotfixUpgradeProperties",
+            "PatchVersionUpgrade": "ClusterAvailableUpgradePatchVersionUpgradeProperties",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_cluster_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.Severity"]] = None,
+        extended_properties: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Hotfix version upgrade description.
+        :paramtype description: str
+        :keyword source_oss_version: Source OSS version of current cluster component.
+        :paramtype source_oss_version: str
+        :keyword source_cluster_version: Source cluster version of current cluster component.
+        :paramtype source_cluster_version: str
+        :keyword source_build_number: Source build number of current cluster component.
+        :paramtype source_build_number: str
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+        :keyword extended_properties: Extended properties of current available upgrade version.
+        :paramtype extended_properties: str
+        :keyword created_time: Created time of current available upgrade version.
+        :paramtype created_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "ClusterAvailableInPlaceUpgradeProperties"
+        self.description = description
+        self.source_oss_version = source_oss_version
+        self.source_cluster_version = source_cluster_version
+        self.source_build_number = source_build_number
+        self.target_oss_version = target_oss_version
+        self.target_cluster_version = target_cluster_version
+        self.target_build_number = target_build_number
+        self.component_name = component_name
+        self.severity = severity
+        self.extended_properties = extended_properties
+        self.created_time = created_time
 
 
 class ProxyResource(Resource):
@@ -568,42 +847,6 @@ class ClusterAvailableUpgrade(ProxyResource):
         self.properties = properties
 
 
-class ClusterAvailableUpgradeProperties(_serialization.Model):
-    """Cluster available upgrade properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ClusterAvailableUpgradeAksPatchUpgradeProperties,
-    ClusterAvailableUpgradeHotfixUpgradeProperties
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
-    :vartype upgrade_type: str or
-     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
-    """
-
-    _validation = {
-        "upgrade_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "upgrade_type": {"key": "upgradeType", "type": "str"},
-    }
-
-    _subtype_map = {
-        "upgrade_type": {
-            "AKSPatchUpgrade": "ClusterAvailableUpgradeAksPatchUpgradeProperties",
-            "HotfixUpgrade": "ClusterAvailableUpgradeHotfixUpgradeProperties",
-        }
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.upgrade_type: Optional[str] = None
-
-
 class ClusterAvailableUpgradeAksPatchUpgradeProperties(
     ClusterAvailableUpgradeProperties
 ):  # pylint: disable=name-too-long
@@ -611,8 +854,8 @@ class ClusterAvailableUpgradeAksPatchUpgradeProperties(
 
     All required parameters must be populated in order to send to server.
 
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
     :vartype upgrade_type: str or
      ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
     :ivar current_version: Current node pool version.
@@ -664,14 +907,14 @@ class ClusterAvailableUpgradeAksPatchUpgradeProperties(
 
 
 class ClusterAvailableUpgradeHotfixUpgradeProperties(
-    ClusterAvailableUpgradeProperties
+    ClusterAvailableInPlaceUpgradeProperties
 ):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Cluster available hotfix version upgrade.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
     :vartype upgrade_type: str or
      ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
     :ivar description: Hotfix version upgrade description.
@@ -759,19 +1002,21 @@ class ClusterAvailableUpgradeHotfixUpgradeProperties(
         :keyword created_time: Created time of current available upgrade version.
         :paramtype created_time: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__(
+            description=description,
+            source_oss_version=source_oss_version,
+            source_cluster_version=source_cluster_version,
+            source_build_number=source_build_number,
+            target_oss_version=target_oss_version,
+            target_cluster_version=target_cluster_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            extended_properties=extended_properties,
+            created_time=created_time,
+            **kwargs
+        )
         self.upgrade_type: str = "HotfixUpgrade"
-        self.description = description
-        self.source_oss_version = source_oss_version
-        self.source_cluster_version = source_cluster_version
-        self.source_build_number = source_build_number
-        self.target_oss_version = target_oss_version
-        self.target_cluster_version = target_cluster_version
-        self.target_build_number = target_build_number
-        self.component_name = component_name
-        self.severity = severity
-        self.extended_properties = extended_properties
-        self.created_time = created_time
 
 
 class ClusterAvailableUpgradeList(_serialization.Model):
@@ -806,6 +1051,119 @@ class ClusterAvailableUpgradeList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class ClusterAvailableUpgradePatchVersionUpgradeProperties(
+    ClusterAvailableInPlaceUpgradeProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Cluster available patch version upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    :ivar description: Hotfix version upgrade description.
+    :vartype description: str
+    :ivar source_oss_version: Source OSS version of current cluster component.
+    :vartype source_oss_version: str
+    :ivar source_cluster_version: Source cluster version of current cluster component.
+    :vartype source_cluster_version: str
+    :ivar source_build_number: Source build number of current cluster component.
+    :vartype source_build_number: str
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+    :ivar extended_properties: Extended properties of current available upgrade version.
+    :vartype extended_properties: str
+    :ivar created_time: Created time of current available upgrade version.
+    :vartype created_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "extended_properties": {"key": "extendedProperties", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_cluster_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.Severity"]] = None,
+        extended_properties: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Hotfix version upgrade description.
+        :paramtype description: str
+        :keyword source_oss_version: Source OSS version of current cluster component.
+        :paramtype source_oss_version: str
+        :keyword source_cluster_version: Source cluster version of current cluster component.
+        :paramtype source_cluster_version: str
+        :keyword source_build_number: Source build number of current cluster component.
+        :paramtype source_build_number: str
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+        :keyword extended_properties: Extended properties of current available upgrade version.
+        :paramtype extended_properties: str
+        :keyword created_time: Created time of current available upgrade version.
+        :paramtype created_time: ~datetime.datetime
+        """
+        super().__init__(
+            description=description,
+            source_oss_version=source_oss_version,
+            source_cluster_version=source_cluster_version,
+            source_build_number=source_build_number,
+            target_oss_version=target_oss_version,
+            target_cluster_version=target_cluster_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            extended_properties=extended_properties,
+            created_time=created_time,
+            **kwargs
+        )
+        self.upgrade_type: str = "PatchVersionUpgrade"
 
 
 class ClusterComponentsItem(_serialization.Model):
@@ -901,13 +1259,326 @@ class ClusterConfigFile(_serialization.Model):
         self.values = values
 
 
-class ClusterHotfixUpgradeProperties(ClusterUpgradeProperties):
+class ClusterInPlaceUpgradeHistoryProperties(
+    ClusterUpgradeHistoryProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Cluster in-place upgrade history properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterHotfixUpgradeHistoryProperties, ClusterHotfixUpgradeRollbackHistoryProperties,
+    ClusterPatchVersionUpgradeHistoryProperties,
+    ClusterPatchVersionUpgradeRollbackHistoryProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar source_cluster_version: Version with three part.
+    :vartype source_cluster_version: str
+    :ivar source_oss_version: Version with three part.
+    :vartype source_oss_version: str
+    :ivar source_build_number: Source build number.
+    :vartype source_build_number: str
+    :ivar target_cluster_version: Version with three part.
+    :vartype target_cluster_version: str
+    :ivar target_oss_version: Version with three part.
+    :vartype target_oss_version: str
+    :ivar target_build_number: Target build number.
+    :vartype target_build_number: str
+    :ivar component_name: Component name to upgrade.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+        "source_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "source_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "HotfixUpgrade": "ClusterHotfixUpgradeHistoryProperties",
+            "HotfixUpgradeRollback": "ClusterHotfixUpgradeRollbackHistoryProperties",
+            "PatchVersionUpgrade": "ClusterPatchVersionUpgradeHistoryProperties",
+            "PatchVersionUpgradeRollback": "ClusterPatchVersionUpgradeRollbackHistoryProperties",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        source_cluster_version: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.ClusterUpgradeHistorySeverityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword source_cluster_version: Version with three part.
+        :paramtype source_cluster_version: str
+        :keyword source_oss_version: Version with three part.
+        :paramtype source_oss_version: str
+        :keyword source_build_number: Source build number.
+        :paramtype source_build_number: str
+        :keyword target_cluster_version: Version with three part.
+        :paramtype target_cluster_version: str
+        :keyword target_oss_version: Version with three part.
+        :paramtype target_oss_version: str
+        :keyword target_build_number: Target build number.
+        :paramtype target_build_number: str
+        :keyword component_name: Component name to upgrade.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+        """
+        super().__init__(utc_time=utc_time, upgrade_result=upgrade_result, **kwargs)
+        self.upgrade_type: str = "ClusterInPlaceUpgradeHistoryProperties"
+        self.source_cluster_version = source_cluster_version
+        self.source_oss_version = source_oss_version
+        self.source_build_number = source_build_number
+        self.target_cluster_version = target_cluster_version
+        self.target_oss_version = target_oss_version
+        self.target_build_number = target_build_number
+        self.component_name = component_name
+        self.severity = severity
+
+
+class ClusterHotfixUpgradeHistoryProperties(
+    ClusterInPlaceUpgradeHistoryProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Cluster hotfix upgrade history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar source_cluster_version: Version with three part.
+    :vartype source_cluster_version: str
+    :ivar source_oss_version: Version with three part.
+    :vartype source_oss_version: str
+    :ivar source_build_number: Source build number.
+    :vartype source_build_number: str
+    :ivar target_cluster_version: Version with three part.
+    :vartype target_cluster_version: str
+    :ivar target_oss_version: Version with three part.
+    :vartype target_oss_version: str
+    :ivar target_build_number: Target build number.
+    :vartype target_build_number: str
+    :ivar component_name: Component name to upgrade.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+        "source_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "source_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        source_cluster_version: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.ClusterUpgradeHistorySeverityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword source_cluster_version: Version with three part.
+        :paramtype source_cluster_version: str
+        :keyword source_oss_version: Version with three part.
+        :paramtype source_oss_version: str
+        :keyword source_build_number: Source build number.
+        :paramtype source_build_number: str
+        :keyword target_cluster_version: Version with three part.
+        :paramtype target_cluster_version: str
+        :keyword target_oss_version: Version with three part.
+        :paramtype target_oss_version: str
+        :keyword target_build_number: Target build number.
+        :paramtype target_build_number: str
+        :keyword component_name: Component name to upgrade.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+        """
+        super().__init__(
+            utc_time=utc_time,
+            upgrade_result=upgrade_result,
+            source_cluster_version=source_cluster_version,
+            source_oss_version=source_oss_version,
+            source_build_number=source_build_number,
+            target_cluster_version=target_cluster_version,
+            target_oss_version=target_oss_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            **kwargs
+        )
+        self.upgrade_type: str = "HotfixUpgrade"
+
+
+class ClusterInPlaceUpgradeProperties(ClusterUpgradeProperties):
+    """Properties of in-place upgrading cluster.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterHotfixUpgradeProperties, ClusterPatchVersionUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "HotfixUpgrade": "ClusterHotfixUpgradeProperties",
+            "PatchVersionUpgrade": "ClusterPatchVersionUpgradeProperties",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "ClusterInPlaceUpgradeProperties"
+        self.target_oss_version = target_oss_version
+        self.target_cluster_version = target_cluster_version
+        self.target_build_number = target_build_number
+        self.component_name = component_name
+
+
+class ClusterHotfixUpgradeProperties(ClusterInPlaceUpgradeProperties):
     """Properties of upgrading cluster's hotfix.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
-     "HotfixUpgrade".
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
     :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
     :ivar target_oss_version: Target OSS version of component to be upgraded.
     :vartype target_oss_version: str
@@ -950,12 +1621,132 @@ class ClusterHotfixUpgradeProperties(ClusterUpgradeProperties):
         :keyword component_name: Name of component to be upgraded.
         :paramtype component_name: str
         """
-        super().__init__(**kwargs)
+        super().__init__(
+            target_oss_version=target_oss_version,
+            target_cluster_version=target_cluster_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            **kwargs
+        )
         self.upgrade_type: str = "HotfixUpgrade"
-        self.target_oss_version = target_oss_version
-        self.target_cluster_version = target_cluster_version
-        self.target_build_number = target_build_number
-        self.component_name = component_name
+
+
+class ClusterHotfixUpgradeRollbackHistoryProperties(
+    ClusterInPlaceUpgradeHistoryProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Cluster hotfix upgrade rollback history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar source_cluster_version: Version with three part.
+    :vartype source_cluster_version: str
+    :ivar source_oss_version: Version with three part.
+    :vartype source_oss_version: str
+    :ivar source_build_number: Source build number.
+    :vartype source_build_number: str
+    :ivar target_cluster_version: Version with three part.
+    :vartype target_cluster_version: str
+    :ivar target_oss_version: Version with three part.
+    :vartype target_oss_version: str
+    :ivar target_build_number: Target build number.
+    :vartype target_build_number: str
+    :ivar component_name: Component name to upgrade.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+        "source_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "source_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        source_cluster_version: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.ClusterUpgradeHistorySeverityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword source_cluster_version: Version with three part.
+        :paramtype source_cluster_version: str
+        :keyword source_oss_version: Version with three part.
+        :paramtype source_oss_version: str
+        :keyword source_build_number: Source build number.
+        :paramtype source_build_number: str
+        :keyword target_cluster_version: Version with three part.
+        :paramtype target_cluster_version: str
+        :keyword target_oss_version: Version with three part.
+        :paramtype target_oss_version: str
+        :keyword target_build_number: Target build number.
+        :paramtype target_build_number: str
+        :keyword component_name: Component name to upgrade.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+        """
+        super().__init__(
+            utc_time=utc_time,
+            upgrade_result=upgrade_result,
+            source_cluster_version=source_cluster_version,
+            source_oss_version=source_oss_version,
+            source_build_number=source_build_number,
+            target_cluster_version=target_cluster_version,
+            target_oss_version=target_oss_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            **kwargs
+        )
+        self.upgrade_type: str = "HotfixUpgradeRollback"
 
 
 class ClusterInstanceViewProperties(_serialization.Model):
@@ -1237,6 +2028,229 @@ class ClusterJobProperties(_serialization.Model):
         self.job_type: Optional[str] = None
 
 
+class ClusterLibrary(ProxyResource):
+    """Libraries in the cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Properties of a library in the cluster. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterLibraryProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterLibraryProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterLibraryProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of a library in the cluster. Required.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterLibraryProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterLibraryList(_serialization.Model):
+    """Collection of libraries in the cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: Collection of libraries in the cluster. Required.
+    :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterLibrary]
+    :ivar next_link: The url of next result page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClusterLibrary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.ClusterLibrary"], **kwargs: Any) -> None:
+        """
+        :keyword value: Collection of libraries in the cluster. Required.
+        :paramtype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterLibrary]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class ClusterLibraryManagementOperation(ProxyResource):
+    """Library management operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Properties of a library management operation. Required.
+    :vartype properties:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterLibraryManagementOperationProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterLibraryManagementOperationProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterLibraryManagementOperationProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of a library management operation. Required.
+        :paramtype properties:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterLibraryManagementOperationProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterLibraryManagementOperationProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """Properties of a library management operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar action: The library management action. Required. Known values are: "Install" and
+     "Uninstall".
+    :vartype action: str or ~azure.mgmt.hdinsightcontainers.models.LibraryManagementAction
+    :ivar libraries: The libraries to be installed/updated/uninstalled. Required.
+    :vartype libraries: list[~azure.mgmt.hdinsightcontainers.models.ClusterLibrary]
+    """
+
+    _validation = {
+        "action": {"required": True},
+        "libraries": {"required": True},
+    }
+
+    _attribute_map = {
+        "action": {"key": "action", "type": "str"},
+        "libraries": {"key": "libraries", "type": "[ClusterLibrary]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        action: Union[str, "_models.LibraryManagementAction"],
+        libraries: List["_models.ClusterLibrary"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword action: The library management action. Required. Known values are: "Install" and
+         "Uninstall".
+        :paramtype action: str or ~azure.mgmt.hdinsightcontainers.models.LibraryManagementAction
+        :keyword libraries: The libraries to be installed/updated/uninstalled. Required.
+        :paramtype libraries: list[~azure.mgmt.hdinsightcontainers.models.ClusterLibrary]
+        """
+        super().__init__(**kwargs)
+        self.action = action
+        self.libraries = libraries
+
+
+class ClusterLibraryProperties(_serialization.Model):
+    """Properties of a library in the cluster.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MavenLibraryProperties, PyPiLibraryProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Type of the library. Required. Known values are: "pypi" and "maven".
+    :vartype type: str or ~azure.mgmt.hdinsightcontainers.models.Type
+    :ivar remarks: Remark of the latest library management operation.
+    :vartype remarks: str
+    :ivar timestamp: Timestamp of the latest library management operation.
+    :vartype timestamp: ~datetime.datetime
+    :ivar status: Status of the library. Known values are: "INSTALLING", "INSTALLED",
+     "INSTALL_FAILED", "UNINSTALLING", and "UNINSTALL_FAILED".
+    :vartype status: str or ~azure.mgmt.hdinsightcontainers.models.Status
+    :ivar message: Error message of the library operation when a failure occurs.
+    :vartype message: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "timestamp": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "remarks": {"key": "remarks", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"maven": "MavenLibraryProperties", "pypi": "PyPiLibraryProperties"}}
+
+    def __init__(self, *, remarks: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword remarks: Remark of the latest library management operation.
+        :paramtype remarks: str
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.remarks = remarks
+        self.timestamp = None
+        self.status = None
+        self.message = None
+
+
 class ClusterListResult(_serialization.Model):
     """The list cluster operation response.
 
@@ -1394,6 +2408,301 @@ class ClusterPatchProperties(_serialization.Model):
         self.cluster_profile = cluster_profile
 
 
+class ClusterPatchVersionUpgradeHistoryProperties(
+    ClusterInPlaceUpgradeHistoryProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Cluster patch version upgrade history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar source_cluster_version: Version with three part.
+    :vartype source_cluster_version: str
+    :ivar source_oss_version: Version with three part.
+    :vartype source_oss_version: str
+    :ivar source_build_number: Source build number.
+    :vartype source_build_number: str
+    :ivar target_cluster_version: Version with three part.
+    :vartype target_cluster_version: str
+    :ivar target_oss_version: Version with three part.
+    :vartype target_oss_version: str
+    :ivar target_build_number: Target build number.
+    :vartype target_build_number: str
+    :ivar component_name: Component name to upgrade.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+        "source_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "source_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        source_cluster_version: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.ClusterUpgradeHistorySeverityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword source_cluster_version: Version with three part.
+        :paramtype source_cluster_version: str
+        :keyword source_oss_version: Version with three part.
+        :paramtype source_oss_version: str
+        :keyword source_build_number: Source build number.
+        :paramtype source_build_number: str
+        :keyword target_cluster_version: Version with three part.
+        :paramtype target_cluster_version: str
+        :keyword target_oss_version: Version with three part.
+        :paramtype target_oss_version: str
+        :keyword target_build_number: Target build number.
+        :paramtype target_build_number: str
+        :keyword component_name: Component name to upgrade.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+        """
+        super().__init__(
+            utc_time=utc_time,
+            upgrade_result=upgrade_result,
+            source_cluster_version=source_cluster_version,
+            source_oss_version=source_oss_version,
+            source_build_number=source_build_number,
+            target_cluster_version=target_cluster_version,
+            target_oss_version=target_oss_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            **kwargs
+        )
+        self.upgrade_type: str = "PatchVersionUpgrade"
+
+
+class ClusterPatchVersionUpgradeProperties(ClusterInPlaceUpgradeProperties):
+    """Properties of upgrading cluster's patch version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", and "PatchVersionUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        """
+        super().__init__(
+            target_oss_version=target_oss_version,
+            target_cluster_version=target_cluster_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            **kwargs
+        )
+        self.upgrade_type: str = "PatchVersionUpgrade"
+
+
+class ClusterPatchVersionUpgradeRollbackHistoryProperties(
+    ClusterInPlaceUpgradeHistoryProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Cluster patch version upgrade rollback history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade",
+     "HotfixUpgrade", "HotfixUpgradeRollback", "PatchVersionUpgrade", and
+     "PatchVersionUpgradeRollback".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+    :ivar source_cluster_version: Version with three part.
+    :vartype source_cluster_version: str
+    :ivar source_oss_version: Version with three part.
+    :vartype source_oss_version: str
+    :ivar source_build_number: Source build number.
+    :vartype source_build_number: str
+    :ivar target_cluster_version: Version with three part.
+    :vartype target_cluster_version: str
+    :ivar target_oss_version: Version with three part.
+    :vartype target_oss_version: str
+    :ivar target_build_number: Target build number.
+    :vartype target_build_number: str
+    :ivar component_name: Component name to upgrade.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+        "source_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "source_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+        "target_oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterUpgradeHistoryUpgradeResultType"],
+        source_cluster_version: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.ClusterUpgradeHistorySeverityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryUpgradeResultType
+        :keyword source_cluster_version: Version with three part.
+        :paramtype source_cluster_version: str
+        :keyword source_oss_version: Version with three part.
+        :paramtype source_oss_version: str
+        :keyword source_build_number: Source build number.
+        :paramtype source_build_number: str
+        :keyword target_cluster_version: Version with three part.
+        :paramtype target_cluster_version: str
+        :keyword target_oss_version: Version with three part.
+        :paramtype target_oss_version: str
+        :keyword target_build_number: Target build number.
+        :paramtype target_build_number: str
+        :keyword component_name: Component name to upgrade.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistorySeverityType
+        """
+        super().__init__(
+            utc_time=utc_time,
+            upgrade_result=upgrade_result,
+            source_cluster_version=source_cluster_version,
+            source_oss_version=source_oss_version,
+            source_build_number=source_build_number,
+            target_cluster_version=target_cluster_version,
+            target_oss_version=target_oss_version,
+            target_build_number=target_build_number,
+            component_name=component_name,
+            severity=severity,
+            **kwargs
+        )
+        self.upgrade_type: str = "PatchVersionUpgradeRollback"
+
+
 class ClusterPool(TrackedResource):
     """Cluster pool.
 
@@ -1456,6 +2765,142 @@ class ClusterPool(TrackedResource):
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
+
+
+class ClusterPoolUpgradeHistoryProperties(_serialization.Model):
+    """Properties of cluster pool upgrade history.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterPoolAksPatchUpgradeHistoryProperties, ClusterPoolNodeOsUpgradeHistoryProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterPoolAksPatchUpgradeHistoryProperties",
+            "NodeOsUpgrade": "ClusterPoolNodeOsUpgradeHistoryProperties",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterPoolUpgradeHistoryUpgradeResultType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+        self.utc_time = utc_time
+        self.upgrade_result = upgrade_result
+
+
+class ClusterPoolAksPatchUpgradeHistoryProperties(ClusterPoolUpgradeHistoryProperties):  # pylint: disable=name-too-long
+    """Cluster pool aks upgrade history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+    :ivar upgrade_cluster_pool: Whether upgrade cluster pool.
+    :vartype upgrade_cluster_pool: bool
+    :ivar upgrade_all_cluster_nodes: Whether upgrade all cluster nodes.
+    :vartype upgrade_all_cluster_nodes: bool
+    :ivar original_version: Version before update.
+    :vartype original_version: str
+    :ivar new_version: Version going to update.
+    :vartype new_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "upgrade_cluster_pool": {"key": "upgradeClusterPool", "type": "bool"},
+        "upgrade_all_cluster_nodes": {"key": "upgradeAllClusterNodes", "type": "bool"},
+        "original_version": {"key": "originalVersion", "type": "str"},
+        "new_version": {"key": "newVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterPoolUpgradeHistoryUpgradeResultType"],
+        upgrade_cluster_pool: Optional[bool] = None,
+        upgrade_all_cluster_nodes: Optional[bool] = None,
+        original_version: Optional[str] = None,
+        new_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+        :keyword upgrade_cluster_pool: Whether upgrade cluster pool.
+        :paramtype upgrade_cluster_pool: bool
+        :keyword upgrade_all_cluster_nodes: Whether upgrade all cluster nodes.
+        :paramtype upgrade_all_cluster_nodes: bool
+        :keyword original_version: Version before update.
+        :paramtype original_version: str
+        :keyword new_version: Version going to update.
+        :paramtype new_version: str
+        """
+        super().__init__(utc_time=utc_time, upgrade_result=upgrade_result, **kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+        self.upgrade_cluster_pool = upgrade_cluster_pool
+        self.upgrade_all_cluster_nodes = upgrade_all_cluster_nodes
+        self.original_version = original_version
+        self.new_version = new_version
 
 
 class ClusterPoolUpgradeProperties(_serialization.Model):
@@ -1773,6 +3218,8 @@ class ClusterPoolComputeProfile(_serialization.Model):
     :vartype vm_size: str
     :ivar count: The number of virtual machines.
     :vartype count: int
+    :ivar availability_zones: The list of Availability zones to use for AKS VMSS nodes.
+    :vartype availability_zones: list[str]
     """
 
     _validation = {
@@ -1783,16 +3230,20 @@ class ClusterPoolComputeProfile(_serialization.Model):
     _attribute_map = {
         "vm_size": {"key": "vmSize", "type": "str"},
         "count": {"key": "count", "type": "int"},
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
     }
 
-    def __init__(self, *, vm_size: str, **kwargs: Any) -> None:
+    def __init__(self, *, vm_size: str, availability_zones: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword vm_size: The virtual machine SKU. Required.
         :paramtype vm_size: str
+        :keyword availability_zones: The list of Availability zones to use for AKS VMSS nodes.
+        :paramtype availability_zones: list[str]
         """
         super().__init__(**kwargs)
         self.vm_size = vm_size
         self.count = None
+        self.availability_zones = availability_zones
 
 
 class ClusterPoolListResult(_serialization.Model):
@@ -1874,7 +3325,8 @@ class ClusterPoolNetworkProfile(_serialization.Model):
     :vartype enable_private_api_server: bool
     :ivar api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
      137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
-     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time. Currently,
+     this property is not supported and please don't use it.
     :vartype api_server_authorized_ip_ranges: list[str]
     """
 
@@ -1911,7 +3363,8 @@ class ClusterPoolNetworkProfile(_serialization.Model):
         :paramtype enable_private_api_server: bool
         :keyword api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
          137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
-         enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+         enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time. Currently,
+         this property is not supported and please don't use it.
         :paramtype api_server_authorized_ip_ranges: list[str]
         """
         super().__init__(**kwargs)
@@ -1945,6 +3398,61 @@ class ClusterPoolNodeOsImageUpdateProperties(ClusterPoolUpgradeProperties):
         self.upgrade_type: str = "NodeOsUpgrade"
 
 
+class ClusterPoolNodeOsUpgradeHistoryProperties(ClusterPoolUpgradeHistoryProperties):  # pylint: disable=name-too-long
+    """Cluster pool node os upgrade history properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryType
+    :ivar utc_time: Time when created this upgrade history. Required.
+    :vartype utc_time: str
+    :ivar upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+     "Failed".
+    :vartype upgrade_result: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+    :ivar new_node_os: New Node Os version.
+    :vartype new_node_os: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+        "utc_time": {"required": True},
+        "upgrade_result": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "utc_time": {"key": "utcTime", "type": "str"},
+        "upgrade_result": {"key": "upgradeResult", "type": "str"},
+        "new_node_os": {"key": "newNodeOs", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        utc_time: str,
+        upgrade_result: Union[str, "_models.ClusterPoolUpgradeHistoryUpgradeResultType"],
+        new_node_os: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword utc_time: Time when created this upgrade history. Required.
+        :paramtype utc_time: str
+        :keyword upgrade_result: Result of this upgrade. Required. Known values are: "Succeed" and
+         "Failed".
+        :paramtype upgrade_result: str or
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryUpgradeResultType
+        :keyword new_node_os: New Node Os version.
+        :paramtype new_node_os: str
+        """
+        super().__init__(utc_time=utc_time, upgrade_result=upgrade_result, **kwargs)
+        self.upgrade_type: str = "NodeOsUpgrade"
+        self.new_node_os = new_node_os
+
+
 class ClusterPoolProfile(_serialization.Model):
     """Cluster pool profile.
 
@@ -1952,6 +3460,9 @@ class ClusterPoolProfile(_serialization.Model):
 
     :ivar cluster_pool_version: Cluster pool version is a 2-part version. Required.
     :vartype cluster_pool_version: str
+    :ivar public_ip_tag: Gets or sets the IP tag for the public IPs created along with the
+     HDInsightOnAks ClusterPools and Clusters.
+    :vartype public_ip_tag: ~azure.mgmt.hdinsightcontainers.models.IpTag
     """
 
     _validation = {
@@ -1960,15 +3471,22 @@ class ClusterPoolProfile(_serialization.Model):
 
     _attribute_map = {
         "cluster_pool_version": {"key": "clusterPoolVersion", "type": "str"},
+        "public_ip_tag": {"key": "publicIpTag", "type": "IpTag"},
     }
 
-    def __init__(self, *, cluster_pool_version: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, cluster_pool_version: str, public_ip_tag: Optional["_models.IpTag"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword cluster_pool_version: Cluster pool version is a 2-part version. Required.
         :paramtype cluster_pool_version: str
+        :keyword public_ip_tag: Gets or sets the IP tag for the public IPs created along with the
+         HDInsightOnAks ClusterPools and Clusters.
+        :paramtype public_ip_tag: ~azure.mgmt.hdinsightcontainers.models.IpTag
         """
         super().__init__(**kwargs)
         self.cluster_pool_version = cluster_pool_version
+        self.public_ip_tag = public_ip_tag
 
 
 class ClusterPoolResourceProperties(_serialization.Model):
@@ -1985,12 +3503,12 @@ class ClusterPoolResourceProperties(_serialization.Model):
     :vartype deployment_id: str
     :ivar managed_resource_group_name: A resource group created by RP, to hold the resources
      created by RP on-behalf of customers. It will also be used to generate
-     aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
+     aksManagedResourceGroupName by pattern: MC\\ *{managedResourceGroupName}*\\
      {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
     :vartype managed_resource_group_name: str
     :ivar aks_managed_resource_group_name: A resource group created by AKS, to hold the
      infrastructure resources created by AKS on-behalf of customers. It is generated by cluster pool
-     name and managed resource group name by pattern: MC\ *{managedResourceGroupName}*\
+     name and managed resource group name by pattern: MC\\ *{managedResourceGroupName}*\\
      {clusterPoolName}_{region}.
     :vartype aks_managed_resource_group_name: str
     :ivar cluster_pool_profile: CLuster pool profile.
@@ -2055,7 +3573,7 @@ class ClusterPoolResourceProperties(_serialization.Model):
         """
         :keyword managed_resource_group_name: A resource group created by RP, to hold the resources
          created by RP on-behalf of customers. It will also be used to generate
-         aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
+         aksManagedResourceGroupName by pattern: MC\\ *{managedResourceGroupName}*\\
          {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
         :paramtype managed_resource_group_name: str
         :keyword cluster_pool_profile: CLuster pool profile.
@@ -2108,6 +3626,9 @@ class ClusterPoolResourcePropertiesClusterPoolProfile(ClusterPoolProfile):  # py
 
     :ivar cluster_pool_version: Cluster pool version is a 2-part version. Required.
     :vartype cluster_pool_version: str
+    :ivar public_ip_tag: Gets or sets the IP tag for the public IPs created along with the
+     HDInsightOnAks ClusterPools and Clusters.
+    :vartype public_ip_tag: ~azure.mgmt.hdinsightcontainers.models.IpTag
     """
 
 
@@ -2122,6 +3643,8 @@ class ClusterPoolResourcePropertiesComputeProfile(ClusterPoolComputeProfile):  #
     :vartype vm_size: str
     :ivar count: The number of virtual machines.
     :vartype count: int
+    :ivar availability_zones: The list of Availability zones to use for AKS VMSS nodes.
+    :vartype availability_zones: list[str]
     """
 
 
@@ -2154,7 +3677,8 @@ class ClusterPoolResourcePropertiesNetworkProfile(ClusterPoolNetworkProfile):  #
     :vartype enable_private_api_server: bool
     :ivar api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
      137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
-     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time. Currently,
+     this property is not supported and please don't use it.
     :vartype api_server_authorized_ip_ranges: list[str]
     """
 
@@ -2183,6 +3707,87 @@ class ClusterPoolUpgrade(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.properties = properties
+
+
+class ClusterPoolUpgradeHistory(ProxyResource):
+    """Cluster pool upgrade history.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Properties of cluster pool upgrade history. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterPoolUpgradeHistoryProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterPoolUpgradeHistoryProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of cluster pool upgrade history. Required.
+        :paramtype properties:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistoryProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterPoolUpgradeHistoryListResult(_serialization.Model):
+    """Represents a list of cluster pool upgrade history.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The list of cluster pool upgrade history. Required.
+    :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistory]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClusterPoolUpgradeHistory]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.ClusterPoolUpgradeHistory"], **kwargs: Any) -> None:
+        """
+        :keyword value: The list of cluster pool upgrade history. Required.
+        :paramtype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeHistory]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
 
 
 class ClusterPoolVersion(ProxyResource):
@@ -2315,9 +3920,12 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype oss_version: str
     :ivar components: Component list of this cluster type and version.
     :vartype components: list[~azure.mgmt.hdinsightcontainers.models.ClusterComponentsItem]
-    :ivar identity_profile: This property is required by Trino, Spark and Flink cluster but is
-     optional for Kafka cluster.
+    :ivar identity_profile: This is deprecated. Please use managed identity profile instead.
     :vartype identity_profile: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
+    :ivar managed_identity_profile: This property is required by Trino, Spark and Flink cluster but
+     is optional for Kafka cluster.
+    :vartype managed_identity_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ManagedIdentityProfile
     :ivar authorization_profile: Authorization profile with details of AAD user Ids and group Ids
      authorized for data plane access. Required.
     :vartype authorization_profile: ~azure.mgmt.hdinsightcontainers.models.AuthorizationProfile
@@ -2382,6 +3990,7 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         "oss_version": {"key": "ossVersion", "type": "str"},
         "components": {"key": "components", "type": "[ClusterComponentsItem]"},
         "identity_profile": {"key": "identityProfile", "type": "IdentityProfile"},
+        "managed_identity_profile": {"key": "managedIdentityProfile", "type": "ManagedIdentityProfile"},
         "authorization_profile": {"key": "authorizationProfile", "type": "AuthorizationProfile"},
         "secrets_profile": {"key": "secretsProfile", "type": "SecretsProfile"},
         "service_configs_profiles": {"key": "serviceConfigsProfiles", "type": "[ClusterServiceConfigsProfile]"},
@@ -2409,6 +4018,7 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         oss_version: str,
         authorization_profile: "_models.AuthorizationProfile",
         identity_profile: Optional["_models.IdentityProfile"] = None,
+        managed_identity_profile: Optional["_models.ManagedIdentityProfile"] = None,
         secrets_profile: Optional["_models.SecretsProfile"] = None,
         service_configs_profiles: Optional[List["_models.ClusterServiceConfigsProfile"]] = None,
         cluster_access_profile: Optional["_models.ClusterAccessProfile"] = None,
@@ -2432,9 +4042,12 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype cluster_version: str
         :keyword oss_version: Version with three part. Required.
         :paramtype oss_version: str
-        :keyword identity_profile: This property is required by Trino, Spark and Flink cluster but is
-         optional for Kafka cluster.
+        :keyword identity_profile: This is deprecated. Please use managed identity profile instead.
         :paramtype identity_profile: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
+        :keyword managed_identity_profile: This property is required by Trino, Spark and Flink cluster
+         but is optional for Kafka cluster.
+        :paramtype managed_identity_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ManagedIdentityProfile
         :keyword authorization_profile: Authorization profile with details of AAD user Ids and group
          Ids authorized for data plane access. Required.
         :paramtype authorization_profile: ~azure.mgmt.hdinsightcontainers.models.AuthorizationProfile
@@ -2482,6 +4095,7 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         self.oss_version = oss_version
         self.components = None
         self.identity_profile = identity_profile
+        self.managed_identity_profile = managed_identity_profile
         self.authorization_profile = authorization_profile
         self.secrets_profile = secrets_profile
         self.service_configs_profiles = service_configs_profiles
@@ -2801,6 +4415,138 @@ class ClusterUpgrade(_serialization.Model):
         self.properties = properties
 
 
+class ClusterUpgradeHistory(ProxyResource):
+    """Cluster upgrade history.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Properties of cluster upgrade history. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterUpgradeHistoryProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterUpgradeHistoryProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of cluster upgrade history. Required.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistoryProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterUpgradeHistoryListResult(_serialization.Model):
+    """Represents a list of cluster upgrade history.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The list of cluster upgrade history. Required.
+    :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistory]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClusterUpgradeHistory]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.ClusterUpgradeHistory"], **kwargs: Any) -> None:
+        """
+        :keyword value: The list of cluster upgrade history. Required.
+        :paramtype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeHistory]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class ClusterUpgradeRollback(_serialization.Model):
+    """Cluster Upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar properties: Properties for manual rollback of cluster's upgrade. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeRollbackProperties
+    """
+
+    _validation = {
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ClusterUpgradeRollbackProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterUpgradeRollbackProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties for manual rollback of cluster's upgrade. Required.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeRollbackProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterUpgradeRollbackProperties(_serialization.Model):
+    """Properties for manual rollback of cluster's upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_history: A specific upgrade history to rollback. Required.
+    :vartype upgrade_history: str
+    """
+
+    _validation = {
+        "upgrade_history": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_history": {"key": "upgradeHistory", "type": "str"},
+    }
+
+    def __init__(self, *, upgrade_history: str, **kwargs: Any) -> None:
+        """
+        :keyword upgrade_history: A specific upgrade history to rollback. Required.
+        :paramtype upgrade_history: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_history = upgrade_history
+
+
 class ClusterVersion(ProxyResource):
     """Available cluster version.
 
@@ -2985,6 +4731,8 @@ class ComputeProfile(_serialization.Model):
 
     :ivar nodes: The nodes definitions. Required.
     :vartype nodes: list[~azure.mgmt.hdinsightcontainers.models.NodeProfile]
+    :ivar availability_zones: The list of Availability zones to use for AKS VMSS nodes.
+    :vartype availability_zones: list[str]
     """
 
     _validation = {
@@ -2993,15 +4741,21 @@ class ComputeProfile(_serialization.Model):
 
     _attribute_map = {
         "nodes": {"key": "nodes", "type": "[NodeProfile]"},
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
     }
 
-    def __init__(self, *, nodes: List["_models.NodeProfile"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, nodes: List["_models.NodeProfile"], availability_zones: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword nodes: The nodes definitions. Required.
         :paramtype nodes: list[~azure.mgmt.hdinsightcontainers.models.NodeProfile]
+        :keyword availability_zones: The list of Availability zones to use for AKS VMSS nodes.
+        :paramtype availability_zones: list[str]
         """
         super().__init__(**kwargs)
         self.nodes = nodes
+        self.availability_zones = availability_zones
 
 
 class ComputeResourceDefinition(_serialization.Model):
@@ -3776,6 +5530,41 @@ class HiveCatalogOption(_serialization.Model):
         self.metastore_warehouse_dir = metastore_warehouse_dir
 
 
+class IpTag(_serialization.Model):
+    """Contains the IpTag associated with the public IP address.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage. Required.
+    :vartype ip_tag_type: str
+    :ivar tag: Gets or sets value of the IpTag associated with the public IP. Example HDInsight,
+     SQL, Storage etc. Required.
+    :vartype tag: str
+    """
+
+    _validation = {
+        "ip_tag_type": {"required": True},
+        "tag": {"required": True},
+    }
+
+    _attribute_map = {
+        "ip_tag_type": {"key": "ipTagType", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+    }
+
+    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs: Any) -> None:
+        """
+        :keyword ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage. Required.
+        :paramtype ip_tag_type: str
+        :keyword tag: Gets or sets value of the IpTag associated with the public IP. Example HDInsight,
+         SQL, Storage etc. Required.
+        :paramtype tag: str
+        """
+        super().__init__(**kwargs)
+        self.ip_tag_type = ip_tag_type
+        self.tag = tag
+
+
 class KafkaConnectivityEndpoints(_serialization.Model):
     """Kafka bootstrap server and broker related connectivity endpoints.
 
@@ -3824,8 +5613,6 @@ class KafkaProfile(_serialization.Model):
     :vartype remote_storage_uri: str
     :ivar disk_storage: Kafka disk storage profile. Required.
     :vartype disk_storage: ~azure.mgmt.hdinsightcontainers.models.DiskStorageProfile
-    :ivar cluster_identity: Identity of the internal service components inside the Kafka cluster.
-    :vartype cluster_identity: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
     :ivar connectivity_endpoints: Kafka bootstrap server and brokers related connectivity
      endpoints.
     :vartype connectivity_endpoints:
@@ -3835,7 +5622,6 @@ class KafkaProfile(_serialization.Model):
     _validation = {
         "remote_storage_uri": {"pattern": r"^(https?|abfss?):\/\/[^/]+(?:\/|$)"},
         "disk_storage": {"required": True},
-        "cluster_identity": {"readonly": True},
         "connectivity_endpoints": {"readonly": True},
     }
 
@@ -3844,7 +5630,6 @@ class KafkaProfile(_serialization.Model):
         "enable_public_endpoints": {"key": "enablePublicEndpoints", "type": "bool"},
         "remote_storage_uri": {"key": "remoteStorageUri", "type": "str"},
         "disk_storage": {"key": "diskStorage", "type": "DiskStorageProfile"},
-        "cluster_identity": {"key": "clusterIdentity", "type": "IdentityProfile"},
         "connectivity_endpoints": {"key": "connectivityEndpoints", "type": "KafkaConnectivityEndpoints"},
     }
 
@@ -3873,7 +5658,6 @@ class KafkaProfile(_serialization.Model):
         self.enable_public_endpoints = enable_public_endpoints
         self.remote_storage_uri = remote_storage_uri
         self.disk_storage = disk_storage
-        self.cluster_identity = None
         self.connectivity_endpoints = None
 
 
@@ -3952,6 +5736,161 @@ class LoadBasedConfig(_serialization.Model):
         self.poll_interval = poll_interval
         self.cooldown_period = cooldown_period
         self.scaling_rules = scaling_rules
+
+
+class ManagedIdentityProfile(_serialization.Model):
+    """The details of managed identity.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar identity_list: The list of managed identity. Required.
+    :vartype identity_list: list[~azure.mgmt.hdinsightcontainers.models.ManagedIdentitySpec]
+    """
+
+    _validation = {
+        "identity_list": {"required": True},
+    }
+
+    _attribute_map = {
+        "identity_list": {"key": "identityList", "type": "[ManagedIdentitySpec]"},
+    }
+
+    def __init__(self, *, identity_list: List["_models.ManagedIdentitySpec"], **kwargs: Any) -> None:
+        """
+        :keyword identity_list: The list of managed identity. Required.
+        :paramtype identity_list: list[~azure.mgmt.hdinsightcontainers.models.ManagedIdentitySpec]
+        """
+        super().__init__(**kwargs)
+        self.identity_list = identity_list
+
+
+class ManagedIdentitySpec(_serialization.Model):
+    """The details of a managed identity.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The type of managed identity. Required. Known values are: "cluster", "user", and
+     "internal".
+    :vartype type: str or ~azure.mgmt.hdinsightcontainers.models.ManagedIdentityType
+    :ivar resource_id: ResourceId of the managed identity. Required.
+    :vartype resource_id: str
+    :ivar client_id: ClientId of the managed identity. Required.
+    :vartype client_id: str
+    :ivar object_id: ObjectId of the managed identity. Required.
+    :vartype object_id: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "resource_id": {"required": True},
+        "client_id": {
+            "required": True,
+            "pattern": r"^[{(]?[0-9A-Fa-f]{8}[-]?(?:[0-9A-Fa-f]{4}[-]?){3}[0-9A-Fa-f]{12}[)}]?$",
+        },
+        "object_id": {
+            "required": True,
+            "pattern": r"^[{(]?[0-9A-Fa-f]{8}[-]?(?:[0-9A-Fa-f]{4}[-]?){3}[0-9A-Fa-f]{12}[)}]?$",
+        },
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedIdentityType"],
+        resource_id: str,
+        client_id: str,
+        object_id: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of managed identity. Required. Known values are: "cluster", "user", and
+         "internal".
+        :paramtype type: str or ~azure.mgmt.hdinsightcontainers.models.ManagedIdentityType
+        :keyword resource_id: ResourceId of the managed identity. Required.
+        :paramtype resource_id: str
+        :keyword client_id: ClientId of the managed identity. Required.
+        :paramtype client_id: str
+        :keyword object_id: ObjectId of the managed identity. Required.
+        :paramtype object_id: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.resource_id = resource_id
+        self.client_id = client_id
+        self.object_id = object_id
+
+
+class MavenLibraryProperties(ClusterLibraryProperties):
+    """Properties of a Maven library in the cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Type of the library. Required. Known values are: "pypi" and "maven".
+    :vartype type: str or ~azure.mgmt.hdinsightcontainers.models.Type
+    :ivar remarks: Remark of the latest library management operation.
+    :vartype remarks: str
+    :ivar timestamp: Timestamp of the latest library management operation.
+    :vartype timestamp: ~datetime.datetime
+    :ivar status: Status of the library. Known values are: "INSTALLING", "INSTALLED",
+     "INSTALL_FAILED", "UNINSTALLING", and "UNINSTALL_FAILED".
+    :vartype status: str or ~azure.mgmt.hdinsightcontainers.models.Status
+    :ivar message: Error message of the library operation when a failure occurs.
+    :vartype message: str
+    :ivar group_id: GroupId of the Maven package. Required.
+    :vartype group_id: str
+    :ivar name: ArtifactId of the Maven package. Required.
+    :vartype name: str
+    :ivar version: Version of the Maven package.
+    :vartype version: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "timestamp": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
+        "group_id": {"required": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "remarks": {"key": "remarks", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(
+        self, *, group_id: str, name: str, remarks: Optional[str] = None, version: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword remarks: Remark of the latest library management operation.
+        :paramtype remarks: str
+        :keyword group_id: GroupId of the Maven package. Required.
+        :paramtype group_id: str
+        :keyword name: ArtifactId of the Maven package. Required.
+        :paramtype name: str
+        :keyword version: Version of the Maven package.
+        :paramtype version: str
+        """
+        super().__init__(remarks=remarks, **kwargs)
+        self.type: str = "maven"
+        self.group_id = group_id
+        self.name = name
+        self.version = version
 
 
 class NameAvailabilityParameters(_serialization.Model):
@@ -4035,7 +5974,7 @@ class NodeProfile(_serialization.Model):
     _validation = {
         "type": {"required": True, "pattern": r"^(head|Head|HEAD|worker|Worker|WORKER)$"},
         "vm_size": {"required": True, "pattern": r"^[a-zA-Z0-9_\-]{0,256}$"},
-        "count": {"required": True, "minimum": 1},
+        "count": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
@@ -4178,6 +6117,65 @@ class OperationListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class PyPiLibraryProperties(ClusterLibraryProperties):
+    """Properties of a PyPi library in the cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Type of the library. Required. Known values are: "pypi" and "maven".
+    :vartype type: str or ~azure.mgmt.hdinsightcontainers.models.Type
+    :ivar remarks: Remark of the latest library management operation.
+    :vartype remarks: str
+    :ivar timestamp: Timestamp of the latest library management operation.
+    :vartype timestamp: ~datetime.datetime
+    :ivar status: Status of the library. Known values are: "INSTALLING", "INSTALLED",
+     "INSTALL_FAILED", "UNINSTALLING", and "UNINSTALL_FAILED".
+    :vartype status: str or ~azure.mgmt.hdinsightcontainers.models.Status
+    :ivar message: Error message of the library operation when a failure occurs.
+    :vartype message: str
+    :ivar name: Name of the PyPi package. Required.
+    :vartype name: str
+    :ivar version: Version of the PyPi package.
+    :vartype version: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "timestamp": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "remarks": {"key": "remarks", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(
+        self, *, name: str, remarks: Optional[str] = None, version: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword remarks: Remark of the latest library management operation.
+        :paramtype remarks: str
+        :keyword name: Name of the PyPi package. Required.
+        :paramtype name: str
+        :keyword version: Version of the PyPi package.
+        :paramtype version: str
+        """
+        super().__init__(remarks=remarks, **kwargs)
+        self.type: str = "pypi"
+        self.name = name
+        self.version = version
 
 
 class RangerAdminSpec(_serialization.Model):
@@ -5193,26 +7191,33 @@ class SshProfile(_serialization.Model):
      ingress URLs for the pods will be available at
      :code:`<clusterFqdn>`/:code:`<sshBasePath>`/:code:`<prefix>`-:code:`<number>`.
     :vartype pod_prefix: str
+    :ivar vm_size: The virtual machine SKU.
+    :vartype vm_size: str
     """
 
     _validation = {
         "count": {"required": True, "maximum": 5, "minimum": 0},
         "pod_prefix": {"readonly": True},
+        "vm_size": {"pattern": r"^[a-zA-Z0-9_\-]{0,256}$"},
     }
 
     _attribute_map = {
         "count": {"key": "count", "type": "int"},
         "pod_prefix": {"key": "podPrefix", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
     }
 
-    def __init__(self, *, count: int, **kwargs: Any) -> None:
+    def __init__(self, *, count: int, vm_size: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword count: Number of ssh pods per cluster. Required.
         :paramtype count: int
+        :keyword vm_size: The virtual machine SKU.
+        :paramtype vm_size: str
         """
         super().__init__(**kwargs)
         self.count = count
         self.pod_prefix = None
+        self.vm_size = vm_size
 
 
 class SystemData(_serialization.Model):
@@ -5576,7 +7581,7 @@ class TrinoWorker(_serialization.Model):
         self.debug = debug
 
 
-class UpdatableClusterProfile(_serialization.Model):
+class UpdatableClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Cluster resource patch properties.
 
     :ivar service_configs_profiles: The service configs profiles.
@@ -5604,6 +7609,10 @@ class UpdatableClusterProfile(_serialization.Model):
     :ivar script_action_profiles: The script action profile list.
     :vartype script_action_profiles:
      list[~azure.mgmt.hdinsightcontainers.models.ScriptActionProfile]
+    :ivar secrets_profile: The cluster secret profile.
+    :vartype secrets_profile: ~azure.mgmt.hdinsightcontainers.models.SecretsProfile
+    :ivar trino_profile: Trino Cluster profile.
+    :vartype trino_profile: ~azure.mgmt.hdinsightcontainers.models.TrinoProfile
     """
 
     _attribute_map = {
@@ -5616,6 +7625,8 @@ class UpdatableClusterProfile(_serialization.Model):
         "ranger_plugin_profile": {"key": "rangerPluginProfile", "type": "ClusterRangerPluginProfile"},
         "ranger_profile": {"key": "rangerProfile", "type": "RangerProfile"},
         "script_action_profiles": {"key": "scriptActionProfiles", "type": "[ScriptActionProfile]"},
+        "secrets_profile": {"key": "secretsProfile", "type": "SecretsProfile"},
+        "trino_profile": {"key": "trinoProfile", "type": "TrinoProfile"},
     }
 
     def __init__(
@@ -5630,6 +7641,8 @@ class UpdatableClusterProfile(_serialization.Model):
         ranger_plugin_profile: Optional["_models.ClusterRangerPluginProfile"] = None,
         ranger_profile: Optional["_models.RangerProfile"] = None,
         script_action_profiles: Optional[List["_models.ScriptActionProfile"]] = None,
+        secrets_profile: Optional["_models.SecretsProfile"] = None,
+        trino_profile: Optional["_models.TrinoProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5658,6 +7671,10 @@ class UpdatableClusterProfile(_serialization.Model):
         :keyword script_action_profiles: The script action profile list.
         :paramtype script_action_profiles:
          list[~azure.mgmt.hdinsightcontainers.models.ScriptActionProfile]
+        :keyword secrets_profile: The cluster secret profile.
+        :paramtype secrets_profile: ~azure.mgmt.hdinsightcontainers.models.SecretsProfile
+        :keyword trino_profile: Trino Cluster profile.
+        :paramtype trino_profile: ~azure.mgmt.hdinsightcontainers.models.TrinoProfile
         """
         super().__init__(**kwargs)
         self.service_configs_profiles = service_configs_profiles
@@ -5669,3 +7686,5 @@ class UpdatableClusterProfile(_serialization.Model):
         self.ranger_plugin_profile = ranger_plugin_profile
         self.ranger_profile = ranger_profile
         self.script_action_profiles = script_action_profiles
+        self.secrets_profile = secrets_profile
+        self.trino_profile = trino_profile
