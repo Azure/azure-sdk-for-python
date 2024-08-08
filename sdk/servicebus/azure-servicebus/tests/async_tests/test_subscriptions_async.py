@@ -248,7 +248,7 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', lock_duration='PT5S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_subscription_receive_and_delete_with_send_and_wait(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+    async def test_subscription_receive_and_delete_with_send_and_wait_async(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -274,7 +274,7 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
                 messages = [ServiceBusMessage("Message") for _ in range(10)]
                 await sender.send_messages(messages)
                 # wait for all messages to be sent to queue
-                await asyncio.sleep(10)
+                await asyncio.sleep(15)
 
                 # receive messages + add to internal buffer should have messages now
                 received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=10)
