@@ -606,7 +606,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]: https://github.com/theskumar/python-dotenv
 [recording_move]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
-[setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md##pre-test-setup
+[setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md#pre-test-setup
 [test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
