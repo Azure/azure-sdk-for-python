@@ -73,6 +73,7 @@ steps:
 
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
+      timeoutInMinutes: 8
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
@@ -126,6 +127,7 @@ steps:
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
+      timeoutInMinutes: 8
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
@@ -137,6 +139,13 @@ steps:
         }
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
+
+
+    - pwsh: |
+        $contents = Invoke-WebRequest -Method GET -Uri http://localhost:5000/Audit/Logs
+        Write-Host $contents.Content
+      displayName: Dump Test-Proxy Audit Log
+      condition: failed()
 
   - ${{ parameters.AfterTestSteps }}
 

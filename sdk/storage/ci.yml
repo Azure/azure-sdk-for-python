@@ -30,6 +30,7 @@ extends:
   parameters:
     ServiceDirectory: storage
     TestProxy: true
+    BuildDocs: false
     TestTimeoutInMinutes: 120
     MatrixConfigs:
       - Name: storage_ci_matrix
