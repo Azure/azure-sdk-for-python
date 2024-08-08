@@ -54,9 +54,10 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
 
 @runtime_checkable
 class AsyncTokenInfoCredential(AsyncTokenCredential, Protocol):
+    """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
     async def get_token_info(self, *scopes: str, options: Optional[_TokenRequestOptions] = None) -> _AccessTokenInfo:
-        """Request an access token that includes additional properties.
+        """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
         on the token.

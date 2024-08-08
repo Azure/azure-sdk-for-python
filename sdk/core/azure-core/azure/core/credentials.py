@@ -39,6 +39,9 @@ class AccessTokenInfo:
         self.expires_on = expires_on
         self.refresh_on = refresh_on
 
+    def __repr__(self) -> str:
+        return f"AccessTokenInfo(token='{self.token}', expires_on={self.expires_on}, refresh_on={self.refresh_on})"
+
 
 class TokenRequestOptions(TypedDict, total=False):
     """Options to use for access token requests. All parameters are optional."""
@@ -62,7 +65,7 @@ class TokenCredential(Protocol):
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 

@@ -77,7 +77,7 @@ def test_bearer_policy_authorize_request(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_bearer_policy_adds_header_expanded_access_token(http_request):
+def test_bearer_policy_adds_header_access_token_info(http_request):
     """The bearer token policy should also add an auth header when an AccessTokenInfo is returned."""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     access_token = AccessToken("other_token", 2524608000)
@@ -105,7 +105,7 @@ def test_bearer_policy_adds_header_expanded_access_token(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_bearer_policy_authorize_request_expanded_token(http_request):
+def test_bearer_policy_authorize_request_access_token_info(http_request):
     """The authorize_request method should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     expected_token = AccessTokenInfo("expected_token", 2524608000)
@@ -166,7 +166,7 @@ def test_bearer_policy_token_caching(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_bearer_policy_expanded_token_caching(http_request):
+def test_bearer_policy_access_token_info_caching(http_request):
     """The policy should cache AccessTokenInfo instances and refresh them when necessary."""
 
     good_for_one_hour = AccessTokenInfo("token", int(time.time() + 3600))

@@ -4,8 +4,13 @@
 
 ### Features Added
 
-- `AccessToken` now has an optional `refresh_on` attribute that can be used to specify when the token should be refreshed.  #36183
-  - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check the `refresh_on` attribute when determining if a token request should be made.
+- Added two new credential protocol classes, `TokenInfoCredential` and `AsyncTokenInfoCredential`, to offer more extensibility in supporting various token acquisition scenarios. #36565
+  - These protocols are extensions of the `TokenCredential` and `AsyncTokenCredential` protocols, respectively.
+  - Each new protocol class defines a `get_token_info` method that returns an `AccessTokenInfo` object.
+- Added a new `TokenRequestOptions` class, which is a `TypedDict` with optional parameters, that can be used to define options for token requests through the `get_token_info` method. #36565
+- Added a new `AccessTokenInfo` class, which is returned by `get_token_info` implementations. This class contains the token, its expiration time, and optional additional information like when a token should be refreshed. #36565
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first checks if a credential has the `get_token_info` method defined. If so, it will use the `get_token_info` method to acquire a token. Otherwise, it will fall back to the `get_token` method. #36565
+  - These policies now also check the `refresh_on` attribute, if available, when determining if a token request should be made.
 
 ### Breaking Changes
 
