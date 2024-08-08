@@ -1064,6 +1064,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
             self._process_receive_error(
@@ -1139,7 +1142,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
-        timeout = kwargs.pop("timeout", 0)
+        timeout = kwargs.pop("timeout", 60)
         expire_time = (time.time() + timeout) if timeout else None
 
         if outcome.lower() == "accepted":
@@ -1177,6 +1180,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             batchable=batchable,
             wait=True,
             on_disposition=on_disposition_received,
+            timeout=timeout
         )
 
         running = True
