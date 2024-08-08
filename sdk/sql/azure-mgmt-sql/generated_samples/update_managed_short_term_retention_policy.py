@@ -27,24 +27,22 @@ if TYPE_CHECKING:
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_backup_short_term_retention_policies.begin_create_or_update(
-        resource_group_name="resourceGroup",
-        managed_instance_name="testsvr",
-        database_name="testdb",
-        policy_name="default",
-        parameters={"properties": {"retentionDays": 14}},
+    response = client.managed_backup_short_term_retention_policies.begin_update(
+        resource_group_name='resourceGroup',
+        managed_instance_name='testsvr',
+        database_name='testdb',
+        policy_name='default',
+        parameters={'properties': {'retentionDays': 14}},
     ).result()
     print(response)
-
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/UpdateManagedShortTermRetentionPolicy.json
 if __name__ == "__main__":
     main()
+   main()

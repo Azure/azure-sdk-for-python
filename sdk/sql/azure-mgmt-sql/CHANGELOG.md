@@ -1,5 +1,60 @@
 # Release History
 
+## 4.0.0b19 (2024-08-18)
+
+### Features Added
+
+  - Added operation ReplicationLinksOperations.begin_create_or_update
+  - Added operation ReplicationLinksOperations.begin_update
+  - Model DistributedAvailabilityGroup has a new parameter last_hardened_lsn
+  - Model DistributedAvailabilityGroup has a new parameter link_state
+  - Model DistributedAvailabilityGroup has a new parameter primary_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter secondary_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter source_endpoint
+  - Model DistributedAvailabilityGroup has a new parameter source_replica_id
+  - Model DistributedAvailabilityGroup has a new parameter target_database
+  - Model DistributedAvailabilityGroup has a new parameter target_replica_id
+  - Model FailoverGroup has a new parameter secondary_type
+  - Model FailoverGroupUpdate has a new parameter secondary_type
+  - Model ReplicationLink has a new parameter partner_database_id
+
+### Breaking Changes
+
+  - Model DistributedAvailabilityGroup no longer has parameter databases
+  - Model DistributedAvailabilityGroup no longer has parameter distributed_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter failover_mode
+  - Model DistributedAvailabilityGroup no longer has parameter instance_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter instance_link_role
+  - Model DistributedAvailabilityGroup no longer has parameter partner_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter partner_endpoint
+  - Model DistributedAvailabilityGroup no longer has parameter partner_link_role
+  - Model DistributedAvailabilityGroup no longer has parameter seeding_mode
+  - Model ManagedInstance no longer has parameter authentication_metadata
+  - Model ManagedInstance no longer has parameter create_time
+  - Model ManagedInstance no longer has parameter database_format
+  - Model ManagedInstance no longer has parameter external_governance_status
+  - Model ManagedInstance no longer has parameter hybrid_secondary_usage
+  - Model ManagedInstance no longer has parameter hybrid_secondary_usage_detected
+  - Model ManagedInstance no longer has parameter is_general_purpose_v2
+  - Model ManagedInstance no longer has parameter pricing_model
+  - Model ManagedInstance no longer has parameter storage_i_ops
+  - Model ManagedInstance no longer has parameter storage_throughput_m_bps
+  - Model ManagedInstance no longer has parameter virtual_cluster_id
+  - Model ManagedInstanceUpdate no longer has parameter authentication_metadata
+  - Model ManagedInstanceUpdate no longer has parameter create_time
+  - Model ManagedInstanceUpdate no longer has parameter database_format
+  - Model ManagedInstanceUpdate no longer has parameter external_governance_status
+  - Model ManagedInstanceUpdate no longer has parameter hybrid_secondary_usage
+  - Model ManagedInstanceUpdate no longer has parameter hybrid_secondary_usage_detected
+  - Model ManagedInstanceUpdate no longer has parameter is_general_purpose_v2
+  - Model ManagedInstanceUpdate no longer has parameter pricing_model
+  - Model ManagedInstanceUpdate no longer has parameter storage_i_ops
+  - Model ManagedInstanceUpdate no longer has parameter storage_throughput_m_bps
+  - Model ManagedInstanceUpdate no longer has parameter virtual_cluster_id
+  - Removed operation DistributedAvailabilityGroupsOperations.begin_failover
+  - Removed operation DistributedAvailabilityGroupsOperations.begin_set_role
+  - Removed operation ManagedInstancesOperations.begin_refresh_status
+
 ## 4.0.0b18 (2024-07-11)
 
 ### Bugs Fixed

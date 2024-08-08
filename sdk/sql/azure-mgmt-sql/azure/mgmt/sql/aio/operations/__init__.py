@@ -138,7 +138,6 @@ from ._managed_database_advanced_threat_protection_settings_operations import (
 from ._managed_instance_advanced_threat_protection_settings_operations import (
     ManagedInstanceAdvancedThreatProtectionSettingsOperations,
 )
-from ._replication_links_operations import ReplicationLinksOperations
 from ._managed_database_move_operations_operations import ManagedDatabaseMoveOperationsOperations
 from ._managed_instance_dtcs_operations import ManagedInstanceDtcsOperations
 from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations
@@ -147,6 +146,7 @@ from ._instance_failover_groups_operations import InstanceFailoverGroupsOperatio
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
 from ._database_encryption_protectors_operations import DatabaseEncryptionProtectorsOperations
 from ._managed_databases_operations import ManagedDatabasesOperations
+from ._managed_instances_operations import ManagedInstancesOperations
 from ._managed_ledger_digest_uploads_operations import ManagedLedgerDigestUploadsOperations
 from ._recoverable_databases_operations import RecoverableDatabasesOperations
 from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
@@ -184,8 +184,8 @@ from ._failover_groups_operations import FailoverGroupsOperations
 from ._instance_pools_operations import InstancePoolsOperations
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from ._long_term_retention_policies_operations import LongTermRetentionPoliciesOperations
-from ._managed_instances_operations import ManagedInstancesOperations
 from ._servers_operations import ServersOperations
+from ._replication_links_operations import ReplicationLinksOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -304,7 +304,6 @@ __all__ = [
     "ManagedServerDnsAliasesOperations",
     "ManagedDatabaseAdvancedThreatProtectionSettingsOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
-    "ReplicationLinksOperations",
     "ManagedDatabaseMoveOperationsOperations",
     "ManagedInstanceDtcsOperations",
     "SynapseLinkWorkspacesOperations",
@@ -313,6 +312,7 @@ __all__ = [
     "ManagedDatabaseRestoreDetailsOperations",
     "DatabaseEncryptionProtectorsOperations",
     "ManagedDatabasesOperations",
+    "ManagedInstancesOperations",
     "ManagedLedgerDigestUploadsOperations",
     "RecoverableDatabasesOperations",
     "RestorableDroppedDatabasesOperations",
@@ -340,8 +340,8 @@ __all__ = [
     "InstancePoolsOperations",
     "LongTermRetentionBackupsOperations",
     "LongTermRetentionPoliciesOperations",
-    "ManagedInstancesOperations",
     "ServersOperations",
+    "ReplicationLinksOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
