@@ -17,9 +17,10 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AssociationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AssociationType."""
+    """Association Type Enum."""
 
     SUBNETS = "subnets"
+    """Association of Type Subnet"""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,13 +42,27 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy Type of the Security Policy."""
+
+    WAF = "waf"
+    """Policy of Type WAF"""
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ProvisioningState."""
+    """Resource Provisioning State Enum."""
 
     PROVISIONING = "Provisioning"
+    """Resource in Provisioning State"""
     UPDATING = "Updating"
+    """Resource in Updating State"""
     DELETING = "Deleting"
+    """Resource in Deleting State"""
     ACCEPTED = "Accepted"
+    """Resource in Accepted State"""
     SUCCEEDED = "Succeeded"
+    """Resource in Succeeded State"""
     FAILED = "Failed"
+    """Resource in Failed State"""
     CANCELED = "Canceled"
+    """Resource in Canceled State"""

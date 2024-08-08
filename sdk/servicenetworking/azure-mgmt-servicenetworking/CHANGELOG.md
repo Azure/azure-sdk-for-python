@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0b1 (2024-08-19)
+
+### Features Added
+
+  - Added operation group SecurityPoliciesInterfaceOperations
+  - Model TrafficController has a new parameter security_policies
+  - Model TrafficController has a new parameter security_policy_configurations
+  - Model TrafficControllerUpdate has a new parameter security_policy_configurations
+
 ## 1.0.0 (2023-11-20)
 
 ### Other Changes
