@@ -3,13 +3,14 @@ trigger: none
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      UseFederatedAuth: false
       Clouds: 'Cosmos_Public'
       CloudConfig:
         Cosmos_Public:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-cosmos-azure-cloud-test-resources)
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
       MaxParallel: 6
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos

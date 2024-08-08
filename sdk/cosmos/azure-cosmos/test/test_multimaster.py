@@ -40,7 +40,10 @@ class TestMultiMaster(unittest.TestCase):
         connectionPolicy.UseMultipleWriteLocations = True
         client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
                                             consistency_level="Session",
-                                            connection_policy=connectionPolicy)
+                                            connection_policy=connectionPolicy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(TestMultiMaster.host, test_config.TestConfig.credential,
+                                            consistency_level="Session",
+                                            connectionPolicy=connectionPolicy)
 
         created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 

@@ -21,6 +21,8 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
+    is_emulator = config.is_emulator
+    credential = config.credential_async
 
     @classmethod
     def setUpClass(cls):
@@ -32,7 +34,8 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):

@@ -28,6 +28,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     created_container: ContainerProxy = None
     client: CosmosClient = None
     config = test_config.TestConfig
+    is_emulator = config.is_emulator
+    credential = config.credential_async
     TEST_CONTAINER_ID = config.TEST_MULTI_PARTITION_CONTAINER_ID
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     host = config.host
@@ -44,7 +46,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         if self.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"

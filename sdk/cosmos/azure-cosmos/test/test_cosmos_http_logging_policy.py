@@ -66,7 +66,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
                                                            consistency_level="Session",
                                                            connection_policy=cls.connectionPolicy,
                                                            logger=cls.logger_diagnostic,
-                                                           enable_diagnostics_logging=True)
+                                                           enable_diagnostics_logging=True) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential,
+                                   consistency_level="Session",
+                                   connection_policy=cls.connectionPolicy,
+                                   logger=cls.logger_diagnostic,
+                                   enable_diagnostics_logging=True)
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database

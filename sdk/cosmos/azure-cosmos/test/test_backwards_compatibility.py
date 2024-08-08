@@ -28,7 +28,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = CosmosClient(cls.host, cls.masterKey) if \
+            test_config.TestConfig.is_emulator else CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.containerForTest = cls.databaseForTest.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 

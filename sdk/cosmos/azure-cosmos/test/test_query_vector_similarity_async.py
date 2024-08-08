@@ -34,6 +34,8 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
+    is_emulator = config.is_emulator
+    credential = config.credential_async
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Vector Similarity Container " + str(uuid.uuid4())
 
@@ -47,7 +49,8 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
+                                                                                                    self.credential)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.test_db = await self.client.create_database(str(uuid.uuid4()))
         self.created_quantized_cosine_container = await self.test_db.create_container(

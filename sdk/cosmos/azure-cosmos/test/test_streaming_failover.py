@@ -45,7 +45,10 @@ class TestStreamingFailOver(unittest.TestCase):
 
         client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
                                             consistency_level=documents.ConsistencyLevel.Eventual,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, test_config.TestConfig.credential,
+                                        connection_level=documents.ConnectionLevel.Eventual,
+                                        connection_policy=connection_policy)
         client.client_connection.GetDatabaseAccount = self.mock_get_database_account
         self.original_get_database_account = client.client_connection.GetDatabaseAccount
         self.original_get_read_endpoints = (client.client_connection._global_endpoint_manager.location_cache
@@ -133,6 +136,9 @@ class TestStreamingFailOver(unittest.TestCase):
 
         client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
                                             consistency_level=documents.ConsistencyLevel.Eventual,
+                                            connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, test_config.TestConfig.credential,
+                                            connection_level=documents.ConnectionLevel.Eventual,
                                             connection_policy=connection_policy)
         client.client_connection.GetDatabaseAccount = self.mock_get_database_account
         self.original_get_database_account = client.client_connection.GetDatabaseAccount

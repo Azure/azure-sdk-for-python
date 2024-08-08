@@ -81,7 +81,8 @@ class TestGlobalDB(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
+            cls.configs.is_emulator else cosmos_client.CosmosClient(cls.host, cls.configs.credential)
         cls.test_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.test_coll = cls.test_db.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
@@ -90,6 +91,8 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         client = cosmos_client.CosmosClient(TestGlobalDB.host, TestGlobalDB.masterKey,
+                                            connection_policy=connection_policy) if \
+            self.configs.is_emulator else cosmos_client.CosmosClient(TestGlobalDB.host, self.configs.credential,
                                             connection_policy=connection_policy)
 
         document_definition = {'id': 'doc',
@@ -147,8 +150,10 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         read_location_client = cosmos_client.CosmosClient(self.read_location_host,
-                                                          self.masterKey,
-                                                          connection_policy=connection_policy)
+                                   self.masterKey,
+                                   connection_policy=connection_policy) if \
+            self.configs.is_emulator else cosmos_client.CosmosClient(self.read_location_host, self.configs.credential,
+                                                                     connection_policy=connection_policy)
 
         document_definition = {'id': 'doc1',
                                'name': 'sample document',
@@ -188,7 +193,10 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = True
 
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                            connection_policy=connection_policy) if test_config.TestConfig.is_emulator\
+            else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                             connection_policy=connection_policy)
+
 
         document_definition = {'id': 'doc3',
                                'pk': 'pk',
@@ -219,6 +227,8 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+                else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                                 connection_policy=connection_policy)
 
             database = client.get_database_client(self.configs.TEST_DATABASE_ID)
@@ -245,6 +255,8 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                            connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                             connection_policy=connection_policy)
 
         # When EnableEndpointDiscovery is set to False, both Read and Write Endpoints point to endpoint passed while creating the client instance
@@ -253,6 +265,8 @@ class TestGlobalDB(unittest.TestCase):
 
         connection_policy.EnableEndpointDiscovery = True
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                            connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                             connection_policy=connection_policy)
 
         # If no preferred locations is set, we return the write endpoint as ReadEndpoint for better latency performance, write endpoint is set as expected
@@ -265,6 +279,8 @@ class TestGlobalDB(unittest.TestCase):
         if is_not_default_host(self.read_location2):
             connection_policy.PreferredLocations = [self.read_location2]
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+                else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                                 connection_policy=connection_policy)
 
             # Test that the preferred location is set as ReadEndpoint instead of default write endpoint when no preference is set
@@ -274,7 +290,8 @@ class TestGlobalDB(unittest.TestCase):
                              self.read_location2_host)
 
     def test_global_db_update_locations_cache(self):
-        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        client = cosmos_client.CosmosClient(self.host, self.masterKey) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential)
 
         writable_locations = [{'name': self.write_location,
                                'databaseAccountEndpoint': self.write_location_host}]
@@ -336,6 +353,8 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+                else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                                 connection_policy=connection_policy)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
@@ -356,6 +375,8 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+                else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                                 connection_policy=connection_policy)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
@@ -374,6 +395,8 @@ class TestGlobalDB(unittest.TestCase):
 
             connection_policy.EnableEndpointDiscovery = False
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                                connection_policy=connection_policy) if test_config.TestConfig.is_emulator \
+                else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential,
                                                 connection_policy=connection_policy)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
@@ -401,7 +424,8 @@ class TestGlobalDB(unittest.TestCase):
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
-        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        client = cosmos_client.CosmosClient(self.host, self.masterKey) if test_config.TestConfig.is_emulator \
+            else cosmos_client.CosmosClient(self.host, test_config.TestConfig.credential)
 
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = _mock_execute_function
