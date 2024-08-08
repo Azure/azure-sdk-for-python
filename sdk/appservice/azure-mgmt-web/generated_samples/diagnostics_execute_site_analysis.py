@@ -30,11 +30,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.diagnostics.execute_site_analysis(
+    response = client.diagnostics.execute_site_analysis_slot(
         resource_group_name="Sample-WestUSResourceGroup",
         site_name="SampleApp",
         diagnostic_category="availability",
         analysis_name="apprestartanalyses",
+        slot="Production",
     )
     print(response)
 

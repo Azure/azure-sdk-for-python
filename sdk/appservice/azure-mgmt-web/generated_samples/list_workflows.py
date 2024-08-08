@@ -30,15 +30,16 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.list_instance_workflows_slot(
+    response = client.web_apps.list_workflows(
         resource_group_name="testrg123",
         name="testsite2",
-        slot="staging",
     )
     for item in response:
         print(item)
 
 
 # x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/ListWorkflows.json
+if __name__ == "__main__":
+    main()
 if __name__ == "__main__":
     main()

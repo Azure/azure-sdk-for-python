@@ -30,9 +30,10 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.list_site_backups(
+    response = client.web_apps.list_site_backups_slot(
         resource_group_name="testrg123",
         name="tests346",
+        slot="staging",
     )
     for item in response:
         print(item)
