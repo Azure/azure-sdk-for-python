@@ -27,7 +27,7 @@ import base64
 import json
 import pickle
 import re
-from utils import HTTP_REQUESTS
+from utils import HTTP_REQUESTS, create_http_request
 from azure.core.pipeline._tools import is_rest
 import types
 from unittest import mock
@@ -48,6 +48,7 @@ from azure.core.polling.async_base_polling import (
 )
 from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
 from rest_client_async import AsyncMockRestClient
+from azure.core.rest import HttpRequest
 
 
 class SimpleResource:
@@ -144,8 +145,12 @@ def polling_response():
     response.headers = headers
     response.status_code = 200
 
+    response.status_code = 200
+    
+    request = create_http_request(HttpRequest, "PUT", "http://example.org/polling", {"x-ms-client-request-id":"testid"})
+    
     polling._pipeline_response = PipelineResponse(
-        None,
+        request,
         AsyncioRequestsTransportResponse(
             None,
             response,
@@ -674,23 +679,23 @@ async def test_long_running_negative(http_request, http_response):
     # Test LRO PUT throws for invalid json
     LOCATION_BODY = "{"
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{'\"}"
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{"
     POLLING_STATUS = 203
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
-        await poll
-    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        await poll.result()
+    assert error.value.continuation_token == poll.continuation_token()
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200
