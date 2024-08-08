@@ -141,6 +141,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     response = response.http_response
     headers = copy.copy(response.headers)
 
+    # new response objects have a content property, which is equivalent to body()
     data = response.body()
     if data:
         data = data.decode("utf-8")
