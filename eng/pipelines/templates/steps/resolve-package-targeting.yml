@@ -7,10 +7,17 @@ parameters:
     default: ''
 
 steps:
-  # if triggered for a PR, handle PR diff side adding the default for packageproperties folder will mean this will always act
-  # as a non-pr resolution
-  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), ne(parameters.PackagePropertiesFolder, '')) }}:
-    - pwsh: |
+  # whether we are running within a PR build or not, we need to walk the package properties and save them to
+  # variable $(TargetingString) so that every other check and accept it as an argument.
+  - pwsh: |
+      $setting = "${{ parameters.BuildTargetingString }}"
+
+      # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+      if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+          Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
+          $setting = "$(BuildTargetingString)"
+      }
+      else {
         $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
           | Where-Object { $_.Extension -eq '.json' } `
           | Foreach-Object { $_.Name } `
@@ -18,20 +25,8 @@ steps:
         $setting = $packageProperties -join ","
         Write-Host "Setting TargetingString to $setting"
         Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
-      displayName: Resolve PR Package Targets
-  # if not triggered for a PR, simply attempt to locate the targeted packages from the service directory combined with runtime variable.
-  - ${{ else }}:
-    - pwsh: |
-        $setting = "${{ parameters.BuildTargetingString }}"
-        # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
-        if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
-            Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
-            $setting = "$(BuildTargetingString)"
-        }
-        else {
-          Write-Host "We are falling back to the parameter value ${{ parameters.BuildTargetingString }}"
-        }
-        Write-Host "Setting TargetingString to $setting"
-        Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
-      displayName: Check override of targeting string by variable for individual build
-      condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
+      }
+
+      Write-Host "Setting TargetingString to $setting"
+      Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
+    displayName: Resolve targeted packages
