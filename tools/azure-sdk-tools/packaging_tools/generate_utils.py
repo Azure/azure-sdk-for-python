@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call, getoutput
+from subprocess import check_output, CalledProcessError, check_call
 from typing import Dict, Any
 from glob import glob
 import yaml

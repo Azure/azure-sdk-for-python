@@ -44,6 +44,7 @@ def build_create_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     file_attributes: str = "none",
     file_creation_time: str = "now",
@@ -57,7 +58,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -81,6 +82,10 @@ def build_create_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
@@ -110,7 +115,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -151,7 +156,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -183,6 +188,7 @@ def build_set_properties_request(
     *,
     timeout: Optional[int] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     file_attributes: str = "none",
     file_creation_time: str = "now",
@@ -197,7 +203,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -218,6 +224,10 @@ def build_set_properties_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
@@ -250,7 +260,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -299,7 +309,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -355,7 +365,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -406,7 +416,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -454,6 +464,7 @@ def build_rename_request(
     file_last_write_time: Optional[str] = None,
     file_change_time: Optional[str] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -466,7 +477,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -506,6 +517,10 @@ def build_rename_request(
         _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     if metadata is not None:
@@ -548,6 +563,7 @@ class DirectoryOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -571,6 +587,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -611,6 +634,7 @@ class DirectoryOperations:
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -827,6 +851,7 @@ class DirectoryOperations:
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -847,6 +872,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -887,6 +919,7 @@ class DirectoryOperations:
             url=self._config.url,
             timeout=timeout,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -1314,6 +1347,7 @@ class DirectoryOperations:
         replace_if_exists: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
@@ -1349,6 +1383,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -1412,6 +1453,7 @@ class DirectoryOperations:
             file_last_write_time=_file_last_write_time,
             file_change_time=_file_change_time,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,

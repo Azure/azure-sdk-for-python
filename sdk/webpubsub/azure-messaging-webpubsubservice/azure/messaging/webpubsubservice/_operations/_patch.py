@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -23,10 +24,10 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
     JSON,
-    build_send_to_all_request,
-    build_send_to_connection_request,
-    build_send_to_user_request,
-    build_send_to_group_request,
+    build_web_pub_sub_service_send_to_all_request,
+    build_web_pub_sub_service_send_to_connection_request,
+    build_web_pub_sub_service_send_to_user_request,
+    build_web_pub_sub_service_send_to_group_request,
 )
 
 
@@ -45,9 +46,11 @@ class _UTC_TZ(tzinfo):
         return self.__class__.ZERO
 
 
-def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
+def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any) -> str:
     """build token with access key.
     :param endpoint:  HTTPS endpoint for the WebPubSub service instance.
+    :type endpoint: str
+    :param path:  HTTPS path for the WebPubSub service instance.
     :type endpoint: str
     :param hub: The hub to give access to.
     :type hub: str
@@ -57,7 +60,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
     :returns: token
     :rtype: str
     """
-    audience = "{}/client/hubs/{}".format(endpoint, hub)
+    audience = endpoint + path + hub
     user = kwargs.pop("user_id", None)
     ttl = timedelta(minutes=kwargs.pop("minutes_to_expire", 60))
     roles = kwargs.pop("roles", [])
@@ -80,7 +83,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace
-    def get_client_access_token(self, **kwargs: Any) -> JSON:
+    def get_client_access_token(self, *, client_protocol: Optional[str] = "Default", **kwargs: Any) -> JSON:
         """Build an authentication token.
 
         :keyword user_id: User Id.
@@ -92,6 +95,10 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :keyword groups: Groups that the connection will join when it connects. Default value is None.
         :paramtype groups: list[str]
+        :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
+         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
+         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
+        :paramtype client_type: str
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
 
@@ -110,17 +117,22 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(endpoint)
             )
         # Ensure endpoint has no trailing slash
+
         endpoint = endpoint.rstrip("/")
 
         # Switch from http(s) to ws(s) scheme
+
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
+        # Example URL for Default Client Type: https://<service-name>.webpubsub.azure.com/client/hubs/<hub>
+        # and for MQTT Client Type: https://<service-name>.webpubsub.azure.com/clients/mqtt/hubs/<hub>
+        client_url = client_endpoint + path + hub
         jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
+            token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
-            token = super().get_client_access_token(**kwargs).get("token")
+            token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {
             "baseUrl": client_url,
             "token": token,
@@ -131,7 +143,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: Union[str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        message: Union[str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -153,7 +171,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: str, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+        self,
+        message: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "text/plain",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -175,7 +199,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        message: IO,
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -197,7 +227,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: Union[IO, str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self,
+        message: Union[IO, str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -242,7 +278,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_all_request(
+        request = build_web_pub_sub_service_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
             filter=filter,
@@ -272,7 +308,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        user_id: str,
+        message: Union[str, JSON],
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -291,10 +333,16 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
-    @overload      
+
+    @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: str, *, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+        self,
+        user_id: str,
+        message: str,
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "text/plain",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -316,7 +364,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        user_id: str,
+        message: IO,
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -338,7 +392,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[IO, str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self,
+        user_id: str,
+        message: Union[IO, str, JSON],
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -383,7 +443,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_user_request(
+        request = build_web_pub_sub_service_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
             filter=filter,
@@ -564,7 +624,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_group_request(
+        request = build_web_pub_sub_service_send_to_group_request(
             group=group,
             hub=self._config.hub,
             excluded=excluded,
@@ -592,10 +652,15 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
-        
+
     @overload
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: Union[str, JSON], *, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        connection_id: str,
+        message: Union[str, JSON],
+        *,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -633,7 +698,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: IO, *, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        connection_id: str,
+        message: IO,
+        *,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -649,7 +719,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
     @distributed_trace
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
         self, connection_id: str, message: Union[IO, str, JSON], *, content_type: Optional[str] = None, **kwargs: Any
@@ -694,7 +764,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_connection_request(
+        request = build_web_pub_sub_service_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
             content_type=content_type,

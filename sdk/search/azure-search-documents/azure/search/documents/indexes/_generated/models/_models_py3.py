@@ -4432,7 +4432,7 @@ class IndexingParametersConfiguration(_serialization.Model):  # pylint: disable=
         allow_skillset_to_read_file_data: bool = False,
         pdf_text_rotation_algorithm: Union[str, "_models.BlobIndexerPDFTextRotationAlgorithm"] = "none",
         execution_environment: Union[str, "_models.IndexerExecutionEnvironment"] = "standard",
-        query_timeout: str = "00:05:00",
+        query_timeout: Optional[str] = "00:05:00",
         **kwargs: Any
     ) -> None:
         """
