@@ -26,7 +26,7 @@ from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotUpdateParameters, SnapshotStatus, SnapshotFields, LabelFields, ConfigurationSettingFields, Label
+from .._generated.models import SnapshotUpdateParameters, SnapshotStatus, SnapshotFields, LabelFields, ConfigurationSettingFields, SettingLabel
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
@@ -614,7 +614,7 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, LabelFields]]] = None,
         **kwargs,
-    ) -> AsyncItemPaged[Label]:
+    ) -> AsyncItemPaged[SettingLabel]:
         """Gets a list of labels.
 
         :keyword name: A filter for the name of the returned labels. Default value is None.
@@ -629,7 +629,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.LabelFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.LabelFields] or None
         :return: An async iterator of labels.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration._generated.models.Label]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.SettingLabel]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if isinstance(accept_datetime, datetime):

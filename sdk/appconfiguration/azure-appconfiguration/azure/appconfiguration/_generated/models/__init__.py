@@ -14,9 +14,9 @@ from ._models_py3 import KeyListResult
 from ._models_py3 import KeyValue
 from ._models_py3 import KeyValueFilter
 from ._models_py3 import KeyValueListResult
-from ._models_py3 import Label
 from ._models_py3 import LabelListResult
 from ._models_py3 import OperationDetails
+from ._models_py3 import SettingLabel
 from ._models_py3 import Snapshot
 from ._models_py3 import SnapshotListResult
 from ._models_py3 import SnapshotUpdateParameters
@@ -40,9 +40,9 @@ __all__ = [
     "KeyValue",
     "KeyValueFilter",
     "KeyValueListResult",
-    "Label",
     "LabelListResult",
     "OperationDetails",
+    "SettingLabel",
     "Snapshot",
     "SnapshotListResult",
     "SnapshotUpdateParameters",
