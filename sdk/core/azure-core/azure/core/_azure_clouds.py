@@ -23,21 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
-from ._version import VERSION
+from enum import Enum
 
-__version__ = VERSION
 
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
-from ._azure_clouds import AzureClouds
-from ._enum_meta import CaseInsensitiveEnumMeta
-from ._pipeline_client_async import AsyncPipelineClient
+class AzureClouds(str, Enum):
+    """An enum to describe Azure Cloud."""
 
-__all__ = [
-    "PipelineClient",
-    "MatchConditions",
-    "CaseInsensitiveEnumMeta",
-    "AsyncPipelineClient",
-    "AzureClouds",
-]
+    AZURE_PUBLIC_CLOUD = "AZURE_PUBLIC_CLOUD"
+    """Azure public cloud"""
+
+    AZURE_CHINA_CLOUD = "AZURE_CHINA_CLOUD"
+    """Azure China cloud"""
+
+    AZURE_US_GOVERNMENT = "AZURE_US_GOVERNMENT"
+    """Azure US government cloud"""

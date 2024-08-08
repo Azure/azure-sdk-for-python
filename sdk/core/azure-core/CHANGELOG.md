@@ -6,6 +6,7 @@
 
 - `AccessToken` now has an optional `refresh_on` attribute that can be used to specify when the token should be refreshed.  #36183
   - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check the `refresh_on` attribute when determining if a token request should be made.
+- Added `azure.core.AzureClouds` enum to represent the different Azure clouds.
 
 ### Breaking Changes
 

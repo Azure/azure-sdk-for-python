@@ -33,6 +33,7 @@ import os
 import sys
 from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
 from azure.core.tracing import AbstractSpan
+from ._azure_clouds import AzureClouds
 
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")
@@ -112,6 +113,28 @@ def convert_logging(value: Union[str, int]) -> int:
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
+
+
+def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
+    """Convert a string to an Azure Cloud
+
+    :param value: the value to convert
+    :type value: string
+    :returns: An AzureClouds enum value
+    :rtype: AzureClouds
+    :raises ValueError: If conversion to AzureClouds fails
+
+    """
+    if isinstance(value, AzureClouds):
+        return value
+    if isinstance(value, str):
+        azure_clouds = {cloud.name: cloud for cloud in AzureClouds}
+        if value in azure_clouds:
+            return azure_clouds[value]
+        raise ValueError(
+            "Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys()))
+        )
+    raise ValueError("Cannot convert {} to Azure Cloud".format(value))
 
 
 def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
@@ -480,6 +503,13 @@ class Settings:
         env_var="AZURE_SDK_TRACING_IMPLEMENTATION",
         convert=convert_tracing_impl,
         default=None,
+    )
+
+    azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = PrioritizedSetting(
+        "azure_cloud",
+        env_var="AZURE_CLOUD",
+        convert=convert_azure_cloud,
+        default=AzureClouds.AZURE_PUBLIC_CLOUD,
     )
 
 
