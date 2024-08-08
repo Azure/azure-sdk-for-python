@@ -90,6 +90,8 @@ Pytest has documentation describing this setup style: https://docs.pytest.org/en
 example:
 
 ```python
+from devtools_testutils.azure_recorded_testcase import get_credential
+
 class TestService(AzureRecordedTestCase):
     def setup_method(self, method):
         """This method is called before each test in the class executes."""
@@ -99,33 +101,39 @@ class TestService(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         """This method is called only once, before any tests execute."""
-        cls.service_endpoint = os.getenv("SERVICE_ENDPOINT", "https://Sanitized.azure.net")
+        credential = get_credential()  # only module-level and classmethod utilities are available
+        cls.client = ServiceClient("...", credential)
 ```
 
-The primary benefit of this setup is that defining `setup_method` in your test class allows you to execute setup code
-while retaining access to the utilities provided by `AzureRecordedTestCase` (or whatever your test class inherits
-from). You could use `self.get_credential`, for example, to pick up our core utility for selecting a client credential
-based on your environment.
-
-A drawback is that `setup_method` runs before each test method in the class, so your setup needs to be idempotent to
-avoid issues caused by repeated invocations.
+The primary benefit of using `setup_method` is retaining access to the utilities provided your test class. You could
+use `self.get_credential`, for example, to pick up our core utility for selecting a client credential based on your
+environment. A drawback is that `setup_method` runs before each test method in the class, so your setup needs to be
+idempotent to avoid issues caused by repeated invocations.
 
 Alternatively, the class-level `setup_class` method runs once before all tests, but doesn't give you access to all
-instance attributes on the class.
+instance attributes on the class. You can still set attributes on the test class to reference from tests, and
+module-level utilities can be used in place of instance attributes, as shown in the example above.
 
 ### Fixture setup
 Pytest has documentation explaining how to implement and use fixtures:
-https://docs.pytest.org/en/latest/how-to/fixtures.html. For example:
+https://docs.pytest.org/en/latest/how-to/fixtures.html. For example, in a library's `conftest.py`:
 
 ```python
-@pytest.fixture(scope="session")
-def setup_fixture():
-    credential = get_credential()  # needs to be manually implemented; we can't use AzureRecordedTestCase.get_credential
-    client = ServiceClient("...", credential)
-    client.set_up_resource()
-    yield
+from devtools_testutils.azure_recorded_testcase import get_credential
 
-@pytest.mark.usefixtures("setup_fixture")
+@pytest.fixture(scope="session")
+def setup_teardown_fixture():
+    # Note that we can't reference AzureRecordedTestCase.get_credential but can use the module-level function
+    client = ServiceClient("...", get_credential())
+    client.set_up_resource()
+    yield  # <-- Tests run here, and execution resumes after they finish
+    client.tear_down_resources()
+```
+
+We can then request the fixture from a test class:
+
+```python
+@pytest.mark.usefixtures("setup_teardown_fixture")
 class TestService(AzureRecordedTestCase):
     ...
 ```
@@ -133,6 +141,14 @@ class TestService(AzureRecordedTestCase):
 By requesting a fixture from the test class, the fixture will execute before any tests in the class do. Fixtures are the
 preferred solution from pytest's perspective and offer a great deal of modular functionality.
 
+As shown in the example above, the
+[`yield`](https://docs.pytest.org/latest/how-to/fixtures.html#yield-fixtures-recommended) command will defer to test
+execution -- after tests finish running, the fixture code after `yield` will execute. This enables the use of a fixture
+for both setup and teardown.
+
 However, fixtures in this context have similar drawbacks to the `setup_class` method described in
 [xunit-style setup](#xunit-style-setup). Since their scope is outside of the test class, test class instance utilities
 can't be accessed and class state can't be modified.
+
+By convention, fixtures should be defined in a library's `tests/conftest.py` file. This will provide access to the
+fixture across test files, and the fixture can be requested without having to manually import it.
