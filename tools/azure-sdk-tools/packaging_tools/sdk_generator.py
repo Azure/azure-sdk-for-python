@@ -274,12 +274,12 @@ def main(generate_input, generate_output):
     python_tag = data.get("python_tag")
     package_total = set()
     readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
-    for input_readme in readme_and_tsp:
+    for readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         try:
-            if "resource-manager" in input_readme:
-                relative_path_readme = str(Path(spec_folder, input_readme))
-                update_metadata_for_multiapi_package(spec_folder, input_readme)
+            if "resource-manager" in readme_or_tsp:
+                relative_path_readme = str(Path(spec_folder, readme_or_tsp))
+                update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
                 del_outdated_files(relative_path_readme)
                 config = generate(
                     CONFIG_FILE,
@@ -290,14 +290,14 @@ def main(generate_input, generate_output):
                     force_generation=True,
                     python_tag=python_tag,
                 )
-            elif "data-plane" in input_readme:
-                config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+            elif "data-plane" in readme_or_tsp:
+                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
-                del_outdated_generated_files(str(Path(spec_folder, input_readme)))
-                config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
+                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
             package_names = get_package_names(sdk_folder)
         except Exception as e:
-            _LOGGER.error(f"fail to generate sdk for {input_readme}: {str(e)}")
+            _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
                 "======================================= Whant Can I do ========================================================================",
                 "If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
@@ -307,10 +307,10 @@ def main(generate_input, generate_output):
             ]:
                 _LOGGER.error(hint_message)
             raise e
-        _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
+        _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen end. [(packages:{str(package_names)})]")
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
-        spec_word = "readmeMd" if "readme.md" in input_readme else "typespecProject"
+        spec_word = "readmeMd" if "readme.md" in readme_or_tsp else "typespecProject"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -321,14 +321,14 @@ def main(generate_input, generate_output):
                 package_entry = {}
                 package_entry["packageName"] = package_name
                 package_entry["path"] = [folder_name]
-                package_entry[spec_word] = [input_readme]
+                package_entry[spec_word] = [readme_or_tsp]
                 package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
-                readme_python_content = get_readme_python_content(str(Path(spec_folder) / input_readme))
+                readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
                 package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
-                result[package_name][spec_word].append(input_readme)
+                result[package_name][spec_word].append(readme_or_tsp)
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
@@ -343,7 +343,7 @@ def main(generate_input, generate_output):
                     folder_name,
                     package_name,
                     spec_folder,
-                    input_readme,
+                    readme_or_tsp,
                 )
             except Exception as e:
                 _LOGGER.error(f"fail to update meta: {str(e)}")
