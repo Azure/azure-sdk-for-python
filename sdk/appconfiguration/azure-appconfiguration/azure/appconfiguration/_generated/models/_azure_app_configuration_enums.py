@@ -20,8 +20,8 @@ class CompositionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY_LABEL = "key_label"
 
 
-class KeyValueFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """KeyValueFields."""
+class ConfigurationSettingFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ConfigurationSettingFields."""
 
     KEY = "key"
     LABEL = "label"

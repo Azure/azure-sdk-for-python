@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -25,7 +26,6 @@ from ._azure_app_configuration_operations import (
     build_get_key_values_request,
 )
 from ... import models as _models
-from ..._vendor import _convert_request
 
 
 class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
@@ -36,7 +36,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         tags: Optional[List[str]] = None,
@@ -59,7 +59,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :param if_match: Used to perform an operation only if the targeted resource's etag matches the
          value provided. Default value is None.
         :type if_match: str
@@ -105,7 +105,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -114,6 +113,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
             else:
                 # make call to next link with the client's api-version
+
                 _parsed_next_link = urllib.parse.urlparse(next_link)
                 _next_request_params = case_insensitive_dict(
                     {
@@ -125,7 +125,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True

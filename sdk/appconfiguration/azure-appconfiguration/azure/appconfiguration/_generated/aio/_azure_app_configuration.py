@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, Optional
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -99,7 +100,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureAppConfiguration":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -17,20 +17,21 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import AzureAppConfigurationMixinABC, _convert_request
+from .._vendor import AzureAppConfigurationMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -114,7 +115,7 @@ def build_get_key_values_request(
     label: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     snapshot: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -166,7 +167,7 @@ def build_check_key_values_request(
     label: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     snapshot: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -216,7 +217,7 @@ def build_get_key_value_request(
     accept_datetime: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -342,7 +343,7 @@ def build_check_key_value_request(
     accept_datetime: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -737,7 +738,7 @@ def build_get_revisions_request(
     label: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     tags: Optional[List[str]] = None,
     sync_token: Optional[str] = None,
     **kwargs: Any
@@ -780,7 +781,7 @@ def build_check_revisions_request(
     label: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
-    select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+    select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     tags: Optional[List[str]] = None,
     sync_token: Optional[str] = None,
     **kwargs: Any
@@ -835,6 +836,7 @@ def build_get_operation_details_request(*, snapshot: str, **kwargs: Any) -> Http
 
 
 class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # pylint: disable=too-many-public-methods
+
     @distributed_trace
     def get_keys(
         self,
@@ -885,7 +887,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -906,7 +907,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -988,7 +988,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1018,7 +1017,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         snapshot: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -1043,7 +1042,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :param snapshot: A filter used get key-values for a snapshot. The value should be the name of
          the snapshot. Not valid when used with 'key' and 'label' filters. Default value is None.
         :type snapshot: str
@@ -1092,7 +1091,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1113,7 +1111,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1155,7 +1152,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         snapshot: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -1180,7 +1177,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :param snapshot: A filter used get key-values for a snapshot. Not valid when used with 'key'
          and 'label' filters. Default value is None.
         :type snapshot: str
@@ -1226,7 +1223,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1258,7 +1254,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         accept_datetime: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         **kwargs: Any
     ) -> _models.KeyValue:
         """Gets a single key-value.
@@ -1280,7 +1276,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1311,7 +1307,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1333,7 +1328,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("KeyValue", pipeline_response)
+        deserialized = self._deserialize("KeyValue", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1485,7 +1480,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1507,7 +1501,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("KeyValue", pipeline_response)
+        deserialized = self._deserialize("KeyValue", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1556,7 +1550,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1580,7 +1573,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-            deserialized = self._deserialize("KeyValue", pipeline_response)
+            deserialized = self._deserialize("KeyValue", pipeline_response.http_response)
 
         if response.status_code == 204:
             response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
@@ -1598,7 +1591,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         accept_datetime: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
@@ -1620,7 +1613,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1651,7 +1644,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1730,7 +1722,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1751,7 +1742,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1822,7 +1812,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1897,7 +1886,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1920,7 +1908,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
-        deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1929,7 +1917,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
     def _create_snapshot_initial(
         self, name: str, entity: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
-    ) -> _models.Snapshot:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1943,7 +1931,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1963,13 +1951,13 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1977,6 +1965,10 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1987,7 +1979,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2072,6 +2064,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -2084,7 +2077,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = self._deserialize("Snapshot", pipeline_response)
+            deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2242,7 +2235,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2265,7 +2257,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
-        deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2315,7 +2307,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2395,7 +2386,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2416,7 +2406,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2503,7 +2492,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2577,7 +2565,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2599,7 +2586,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("KeyValue", pipeline_response)
+        deserialized = self._deserialize("KeyValue", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2657,7 +2644,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2679,7 +2665,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("KeyValue", pipeline_response)
+        deserialized = self._deserialize("KeyValue", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2693,7 +2679,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> Iterable["_models.KeyValue"]:
@@ -2715,7 +2701,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :param tags: A filter used to query by tags. Syntax reference:
          https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type tags: list[str]
@@ -2752,7 +2738,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2773,7 +2758,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2815,7 +2799,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
@@ -2837,7 +2821,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
-        :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
+        :type select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
         :param tags: A filter used to query by tags. Syntax reference:
          https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type tags: list[str]
@@ -2871,7 +2855,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2927,7 +2910,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -2945,7 +2927,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("OperationDetails", pipeline_response)
+        deserialized = self._deserialize("OperationDetails", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

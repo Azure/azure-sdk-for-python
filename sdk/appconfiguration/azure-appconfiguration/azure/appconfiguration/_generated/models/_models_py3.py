@@ -422,7 +422,7 @@ class OperationDetails(_serialization.Model):
     :ivar status: The current status of the operation. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.appconfiguration.models.State
-    :ivar error: An error, available when the status is ``Failed``\ , describing why the operation
+    :ivar error: An error, available when the status is ``Failed``\\ , describing why the operation
      failed.
     :vartype error: ~azure.appconfiguration.models.ErrorDetail
     """
@@ -452,7 +452,7 @@ class OperationDetails(_serialization.Model):
         :keyword status: The current status of the operation. Required. Known values are: "NotStarted",
          "Running", "Succeeded", "Failed", and "Canceled".
         :paramtype status: str or ~azure.appconfiguration.models.State
-        :keyword error: An error, available when the status is ``Failed``\ , describing why the
+        :keyword error: An error, available when the status is ``Failed``\\ , describing why the
          operation failed.
         :paramtype error: ~azure.appconfiguration.models.ErrorDetail
         """

@@ -13,7 +13,7 @@
 - Updated the default `api_version` to "2023-11-01".
 - Published enum `LabelFields`, and accepted the type for `fields` parameter in `list_labels()`.
 - Published enum `SnapshotFields`, and accepted the type for `fields` parameter in `get_snapshot()` and `list_snapshots()`.
-- Published enum `KeyValueFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
+- Published enum `ConfigurationSettingFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
 
 ## 1.6.0 (2024-04-09)
 
