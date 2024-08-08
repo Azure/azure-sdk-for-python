@@ -100,6 +100,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 client.last_response_headers = {}
 
             # setting the throttle related response headers before returning the result
+
+            # move this in to PipelineContext
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryCount
             ] = resourceThrottle_retry_policy.current_retry_attempt_count
@@ -169,6 +171,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # throttle related response headers and re-throw the exception back arg[0]
             # is the request. It needs to be modified for write forbidden exception
             if not retry_policy.ShouldRetry(e):
+                # move this in to PipelineContext
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[
