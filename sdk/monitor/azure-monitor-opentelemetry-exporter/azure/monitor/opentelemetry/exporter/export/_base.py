@@ -82,7 +82,6 @@ class BaseExporter:
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
-        self._connection_string = kwargs.get('connection_string')
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
@@ -139,7 +138,6 @@ class BaseExporter:
             )
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get('instrumentation_collection', False)
-
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
