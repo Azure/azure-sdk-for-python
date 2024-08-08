@@ -171,7 +171,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        use_tls: bool =True,
         **kwargs
     ):
         self._quick_recv = None
@@ -186,8 +185,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_timeout = socket_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
-
-        self._use_tls = use_tls
 
     def connect(self):
         try:
@@ -512,8 +509,7 @@ class SSLTransport(_AbstractTransport):
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
-        if self._use_tls:
-            self.sock = self._wrap_socket(self.sock, **self.sslopts)
+        self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
     def _wrap_socket(self, sock, context=None, **sslopts):
@@ -603,8 +599,7 @@ class SSLTransport(_AbstractTransport):
         """Unwrap a SSL socket, so we can call shutdown()."""
         if self.sock is not None:
             try:
-                if self._use_tls:
-                    self.sock = self.sock.unwrap()
+                self.sock = self.sock.unwrap()
             except OSError:
                 pass
 
@@ -742,12 +737,11 @@ class WebSocketTransport(_AbstractTransport):
             ) from None
         try:
             self.sock = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self._host) if self._use_tls
-                    else "ws://{}".format(self._custom_endpoint or self._host),
+                url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,    # timeout for read/write operations
                 skip_utf8_validation=True,
-                sslopt=self.sslopts if self._use_tls else None,
+                sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
