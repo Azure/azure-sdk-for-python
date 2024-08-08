@@ -7,18 +7,23 @@
 # --------------------------------------------------------------------------
 
 from ._models import AddressValue
+from ._models import AnalyzeBatchDocumentsRequest
+from ._models import AnalyzeBatchOperationDetail
+from ._models import AnalyzeBatchResult
+from ._models import AnalyzeBatchResultOperation
 from ._models import AnalyzeDocumentRequest
 from ._models import AnalyzeResult
 from ._models import AnalyzeResultOperation
+from ._models import AuthorizeClassifierCopyRequest
 from ._models import AuthorizeCopyRequest
 from ._models import AzureBlobContentSource
 from ._models import AzureBlobFileListContentSource
 from ._models import BoundingRegion
 from ._models import BuildDocumentClassifierRequest
 from ._models import BuildDocumentModelRequest
+from ._models import ClassifierCopyAuthorization
 from ._models import ClassifierDocumentTypeDetails
 from ._models import ClassifyDocumentRequest
-from ._models import ComponentDocumentModelDetails
 from ._models import ComposeDocumentModelRequest
 from ._models import CopyAuthorization
 from ._models import CurrencyValue
@@ -38,8 +43,6 @@ from ._models import DocumentKeyValueElement
 from ._models import DocumentKeyValuePair
 from ._models import DocumentLanguage
 from ._models import DocumentLine
-from ._models import DocumentList
-from ._models import DocumentListItem
 from ._models import DocumentModelBuildOperationDetails
 from ._models import DocumentModelComposeOperationDetails
 from ._models import DocumentModelCopyToOperationDetails
@@ -86,18 +89,23 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AddressValue",
+    "AnalyzeBatchDocumentsRequest",
+    "AnalyzeBatchOperationDetail",
+    "AnalyzeBatchResult",
+    "AnalyzeBatchResultOperation",
     "AnalyzeDocumentRequest",
     "AnalyzeResult",
     "AnalyzeResultOperation",
+    "AuthorizeClassifierCopyRequest",
     "AuthorizeCopyRequest",
     "AzureBlobContentSource",
     "AzureBlobFileListContentSource",
     "BoundingRegion",
     "BuildDocumentClassifierRequest",
     "BuildDocumentModelRequest",
+    "ClassifierCopyAuthorization",
     "ClassifierDocumentTypeDetails",
     "ClassifyDocumentRequest",
-    "ComponentDocumentModelDetails",
     "ComposeDocumentModelRequest",
     "CopyAuthorization",
     "CurrencyValue",
@@ -117,8 +125,6 @@ __all__ = [
     "DocumentKeyValuePair",
     "DocumentLanguage",
     "DocumentLine",
-    "DocumentList",
-    "DocumentListItem",
     "DocumentModelBuildOperationDetails",
     "DocumentModelComposeOperationDetails",
     "DocumentModelCopyToOperationDetails",

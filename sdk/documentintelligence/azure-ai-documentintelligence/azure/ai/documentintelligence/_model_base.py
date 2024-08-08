@@ -883,6 +883,5 @@ def rest_discriminator(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
-    visibility: typing.Optional[typing.List[str]] = None,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, is_discriminator=True, visibility=visibility)
+    return _RestField(name=name, type=type, is_discriminator=True)
