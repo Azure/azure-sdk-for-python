@@ -23,8 +23,6 @@ steps:
           | Foreach-Object { $_.Name } `
           | ForEach-Object { $_.Replace(".json", "") }
         $setting = $packageProperties -join ","
-        Write-Host "Setting TargetingString to $setting"
-        Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
       }
 
       Write-Host "Setting TargetingString to $setting"
