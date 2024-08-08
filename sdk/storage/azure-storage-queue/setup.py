@@ -46,7 +46,7 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue',
     keywords="azure, azure sdk",
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
