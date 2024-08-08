@@ -16,8 +16,7 @@ parameters:
 
 steps:
 - pwsh: |
-    $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
-      | Where-Object { $_.Extension -eq '.json' } `
+    $packageProperties = Get-ChildItem -Recurse "${{ parameters.PackagePropertiesFolder }}" *.json
 
     $paths = @()
 
@@ -34,8 +33,6 @@ steps:
 - task: PowerShell@2
   displayName: "Verify Readmes"
   condition: ${{ parameters.Condition }}
-  # todo: fix this continueOnError
-  continueOnError: true
   inputs:
     filePath: "eng/common/scripts/Verify-Readme.ps1"
     arguments: >

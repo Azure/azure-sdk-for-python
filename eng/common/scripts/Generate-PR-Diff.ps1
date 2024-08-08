@@ -19,7 +19,6 @@ Param (
   [string] $TargetPath
 )
 
-
 . (Join-Path $PSScriptRoot "Helpers" "git-helpers.ps1")
 
 function Get-ChangedServices {

@@ -111,13 +111,13 @@ foreach ($packagePropFile in $packageProperties)
     $packageMetadata = Get-Content $packagePropFile | ConvertFrom-Json
     Write-Host "Processing $($packageMetadata.ArtifactName)"
 
-    $packages = &$FindArtifactForApiReviewFn $ArtifactPath $packageMetadata.Name
+    $packages = &$FindArtifactForApiReviewFn $ArtifactPath $packageMetadata.ArtifactName
 
     if ($packages)
     {
         $pkgPath = $packages.Values[0]
         $isRequired = Should-Process-Package -pkgPath $pkgPath -packageName $($packageMetadata.ArtifactName)
-        Write-Host "Is API change detect required for $($packages.Name):$($isRequired)"
+        Write-Host "Is API change detect required for $($packages.ArtifactName):$($isRequired)"
         if ($isRequired -eq $True)
         {
             $filePath = $pkgPath.Replace($ArtifactPath , "").Replace("\", "/")
