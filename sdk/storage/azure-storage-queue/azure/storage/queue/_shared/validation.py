@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import hashlib
 from enum import Enum
-from typing import cast, Literal, Optional, Union
+from typing import cast, List, Literal, Optional, Tuple, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -75,3 +75,23 @@ def calculate_crc64_bytes(data: bytes) -> bytes:
     from azure.storage.extensions import crc64
 
     return cast(bytes, crc64.compute(data, 0).to_bytes(CRC64_LENGTH, 'little'))
+
+
+def get_crc64_bytes(crc: int) -> bytes:
+    return crc.to_bytes(CRC64_LENGTH, 'little')
+
+
+def combine_crc64(values: List[Tuple[int, int]]) -> int:
+    # Locally import to avoid error if not installed.
+    from azure.storage.extensions import crc64
+
+    if len(values) == 0:
+        raise ValueError("Must provide at least one crc value.")
+
+    crc = values[0][0]
+    length = values[0][1]
+    for i in range(1, len(values)):
+        crc = crc64.concat(0, 0, crc, length, 0, values[i][0], values[i][1])
+        length += values[i][1]
+
+    return crc
