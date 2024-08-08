@@ -81,6 +81,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         client_secret: Optional[str] = None,
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[bytes, str]] = None,
+        send_certificate_chain: bool = False,
         **kwargs: Any
     ) -> None:
         self._assertion = user_assertion
@@ -102,9 +104,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             try:
                 credential = get_client_credential(
                     certificate_path=None,
-                    password=kwargs.pop("password", None),
+                    password=password,
                     certificate_data=client_certificate,
-                    send_certificate_chain=kwargs.pop("send_certificate_chain", False),
+                    send_certificate_chain=send_certificate_chain,
                 )
             except ValueError as ex:
                 # client_certificate isn't a valid cert.
