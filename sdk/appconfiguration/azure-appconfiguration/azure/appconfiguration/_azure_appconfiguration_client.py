@@ -23,7 +23,14 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._generated import AzureAppConfiguration
-from ._generated.models import SnapshotUpdateParameters, SnapshotStatus, SnapshotFields, LabelFields, ConfigurationSettingFields, SettingLabel
+from ._generated.models import (
+    SnapshotUpdateParameters,
+    SnapshotStatus,
+    SnapshotFields,
+    LabelFields,
+    ConfigurationSettingFields,
+    SettingLabel,
+)
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,

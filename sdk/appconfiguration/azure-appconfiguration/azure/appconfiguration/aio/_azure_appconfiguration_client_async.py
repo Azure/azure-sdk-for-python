@@ -26,7 +26,14 @@ from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotUpdateParameters, SnapshotStatus, SnapshotFields, LabelFields, ConfigurationSettingFields, SettingLabel
+from .._generated.models import (
+    SnapshotUpdateParameters,
+    SnapshotStatus,
+    SnapshotFields,
+    LabelFields,
+    ConfigurationSettingFields,
+    SettingLabel,
+)
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
