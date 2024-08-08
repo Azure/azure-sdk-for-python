@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import pytest
 from azure.mgmt.sql.aio import SqlManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
