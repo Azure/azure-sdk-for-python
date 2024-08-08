@@ -101,6 +101,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 client.last_response_headers = {}
 
             # setting the throttle related response headers before returning the result
+            # values like this should be store in the PipelinContext object. 
+            # https://github.com/Azure/azure-sdk-for-python/blob/1e860019db1831bf28ec60551f525e2b529c8237/sdk/core/azure-core/azure/core/pipeline/__init__.py#L38
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryCount
             ] = resourceThrottle_retry_policy.current_retry_attempt_count
@@ -169,6 +171,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             # is the request. It needs to be modified for write forbidden exception
             if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
+                    # similar to the comment above, values like this should be store in the PipelinContext object.
                     client.last_response_headers = {}
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryCount
