@@ -286,7 +286,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
     async def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
         if kwargs.get("drain", False):
             link_credit_needed = 0
-        elif self.current_link_credit <= 0:
+        elif self.current_link_credit <= 0 and link_credit:
             link_credit_needed = link_credit
         else:
             link_credit_needed = link_credit - self.current_link_credit
