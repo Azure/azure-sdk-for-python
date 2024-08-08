@@ -275,7 +275,7 @@ def main(generate_input, generate_output):
     package_total = set()
     readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
     for readme_or_tsp in readme_and_tsp:
-        _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
+        _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
