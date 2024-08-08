@@ -718,16 +718,16 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
 
                         elif len(messages) == 1:
                             assert not results
-                            await asyncio.sleep(10)
+                            await asyncio.sleep(20)
                             print("Second sleep {}".format(session.session.locked_until_utc - utc_now()))
                             assert session.session._lock_expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
+                            messages.append(message)
                             try:
                                 await session.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockExpired")
                             except SessionLockLostError as e:
-                                pass
-                            messages.append(message)
+                                raise
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
             renewer._renew_period = 1
