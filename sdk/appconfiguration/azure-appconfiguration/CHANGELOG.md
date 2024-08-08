@@ -11,7 +11,7 @@
 
 ### Other Changes
 - Updated the default `api_version` to "2023-11-01".
-- Published enum `LabelFields` and model `SettingLabel`.
+- Published enum `LabelFields` and model `ConfigurationSettingLabel`.
 - Published enum `SnapshotFields`, and accepted the type for `fields` parameter in `get_snapshot()` and `list_snapshots()`.
 - Published enum `ConfigurationSettingFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
 

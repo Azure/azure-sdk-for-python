@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ConfigurationSettingLabel
 from ._models_py3 import Error
 from ._models_py3 import ErrorDetail
 from ._models_py3 import InnerError
@@ -16,7 +17,6 @@ from ._models_py3 import KeyValueFilter
 from ._models_py3 import KeyValueListResult
 from ._models_py3 import LabelListResult
 from ._models_py3 import OperationDetails
-from ._models_py3 import SettingLabel
 from ._models_py3 import Snapshot
 from ._models_py3 import SnapshotListResult
 from ._models_py3 import SnapshotUpdateParameters
@@ -32,6 +32,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ConfigurationSettingLabel",
     "Error",
     "ErrorDetail",
     "InnerError",
@@ -42,7 +43,6 @@ __all__ = [
     "KeyValueListResult",
     "LabelListResult",
     "OperationDetails",
-    "SettingLabel",
     "Snapshot",
     "SnapshotListResult",
     "SnapshotUpdateParameters",

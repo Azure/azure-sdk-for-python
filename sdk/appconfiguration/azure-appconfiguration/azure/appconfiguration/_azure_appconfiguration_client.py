@@ -29,7 +29,7 @@ from ._generated.models import (
     SnapshotFields,
     LabelFields,
     ConfigurationSettingFields,
-    SettingLabel,
+    ConfigurationSettingLabel,
 )
 from ._models import (
     ConfigurationSetting,
@@ -606,7 +606,7 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, LabelFields]]] = None,
         **kwargs,
-    ) -> ItemPaged[SettingLabel]:
+    ) -> ItemPaged[ConfigurationSettingLabel]:
         """Gets a list of labels.
 
         :keyword name: A filter for the name of the returned labels. Default value is None.
@@ -621,7 +621,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.LabelFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.LabelFields] or None
         :return: An iterator of labels.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.SettingLabel]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSettingLabel]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if isinstance(accept_datetime, datetime):

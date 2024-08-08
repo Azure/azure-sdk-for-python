@@ -25,10 +25,10 @@ directive:
     $["x-ms-enum"]["name"] = "ConfigurationSettingFields"
 ```
 
-### Rename the enum "Label" to "SettingLabel"
+### Rename the enum "Label" to "ConfigurationSettingLabel"
 ```yaml
 directive:
   rename-model:
     from: Label
-    to: SettingLabel
+    to: ConfigurationSettingLabel
 ```

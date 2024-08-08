@@ -17,6 +17,29 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ConfigurationSettingLabel(_serialization.Model):
+    """ConfigurationSettingLabel.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the label.
+    :vartype name: str
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+
+
 class Error(_serialization.Model):
     """Azure App Configuration error object.
 
@@ -365,22 +388,26 @@ class LabelListResult(_serialization.Model):
     """The result of a list request.
 
     :ivar items: The collection value.
-    :vartype items: list[~azure.appconfiguration.models.SettingLabel]
+    :vartype items: list[~azure.appconfiguration.models.ConfigurationSettingLabel]
     :ivar next_link: The URI that can be used to request the next set of paged results.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "items": {"key": "items", "type": "[SettingLabel]"},
+        "items": {"key": "items", "type": "[ConfigurationSettingLabel]"},
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, items: Optional[List["_models.SettingLabel"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        items: Optional[List["_models.ConfigurationSettingLabel"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword items: The collection value.
-        :paramtype items: list[~azure.appconfiguration.models.SettingLabel]
+        :paramtype items: list[~azure.appconfiguration.models.ConfigurationSettingLabel]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
@@ -437,29 +464,6 @@ class OperationDetails(_serialization.Model):
         self.id = id
         self.status = status
         self.error = error
-
-
-class SettingLabel(_serialization.Model):
-    """SettingLabel.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the label.
-    :vartype name: str
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.name = None
 
 
 class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
