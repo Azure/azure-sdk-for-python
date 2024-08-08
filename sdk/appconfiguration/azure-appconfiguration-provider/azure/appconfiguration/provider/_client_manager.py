@@ -290,7 +290,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._retry_total = retry_total
         self._retry_backoff_max = retry_backoff_max
         self._replica_discovery_enabled = replica_discovery_enabled
-        self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL
+        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
@@ -337,7 +337,11 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             return
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
 
-        if not failover_endpoints:
+        if failover_endpoints is None:
+            self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL
+            return
+
+        if len(failover_endpoints) == 0:
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             return
 
@@ -376,7 +380,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                         )
                     )
         self._replica_clients = new_clients
-        self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL
+        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
 
     def get_active_clients(self):
         active_clients = []
