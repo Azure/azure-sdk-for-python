@@ -1,0 +1,524 @@
+{
+    "id":"integration-test-collection",
+    "type":"Collection",
+    "links":[
+       {
+          "rel":"items",
+          "type":"application/geo+json",
+          "href":"https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-2-l2a/items"
+       },
+       {
+          "rel":"parent",
+          "type":"application/json",
+          "href":"https://planetarycomputer.microsoft.com/api/stac/v1/"
+       },
+       {
+          "rel":"root",
+          "type":"application/json",
+          "href":"https://planetarycomputer.microsoft.com/api/stac/v1/"
+       },
+       {
+          "rel":"self",
+          "type":"application/json",
+          "href":"https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-2-l2a"
+       },
+       {
+          "rel":"license",
+          "href":"https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/TermsConditions/Sentinel_Data_Terms_and_Conditions.pdf",
+          "title":"Copernicus Sentinel data terms"
+       },
+       {
+          "rel":"describedby",
+          "href":"https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a",
+          "title":"Human readable dataset overview and reference",
+          "type":"text/html"
+       }
+    ],
+    "title":"integration-test-collection",
+    "extent":{
+       "spatial":{
+          "bbox":[
+             [
+                -180,
+                -90,
+                180,
+                90
+             ]
+          ]
+       },
+       "temporal":{
+          "interval":[
+             [
+                "2015-06-27T10:25:31Z",
+                null
+             ]
+          ]
+       }
+    },
+    "license":"proprietary",
+    "keywords":[
+       "Sentinel",
+       "Copernicus",
+       "ESA",
+       "Satellite",
+       "Global",
+       "Imagery",
+       "Reflectance"
+    ],
+    "providers":[
+       {
+          "url":"https://sentinel.esa.int/web/sentinel/missions/sentinel-2",
+          "name":"ESA",
+          "roles":[
+             "producer",
+             "licensor"
+          ]
+       },
+       {
+          "url":"https://www.esri.com/",
+          "name":"Esri",
+          "roles":[
+             "processor"
+          ]
+       },
+       {
+          "url":"https://planetarycomputer.microsoft.com",
+          "name":"Microsoft",
+          "roles":[
+             "host",
+             "processor"
+          ]
+       }
+    ],
+    "summaries":{
+       "gsd":[
+          10,
+          20,
+          60
+       ],
+       "eo:bands":[
+          {
+             "name":"AOT",
+             "description":"aerosol optical thickness"
+          },
+          {
+             "gsd":60,
+             "name":"B01",
+             "common_name":"coastal",
+             "description":"coastal aerosol",
+             "center_wavelength":0.443,
+             "full_width_half_max":0.027
+          },
+          {
+             "gsd":10,
+             "name":"B02",
+             "common_name":"blue",
+             "description":"visible blue",
+             "center_wavelength":0.49,
+             "full_width_half_max":0.098
+          },
+          {
+             "gsd":10,
+             "name":"B03",
+             "common_name":"green",
+             "description":"visible green",
+             "center_wavelength":0.56,
+             "full_width_half_max":0.045
+          },
+          {
+             "gsd":10,
+             "name":"B04",
+             "common_name":"red",
+             "description":"visible red",
+             "center_wavelength":0.665,
+             "full_width_half_max":0.038
+          },
+          {
+             "gsd":20,
+             "name":"B05",
+             "common_name":"rededge",
+             "description":"vegetation classification red edge",
+             "center_wavelength":0.704,
+             "full_width_half_max":0.019
+          },
+          {
+             "gsd":20,
+             "name":"B06",
+             "common_name":"rededge",
+             "description":"vegetation classification red edge",
+             "center_wavelength":0.74,
+             "full_width_half_max":0.018
+          },
+          {
+             "gsd":20,
+             "name":"B07",
+             "common_name":"rededge",
+             "description":"vegetation classification red edge",
+             "center_wavelength":0.783,
+             "full_width_half_max":0.028
+          },
+          {
+             "gsd":10,
+             "name":"B08",
+             "common_name":"nir",
+             "description":"near infrared",
+             "center_wavelength":0.842,
+             "full_width_half_max":0.145
+          },
+          {
+             "gsd":20,
+             "name":"B8A",
+             "common_name":"rededge",
+             "description":"vegetation classification red edge",
+             "center_wavelength":0.865,
+             "full_width_half_max":0.033
+          },
+          {
+             "gsd":60,
+             "name":"B09",
+             "description":"water vapor",
+             "center_wavelength":0.945,
+             "full_width_half_max":0.026
+          },
+          {
+             "gsd":20,
+             "name":"B11",
+             "common_name":"swir16",
+             "description":"short-wave infrared, snow/ice/cloud classification",
+             "center_wavelength":1.61,
+             "full_width_half_max":0.143
+          },
+          {
+             "gsd":20,
+             "name":"B12",
+             "common_name":"swir22",
+             "description":"short-wave infrared, snow/ice/cloud classification",
+             "center_wavelength":2.19,
+             "full_width_half_max":0.242
+          }
+       ],
+       "platform":[
+          "Sentinel-2A",
+          "Sentinel-2B"
+       ],
+       "instruments":[
+          "msi"
+       ],
+       "constellation":[
+          "sentinel-2"
+       ],
+       "view:off_nadir":[
+          0
+       ]
+    },
+    "description":"The [Sentinel-2](https://sentinel.esa.int/web/sentinel/missions/sentinel-2) program provides global imagery in thirteen spectral bands at 10m-60m resolution and a revisit time of approximately five days.  This dataset represents the global Sentinel-2 archive, from 2016 to the present, processed to L2A (bottom-of-atmosphere) using [Sen2Cor](https://step.esa.int/main/snap-supported-plugins/sen2cor/) and converted to [cloud-optimized GeoTIFF](https://www.cogeo.org/) format.",
+    "item_assets":{
+       "AOT":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Aerosol optical thickness (AOT)"
+       },
+       "B01":{
+          "gsd":60.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 1 - Coastal aerosol - 60m",
+          "eo:bands":[
+             {
+                "name":"B01",
+                "common_name":"coastal",
+                "description":"Band 1 - Coastal aerosol",
+                "center_wavelength":0.443,
+                "full_width_half_max":0.027
+             }
+          ]
+       },
+       "B02":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 2 - Blue - 10m",
+          "eo:bands":[
+             {
+                "name":"B02",
+                "common_name":"blue",
+                "description":"Band 2 - Blue",
+                "center_wavelength":0.49,
+                "full_width_half_max":0.098
+             }
+          ]
+       },
+       "B03":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 3 - Green - 10m",
+          "eo:bands":[
+             {
+                "name":"B03",
+                "common_name":"green",
+                "description":"Band 3 - Green",
+                "center_wavelength":0.56,
+                "full_width_half_max":0.045
+             }
+          ]
+       },
+       "B04":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 4 - Red - 10m",
+          "eo:bands":[
+             {
+                "name":"B04",
+                "common_name":"red",
+                "description":"Band 4 - Red",
+                "center_wavelength":0.665,
+                "full_width_half_max":0.038
+             }
+          ]
+       },
+       "B05":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 5 - Vegetation red edge 1 - 20m",
+          "eo:bands":[
+             {
+                "name":"B05",
+                "common_name":"rededge",
+                "description":"Band 5 - Vegetation red edge 1",
+                "center_wavelength":0.704,
+                "full_width_half_max":0.019
+             }
+          ]
+       },
+       "B06":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 6 - Vegetation red edge 2 - 20m",
+          "eo:bands":[
+             {
+                "name":"B06",
+                "common_name":"rededge",
+                "description":"Band 6 - Vegetation red edge 2",
+                "center_wavelength":0.74,
+                "full_width_half_max":0.018
+             }
+          ]
+       },
+       "B07":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 7 - Vegetation red edge 3 - 20m",
+          "eo:bands":[
+             {
+                "name":"B07",
+                "common_name":"rededge",
+                "description":"Band 7 - Vegetation red edge 3",
+                "center_wavelength":0.783,
+                "full_width_half_max":0.028
+             }
+          ]
+       },
+       "B08":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 8 - NIR - 10m",
+          "eo:bands":[
+             {
+                "name":"B08",
+                "common_name":"nir",
+                "description":"Band 8 - NIR",
+                "center_wavelength":0.842,
+                "full_width_half_max":0.145
+             }
+          ]
+       },
+       "B09":{
+          "gsd":60.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 9 - Water vapor - 60m",
+          "eo:bands":[
+             {
+                "name":"B09",
+                "description":"Band 9 - Water vapor",
+                "center_wavelength":0.945,
+                "full_width_half_max":0.026
+             }
+          ]
+       },
+       "B11":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 11 - SWIR (1.6) - 20m",
+          "eo:bands":[
+             {
+                "name":"B11",
+                "common_name":"swir16",
+                "description":"Band 11 - SWIR (1.6)",
+                "center_wavelength":1.61,
+                "full_width_half_max":0.143
+             }
+          ]
+       },
+       "B12":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 12 - SWIR (2.2) - 20m",
+          "eo:bands":[
+             {
+                "name":"B12",
+                "common_name":"swir22",
+                "description":"Band 12 - SWIR (2.2)",
+                "center_wavelength":2.19,
+                "full_width_half_max":0.242
+             }
+          ]
+       },
+       "B8A":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Band 8A - Vegetation red edge 4 - 20m",
+          "eo:bands":[
+             {
+                "name":"B8A",
+                "common_name":"rededge",
+                "description":"Band 8A - Vegetation red edge 4",
+                "center_wavelength":0.865,
+                "full_width_half_max":0.033
+             }
+          ]
+       },
+       "SCL":{
+          "gsd":20.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Scene classfication map (SCL)"
+       },
+       "WVP":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"Water vapour (WVP)"
+       },
+       "visual":{
+          "gsd":10.0,
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "data"
+          ],
+          "title":"True color image",
+          "eo:bands":[
+             {
+                "name":"B04",
+                "common_name":"red",
+                "description":"Band 4 - Red",
+                "center_wavelength":0.665,
+                "full_width_half_max":0.038
+             },
+             {
+                "name":"B03",
+                "common_name":"green",
+                "description":"Band 3 - Green",
+                "center_wavelength":0.56,
+                "full_width_half_max":0.045
+             },
+             {
+                "name":"B02",
+                "common_name":"blue",
+                "description":"Band 2 - Blue",
+                "center_wavelength":0.49,
+                "full_width_half_max":0.098
+             }
+          ]
+       },
+       "preview":{
+          "type":"image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles":[
+             "thumbnail"
+          ],
+          "title":"Thumbnail"
+       },
+       "safe-manifest":{
+          "type":"application/xml",
+          "roles":[
+             "metadata"
+          ],
+          "title":"SAFE manifest"
+       },
+       "granule-metadata":{
+          "type":"application/xml",
+          "roles":[
+             "metadata"
+          ],
+          "title":"Granule metadata"
+       },
+       "inspire-metadata":{
+          "type":"application/xml",
+          "roles":[
+             "metadata"
+          ],
+          "title":"INSPIRE metadata"
+       },
+       "product-metadata":{
+          "type":"application/xml",
+          "roles":[
+             "metadata"
+          ],
+          "title":"Product metadata"
+       },
+       "datastrip-metadata":{
+          "type":"application/xml",
+          "roles":[
+             "metadata"
+          ],
+          "title":"Datastrip metadata"
+       }
+    },
+    "stac_version":"1.0.0",
+    "stac_extensions":[
+       "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+       "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "msft:short_description":"The Sentinel-2 program provides global imagery in thirteen spectral bands at 10m-60m resolution and a revisit time of approximately five days.  This dataset contains the global Sentinel-2 archive, from 2016 to the present, processed to L2A (bottom-of-atmosphere).",
+    "msft:region":"westeurope"
+ }
