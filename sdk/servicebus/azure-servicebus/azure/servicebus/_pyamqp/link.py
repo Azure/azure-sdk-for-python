@@ -212,10 +212,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         }
         with self._drain_lock:
             self._received_drain_response = False
-            # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
+            # If the link is in drain mode, don't add more credit
             if not self._drain_state:
                 self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
-                # Drain State will be True if we sent a flow frame with drain=True, and will return to false when received
                 self._drain_state = kwargs.get("drain", False)
 
     def _incoming_flow(self, frame):
@@ -232,9 +231,6 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
-            # self._session.links.pop(self.name, None)
-            # self._session._input_handles.pop(self.remote_handle, None)
-            # self._session._output_handles.pop(self.handle, None)
 
     def _incoming_detach(self, frame) -> None:
         if self.network_trace:
@@ -267,8 +263,6 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._set_state(LinkState.ATTACH_SENT)
 
     def detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
-        print(error)
-        print(type(error))
         if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR):
             return
         try:

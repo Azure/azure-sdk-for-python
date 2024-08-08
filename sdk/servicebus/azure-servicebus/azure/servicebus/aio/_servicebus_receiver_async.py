@@ -476,7 +476,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except (RuntimeError, ServiceBusConnectionError) as exception:
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",

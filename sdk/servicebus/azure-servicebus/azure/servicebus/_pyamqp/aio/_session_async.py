@@ -373,7 +373,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         try:
             link = self._input_handles[frame[0]]  # handle
             await link._incoming_detach(frame)
-            if link._is_closed:  # TODO - need for this
+            if link._is_closed:
                 self.links.pop(link.name)
                 self._input_handles.pop(link.remote_handle)
                 self._output_handles.pop(link.handle)
