@@ -247,7 +247,6 @@ class AsyncTransport(
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        use_tls: bool = True,
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.connected = False
@@ -261,7 +260,6 @@ class AsyncTransport(
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
-        self._use_tls = use_tls
 
     async def connect(self):
         try:
@@ -282,10 +280,10 @@ class AsyncTransport(
             self.reader, self.writer = await asyncio.open_connection(
                 host=self.host,
                 port=self.port,
-                ssl=self.sslopts if self._use_tls else None,
+                ssl=self.sslopts,
                 family=socket.AF_UNSPEC,
                 proto=SOL_TCP,
-                server_hostname=self.host if self._use_tls else None,
+                server_hostname=self.host if self.sslopts else None,
             )
             self.connected = True
             sock = self.writer.transport.get_extra_info("socket")
@@ -438,7 +436,6 @@ class WebSocketTransportAsync(
         port=WEBSOCKET_PORT,
         socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
-        use_tls: bool =True,
         **kwargs
     ):
         self._read_buffer = BytesIO()
@@ -452,7 +449,6 @@ class WebSocketTransportAsync(
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
         self.network_trace_params = kwargs.get('network_trace_params')
-        self._use_tls = use_tls
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)
@@ -482,9 +478,9 @@ class WebSocketTransportAsync(
 
         self.session = ClientSession()
         if self._custom_endpoint:
-            url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
+            url = f"wss://{self._custom_endpoint}"
         else:
-            url = f"wss://{self.host}" if self._use_tls else f"ws://{self.host}"
+            url = f"wss://{self.host}"
             parsed_url = urlsplit(url)
             url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
@@ -504,7 +500,7 @@ class WebSocketTransportAsync(
                 autoclose=False,
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
-                ssl=self.sslopts if self._use_tls else None,
+                ssl=self.sslopts,
                 heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
         except ClientConnectorError as exc:
