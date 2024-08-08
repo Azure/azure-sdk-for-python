@@ -9,8 +9,8 @@
   - Each new protocol class defines a `get_token_info` method that returns an `AccessTokenInfo` object.
 - Added a new `TokenRequestOptions` class, which is a `TypedDict` with optional parameters, that can be used to define options for token requests through the `get_token_info` method. #36565
 - Added a new `AccessTokenInfo` class, which is returned by `get_token_info` implementations. This class contains the token, its expiration time, and optional additional information like when a token should be refreshed. #36565
-- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first checks if a credential has the `get_token_info` method defined. If so, it will use the `get_token_info` method to acquire a token. Otherwise, it will fall back to the `get_token` method. #36565
-  - These policies now also check the `refresh_on` attribute, if available, when determining if a token request should be made.
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. Otherwise, the `get_token` method is used. #36565
+  - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
 
 ### Breaking Changes
 
