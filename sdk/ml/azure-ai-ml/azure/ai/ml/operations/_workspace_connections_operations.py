@@ -105,7 +105,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, workspace_connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
-    ) -> Optional[WorkspaceConnection]:
+    ) -> WorkspaceConnection:
         """Create or update a connection.
 
         :param workspace_connection: Definition of a Workspace Connection or one of its subclasses
