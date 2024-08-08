@@ -777,14 +777,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: None
         """
         # pylint: disable=protected-access
-        if drain:
-            link_credit_needed = 0
-        elif handler._link.current_link_credit <= 0:
-            link_credit_needed = link_credit
-        else:
-            link_credit_needed = link_credit - handler._link.current_link_credit
-        # if link_credit_needed > 0:
-        handler._link.flow(link_credit=link_credit_needed, drain=drain)
+        handler._link.flow(link_credit=link_credit, drain=drain)
 
     @staticmethod
     def settle_message_via_receiver_link(

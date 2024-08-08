@@ -317,13 +317,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :rtype: None
         """
         # pylint: disable=protected-access
-        if drain:
-            link_credit_needed = 0
-        elif handler._link.current_link_credit <= 0:
-            link_credit_needed = link_credit
-        else:
-            link_credit_needed = link_credit - handler._link.current_link_credit
-        await handler._link.flow(link_credit=link_credit_needed, drain=drain)
+        await handler._link.flow(link_credit=link_credit, drain=drain)
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
