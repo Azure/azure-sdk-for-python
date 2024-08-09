@@ -7,33 +7,33 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sync_token_samples.py
+FILE: sync_token_sample_async.py
 
 DESCRIPTION:
-    This sample demos update_sync_token for the AzureAppConfigurationClient
+    This sample demos how to update sync_token for an AzureAppConfigurationClient asynchronously.
 
-
-USAGE: python sync_token_samples.py
+USAGE: python sync_token_sample_async.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+import asyncio
 import os
-from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 
-def handle_event_grid_notifications(event_grid_events):
+async def handle_event_grid_notifications(event_grid_events):
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
     all_keys = []
 
-    with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
         for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == "Microsoft.KeyValueModified":
                 sync_token = event_grid_event["data"]["syncToken"]
-                client.update_sync_token(sync_token)
+                await client.update_sync_token(sync_token)
 
-                new_key = client.get_configuration_setting(
+                new_key = await client.get_configuration_setting(
                     key=event_grid_event["data"]["key"], label=event_grid_event["data"]["label"]
                 )
 
@@ -41,4 +41,4 @@ def handle_event_grid_notifications(event_grid_events):
 
 
 if __name__ == "__main__":
-    handle_event_grid_notifications([])
+    asyncio.run(handle_event_grid_notifications([]))

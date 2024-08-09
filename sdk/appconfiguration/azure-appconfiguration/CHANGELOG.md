@@ -3,13 +3,17 @@
 ## 1.6.1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
+- Added operation `list_labels()` for listing configuration setting labels.
+- Supported to filter by configuration setting tags in `list_configuration_settings()` and `list_revisions()` via an optional keyword argument `tags_filter`.
 
 ### Bugs Fixed
 - Fixed a bug where the `feature_id` of `FeatureFlagConfigurationSetting` will be different from `id` customer field, and may overwrite the original customer-defined value if different from the `FeatureFlagConfigurationSetting` key suffix.
 
 ### Other Changes
+- Updated the default `api_version` to "2023-11-01".
+- Published enum `LabelFields` and model `ConfigurationSettingLabel`.
+- Published enum `SnapshotFields`, and accepted the type for `fields` parameter in `get_snapshot()` and `list_snapshots()`.
+- Published enum `ConfigurationSettingFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
 
 ## 1.6.0 (2024-04-09)
 

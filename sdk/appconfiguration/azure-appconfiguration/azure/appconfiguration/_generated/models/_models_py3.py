@@ -17,6 +17,29 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ConfigurationSettingLabel(_serialization.Model):
+    """ConfigurationSettingLabel.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the label.
+    :vartype name: str
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+
+
 class Error(_serialization.Model):
     """Azure App Configuration error object.
 
@@ -73,7 +96,7 @@ class Error(_serialization.Model):
 class ErrorDetail(_serialization.Model):
     """The details of an error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -281,35 +304,45 @@ class KeyValue(_serialization.Model):
 
 
 class KeyValueFilter(_serialization.Model):
-    """Enables filtering of key-values.
+    """Enables filtering of key-values. Syntax reference:
+    https://aka.ms/azconfig/docs/restapisnapshots.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Filters key-values by their key field. Required.
     :vartype key: str
     :ivar label: Filters key-values by their label field.
     :vartype label: str
+    :ivar tags: Filters key-values by their tags field.
+    :vartype tags: list[str]
     """
 
     _validation = {
         "key": {"required": True},
+        "tags": {"unique": True},
     }
 
     _attribute_map = {
         "key": {"key": "key", "type": "str"},
         "label": {"key": "label", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key: Filters key-values by their key field. Required.
         :paramtype key: str
         :keyword label: Filters key-values by their label field.
         :paramtype label: str
+        :keyword tags: Filters key-values by their tags field.
+        :paramtype tags: list[str]
         """
         super().__init__(**kwargs)
         self.key = key
         self.label = label
+        self.tags = tags
 
 
 class KeyValueListResult(_serialization.Model):
@@ -351,49 +384,30 @@ class KeyValueListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class Label(_serialization.Model):
-    """Label.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the label.
-    :vartype name: str
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.name = None
-
-
 class LabelListResult(_serialization.Model):
     """The result of a list request.
 
     :ivar items: The collection value.
-    :vartype items: list[~azure.appconfiguration.models.Label]
+    :vartype items: list[~azure.appconfiguration.models.ConfigurationSettingLabel]
     :ivar next_link: The URI that can be used to request the next set of paged results.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "items": {"key": "items", "type": "[Label]"},
+        "items": {"key": "items", "type": "[ConfigurationSettingLabel]"},
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, items: Optional[List["_models.Label"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        items: Optional[List["_models.ConfigurationSettingLabel"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword items: The collection value.
-        :paramtype items: list[~azure.appconfiguration.models.Label]
+        :paramtype items: list[~azure.appconfiguration.models.ConfigurationSettingLabel]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
@@ -405,14 +419,14 @@ class LabelListResult(_serialization.Model):
 class OperationDetails(_serialization.Model):
     """Details of a long running operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The unique id of the operation. Required.
     :vartype id: str
     :ivar status: The current status of the operation. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.appconfiguration.models.State
-    :ivar error: An error, available when the status is ``Failed``\ , describing why the operation
+    :ivar error: An error, available when the status is ``Failed``\\ , describing why the operation
      failed.
     :vartype error: ~azure.appconfiguration.models.ErrorDetail
     """
@@ -442,7 +456,7 @@ class OperationDetails(_serialization.Model):
         :keyword status: The current status of the operation. Required. Known values are: "NotStarted",
          "Running", "Succeeded", "Failed", and "Canceled".
         :paramtype status: str or ~azure.appconfiguration.models.State
-        :keyword error: An error, available when the status is ``Failed``\ , describing why the
+        :keyword error: An error, available when the status is ``Failed``\\ , describing why the
          operation failed.
         :paramtype error: ~azure.appconfiguration.models.ErrorDetail
         """
@@ -457,7 +471,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the snapshot.
     :vartype name: str

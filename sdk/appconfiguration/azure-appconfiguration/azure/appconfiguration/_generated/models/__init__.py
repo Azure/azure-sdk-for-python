@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ConfigurationSettingLabel
 from ._models_py3 import Error
 from ._models_py3 import ErrorDetail
 from ._models_py3 import InnerError
@@ -14,7 +15,6 @@ from ._models_py3 import KeyListResult
 from ._models_py3 import KeyValue
 from ._models_py3 import KeyValueFilter
 from ._models_py3 import KeyValueListResult
-from ._models_py3 import Label
 from ._models_py3 import LabelListResult
 from ._models_py3 import OperationDetails
 from ._models_py3 import Snapshot
@@ -22,7 +22,7 @@ from ._models_py3 import SnapshotListResult
 from ._models_py3 import SnapshotUpdateParameters
 
 from ._azure_app_configuration_enums import CompositionType
-from ._azure_app_configuration_enums import KeyValueFields
+from ._azure_app_configuration_enums import ConfigurationSettingFields
 from ._azure_app_configuration_enums import LabelFields
 from ._azure_app_configuration_enums import SnapshotFields
 from ._azure_app_configuration_enums import SnapshotStatus
@@ -32,6 +32,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ConfigurationSettingLabel",
     "Error",
     "ErrorDetail",
     "InnerError",
@@ -40,14 +41,13 @@ __all__ = [
     "KeyValue",
     "KeyValueFilter",
     "KeyValueListResult",
-    "Label",
     "LabelListResult",
     "OperationDetails",
     "Snapshot",
     "SnapshotListResult",
     "SnapshotUpdateParameters",
     "CompositionType",
-    "KeyValueFields",
+    "ConfigurationSettingFields",
     "LabelFields",
     "SnapshotFields",
     "SnapshotStatus",

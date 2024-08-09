@@ -7,19 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: hello_world_async_sample.py
+FILE: hello_world_sample_async.py
 
 DESCRIPTION:
-    This sample demos set/get/delete operations for app configuration
+    This sample demos how to add/update/retrieve/delete configuration settings asynchronously.
 
-USAGE: python hello_world_async_sample.py
+USAGE: python hello_world_sample_async.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
-from util import print_configuration_setting
 
 
 async def main():
@@ -29,27 +28,36 @@ async def main():
 
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
-    # Create app config client
+    # Create an app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
     # [END create_app_config_client]
 
-    print("Set new configuration setting")
+    print("Add new configuration setting")
     config_setting = ConfigurationSetting(
-        key="MyKey", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
+        key="MyKey", label="MyLabel", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
     )
-    returned_config_setting = await client.set_configuration_setting(config_setting)
+    added_config_setting = await client.add_configuration_setting(config_setting)
     print("New configuration setting:")
-    print_configuration_setting(returned_config_setting)
+    print(added_config_setting)
+    print("")
+
+    print("Set configuration setting")
+    added_config_setting.value = "new value"
+    added_config_setting.content_type = "new content type"
+    updated_config_setting = await client.set_configuration_setting(added_config_setting)
+    print(updated_config_setting)
     print("")
 
     print("Get configuration setting")
-    fetched_config_setting = await client.get_configuration_setting(key="MyKey")
+    # [START get_config_setting]
+    fetched_config_setting = await client.get_configuration_setting(key="MyKey", label="MyLabel")
+    # [END get_config_setting]
     print("Fetched configuration setting:")
-    print_configuration_setting(fetched_config_setting)
+    print(fetched_config_setting)
     print("")
 
     print("Delete configuration setting")
-    await client.delete_configuration_setting(key="MyKey")
+    await client.delete_configuration_setting(key="MyKey", label="MyLabel")
 
 
 if __name__ == "__main__":

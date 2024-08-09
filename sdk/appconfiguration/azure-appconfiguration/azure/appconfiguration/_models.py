@@ -565,6 +565,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
+        self._tags = kwargs.get("tags")
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -575,6 +576,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            tags=self._tags,
             continuation_token=continuation_token,
             cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
@@ -602,6 +604,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
+        self._tags = kwargs.get("tags")
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -612,6 +615,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            tags=self._tags,
             continuation_token=continuation_token,
             cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
