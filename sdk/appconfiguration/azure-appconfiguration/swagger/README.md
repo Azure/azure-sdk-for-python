@@ -40,3 +40,11 @@ directive:
     from: KeyValueFilter
     to: ConfigurationSettingsFilter
 ```
+
+### Rename the model "Snapshot" to "ConfigurationSnapshot"
+```yaml
+directive:
+  rename-model:
+    from: Snapshot
+    to: ConfigurationSnapshot
+```

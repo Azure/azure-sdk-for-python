@@ -1675,7 +1675,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         select: Optional[List[Union[str, _models.SnapshotFields]]] = None,
         status: Optional[List[Union[str, _models.SnapshotStatus]]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.Snapshot"]:
+    ) -> Iterable["_models.ConfigurationSnapshot"]:
         """Gets a list of key-value snapshots.
 
         Gets a list of key-value snapshots.
@@ -1691,8 +1691,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param status: Used to filter returned snapshots by their status property. Default value is
          None.
         :type status: list[str or ~azure.appconfiguration.models.SnapshotStatus]
-        :return: An iterator like instance of either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Snapshot]
+        :return: An iterator like instance of either ConfigurationSnapshot or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.ConfigurationSnapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1842,7 +1843,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         if_none_match: Optional[str] = None,
         select: Optional[List[Union[str, _models.SnapshotFields]]] = None,
         **kwargs: Any
-    ) -> _models.Snapshot:
+    ) -> _models.ConfigurationSnapshot:
         """Gets a single key-value snapshot.
 
         Gets a single key-value snapshot.
@@ -1858,8 +1859,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.SnapshotFields]
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
+        :return: ConfigurationSnapshot or the result of cls(response)
+        :rtype: ~azure.appconfiguration.models.ConfigurationSnapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -1874,7 +1875,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationSnapshot] = kwargs.pop("cls", None)
 
         _request = build_get_snapshot_request(
             name=name,
@@ -1908,7 +1909,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
-        deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
+        deserialized = self._deserialize("ConfigurationSnapshot", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1916,7 +1917,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         return deserialized  # type: ignore
 
     def _create_snapshot_initial(
-        self, name: str, entity: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
+        self, name: str, entity: Union[_models.ConfigurationSnapshot, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1939,7 +1940,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         if isinstance(entity, (IOBase, bytes)):
             _content = entity
         else:
-            _json = self._serialize.body(entity, "Snapshot")
+            _json = self._serialize.body(entity, "ConfigurationSnapshot")
 
         _request = build_create_snapshot_request(
             name=name,
@@ -1988,8 +1989,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
     @overload
     def begin_create_snapshot(
-        self, name: str, entity: _models.Snapshot, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.Snapshot]:
+        self, name: str, entity: _models.ConfigurationSnapshot, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.ConfigurationSnapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -1997,19 +1998,20 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
         :param entity: The key-value snapshot to create. Required.
-        :type entity: ~azure.appconfiguration.models.Snapshot
+        :type entity: ~azure.appconfiguration.models.ConfigurationSnapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :return: An instance of LROPoller that returns either ConfigurationSnapshot or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.ConfigurationSnapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_create_snapshot(
         self, name: str, entity: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.Snapshot]:
+    ) -> LROPoller[_models.ConfigurationSnapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -2022,26 +2024,28 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
          Known values are: 'application/json', 'application/vnd.microsoft.appconfig.snapshot+json'.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :return: An instance of LROPoller that returns either ConfigurationSnapshot or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.ConfigurationSnapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_create_snapshot(
-        self, name: str, entity: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[_models.Snapshot]:
+        self, name: str, entity: Union[_models.ConfigurationSnapshot, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[_models.ConfigurationSnapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
 
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
-        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO[bytes] type.
-         Required.
-        :type entity: ~azure.appconfiguration.models.Snapshot or IO[bytes]
-        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :param entity: The key-value snapshot to create. Is either a ConfigurationSnapshot type or a
+         IO[bytes] type. Required.
+        :type entity: ~azure.appconfiguration.models.ConfigurationSnapshot or IO[bytes]
+        :return: An instance of LROPoller that returns either ConfigurationSnapshot or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.ConfigurationSnapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2049,7 +2053,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationSnapshot] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -2077,7 +2081,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
+            deserialized = self._deserialize("ConfigurationSnapshot", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2095,13 +2099,13 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.Snapshot].from_continuation_token(
+            return LROPoller[_models.ConfigurationSnapshot].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.Snapshot](
+        return LROPoller[_models.ConfigurationSnapshot](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -2115,7 +2119,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Snapshot:
+    ) -> _models.ConfigurationSnapshot:
         """Updates the state of a key-value snapshot.
 
         Updates the state of a key-value snapshot.
@@ -2133,8 +2137,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
+        :return: ConfigurationSnapshot or the result of cls(response)
+        :rtype: ~azure.appconfiguration.models.ConfigurationSnapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2148,7 +2152,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Snapshot:
+    ) -> _models.ConfigurationSnapshot:
         """Updates the state of a key-value snapshot.
 
         Updates the state of a key-value snapshot.
@@ -2167,8 +2171,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
          Known values are: 'application/json', 'application/merge-patch+json'. Default value is
          "application/json".
         :paramtype content_type: str
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
+        :return: ConfigurationSnapshot or the result of cls(response)
+        :rtype: ~azure.appconfiguration.models.ConfigurationSnapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2180,7 +2184,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.Snapshot:
+    ) -> _models.ConfigurationSnapshot:
         """Updates the state of a key-value snapshot.
 
         Updates the state of a key-value snapshot.
@@ -2196,8 +2200,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
+        :return: ConfigurationSnapshot or the result of cls(response)
+        :rtype: ~azure.appconfiguration.models.ConfigurationSnapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -2213,7 +2217,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfigurationSnapshot] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2257,7 +2261,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
-        deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
+        deserialized = self._deserialize("ConfigurationSnapshot", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -82,6 +82,109 @@ class ConfigurationSettingsFilter(_serialization.Model):
         self.tags = tags
 
 
+class ConfigurationSnapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """ConfigurationSnapshot.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the snapshot.
+    :vartype name: str
+    :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
+     "archived", and "failed".
+    :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
+    :ivar filters: A list of filters used to filter the key-values included in the snapshot.
+     Required.
+    :vartype filters: list[~azure.appconfiguration.models.ConfigurationSettingsFilter]
+    :ivar composition_type: The composition type describes how the key-values within the snapshot
+     are composed. The 'key' composition type ensures there are no two key-values containing the
+     same key. The 'key_label' composition type ensures there are no two key-values containing the
+     same key and label. Known values are: "key" and "key_label".
+    :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
+    :ivar created: The time that the snapshot was created.
+    :vartype created: ~datetime.datetime
+    :ivar expires: The time that the snapshot will expire.
+    :vartype expires: ~datetime.datetime
+    :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
+     archived state before expiring. This property is only writable during the creation of a
+     snapshot. If not specified, the default lifetime of key-value revisions will be used.
+    :vartype retention_period: int
+    :ivar size: The size in bytes of the snapshot.
+    :vartype size: int
+    :ivar items_count: The amount of key-values in the snapshot.
+    :vartype items_count: int
+    :ivar tags: The tags of the snapshot.
+    :vartype tags: dict[str, str]
+    :ivar etag: A value representing the current state of the snapshot.
+    :vartype etag: str
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "filters": {"required": True, "max_items": 3, "min_items": 1},
+        "created": {"readonly": True},
+        "expires": {"readonly": True},
+        "retention_period": {"maximum": 7776000, "minimum": 3600},
+        "size": {"readonly": True},
+        "items_count": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "filters": {"key": "filters", "type": "[ConfigurationSettingsFilter]"},
+        "composition_type": {"key": "composition_type", "type": "str"},
+        "created": {"key": "created", "type": "iso-8601"},
+        "expires": {"key": "expires", "type": "iso-8601"},
+        "retention_period": {"key": "retention_period", "type": "int"},
+        "size": {"key": "size", "type": "int"},
+        "items_count": {"key": "items_count", "type": "int"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        filters: List["_models.ConfigurationSettingsFilter"],
+        composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
+        retention_period: Optional[int] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword filters: A list of filters used to filter the key-values included in the snapshot.
+         Required.
+        :paramtype filters: list[~azure.appconfiguration.models.ConfigurationSettingsFilter]
+        :keyword composition_type: The composition type describes how the key-values within the
+         snapshot are composed. The 'key' composition type ensures there are no two key-values
+         containing the same key. The 'key_label' composition type ensures there are no two key-values
+         containing the same key and label. Known values are: "key" and "key_label".
+        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
+        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
+         archived state before expiring. This property is only writable during the creation of a
+         snapshot. If not specified, the default lifetime of key-value revisions will be used.
+        :paramtype retention_period: int
+        :keyword tags: The tags of the snapshot.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.status = None
+        self.filters = filters
+        self.composition_type = composition_type
+        self.created = None
+        self.expires = None
+        self.retention_period = retention_period
+        self.size = None
+        self.items_count = None
+        self.tags = tags
+        self.etag = None
+
+
 class Error(_serialization.Model):
     """Azure App Configuration error object.
 
@@ -466,129 +569,30 @@ class OperationDetails(_serialization.Model):
         self.error = error
 
 
-class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Snapshot.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The name of the snapshot.
-    :vartype name: str
-    :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
-     "archived", and "failed".
-    :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
-    :ivar filters: A list of filters used to filter the key-values included in the snapshot.
-     Required.
-    :vartype filters: list[~azure.appconfiguration.models.ConfigurationSettingsFilter]
-    :ivar composition_type: The composition type describes how the key-values within the snapshot
-     are composed. The 'key' composition type ensures there are no two key-values containing the
-     same key. The 'key_label' composition type ensures there are no two key-values containing the
-     same key and label. Known values are: "key" and "key_label".
-    :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
-    :ivar created: The time that the snapshot was created.
-    :vartype created: ~datetime.datetime
-    :ivar expires: The time that the snapshot will expire.
-    :vartype expires: ~datetime.datetime
-    :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
-     archived state before expiring. This property is only writable during the creation of a
-     snapshot. If not specified, the default lifetime of key-value revisions will be used.
-    :vartype retention_period: int
-    :ivar size: The size in bytes of the snapshot.
-    :vartype size: int
-    :ivar items_count: The amount of key-values in the snapshot.
-    :vartype items_count: int
-    :ivar tags: The tags of the snapshot.
-    :vartype tags: dict[str, str]
-    :ivar etag: A value representing the current state of the snapshot.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "status": {"readonly": True},
-        "filters": {"required": True, "max_items": 3, "min_items": 1},
-        "created": {"readonly": True},
-        "expires": {"readonly": True},
-        "retention_period": {"maximum": 7776000, "minimum": 3600},
-        "size": {"readonly": True},
-        "items_count": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "filters": {"key": "filters", "type": "[ConfigurationSettingsFilter]"},
-        "composition_type": {"key": "composition_type", "type": "str"},
-        "created": {"key": "created", "type": "iso-8601"},
-        "expires": {"key": "expires", "type": "iso-8601"},
-        "retention_period": {"key": "retention_period", "type": "int"},
-        "size": {"key": "size", "type": "int"},
-        "items_count": {"key": "items_count", "type": "int"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        filters: List["_models.ConfigurationSettingsFilter"],
-        composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
-        retention_period: Optional[int] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword filters: A list of filters used to filter the key-values included in the snapshot.
-         Required.
-        :paramtype filters: list[~azure.appconfiguration.models.ConfigurationSettingsFilter]
-        :keyword composition_type: The composition type describes how the key-values within the
-         snapshot are composed. The 'key' composition type ensures there are no two key-values
-         containing the same key. The 'key_label' composition type ensures there are no two key-values
-         containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
-        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
-         archived state before expiring. This property is only writable during the creation of a
-         snapshot. If not specified, the default lifetime of key-value revisions will be used.
-        :paramtype retention_period: int
-        :keyword tags: The tags of the snapshot.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.name = None
-        self.status = None
-        self.filters = filters
-        self.composition_type = composition_type
-        self.created = None
-        self.expires = None
-        self.retention_period = retention_period
-        self.size = None
-        self.items_count = None
-        self.tags = tags
-        self.etag = None
-
-
 class SnapshotListResult(_serialization.Model):
     """The result of a snapshot list request.
 
     :ivar items: The collection value.
-    :vartype items: list[~azure.appconfiguration.models.Snapshot]
+    :vartype items: list[~azure.appconfiguration.models.ConfigurationSnapshot]
     :ivar next_link: The URI that can be used to request the next set of paged results.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "items": {"key": "items", "type": "[Snapshot]"},
+        "items": {"key": "items", "type": "[ConfigurationSnapshot]"},
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, items: Optional[List["_models.Snapshot"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        items: Optional[List["_models.ConfigurationSnapshot"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword items: The collection value.
-        :paramtype items: list[~azure.appconfiguration.models.Snapshot]
+        :paramtype items: list[~azure.appconfiguration.models.ConfigurationSnapshot]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
