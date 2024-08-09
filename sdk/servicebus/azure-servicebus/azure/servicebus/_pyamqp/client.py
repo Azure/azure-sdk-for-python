@@ -949,11 +949,13 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         try:
             amqp_condition = ErrorCondition(condition)
         except ValueError:
-            error = MessageException(condition, description=description, info=info)
+            error = AMQPException(condition, description=description, info=info)
+        #     error = MessageException(condition, description=description, info=info)
         else:
-            error = MessageSendFailed(
-                amqp_condition, description=description, info=info
-            )
+            error = AMQPException(amqp_condition, description=description, info=info)
+            # error = MessageSendFailed(
+            #     amqp_condition, description=description, info=info
+            # )
         message_delivery.state = MessageDeliveryState.Error
         message_delivery.error = error
 
