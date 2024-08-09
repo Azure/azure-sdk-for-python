@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AnalyzeOutputOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Additional output to generate during analysis."""
+
+    PDF = "pdf"
+    """Generate searchable PDF output."""
+    FIGURES = "figures"
+    """Generate cropped images of detected figures."""
+
+
 class ContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Format of the content in analyzed result."""
 
@@ -98,6 +107,8 @@ class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target documents with similar visual templates."""
     NEURAL = "neural"
     """Support documents with diverse visual templates."""
+    GENERATIVE = "generative"
+    """Enable documents of all types using generative AI techniques."""
 
 
 class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -216,6 +227,9 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Compose a new custom document model from existing models."""
     DOCUMENT_MODEL_COPY_TO = "documentModelCopyTo"
     """Copy an existing document model to potentially a different resource, region, or
+    subscription."""
+    DOCUMENT_CLASSIFIER_COPY_TO = "documentClassifierCopyTo"
+    """Copy an existing document classifier to potentially a different resource, region, or
     subscription."""
     DOCUMENT_CLASSIFIER_BUILD = "documentClassifierBuild"
     """Build a new custom classifier model."""
