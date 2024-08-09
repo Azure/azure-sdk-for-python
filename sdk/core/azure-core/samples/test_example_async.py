@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 from typing import Iterable, MutableSequence, Union
 import pytest
 from azure.core.pipeline import AsyncPipeline
@@ -70,6 +71,8 @@ async def test_example_asyncio():
 
 @pytest.mark.asyncio
 async def test_example_aiohttp():
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     request = HttpRequest("GET", "https://bing.com")
     policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
@@ -86,6 +89,8 @@ async def test_example_aiohttp():
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline():
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     # [START build_async_pipeline]
     from azure.core.pipeline import AsyncPipeline
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
@@ -108,6 +113,8 @@ async def test_example_async_pipeline():
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline_client():
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     url = "https://bing.com"
 
     # [START build_async_pipeline_client]
@@ -131,6 +138,8 @@ async def test_example_async_pipeline_client():
 
 @pytest.mark.asyncio
 async def test_example_async_redirect_policy():
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     url = "https://bing.com"
     request = HttpRequest("GET", url)
 
@@ -159,6 +168,8 @@ async def test_example_async_redirect_policy():
 
 @pytest.mark.asyncio
 async def test_example_async_retry_policy():
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     url = "https://bing.com"
     request = HttpRequest("GET", "https://bing.com")
     policies: MutableSequence[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
