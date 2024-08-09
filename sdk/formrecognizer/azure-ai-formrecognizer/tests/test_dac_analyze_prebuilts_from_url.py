@@ -13,21 +13,20 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
 class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client):
+    def test_business_card_multipage_pdf(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
         result = poller.result()
 
@@ -92,9 +91,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg_passport(self, client):
+    def test_identity_document_jpg_passport(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
 
         result = poller.result()
@@ -114,9 +113,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg(self, client):
+    def test_identity_document_jpg(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg)
 
         result = poller.result()
@@ -143,9 +142,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_invoice_tiff(self, client, **kwargs):
+    def test_invoice_tiff(self, **kwargs):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url(model_id="prebuilt-invoice", document_url=self.invoice_url_tiff)
 
         result = poller.result()
@@ -168,8 +167,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
+    def test_polling_interval(self, **kwargs):
+        client = get_da_client(polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, polling_interval=6)
@@ -182,17 +181,15 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     def test_active_directory_auth(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
-        client = DocumentAnalysisClient(endpoint, token)
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         result = poller.result()
         assert result is not None
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipts_encoded_url(self, client):
+    def test_receipts_encoded_url(self):
+        client = get_da_client()
         try:
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
         except HttpResponseError as e:
@@ -200,7 +197,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_receipt_url_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
+        formrecognizer_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
         with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
@@ -208,21 +205,20 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+        client = get_da_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_bad_url(self, client):
+    def test_receipt_bad_url(self):
+        client = get_da_client()
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_receipt_url_pass_stream(self, **kwargs):
-        client = kwargs.get("client", None)
+        client = get_da_client()
         with open(self.receipt_png, "rb") as receipt:
             with pytest.raises(ValueError) as e:
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
@@ -230,9 +226,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_url_transform_jpg(self, client):
+    def test_receipt_url_transform_jpg(self):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -267,10 +263,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_url_png(self, client):
-        
+    def test_receipt_url_png(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_png)
 
         result = poller.result()
@@ -289,10 +284,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage_url(self, client):
-        
+    def test_receipt_multipage_url(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.multipage_receipt_url_pdf)
         result = poller.result()
 
@@ -323,10 +317,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage_transform_url(self, client, **kwargs):
-        
+    def test_receipt_multipage_transform_url(self, **kwargs):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -362,10 +355,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_receipt_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_da_client()
         initial_poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         cont_token = initial_poller.continuation_token()
         poller = client.begin_analyze_document_from_url(None, None, continuation_token=cont_token)
@@ -375,9 +366,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_specified(self, client):
+    def test_receipt_locale_specified(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="en-IN")
         assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
         result = poller.result()
@@ -385,18 +376,18 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/29145")
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_error(self, client):
+    def test_receipt_locale_error(self):
+        client = get_da_client()
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self):
+        client = get_da_client()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()

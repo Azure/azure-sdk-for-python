@@ -13,35 +13,34 @@ from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResul
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 
 class TestContentFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+    def test_content_url_auth_bad_key(self, **kwargs):
+        client = get_fr_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_url_pass_stream(self, client):
+    def test_content_url_pass_stream(self):
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as receipt:
             with pytest.raises(HttpResponseError):
                 poller = client.begin_recognize_content_from_url(receipt)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_url_transform_pdf(self, client):
+    def test_content_url_transform_pdf(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -62,9 +61,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_url_pdf(self, client):
+    def test_content_url_pdf(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -77,9 +76,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_url_transform_jpg(self, client):
+    def test_content_url_transform_jpg(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -100,9 +99,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_url_jpg(self, client):
+    def test_content_url_jpg(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         result = poller.result()
         assert len(result) == 1
@@ -118,9 +117,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_multipage_url(self, client):
+    def test_content_multipage_url(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf)
         result = poller.result()
 
@@ -129,9 +128,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_multipage_transform_url(self, client):
+    def test_content_multipage_transform_url(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -153,9 +152,8 @@ class TestContentFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_content_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         cont_token = initial_poller.continuation_token()
 
@@ -166,9 +164,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_multipage_table_span_pdf(self, client):
+    def test_content_multipage_table_span_pdf(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
         result = poller.result()
         assert len(result) == 2
@@ -191,9 +189,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_selection_marks(self, client):
+    def test_content_selection_marks(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -203,9 +201,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
-    def test_content_selection_marks_v2(self, client):
+    def test_content_selection_marks_v2(self):
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -215,9 +213,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_specify_pages(self, client):
+    def test_content_specify_pages(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
         result = poller.result()
         assert len(result) == 1
@@ -236,9 +234,9 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_reading_order(self, client):
+    def test_content_reading_order(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
         assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
@@ -247,26 +245,25 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_language_specified(self, client):
+    def test_content_language_specified(self):
+        client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
         result = poller.result()
         assert result
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_content_language_error(self, client):
+    def test_content_language_error(self):
+        client = get_fr_client()
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
         assert "NotSupportedLanguage" == e.value.error.code
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_content_language_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
         assert "'language' is only available for API version V2_1 and up" in str(e.value)

@@ -10,20 +10,19 @@ from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 
 class TestBusinessCardFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_business_card_jpg_include_field_elements(self, client):
+    def test_business_card_jpg_include_field_elements(self):
+        client = get_fr_client()
         poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
 
         result = poller.result()
@@ -71,9 +70,8 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_business_card_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
         assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
