@@ -81,10 +81,6 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
-    - template: ../steps/set-dev-build.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
