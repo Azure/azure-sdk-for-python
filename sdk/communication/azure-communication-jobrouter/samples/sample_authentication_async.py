@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,10 +21,10 @@ import asyncio
 
 
 class RouterClientAuthenticationSamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     async def create_router_client(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         # [START auth_from_connection_string_async]
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -36,7 +36,7 @@ class RouterClientAuthenticationSamplesAsync(object):
         # [END auth_from_connection_string_async]
 
     async def create_router_admin_client(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         # [START admin_auth_from_connection_string_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient

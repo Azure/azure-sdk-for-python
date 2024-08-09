@@ -514,6 +514,12 @@ class ShareProperties(DictMixin):
     enable_snapshot_virtual_directory_access: Optional[bool] = None
     """Specifies whether the snapshot virtual directory should be accessible at the root of the share
         mount point when NFS is enabled. if not specified, the default is True."""
+    paid_bursting_enabled: int
+    """This property enables paid bursting."""
+    paid_bursting_bandwidth_mibps: int
+    """The maximum throughput the file share can support in MiB/s."""
+    paid_bursting_iops: int
+    """The maximum IOPS the file share can support."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -538,6 +544,9 @@ class ShareProperties(DictMixin):
         self.root_squash = kwargs.get('x-ms-root-squash', None)
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
+        self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
+        self.paid_bursting_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
+        self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -563,7 +572,9 @@ class ShareProperties(DictMixin):
             if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
         props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
-
+        props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
+        props.paid_bursting_bandwidth_mibps = generated.properties.paid_bursting_max_bandwidth_mibps
+        props.paid_bursting_iops = generated.properties.paid_bursting_max_iops
         return props
 
 
@@ -977,7 +988,7 @@ class DirectoryPropertiesPaged(PageIterator):
 
 class CopyProperties(DictMixin):
     """File Copy Properties.
-    
+
     These properties will be `None` if this file has never been the destination in a Copy
     File operation, or if this file has been modified after a concluded Copy File operation.
     """
