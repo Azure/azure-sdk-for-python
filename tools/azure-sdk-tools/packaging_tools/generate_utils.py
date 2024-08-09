@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call
+from subprocess import check_output, CalledProcessError, check_call, STDOUT
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -432,7 +432,7 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         repo_url = rest_repo_url.replace("https://github.com/", "")
         cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
         _LOGGER.info(f"generation cmd: {cmd}")
-        output = check_output(cmd, shell=True)
+        output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
