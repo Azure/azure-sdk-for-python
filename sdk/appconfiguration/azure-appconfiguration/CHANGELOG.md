@@ -4,7 +4,8 @@
 
 ### Features Added
 - Added operation `list_labels()` for listing configuration setting labels.
-- Supported to filter by configuration setting tags in `list_configuration_settings()` and `list_revisions()` via an optional keyword argument `tags_filter`.
+- Supported filtering by configuration setting tags in `list_configuration_settings()` and `list_revisions()`.
+- Added a new property tags to ConfigurationSettingsFilter to support filtering settings with tags filter for snapshot.
 
 ### Bugs Fixed
 - Fixed a bug where the `feature_id` of `FeatureFlagConfigurationSetting` will be different from `id` customer field, and may overwrite the original customer-defined value if different from the `FeatureFlagConfigurationSetting` key suffix.
