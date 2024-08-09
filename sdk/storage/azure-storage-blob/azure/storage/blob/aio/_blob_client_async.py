@@ -23,6 +23,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
 from ._models import PageRangePaged
+from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_append_blob,
     upload_block_blob,
@@ -46,6 +47,7 @@ from .._blob_client_helpers import (
     _get_block_list_result,
     _get_page_ranges_options,
     _parse_url,
+    _quick_query_options,
     _resize_blob_options,
     _seal_append_blob_options,
     _set_blob_metadata_options,
@@ -69,7 +71,7 @@ from .._deserialize import (
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._models import BlobType, BlobBlock, BlobProperties, PageRange
+from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
@@ -737,7 +739,102 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace_async
     async def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
-        raise NotImplementedError("not yet implemented :)")
+        """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
+        This operation returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
+
+        :param str query_expression:
+            Required. a query statement. For more details see
+            https://learn.microsoft.com/azure/storage/blobs/query-acceleration-sql-reference.
+        :keyword Callable[~azure.storage.blob.BlobQueryError] on_error:
+            A function to be called on any processing errors returned by the service.
+        :keyword blob_format:
+            Optional. Defines the serialization of the data currently stored in the blob. The default is to
+            treat the blob data as CSV data formatted in the default dialect. This can be overridden with
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+
+            .. note::
+                "ParquetDialect" is in preview, so some features may not work as intended.
+
+        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or ~azure.storage.blob.QuickQueryDialect or str
+        :keyword output_format:
+            Optional. Defines the output serialization for the data stream. By default the data will be returned
+            as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
+            By providing an output format, the blob data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or List[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
+        :returns: A streaming object (BlobQueryReader)
+        :rtype: ~azure.storage.blob.aio.BlobQueryReader
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_query.py
+                :start-after: [START query]
+                :end-before: [END query]
+                :language: python
+                :dedent: 4
+                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
+        """
+        errors = kwargs.pop("on_error", None)
+        error_cls = kwargs.pop("error_cls", BlobQueryError)
+        encoding = kwargs.pop("encoding", None)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
+        try:
+            headers, raw_response_body = await self._client.blob.query(**options)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        return BlobQueryReader(
+            name=self.blob_name,
+            container=self.container_name,
+            errors=errors,
+            record_delimiter=delimiter,
+            encoding=encoding,
+            headers=headers,
+            response=raw_response_body,
+            error_cls=error_cls)
 
     @distributed_trace_async
     async def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:

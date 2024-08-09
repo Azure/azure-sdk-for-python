@@ -744,7 +744,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
-        This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
+        This operation returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
             Required. a query statement. For more details see

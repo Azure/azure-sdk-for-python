@@ -10,7 +10,7 @@ from typing import (
     TYPE_CHECKING
 )
 
-from .._shared.avro.avro_io import DatumReader
+from .._shared.avro.avro_io_async import AsyncDatumReader
 from .._shared.avro.datafile_async import AsyncDataFileReader
 
 if TYPE_CHECKING:
@@ -49,11 +49,12 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         self._bytes_processed = 0
         self._errors = errors
         self._encoding = encoding
-        self._parsed_results = AsyncDataFileReader(QuickQueryStreamer(response), DatumReader())
+        self._parsed_results = AsyncDataFileReader(QuickQueryStreamer(response), AsyncDatumReader())
         self._error_cls = error_cls
 
     async def _setup(self):
-        self._first_result = self._process_record(await self._parsed_results.__anext__())
+        first_result = await self._parsed_results.__anext__()
+        self._first_result = self._process_record(first_result)  # pylint: disable=attribute-defined-outside-init
 
     def __len__(self):
         return self._size
@@ -68,13 +69,13 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
                 error=result['name'],
                 is_fatal=result['fatal'],
                 description=result['description'],
-                position=result['position'],
+                position=result['position']
             )
             if self._errors:
                 self._errors(error)
         return None
 
-    async def _aiter_stream(self) -> AsyncGenerator[bytes, None, None]:
+    async def _aiter_stream(self) -> AsyncGenerator[bytes, None]:
         if self._first_result is not None:
             yield self._first_result
         async for next_result in self._parsed_results:
@@ -118,7 +119,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         records are they are received.
 
         :returns: A record generator for the query result.
-        :rtype: Iterable[Union[bytes, str]]
+        :rtype: AsyncIterable[Union[bytes, str]]
         """
         delimiter = self.record_delimiter.encode('utf-8')
         async for record_chunk in self._aiter_stream():
@@ -140,7 +141,6 @@ class QuickQueryStreamer:
         self._download_offset = 0
         self._buf_start = 0
         self.file_length = None
-        raise NotImplementedError("QuickQueryStreamer is not yet implemented.")
 
     def __len__(self):
         return self.file_length
