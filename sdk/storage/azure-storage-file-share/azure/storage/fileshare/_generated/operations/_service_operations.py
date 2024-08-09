@@ -39,7 +39,12 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_set_properties_request(
-    url: str, *, content: Any, timeout: Optional[int] = None, **kwargs: Any
+    url: str,
+    *,
+    content: Any,
+    timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -47,7 +52,7 @@ def build_set_properties_request(
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -66,6 +71,8 @@ def build_set_properties_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -73,13 +80,19 @@ def build_set_properties_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_get_properties_request(
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -98,6 +111,8 @@ def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **k
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -111,13 +126,14 @@ def build_list_shares_segment_request(
     maxresults: Optional[int] = None,
     include: Optional[List[Union[str, _models.ListSharesIncludeType]]] = None,
     timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -143,6 +159,8 @@ def build_list_shares_segment_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -206,6 +224,7 @@ class ServiceOperations:
         _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -268,6 +287,7 @@ class ServiceOperations:
         _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -358,6 +378,7 @@ class ServiceOperations:
             maxresults=maxresults,
             include=include,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,

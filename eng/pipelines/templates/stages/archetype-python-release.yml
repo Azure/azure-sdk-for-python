@@ -106,6 +106,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
+
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
@@ -264,9 +265,15 @@ stages:
                       - script: |
                           python -m pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
+
                       - pwsh: |
                           sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
+                          if (Test-Path component-detection-pip-report.json) {
+                            Write-Host "Deleting component-detection-pip-report.json"
+                            rm component-detection-pip-report.json
+                          }
                         displayName: Increment package version
+
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
@@ -294,7 +301,6 @@ stages:
           name: azsdk-pool-mms-ubuntu-2004-general
           os: linux
         steps:
-        - checkout: none
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
@@ -327,7 +333,7 @@ stages:
 
       - job: PublishDocsToNightlyBranch
         dependsOn: PublishPackages
-        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+        condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
         pool:
           image: azsdk-pool-mms-ubuntu-2004-1espt
           name: azsdk-pool-mms-ubuntu-2004-general

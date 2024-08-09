@@ -388,7 +388,7 @@ class AMQPClientAsync(AMQPClientSync):
                 self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
 
-        while not self.client_ready_async():
+        while not await self.client_ready_async():
             await asyncio.sleep(0.05)
 
         while not await mgmt_link.ready():

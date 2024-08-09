@@ -11,47 +11,44 @@ from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._blob_client import BlobClient
+from ._blob_service_client_helpers import _parse_url
+from ._container_client import ContainerClient
+from ._deserialize import service_properties_deserialize, service_stats_deserialize
+from ._encryption import StorageEncryptionMixin
+from ._generated import AzureBlobStorage
+from ._generated.models import KeyInfo, StorageServiceProperties
+from ._list_blobs_helper import FilteredBlobPaged
+from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
+from ._serialize import get_api_version
+from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import (
-    return_response_headers,
+    parse_to_internal_user_delegation_key,
     process_storage_error,
-    parse_to_internal_user_delegation_key
+    return_response_headers
 )
-from ._generated import AzureBlobStorage
-from ._generated.models import StorageServiceProperties, KeyInfo
-from ._container_client import ContainerClient
-from ._blob_client import BlobClient
-from ._deserialize import service_stats_deserialize, service_properties_deserialize
-from ._encryption import StorageEncryptionMixin
-from ._list_blobs_helper import FilteredBlobPaged
-from ._models import BlobProperties, ContainerPropertiesPaged
-from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
-        ContainerProperties,
-        PublicAccess,
         BlobAnalyticsLogging,
+        FilteredBlob,
         Metrics,
-        CorsRule,
+        PublicAccess,
         RetentionPolicy,
-        StaticWebsite,
-        FilteredBlob
+        StaticWebsite
     )
+    from ._shared.models import UserDelegationKey
 
 
 class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -118,28 +115,20 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :end-before: [END create_blob_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the BlobServiceClient with Azure Identity credentials.
+            :caption: Creating the BlobServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
+        parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
@@ -155,10 +144,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
@@ -198,11 +187,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_user_delegation_key(self, key_start_time,  # type: datetime
-                                key_expiry_time,  # type: datetime
-                                **kwargs  # type: Any
-                                ):
-        # type: (...) -> UserDelegationKey
+    def get_user_delegation_key(
+        self, key_start_time: "datetime",
+        key_expiry_time: "datetime",
+        **kwargs: Any
+    ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -232,8 +221,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace
-    def get_account_information(self, **kwargs):
-        # type: (Any) -> Dict[str, str]
+    def get_account_information(self, **kwargs: Any) -> Dict[str, str]:
         """Gets information related to the storage account.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -257,8 +245,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Blob service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -304,8 +291,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_properties(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -337,16 +323,15 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_service_properties(
-            self, analytics_logging=None,  # type: Optional[BlobAnalyticsLogging]
-            hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[List[CorsRule]]
-            target_version=None,  # type: Optional[str]
-            delete_retention_policy=None,  # type: Optional[RetentionPolicy]
-            static_website=None,  # type: Optional[StaticWebsite]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
+        hour_metrics: Optional["Metrics"] = None,
+        minute_metrics: Optional["Metrics"] = None,
+        cors: Optional[List[CorsRule]] = None,
+        target_version: Optional[str] = None,
+        delete_retention_policy: Optional["RetentionPolicy"] = None,
+        static_website: Optional["StaticWebsite"] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -406,7 +391,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=CorsRule._to_generated(cors), # pylint: disable=protected-access
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
@@ -419,11 +404,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def list_containers(
-            self, name_starts_with=None,  # type: Optional[str]
-            include_metadata=False,  # type: Optional[bool]
-            **kwargs
-        ):
-        # type: (...) -> ItemPaged[ContainerProperties]
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: bool = False,
+        **kwargs: Any
+    ) -> ItemPaged[ContainerProperties]:
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -487,8 +471,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             )
 
     @distributed_trace
-    def find_blobs_by_tags(self, filter_expression, **kwargs):
-        # type: (str, **Any) -> ItemPaged[FilteredBlob]
+    def find_blobs_by_tags(self, filter_expression: str, **kwargs: Any) -> ItemPaged["FilteredBlob"]:
         """The Filter Blobs operation enables callers to list blobs across all
         containers whose tags match a given search expression.  Filter blobs
         searches across all containers within a storage account but can be
@@ -523,12 +506,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_container(
-            self, name,  # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            public_access=None,  # type: Optional[Union[PublicAccess, str]]
-            **kwargs
-        ):
-        # type: (...) -> ContainerClient
+        self, name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Creates a new container under the specified account.
 
         If the container with the same name already exists, a ResourceExistsError will
@@ -577,7 +559,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-        self, container: Union["ContainerProperties", str],
+        self, container: Union[ContainerProperties, str],
         lease: Optional[Union["BlobLeaseClient", str]] = None,
         **kwargs: Any
     ) -> None:
@@ -628,17 +610,16 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Deleting a container in the blob service.
         """
-        container = self.get_container_client(container) # type: ignore
+        container_client = self.get_container_client(container)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        container.delete_container( # type: ignore
+        container_client.delete_container(
             lease=lease,
             timeout=timeout,
             **kwargs)
 
     @distributed_trace
-    def _rename_container(self, name, new_name, **kwargs):
-        # type: (str, str, **Any) -> ContainerClient
+    def _rename_container(self, name: str, new_name: str, **kwargs: Any) -> ContainerClient:
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -663,18 +644,21 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         renamed_container = self.get_container_client(new_name)
         lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
-        # type: (str, str, **Any) -> ContainerClient
+    def undelete_container(
+        self, deleted_container_name: str,
+        deleted_container_version: str,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -708,8 +692,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self, container):
-        # type: (Union[ContainerProperties, str]) -> ContainerClient
+    def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient:
         """Get a client to interact with the specified container.
 
         The container need not already exist.
@@ -730,9 +713,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Getting the container client to interact with a specific container.
         """
-        try:
+        if isinstance(container, ContainerProperties):
             container_name = container.name
-        except AttributeError:
+        else:
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -746,13 +729,12 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container: Union["ContainerProperties", str],
-            blob: str,
-            snapshot: Optional[Union[Dict[str, Any], str]] = None,
-            *,
-            version_id: Optional[str] = None
-        ):
-        # type: (...) -> BlobClient
+        self, container: Union[ContainerProperties, str],
+        blob: str,
+        snapshot: Optional[Union[Dict[str, Any], str]] = None,
+        *,
+        version_id: Optional[str] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.
@@ -786,19 +768,18 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        try:
-            container_name = container.name
-        except AttributeError:
-            container_name = container
-        try:
             blob_name = blob.name
-        except AttributeError:
+        else:
             blob_name = blob
+        if isinstance(container, ContainerProperties):
+            container_name = container.name
+        else:
+            container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return BlobClient( # type: ignore
+        return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,

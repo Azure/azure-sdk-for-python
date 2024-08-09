@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b1 (2024-08-06)
+
+### Features Added
+
+- Support Render API `2024-04-01`
+
 ## 1.0.0b3 (2024-05-15)
 
 ### Other Changes

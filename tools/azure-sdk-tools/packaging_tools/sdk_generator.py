@@ -1,3 +1,4 @@
+import sys
 from typing import List, Dict, Any
 import argparse
 import json
@@ -7,6 +8,7 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
+
 try:
     # py 311 adds this library natively
     import tomllib as toml
@@ -24,7 +26,7 @@ from .generate_utils import (
     init_new_service,
     update_servicemetadata,
     judge_tag_preview,
-    format_samples,
+    format_samples_and_tests,
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
@@ -35,6 +37,11 @@ from .generate_utils import (
 )
 from .conf import CONF_NAME
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -61,6 +68,7 @@ def multiapi_combiner(sdk_code_path: str, package_name: str):
     )
     check_call("pip install -e .", shell=True)
 
+
 @return_origin_path
 def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: str):
     toml_file = Path(sdk_code_path) / CONF_NAME
@@ -75,12 +83,14 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
             # azure-mgmt-resource has subfolders
             subfolder_path = Path(sdk_code_path) / package_name.replace("-", "/")
             subfolders_name = [s.name for s in subfolder_path.iterdir() if s.is_dir() and not s.name.startswith("_")]
-            content["packaging"]["exclude_folders"] = ",".join([exclude(f"{package_name}-{s}") for s in subfolders_name])
+            content["packaging"]["exclude_folders"] = ",".join(
+                [exclude(f"{package_name}-{s}") for s in subfolders_name]
+            )
 
         with open(toml_file, "wb") as file_out:
             tomlw.dump(content, file_out)
         call_build_config(package_name, folder_name)
-        
+
         # remove .egg-info to reinstall package
         for item in Path(sdk_code_path).iterdir():
             if item.suffix == ".egg-info":
@@ -91,14 +101,20 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         _LOGGER.info(f"do not find {toml_file}")
 
 
-def del_outdated_files(readme: str):
+# readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md or absolute path
+def get_readme_python_content(readme: str) -> List[str]:
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
-        return
+        return []
 
     with open(python_readme, "r") as file_in:
-        content = file_in.readlines()
+        return file_in.readlines()
+
+
+# readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md
+def del_outdated_files(readme: str):
+    content = get_readme_python_content(readme)
     sdk_folder = extract_sdk_folder(content)
     is_multiapi = is_multiapi_package(content)
     if sdk_folder:
@@ -144,7 +160,7 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
 
 
 def get_last_commit_info(files: List[str]) -> str:
-    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip('\n ') + " " + f for f in files]
+    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip("\n ") + " " + f for f in files]
     result.sort()
     return result[-1]
 
@@ -193,7 +209,9 @@ def extract_version_info(config: Dict[str, Any]) -> str:
 def if_need_regenerate(meta: Dict[str, Any]) -> bool:
     with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
         config = json.load(file_in)
-    current_info = config["meta"]["autorest_options"]["version"] + "".join(sorted(config["meta"]["autorest_options"]["use"]))
+    current_info = config["meta"]["autorest_options"]["version"] + "".join(
+        sorted(config["meta"]["autorest_options"]["use"])
+    )
     recorded_info = meta["autorest"] + "".join(sorted(meta["use"]))
     return recorded_info != current_info
 
@@ -255,48 +273,44 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
-    spec_word = "readmeMd"
-    if "relatedReadmeMdFiles" in data:
-        readme_files = data["relatedReadmeMdFiles"]
-    elif "relatedReadmeMdFile" in data:
-        input_readme = data["relatedReadmeMdFile"]
-        if "specification" in spec_folder:
-            spec_folder = str(Path(spec_folder.split("specification")[0]))
-        if "specification" not in input_readme:
-            input_readme = str(Path("specification") / input_readme)
-        readme_files = [input_readme]
-    else:
-        # ["specification/confidentialledger/ConfientialLedger"]
-        if isinstance(data["relatedTypeSpecProjectFolder"], str):
-            readme_files = [data["relatedTypeSpecProjectFolder"]]
-        else:
-            readme_files = data["relatedTypeSpecProjectFolder"]
-        spec_word = "typespecProject"
-
-    for input_readme in readme_files:
-        _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        if "resource-manager" in input_readme:
-            relative_path_readme = str(Path(spec_folder, input_readme))
-            update_metadata_for_multiapi_package(spec_folder, input_readme)
-            del_outdated_files(relative_path_readme)
-            config = generate(
-                CONFIG_FILE,
-                sdk_folder,
-                [],
-                relative_path_readme,
-                spec_folder,
-                force_generation=True,
-                python_tag=python_tag,
-            )
-        elif "data-plane" in input_readme:
-            config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
-        else:
-            del_outdated_generated_files(str(Path(spec_folder, input_readme)))
-            config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
-        package_names = get_package_names(sdk_folder)
-        _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
+    readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
+    for readme_or_tsp in readme_and_tsp:
+        _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
+        try:
+            if "resource-manager" in readme_or_tsp:
+                relative_path_readme = str(Path(spec_folder, readme_or_tsp))
+                update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
+                del_outdated_files(relative_path_readme)
+                config = generate(
+                    CONFIG_FILE,
+                    sdk_folder,
+                    [],
+                    relative_path_readme,
+                    spec_folder,
+                    force_generation=True,
+                    python_tag=python_tag,
+                )
+            elif "data-plane" in readme_or_tsp:
+                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+            else:
+                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
+            package_names = get_package_names(sdk_folder)
+        except Exception as e:
+            _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
+            for hint_message in [
+                "======================================= Whant Can I do ========================================================================",
+                "If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
+                "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
+                "If it happens to Python alone, you can open an issue to https://github.com/Azure/autorest.python/issues. Please include the link of this Pull Request in the issue.",
+                "===============================================================================================================================",
+            ]:
+                _LOGGER.error(hint_message)
+            raise e
+        _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen end. [(packages:{str(package_names)})]")
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
+        spec_word = "readmeMd" if "readme.md" in readme_or_tsp else "typespecProject"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -307,16 +321,18 @@ def main(generate_input, generate_output):
                 package_entry = {}
                 package_entry["packageName"] = package_name
                 package_entry["path"] = [folder_name]
-                package_entry[spec_word] = [input_readme]
+                package_entry[spec_word] = [readme_or_tsp]
                 package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
+                readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
+                package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
-                result[package_name][spec_word].append(input_readme)
+                result[package_name][spec_word].append(readme_or_tsp)
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
-            format_samples(sdk_code_path)
+            format_samples_and_tests(sdk_code_path)
 
             # Update metadata
             try:
@@ -327,10 +343,10 @@ def main(generate_input, generate_output):
                     folder_name,
                     package_name,
                     spec_folder,
-                    input_readme,
+                    readme_or_tsp,
                 )
             except Exception as e:
-                _LOGGER.info(f"fail to update meta: {str(e)}")
+                _LOGGER.error(f"fail to update meta: {str(e)}")
 
             # Setup package locally
             check_call(
@@ -354,7 +370,10 @@ def main(generate_input, generate_output):
     # remove duplicates
     for value in result.values():
         value["path"] = list(set(value["path"]))
-        value[spec_word] = list(set(value[spec_word]))
+        if value.get("typespecProject"):
+            value["typespecProject"] = list(set(value["typespecProject"]))
+        if value.get("readmeMd"):
+            value["readmeMd"] = list(set(value["readmeMd"]))
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)

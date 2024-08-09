@@ -38,7 +38,7 @@ async def pre_prepare_client(client, data):
 
 async def send_batch_message(conn_str, eventhub_name, num_of_events, single_event_size, run_times=1, description=None):
 
-    client = EventHubProducerClient.from_connection_string(
+    client = EventHubProducerClient(
         conn_str=conn_str, eventhub_name=eventhub_name
     )
 
@@ -103,7 +103,7 @@ async def send_batch_message_in_parallel(conn_str, eventhub_name, single_event_s
 
         futures = []
         clients = [
-            EventHubProducerClient.from_connection_string(
+            EventHubProducerClient(
                 conn_str=conn_str, eventhub_name=eventhub_name
             ) for _ in range(parallel_coroutine_count)
         ]
