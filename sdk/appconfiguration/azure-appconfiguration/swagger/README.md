@@ -32,3 +32,11 @@ directive:
     from: Label
     to: ConfigurationSettingLabel
 ```
+
+### Rename the model "KeyValueFilter" to "ConfigurationSettingsFilter"
+```yaml
+directive:
+  rename-model:
+    from: KeyValueFilter
+    to: ConfigurationSettingsFilter
+```
