@@ -100,7 +100,7 @@ def build() -> None:
 
     repo_root = discover_repo_root(args.repo)
 
-    if args.service:
+    if args.service and args.service != "auto":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(repo_root, service_dir)
     else:

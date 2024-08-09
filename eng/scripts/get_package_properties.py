@@ -1,10 +1,73 @@
 import argparse
-import sys
-import glob
 import os
 import re
 
+from typing import Dict, List
+
 from ci_tools.parsing import ParsedSetup
+
+additional_pr_triggers: Dict[str, List[str]] = {
+    "azure-core":[
+        os.path.join("sdk", "storage", "azure-storage-blob"),
+        os.path.join("sdk", "servicebus", "azure-servicebus"),
+        os.path.join("sdk", "eventhub", "azure-eventhub"),
+        os.path.join("sdk", "tables", "azure-data-table"),
+        os.path.join("sdk", "appconfig", "azure-appconfig"),
+        os.path.join("sdk", "keyvault", "azure-keyvault-keys"),
+        os.path.join("sdk", "identity", "azure-identity"),
+        os.path.join("sdk", "core", "azure-mgmt-core"),
+        os.path.join("sdk", "core", "azure-core-experimental"),
+        os.path.join("sdk", "core", "azure-core-tracing-opentelemetry"),
+        os.path.join("sdk", "core", "azure-core-tracing-opencensus"),
+        os.path.join("sdk", "cosmos", "azure-cosmos"),
+        os.path.join("sdk", "ml", "azure-ai-ml"),
+        os.path.join("sdk", "ai", "azure-ai-documentintelligence"),
+        os.path.join("sdk", "ai", "azure-ai-inference"),
+        os.path.join("sdk", "ai", "azure-ai-textanalytics"),
+        os.path.join("sdk", "ai", "azure-ai-doctranslation"),
+        os.path.join("sdk", "compute", "azure-mgmt-compute"),
+        os.path.join("sdk", "communication", "azure-communication-chat"),
+        os.path.join("sdk", "communication", "azure-communication-identity")
+    ],
+    "azure-mgmt-core": [
+        os.path.join("sdk", "compute", "azure-mgmt-compute"),
+        os.path.join("sdk", "network", "azure-mgmt-network"),
+        os.path.join("sdk", "resource", "azure-mgmt-resource"),
+        os.path.join("sdk", "keyvault", "azure-mgmt-keyvault")
+    ]
+}
+
+# todo triggers based on paths and not files
+# tools/
+#   azure-storage-blob
+#   azure-servicebus
+#   azure-eventhub
+#   azure-data-table
+#   azure-appconfig
+#   azure-keyvault-keys
+#   azure-identity
+#   azure-mgmt-core
+#   azure-core-experimental
+#   azure-core-tracing-opentelemetry
+#   azure-core-tracing-opencensus
+#   azure-cosmos
+#   azure-ai-documentintelligence
+#   azure-ai-ml
+#   azure-ai-inference
+#   azure-ai-textanalytics
+#   azure-ai-doctranslation
+#   azure-mgmt-compute
+#   azure-communication-chat
+#   azure-communication-identity
+
+# eng/
+#   azure-template
+#   azure-core
+
+# scripts/, doc/, common/, conda/
+#   azure-template
+#   azure-core
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
@@ -18,9 +81,17 @@ if __name__ == "__main__":
                 try:
                     parsed = ParsedSetup.from_path(root)
 
+                    dependent_packages = ""
+                    if parsed.name in additional_pr_triggers:
+                        dependent_packages = ",".join(additional_pr_triggers[parsed.name])
+
                     print(
-                        "{0} {1} {2} {3}".format(
-                            parsed.name, parsed.version, parsed.is_new_sdk, os.path.dirname(parsed.setup_filename)
+                        "{0} {1} {2} {3} {4}".format(
+                            parsed.name,
+                            parsed.version,
+                            parsed.is_new_sdk,
+                            os.path.dirname(parsed.setup_filename),
+                            dependent_packages
                         )
                     )
                 except:

@@ -1,0 +1,30 @@
+parameters:
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: PackagePropertiesFolder
+    type: string
+    default: ''
+
+steps:
+  # whether we are running within a PR build or not, we need to walk the package properties and save them to
+  # variable $(TargetingString) so that every other check and accept it as an argument.
+  - pwsh: |
+      $setting = "${{ parameters.BuildTargetingString }}"
+
+      # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+      if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+          Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
+          $setting = "$(BuildTargetingString)"
+      }
+      else {
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
+          | Where-Object { $_.Extension -eq '.json' } `
+          | Foreach-Object { $_.Name } `
+          | ForEach-Object { $_.Replace(".json", "") }
+        $setting = $packageProperties -join ","
+      }
+
+      Write-Host "Setting TargetingString to $setting"
+      Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
+    displayName: Resolve targeted packages

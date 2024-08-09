@@ -110,7 +110,7 @@ jobs:
         parameters:
           AgentImage: ${{ parameters.OSName }}
 
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
