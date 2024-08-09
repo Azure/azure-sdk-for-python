@@ -39,3 +39,5 @@ extends:
     Artifacts:
       - name: azure-health-deidentification
         safeName: azurehealthdeidentification
+    - name: azure-mgmt-healthdataaiservices
+      safeName: azuremgmthealthdataaiservices
