@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import functools
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast, overload
+from typing import Any, Dict, List, Optional, Union, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged

@@ -1084,7 +1084,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         response = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
-        
+
         items = self.client.list_configuration_settings(snapshot_name=snapshot_name2)
         assert len(list(items)) == 0
 
