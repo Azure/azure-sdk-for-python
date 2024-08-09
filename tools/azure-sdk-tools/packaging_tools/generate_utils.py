@@ -194,6 +194,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             with open(manifest_file, "w") as f:
                 f.write("".join(includes))
 
+
 @return_origin_path
 def judge_tag_preview(path: str, package_name: str) -> bool:
     os.chdir(path)
@@ -429,13 +430,20 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        check_output(
+        output = check_output(
             f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug",
             shell=True,
         )
     except CalledProcessError as e:
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
+    else:
+        decode_output = output.decode("utf-8")
+        # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
+        if " - error " in decode_output:
+            error_info = f"Failed to generate sdk from typespec: {decode_output}"
+            _LOGGER.error(error_info)
+            raise Exception(error_info)
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
