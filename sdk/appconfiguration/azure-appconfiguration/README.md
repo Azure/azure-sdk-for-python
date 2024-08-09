@@ -65,7 +65,7 @@ from azure.appconfiguration import AzureAppConfigurationClient
 
 CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
-# Create an app config client
+# Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 ```
 
@@ -255,9 +255,9 @@ List all configuration settings filtered with label_filter and/or key_filter and
 <!-- SNIPPET:list_configuration_settings_sample.list_configuration_settings -->
 
 ```python
-config_settings= client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
-    for config_setting in config_settings:
-        print(config_setting)
+config_settings = client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
+for config_setting in config_settings:
+    print(config_setting)
 ```
 
 <!-- END SNIPPET -->
@@ -270,8 +270,8 @@ List revision history of configuration settings filtered with label_filter and/o
 
 ```python
 items = client.list_revisions(key_filter="MyKey", tags_filter=["my tag=my tag value"])
-    for item in items:
-        print(item)
+for item in items:
+    print(item)
 ```
 
 <!-- END SNIPPET -->
@@ -284,17 +284,17 @@ List labels of all configuration settings.
 
 ```python
 print("List all labels in resource")
-config_settings= client.list_labels()
+config_settings = client.list_labels()
 for config_setting in config_settings:
     print(config_setting)
 
 print("List labels by exact match")
-config_settings= client.list_labels(name="my label1")
+config_settings = client.list_labels(name="my label1")
 for config_setting in config_settings:
     print(config_setting)
 
 print("List labels by wildcard")
-config_settings= client.list_labels(name="my label*")
+config_settings = client.list_labels(name="my label*")
 for config_setting in config_settings:
     print(config_setting)
 ```
@@ -311,7 +311,6 @@ from azure.appconfiguration import ConfigurationSettingsFilter
 filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
 response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = response.result()
-print(created_snapshot)
 ```
 
 <!-- END SNIPPET -->
@@ -403,9 +402,9 @@ To list configuration settings, call `list_configuration_settings` operation syn
 <!-- SNIPPET:list_configuration_settings_sample_async.list_configuration_settings -->
 
 ```python
-config_settings= client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
-    async for config_setting in config_settings:
-        print(config_setting)
+config_settings = client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
+async for config_setting in config_settings:
+    print(config_setting)
 ```
 
 <!-- END SNIPPET -->
