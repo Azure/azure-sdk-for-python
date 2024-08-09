@@ -25,7 +25,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     """The response_headers of the quick query request."""
     record_delimiter: str
     """The delimiter used to separate lines, or records with the data. The `records`
-    method will return these lines via a generator."""
+        method will return these lines via a generator."""
 
     def __init__(
         self,
