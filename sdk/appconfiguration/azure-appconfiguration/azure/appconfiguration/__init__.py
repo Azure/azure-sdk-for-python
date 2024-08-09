@@ -18,7 +18,13 @@ from ._models import (
     ConfigurationSnapshot,
     ConfigurationSettingsFilter,
 )
-from ._generated.models import SnapshotStatus, ConfigurationSettingLabel, LabelFields, SnapshotFields, ConfigurationSettingFields
+from ._generated.models import (
+    SnapshotStatus,
+    ConfigurationSettingLabel,
+    LabelFields,
+    SnapshotFields,
+    ConfigurationSettingFields,
+)
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 

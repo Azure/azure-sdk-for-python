@@ -39,17 +39,17 @@ async def main():
     await client.set_configuration_setting(config_setting2)
 
     print("List all labels in resource")
-    config_settings= client.list_labels()
+    config_settings = client.list_labels()
     async for config_setting in config_settings:
         print(config_setting)
-    
+
     print("List labels by exact match")
-    config_settings= client.list_labels(name="my label1")
+    config_settings = client.list_labels(name="my label1")
     async for config_setting in config_settings:
         print(config_setting)
-    
+
     print("List labels by whildcard")
-    config_settings= client.list_labels(name="my label*")
+    config_settings = client.list_labels(name="my label*")
     async for config_setting in config_settings:
         print(config_setting)
 

@@ -40,7 +40,7 @@ async def main():
 
     print("List configuration settings")
     # [START list_configuration_settings]
-    config_settings= client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
+    config_settings = client.list_configuration_settings(key_filter="MyKey*", tags_filter=["my tag1=my tag1 value"])
     async for config_setting in config_settings:
         print(config_setting)
     # [END list_configuration_settings]
