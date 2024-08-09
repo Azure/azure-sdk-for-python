@@ -194,9 +194,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             with open(manifest_file, "w") as f:
                 f.write("".join(includes))
 
-
-def judge_tag_preview(path: str) -> bool:
-    files = [i for i in Path(path).glob("**/*.py")]
+@return_origin_path
+def judge_tag_preview(path: str, package_name: str) -> bool:
+    os.chdir(path)
+    first_level = package_name.split("-")[0]
+    files = [i for i in Path(".").glob(f"{first_level}/**/*.py")]
     default_api_version = ""  # for multi-api
     api_version = ""  # for single-api
     for file in files:

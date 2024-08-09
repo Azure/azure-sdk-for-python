@@ -326,7 +326,7 @@ def main(generate_input, generate_output):
                     package_entry["packageName"] = package_name
                     package_entry["path"] = [folder_name]
                     package_entry[spec_word] = [readme_or_tsp]
-                    package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
+                    package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
                     readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                     result[package_name] = package_entry
