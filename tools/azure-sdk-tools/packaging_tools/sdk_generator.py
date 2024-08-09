@@ -383,6 +383,9 @@ def main(generate_input, generate_output):
                 value["readmeMd"] = list(set(value["readmeMd"]))
     except Exception as e:
         _LOGGER.error(f"fail to remove duplicates: {str(e)}")
+    
+    if len(result) == 0 and len(readme_and_tsp) > 1:
+        raise Exception("No package is generated, please check the log for details")
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
