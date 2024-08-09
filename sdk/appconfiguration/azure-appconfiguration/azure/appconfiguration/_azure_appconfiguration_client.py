@@ -153,13 +153,17 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
-        :keyword key_filter: Filter results based on their keys. '*' can be
-            used as wildcard in the beginning or end of the filter
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+            of the filter. For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be
-            used as wildcard in the beginning or end of the filter
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+            of the filter. For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :paramtype label_filter: str or None
         :keyword tags_filter: A filter used to query by tags. Default value is None.
+            For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
@@ -482,13 +486,17 @@ class AzureAppConfigurationClient:
         """
         Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
 
-        :param key_filter: Filter results based on their keys. '*' can be
-            used as wildcard in the beginning or end of the filter
+        :param key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+            of the filter. For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :type key_filter: str or None
-        :param label_filter: Filter results based on their label. '*' can be
-            used as wildcard in the beginning or end of the filter
+        :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+            of the filter. For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :type label_filter: str or None
         :keyword tags_filter: A filter used to query by tags. Default value is None.
+            For more information about supported filters,
+            see https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters.
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
