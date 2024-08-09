@@ -63,7 +63,12 @@ class AzureApplicationCredential(ChainedTokenCredential):
         )
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
@@ -75,6 +80,8 @@ class AzureApplicationCredential(ChainedTokenCredential):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token if possible. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -82,10 +89,12 @@ class AzureApplicationCredential(ChainedTokenCredential):
             `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = await self._successful_credential.get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
 
-        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)

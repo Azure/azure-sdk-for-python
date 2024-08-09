@@ -99,7 +99,12 @@ class EnvironmentCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
@@ -111,6 +116,8 @@ class EnvironmentCredential(AsyncContextManager):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -123,4 +130,6 @@ class EnvironmentCredential(AsyncContextManager):
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)
-        return await self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return await self._credential.get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+        )
