@@ -27,9 +27,9 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
-# input example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
-def del_outdated_generated_files(readme: str):
-    tspconfig = Path(readme) / "tspconfig.yaml"
+# tsp example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
+def del_outdated_generated_files(tsp: str):
+    tspconfig = Path(tsp) / "tspconfig.yaml"
     if not tspconfig.exists():
         _LOGGER.info(f"do not find tspconfig.yaml: {tspconfig}")
         return
