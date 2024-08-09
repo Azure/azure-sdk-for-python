@@ -35,6 +35,8 @@ from azure.mgmt.core.policies._authentication import (
 )
 
 from azure.core.pipeline.transport import HttpRequest
+from devtools_testutils.fake_credentials import FakeTokenCredential
+
 
 import pytest
 from unittest.mock import Mock
@@ -171,14 +173,14 @@ def test_multiple_claims_challenges():
         return Mock(status_code=401, headers={"WWW-Authenticate": expected_header})
 
     transport = Mock(send=Mock(wraps=send))
-    credential = Mock()
+    credential = FakeTokenCredential()
     policies = [ARMChallengeAuthenticationPolicy(credential, "scope")]
     pipeline = Pipeline(transport=transport, policies=policies)
 
     response = pipeline.run(HttpRequest("GET", "https://localhost"))
 
     assert transport.send.call_count == 1
-    assert credential.get_token.call_count == 1
+    assert credential.get_token_count == 1
 
     # the policy should have returned the error response because it was unable to handle the challenge
     assert response.http_response.status_code == 401

@@ -3,13 +3,20 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from collections import namedtuple
 import time
 from itertools import product
 from requests import Response
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    AccessTokenInfo,
+)
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext
 from azure.core.pipeline.transport import HttpTransport, HttpRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -51,6 +58,70 @@ def test_bearer_policy_adds_header(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_authorize_request(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token.call_count == 1
+    assert fake_credential.get_token.call_args[0] == ("scope",)
+    assert fake_credential.get_token.call_args[1] == {"claims": "foo"}
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_adds_header_access_token_info(http_request):
+    """The bearer token policy should also add an auth header when an AccessTokenInfo is returned."""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    access_token = AccessToken("other_token", 2524608000)
+    expected_token = AccessTokenInfo("expected_token", 2524608000, refresh_on=2524608000)
+
+    def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
+        return Mock()
+
+    fake_credential = Mock(get_token=Mock(return_value=access_token), get_token_info=Mock(return_value=expected_token))
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    assert fake_credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert fake_credential.get_token_info.call_count == 1
+
+    # get_token should not have been called
+    assert fake_credential.get_token.call_count == 0
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_authorize_request_access_token_info(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessTokenInfo("expected_token", 2524608000)
+    fake_credential = Mock(get_token=Mock(), get_token_info=Mock(return_value=expected_token))
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token_info.call_args[0] == ("scope",)
+    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo"}}
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_send(http_request):
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = http_request("GET", "https://spam.eggs")
@@ -72,7 +143,7 @@ def test_bearer_policy_send(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_token_caching(http_request):
-    good_for_one_hour = AccessToken("token", time.time() + 3600)
+    good_for_one_hour = AccessToken("token", int(time.time() + 3600))
     credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=good_for_one_hour))
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
@@ -82,7 +153,7 @@ def test_bearer_policy_token_caching(http_request):
     pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 1  # token is good for an hour -> policy should return it from cache
 
-    expired_token = AccessToken("token", time.time())
+    expired_token = AccessToken("token", int(time.time()))
     credential.get_token.reset_mock()
     credential.get_token.return_value = expired_token
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
@@ -91,7 +162,46 @@ def test_bearer_policy_token_caching(http_request):
     assert credential.get_token.call_count == 1
 
     pipeline.run(http_request("GET", "https://spam.eggs"))
-    assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
+    assert credential.get_token.call_count == 2
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_access_token_info_caching(http_request):
+    """The policy should cache AccessTokenInfo instances and refresh them when necessary."""
+
+    good_for_one_hour = AccessTokenInfo("token", int(time.time() + 3600))
+    credential = Mock(get_token=Mock(return_value=Mock()), get_token_info=Mock(return_value=good_for_one_hour))
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert (
+        credential.get_token_info.call_count == 1
+    )  # policy has no token at first request -> it should call get_token_info
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1  # token is good for an hour -> policy should return it from cache
+
+    expired_token = AccessTokenInfo("token", int(time.time()))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = expired_token
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token is expired -> policy should call get_token_info again
+
+    refreshable_token = AccessTokenInfo("token", int(time.time() + 3600), refresh_on=int(time.time() - 1))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = refreshable_token
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token refresh-on time has passed, call again
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -324,11 +434,32 @@ def test_need_new_token():
     assert not policy._need_new_token
 
     # Token has both expires_on and refresh_on set well into the future.
-    policy._token = AccessToken("", now + 1200, now + 1200)
+    policy._token = AccessTokenInfo("", now + 1200, refresh_on=now + 1200)
     assert not policy._need_new_token
 
     # Token is not close to expiring, but refresh_on is in the past.
-    policy._token = AccessToken("", now + 1200, now - 1)
+    policy._token = AccessTokenInfo("", now + 1200, refresh_on=now - 1)
+    assert policy._need_new_token
+
+    policy._token = None
+    assert policy._need_new_token
+
+
+def test_need_new_token_with_external_defined_token_class():
+    """Test the case where some custom credential get_token call returns a custom token object."""
+    FooAccessToken = namedtuple("FooAccessToken", ["token", "expires_on"])
+
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = FooAccessToken("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = FooAccessToken("", now + 299)
     assert policy._need_new_token
 
 
@@ -638,3 +769,25 @@ def test_azure_http_credential_policy(http_request):
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_access_token_unpack():
+    """Test unpacking of AccessToken."""
+    token = AccessToken("token", 42)
+    assert token.token == "token"
+    assert token.expires_on == 42
+
+    token, expires_on = AccessToken("token", 42)
+    assert token == "token"
+    assert expires_on == 42
+
+    with pytest.raises(ValueError):
+        token, expires_on, _ = AccessToken("token", 42)
+
+
+def test_access_token_subscriptable():
+    """Test AccessToken property access using index values."""
+    token = AccessToken("token", 42)
+    assert len(token) == 2
+    assert token[0] == "token"
+    assert token[1] == 42
