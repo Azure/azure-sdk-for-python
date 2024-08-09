@@ -4,20 +4,13 @@
 # ------------------------------------
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast, Callable
-from typing_extensions import Literal
+from typing import Any, Dict, List, Optional, Callable
 
 from azure.core.async_paging import AsyncList
-from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator
 from azure.core.async_paging import AsyncPageIterator
 from ._generated._serialization import Model
-from ._generated.models import (
-    KeyValue,
-    KeyValueFilter,
-    Snapshot as GeneratedConfigurationSnapshot,
-    SnapshotStatus,
-)
+from ._generated.models import KeyValue
 
 
 class ConfigurationSetting(Model):
@@ -384,163 +377,6 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag,
-        )
-
-
-class ConfigurationSettingsFilter:
-    """Enables filtering of configuration settings."""
-
-    key: str
-    """Filters configuration settings by their key field. Required."""
-    label: Optional[str]
-    """Filters configuration settings by their label field."""
-
-    def __init__(self, *, key: str, label: Optional[str] = None) -> None:
-        """
-        :keyword key: Filters configuration settings by their key field. Required.
-        :paramtype key: str
-        :keyword label: Filters configuration settings by their label field.
-        :paramtype label: str or None
-        """
-        self.key = key
-        self.label = label
-
-
-class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
-    """A point-in-time snapshot of configuration settings."""
-
-    name: Optional[str]
-    """The name of the configuration snapshot."""
-    status: Optional[Union[str, SnapshotStatus]]
-    """The current status of the snapshot. Known values are: "provisioning", "ready",
-        "archived", and "failed"."""
-    filters: List[ConfigurationSettingsFilter]
-    """A list of filters used to filter the key-values included in the configuration snapshot."""
-    composition_type: Optional[str]
-    """The composition type describes how the key-values within the configuration snapshot
-        are composed. The 'key' composition type ensures there are no two key-values containing the
-        same key. The 'key_label' composition type ensures there are no two key-values containing the
-        same key and label. Known values are: "key" and "key_label"."""
-    created: Optional[datetime]
-    """The time that the configuration snapshot was created."""
-    expires: Optional[datetime]
-    """The time that the configuration snapshot will expire."""
-    retention_period: Optional[int]
-    """The amount of time, in seconds, that a configuration snapshot will remain in the
-        archived state before expiring. This property is only writable during the creation of a configuration
-        snapshot. If not specified, the default lifetime of key-value revisions will be used."""
-    size: Optional[int]
-    """The size in bytes of the configuration snapshot."""
-    items_count: Optional[int]
-    """The amount of key-values in the configuration snapshot."""
-    tags: Optional[Dict[str, str]]
-    """The tags of the configuration snapshot."""
-    etag: Optional[str]
-    """A value representing the current state of the configuration snapshot."""
-
-    def __init__(
-        self,
-        filters: List[ConfigurationSettingsFilter],
-        *,
-        composition_type: Optional[Literal["key", "key_label"]] = None,
-        retention_period: Optional[int] = None,
-        tags: Optional[Dict[str, str]] = None,
-    ) -> None:
-        """
-        :param filters: A list of filters used to filter the key-values included in the configuration snapshot.
-            Required.
-        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
-        :keyword composition_type: The composition type describes how the key-values within the configuration
-            snapshot are composed. The 'key' composition type ensures there are no two key-values
-            containing the same key. The 'key_label' composition type ensures there are no two key-values
-            containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str or None
-        :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
-            archived state before expiring. This property is only writable during the creation of a configuration
-            snapshot. If not specified, the default lifetime of key-value revisions will be used.
-        :paramtype retention_period: int or None
-        :keyword tags: The tags of the configuration snapshot.
-        :paramtype tags: dict[str, str] or None
-        """
-        self.name = None
-        self.status = None
-        self.filters = filters
-        self.composition_type = composition_type
-        self.created = None
-        self.expires = None
-        self.retention_period = retention_period
-        self.size = None
-        self.items_count = None
-        self.tags = tags
-        self.etag = None
-
-    @classmethod
-    def _from_generated(cls, generated: GeneratedConfigurationSnapshot) -> "ConfigurationSnapshot":
-        if generated is None:
-            return generated
-
-        filters = []
-        if generated.filters:
-            for config_setting_filter in generated.filters:
-                filters.append(
-                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
-                )
-        snapshot = cls(
-            filters=filters,
-            composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
-            retention_period=generated.retention_period,
-            tags=generated.tags,
-        )
-        snapshot.name = generated.name
-        snapshot.status = generated.status
-        snapshot.created = generated.created
-        snapshot.expires = generated.expires
-        snapshot.size = generated.size
-        snapshot.items_count = generated.items_count
-        snapshot.etag = generated.etag
-
-        return snapshot
-
-    @classmethod
-    def _from_deserialized(
-        cls,
-        response: HttpResponse,  # pylint:disable=unused-argument
-        deserialized: GeneratedConfigurationSnapshot,
-        response_headers: Dict,  # pylint:disable=unused-argument
-    ) -> "ConfigurationSnapshot":
-        if deserialized is None:
-            return deserialized
-        filters = []
-        if deserialized.filters:
-            for config_setting_filter in deserialized.filters:
-                filters.append(
-                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
-                )
-        snapshot = cls(
-            filters=filters,
-            composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
-            retention_period=deserialized.retention_period,
-            tags=deserialized.tags,
-        )
-        snapshot.name = deserialized.name
-        snapshot.status = deserialized.status
-        snapshot.created = deserialized.created
-        snapshot.expires = deserialized.expires
-        snapshot.size = deserialized.size
-        snapshot.items_count = deserialized.items_count
-        snapshot.etag = deserialized.etag
-
-        return snapshot
-
-    def _to_generated(self) -> GeneratedConfigurationSnapshot:
-        config_setting_filters = []
-        for kv_filter in self.filters:
-            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label))
-        return GeneratedConfigurationSnapshot(
-            filters=config_setting_filters,
-            composition_type=self.composition_type,
-            retention_period=self.retention_period,
-            tags=self.tags,
         )
 
 

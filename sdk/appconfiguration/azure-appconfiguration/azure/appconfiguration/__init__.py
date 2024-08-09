@@ -15,12 +15,12 @@ from ._models import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    ConfigurationSnapshot,
-    ConfigurationSettingsFilter,
 )
 from ._generated.models import (
     SnapshotStatus,
     ConfigurationSettingLabel,
+    ConfigurationSettingsFilter,
+    ConfigurationSnapshot,
     LabelFields,
     SnapshotFields,
     ConfigurationSettingFields,

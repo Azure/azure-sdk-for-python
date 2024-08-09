@@ -30,11 +30,11 @@ from ._generated.models import (
     LabelFields,
     ConfigurationSettingFields,
     ConfigurationSettingLabel,
+    ConfigurationSettingsFilter,
+    ConfigurationSnapshot,
 )
 from ._models import (
     ConfigurationSetting,
-    ConfigurationSettingsFilter,
-    ConfigurationSnapshot,
     ConfigurationSettingPropertiesPaged,
 )
 from ._utils import (
@@ -680,12 +680,7 @@ class AzureAppConfigurationClient:
         snapshot = ConfigurationSnapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
-        return cast(
-            LROPoller[ConfigurationSnapshot],
-            self._impl.begin_create_snapshot(
-                name=name, entity=snapshot._to_generated(), cls=ConfigurationSnapshot._from_deserialized, **kwargs
-            ),
-        )
+        return self._impl.begin_create_snapshot(name=name, entity=snapshot, **kwargs)
 
     @distributed_trace
     def archive_snapshot(
@@ -718,7 +713,7 @@ class AzureAppConfigurationClient:
             error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
             error_map.update({412: ResourceExistsError})
-        generated_snapshot = self._impl.update_snapshot(
+        return self._impl.update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
             if_match=prep_if_match(etag, match_condition),
@@ -726,7 +721,6 @@ class AzureAppConfigurationClient:
             error_map=error_map,
             **kwargs,
         )
-        return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
     def recover_snapshot(
@@ -758,7 +752,7 @@ class AzureAppConfigurationClient:
             error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
             error_map.update({412: ResourceExistsError})
-        generated_snapshot = self._impl.update_snapshot(
+        return self._impl.update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
             if_match=prep_if_match(etag, match_condition),
@@ -766,7 +760,6 @@ class AzureAppConfigurationClient:
             error_map=error_map,
             **kwargs,
         )
-        return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
     def get_snapshot(
@@ -783,10 +776,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        generated_snapshot = self._impl.get_snapshot(
-            name=name, if_match=None, if_none_match=None, select=fields, **kwargs
-        )
-        return ConfigurationSnapshot._from_generated(generated_snapshot)
+        return self._impl.get_snapshot(name=name, if_match=None, if_none_match=None, select=fields, **kwargs)
 
     @distributed_trace
     def list_snapshots(
@@ -812,13 +802,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        return self._impl.get_snapshots(  # type: ignore[return-value]
-            name=name,
-            select=fields,
-            status=status,
-            cls=lambda objs: [ConfigurationSnapshot._from_generated(x) for x in objs],
-            **kwargs,
-        )
+        return self._impl.get_snapshots(name=name, select=fields, status=status, **kwargs)  # type: ignore[return-value]
 
     def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.
