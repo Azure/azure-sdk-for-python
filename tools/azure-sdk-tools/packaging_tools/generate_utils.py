@@ -440,9 +440,11 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     decode_output = output.decode("utf-8")
     # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
     if " - error " in decode_output:
-        error_info = f"Failed to generate sdk from typespec: {decode_output}"
-        _LOGGER.error(error_info)
-        raise Exception(error_info)
+        _LOGGER.error(f"Failed to generate sdk from typespec:")
+        for item in decode_output.split("\n"):
+            if " - error " in item:
+                _LOGGER.error(item)
+        raise Exception(f"Failed to generate sdk from typespec: {decode_output}")
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
