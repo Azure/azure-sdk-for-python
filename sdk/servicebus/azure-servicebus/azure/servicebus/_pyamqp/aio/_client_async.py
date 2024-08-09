@@ -1043,7 +1043,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             **kwargs
     ):
         batchable = kwargs.pop('batchable', None)
-        timeout = kwargs.pop("timeout", .1)
+        timeout = kwargs.pop("timeout", 60)
         expire_time = (time.time() + timeout) if timeout else None
 
         if outcome.lower() == 'accepted':
