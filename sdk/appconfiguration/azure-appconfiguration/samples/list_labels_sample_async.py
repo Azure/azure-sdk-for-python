@@ -48,7 +48,7 @@ async def main():
     async for config_setting in config_settings:
         print(config_setting)
 
-    print("List labels by whildcard")
+    print("List labels by wildcard")
     config_settings = client.list_labels(name="my label*")
     async for config_setting in config_settings:
         print(config_setting)
