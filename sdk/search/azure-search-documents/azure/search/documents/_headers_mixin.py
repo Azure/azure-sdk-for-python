@@ -10,11 +10,11 @@ from typing import Optional, Dict, Any, MutableMapping
 class HeadersMixin:
     @property
     def _headers(self) -> Dict[str, Any]:
+        if self._aad:  # type: ignore
+            return {"Accept": self._ODATA_ACCEPT}  # type: ignore
         return {"api-key": self._credential.key, "Accept": self._ODATA_ACCEPT}  # type: ignore
 
     def _merge_client_headers(self, headers: Optional[MutableMapping[str, str]]) -> MutableMapping[str, str]:
-        if self._aad:  # type: ignore
-            return headers or {}
         headers = headers or {}
         combined = self._headers
         combined.update(headers)

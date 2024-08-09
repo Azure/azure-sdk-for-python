@@ -4,3 +4,4 @@ include azure/__init__.py
 recursive-include samples *.py *.md
 recursive-include test *.py
 include azure/cosmos/py.typed
+recursive-include doc *.rst

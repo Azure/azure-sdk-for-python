@@ -414,8 +414,11 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
                 # mldesigner.Output -> entities.Output
                 io = Output
             elif _is_primitive_type(io):
-                if not isinstance(io, type):
-                    io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
+                io = (
+                    Output(type=io.TYPE_NAME)  # type: ignore
+                    if key == return_annotation_key
+                    else Input(type=io.TYPE_NAME)  # type: ignore
+                )
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):

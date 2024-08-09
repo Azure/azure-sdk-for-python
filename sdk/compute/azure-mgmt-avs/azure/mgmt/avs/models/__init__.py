@@ -20,14 +20,13 @@ from ._models_py3 import CloudLink
 from ._models_py3 import CloudLinkList
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterList
-from ._models_py3 import ClusterProperties
 from ._models_py3 import ClusterUpdate
 from ._models_py3 import ClusterZone
 from ._models_py3 import ClusterZoneList
-from ._models_py3 import CommonClusterProperties
 from ._models_py3 import Datastore
 from ._models_py3 import DatastoreList
 from ._models_py3 import DiskPoolVolume
+from ._models_py3 import ElasticSanVolume
 from ._models_py3 import Encryption
 from ._models_py3 import EncryptionKeyVaultProperties
 from ._models_py3 import Endpoints
@@ -41,15 +40,13 @@ from ._models_py3 import GlobalReachConnectionList
 from ._models_py3 import HcxEnterpriseSite
 from ._models_py3 import HcxEnterpriseSiteList
 from ._models_py3 import IdentitySource
-from ._models_py3 import LogSpecification
+from ._models_py3 import IscsiPath
+from ._models_py3 import IscsiPathListResult
 from ._models_py3 import ManagementCluster
-from ._models_py3 import MetricDimension
-from ._models_py3 import MetricSpecification
 from ._models_py3 import NetAppVolume
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
-from ._models_py3 import OperationList
-from ._models_py3 import OperationProperties
+from ._models_py3 import OperationListResult
 from ._models_py3 import PSCredentialExecutionParameter
 from ._models_py3 import PlacementPoliciesList
 from ._models_py3 import PlacementPolicy
@@ -58,9 +55,7 @@ from ._models_py3 import PlacementPolicyUpdate
 from ._models_py3 import PrivateCloud
 from ._models_py3 import PrivateCloudIdentity
 from ._models_py3 import PrivateCloudList
-from ._models_py3 import PrivateCloudProperties
 from ._models_py3 import PrivateCloudUpdate
-from ._models_py3 import PrivateCloudUpdateProperties
 from ._models_py3 import ProxyResource
 from ._models_py3 import Quota
 from ._models_py3 import Resource
@@ -74,8 +69,8 @@ from ._models_py3 import ScriptPackagesList
 from ._models_py3 import ScriptParameter
 from ._models_py3 import ScriptSecureStringExecutionParameter
 from ._models_py3 import ScriptStringExecutionParameter
-from ._models_py3 import ServiceSpecification
 from ._models_py3 import Sku
+from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import Trial
 from ._models_py3 import VirtualMachine
@@ -109,30 +104,37 @@ from ._models_py3 import WorkloadNetworkVMGroupsList
 from ._models_py3 import WorkloadNetworkVirtualMachine
 from ._models_py3 import WorkloadNetworkVirtualMachinesList
 
+from ._avs_client_enums import ActionType
 from ._avs_client_enums import AddonProvisioningState
 from ._avs_client_enums import AddonType
 from ._avs_client_enums import AffinityStrength
 from ._avs_client_enums import AffinityType
 from ._avs_client_enums import AvailabilityStrategy
 from ._avs_client_enums import AzureHybridBenefitType
+from ._avs_client_enums import CloudLinkProvisioningState
 from ._avs_client_enums import CloudLinkStatus
 from ._avs_client_enums import ClusterProvisioningState
+from ._avs_client_enums import CreatedByType
 from ._avs_client_enums import DatastoreProvisioningState
 from ._avs_client_enums import DatastoreStatus
 from ._avs_client_enums import DhcpTypeEnum
 from ._avs_client_enums import DnsServiceLogLevelEnum
 from ._avs_client_enums import DnsServiceStatusEnum
+from ._avs_client_enums import DnsZoneType
 from ._avs_client_enums import EncryptionKeyStatus
 from ._avs_client_enums import EncryptionState
 from ._avs_client_enums import EncryptionVersionType
 from ._avs_client_enums import ExpressRouteAuthorizationProvisioningState
 from ._avs_client_enums import GlobalReachConnectionProvisioningState
 from ._avs_client_enums import GlobalReachConnectionStatus
+from ._avs_client_enums import HcxEnterpriseSiteProvisioningState
 from ._avs_client_enums import HcxEnterpriseSiteStatus
 from ._avs_client_enums import InternetEnum
+from ._avs_client_enums import IscsiPathProvisioningState
 from ._avs_client_enums import MountOptionEnum
 from ._avs_client_enums import NsxPublicIpQuotaRaisedEnum
 from ._avs_client_enums import OptionalParamEnum
+from ._avs_client_enums import Origin
 from ._avs_client_enums import PlacementPolicyProvisioningState
 from ._avs_client_enums import PlacementPolicyState
 from ._avs_client_enums import PlacementPolicyType
@@ -141,22 +143,27 @@ from ._avs_client_enums import PortMirroringStatusEnum
 from ._avs_client_enums import PrivateCloudProvisioningState
 from ._avs_client_enums import QuotaEnabled
 from ._avs_client_enums import ResourceIdentityType
+from ._avs_client_enums import ScriptCmdletAudience
+from ._avs_client_enums import ScriptCmdletProvisioningState
 from ._avs_client_enums import ScriptExecutionParameterType
 from ._avs_client_enums import ScriptExecutionProvisioningState
 from ._avs_client_enums import ScriptOutputStreamType
+from ._avs_client_enums import ScriptPackageProvisioningState
 from ._avs_client_enums import ScriptParameterTypes
 from ._avs_client_enums import SegmentStatusEnum
+from ._avs_client_enums import SkuTier
 from ._avs_client_enums import SslEnum
 from ._avs_client_enums import TrialStatus
 from ._avs_client_enums import VMGroupStatusEnum
 from ._avs_client_enums import VMTypeEnum
+from ._avs_client_enums import VirtualMachineProvisioningState
 from ._avs_client_enums import VirtualMachineRestrictMovementState
 from ._avs_client_enums import VisibilityParameterEnum
 from ._avs_client_enums import WorkloadNetworkDhcpProvisioningState
 from ._avs_client_enums import WorkloadNetworkDnsServiceProvisioningState
 from ._avs_client_enums import WorkloadNetworkDnsZoneProvisioningState
-from ._avs_client_enums import WorkloadNetworkName
 from ._avs_client_enums import WorkloadNetworkPortMirroringProvisioningState
+from ._avs_client_enums import WorkloadNetworkProvisioningState
 from ._avs_client_enums import WorkloadNetworkPublicIPProvisioningState
 from ._avs_client_enums import WorkloadNetworkSegmentProvisioningState
 from ._avs_client_enums import WorkloadNetworkVMGroupProvisioningState
@@ -179,14 +186,13 @@ __all__ = [
     "CloudLinkList",
     "Cluster",
     "ClusterList",
-    "ClusterProperties",
     "ClusterUpdate",
     "ClusterZone",
     "ClusterZoneList",
-    "CommonClusterProperties",
     "Datastore",
     "DatastoreList",
     "DiskPoolVolume",
+    "ElasticSanVolume",
     "Encryption",
     "EncryptionKeyVaultProperties",
     "Endpoints",
@@ -200,15 +206,13 @@ __all__ = [
     "HcxEnterpriseSite",
     "HcxEnterpriseSiteList",
     "IdentitySource",
-    "LogSpecification",
+    "IscsiPath",
+    "IscsiPathListResult",
     "ManagementCluster",
-    "MetricDimension",
-    "MetricSpecification",
     "NetAppVolume",
     "Operation",
     "OperationDisplay",
-    "OperationList",
-    "OperationProperties",
+    "OperationListResult",
     "PSCredentialExecutionParameter",
     "PlacementPoliciesList",
     "PlacementPolicy",
@@ -217,9 +221,7 @@ __all__ = [
     "PrivateCloud",
     "PrivateCloudIdentity",
     "PrivateCloudList",
-    "PrivateCloudProperties",
     "PrivateCloudUpdate",
-    "PrivateCloudUpdateProperties",
     "ProxyResource",
     "Quota",
     "Resource",
@@ -233,8 +235,8 @@ __all__ = [
     "ScriptParameter",
     "ScriptSecureStringExecutionParameter",
     "ScriptStringExecutionParameter",
-    "ServiceSpecification",
     "Sku",
+    "SystemData",
     "TrackedResource",
     "Trial",
     "VirtualMachine",
@@ -267,30 +269,37 @@ __all__ = [
     "WorkloadNetworkVMGroupsList",
     "WorkloadNetworkVirtualMachine",
     "WorkloadNetworkVirtualMachinesList",
+    "ActionType",
     "AddonProvisioningState",
     "AddonType",
     "AffinityStrength",
     "AffinityType",
     "AvailabilityStrategy",
     "AzureHybridBenefitType",
+    "CloudLinkProvisioningState",
     "CloudLinkStatus",
     "ClusterProvisioningState",
+    "CreatedByType",
     "DatastoreProvisioningState",
     "DatastoreStatus",
     "DhcpTypeEnum",
     "DnsServiceLogLevelEnum",
     "DnsServiceStatusEnum",
+    "DnsZoneType",
     "EncryptionKeyStatus",
     "EncryptionState",
     "EncryptionVersionType",
     "ExpressRouteAuthorizationProvisioningState",
     "GlobalReachConnectionProvisioningState",
     "GlobalReachConnectionStatus",
+    "HcxEnterpriseSiteProvisioningState",
     "HcxEnterpriseSiteStatus",
     "InternetEnum",
+    "IscsiPathProvisioningState",
     "MountOptionEnum",
     "NsxPublicIpQuotaRaisedEnum",
     "OptionalParamEnum",
+    "Origin",
     "PlacementPolicyProvisioningState",
     "PlacementPolicyState",
     "PlacementPolicyType",
@@ -299,22 +308,27 @@ __all__ = [
     "PrivateCloudProvisioningState",
     "QuotaEnabled",
     "ResourceIdentityType",
+    "ScriptCmdletAudience",
+    "ScriptCmdletProvisioningState",
     "ScriptExecutionParameterType",
     "ScriptExecutionProvisioningState",
     "ScriptOutputStreamType",
+    "ScriptPackageProvisioningState",
     "ScriptParameterTypes",
     "SegmentStatusEnum",
+    "SkuTier",
     "SslEnum",
     "TrialStatus",
     "VMGroupStatusEnum",
     "VMTypeEnum",
+    "VirtualMachineProvisioningState",
     "VirtualMachineRestrictMovementState",
     "VisibilityParameterEnum",
     "WorkloadNetworkDhcpProvisioningState",
     "WorkloadNetworkDnsServiceProvisioningState",
     "WorkloadNetworkDnsZoneProvisioningState",
-    "WorkloadNetworkName",
     "WorkloadNetworkPortMirroringProvisioningState",
+    "WorkloadNetworkProvisioningState",
     "WorkloadNetworkPublicIPProvisioningState",
     "WorkloadNetworkSegmentProvisioningState",
     "WorkloadNetworkVMGroupProvisioningState",

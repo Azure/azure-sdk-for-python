@@ -8,18 +8,16 @@ DESCRIPTION:
     the service using a synchronous client, while supplying additional
     model-specific parameters as part of the request.
     See setting of the optional `model_extras` in the `complete` method.
-    Also see related setting of the optional `unknown-parameters`
-    parameter in the `complete` method.
 
 USAGE:
     python sample_chat_completions_with_model_extras.py
 
     Set these two environment variables before running the sample:
-    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
 
@@ -27,10 +25,10 @@ def sample_chat_completions_with_model_extras():
     import os
 
     try:
-        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
-        key = os.environ["CHAT_COMPLETIONS_KEY"]
+        endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
+        key = os.environ["AZURE_AI_CHAT_KEY"]
     except KeyError:
-        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
+        print("Missing environment variable 'AZURE_AI_CHAT_ENDPOINT' or 'AZURE_AI_CHAT_KEY'")
         print("Set them before running this sample.")
         exit()
 

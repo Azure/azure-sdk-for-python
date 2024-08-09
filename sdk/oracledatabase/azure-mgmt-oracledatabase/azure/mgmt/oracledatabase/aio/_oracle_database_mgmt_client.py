@@ -33,6 +33,7 @@ from .operations import (
     GiVersionsOperations,
     Operations,
     OracleSubscriptionsOperations,
+    SystemVersionsOperations,
     VirtualNetworkAddressesOperations,
 )
 
@@ -72,6 +73,8 @@ class OracleDatabaseMgmtClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype dns_private_zones: azure.mgmt.oracledatabase.aio.operations.DnsPrivateZonesOperations
     :ivar gi_versions: GiVersionsOperations operations
     :vartype gi_versions: azure.mgmt.oracledatabase.aio.operations.GiVersionsOperations
+    :ivar system_versions: SystemVersionsOperations operations
+    :vartype system_versions: azure.mgmt.oracledatabase.aio.operations.SystemVersionsOperations
     :ivar oracle_subscriptions: OracleSubscriptionsOperations operations
     :vartype oracle_subscriptions:
      azure.mgmt.oracledatabase.aio.operations.OracleSubscriptionsOperations
@@ -91,8 +94,8 @@ class OracleDatabaseMgmtClient:  # pylint: disable=client-accepts-api-version-ke
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-09-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-09-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -159,6 +162,7 @@ class OracleDatabaseMgmtClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.gi_versions = GiVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.system_versions = SystemVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.oracle_subscriptions = OracleSubscriptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

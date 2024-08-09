@@ -13,31 +13,22 @@ These code samples show common scenario operations with the Azure Maps Search cl
 
 Authenticate the client with a Azure Maps Search [API Key Credential](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
 
-[samples authentication](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_authentication_async.py))
-
 Then for common Azure Maps Search operations:
 
-* Perform fuzzy search: [sample_fuzzy_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_fuzzy_search.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_fuzzy_search_async.py))
+* Perform geocode search: [sample_geocode.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_geocode.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_geocode_async.py))
 
-* Perform get POI categories search: [sample_get_point_of_interest_categories.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_get_point_of_interest_categories.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_get_point_of_interest_categories_async.py))
+* Perform geocode batch search: [sample_geocode_batch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_geocode_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_geocode_batch_async.py))
 
-* Perform reverse search address: [sample_reverse_search_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_search_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_search_address_async.py))
+* Perform reverse geocode search: [sample_reverse_geocode.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_geocode.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_geocode_async.py))
 
-* Perform reverse search cross street address: [sample_reverse_search_cross_street_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_search_cross_street_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_search_cross_street_address_async.py))
+* Perform reverse batch geocode search: [sample_reverse_geocode_batch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_geocode_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_geocode_batch_async.py))
 
-* Get search nearby POI: [sample_search_nearby_point_of_interest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_nearby_point_of_interest.py)) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_nearby_point_of_interest_async.py))
+* Perform polygon search: [sample_get_polygon.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_get_polygon.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_get_polygon_async.py))
 
-* Get search POI: [sample_search_point_of_interest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_point_of_interest.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_point_of_interest_async.py))
-
-* Get search POI category: [sample_search_point_of_interest_category.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_point_of_interest_category.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_point_of_interest_category_async.py))
-
-* Perform search with structured address: [sample_search_structured_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_structured_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_structured_address_async.py))
-
-* Search inside Geometry: [sample_search_inside_geometry.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_inside_geometry.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_inside_geometry_async.py))
 
 ## Prerequisites
 
-* Python 3.6 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
 * A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
@@ -56,7 +47,7 @@ Then for common Azure Maps Search operations:
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_fuzzy_search.py`
+3. Follow the usage described in the file, e.g. `python sample_geocode.py`
 
 ## Next steps
 

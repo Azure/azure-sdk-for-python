@@ -290,7 +290,7 @@ class TestTranslation(TextTranslationTest):
         endpoint = kwargs.get("translation_text_endpoint")
         apikey = kwargs.get("translation_text_apikey")
         region = kwargs.get("translation_text_region")
-        client = self.create_client_token(endpoint, apikey, region)
+        client = self.create_client_token(endpoint, apikey, region, "https://api.microsofttranslator.com/")
 
         to_language = ["cs"]
         input_text_elements = ["This is a test."]
@@ -309,6 +309,24 @@ class TestTranslation(TextTranslationTest):
         aadResourceId = kwargs.get("translation_text_resource_id")
         token_credential = self.get_mt_credential(False)
         client = self.create_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
+
+        from_language = "es"
+        to_language = ["cs"]
+        input_text_elements = ["Hola mundo"]
+        response = client.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+
+        assert len(response) == 1
+        assert len(response[0].translations) == 1
+        assert response[0].translations[0].to == "cs"
+        assert response[0].translations[0].text is not None
+
+    @pytest.mark.skip
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_translate_aad_custom(self, **kwargs):
+        endpoint = kwargs.get("translation_text_custom_endpoint")
+        token_credential = self.get_mt_credential(False)
+        client = self.create_text_translation_client_custom_with_aad(token_credential, endpoint=endpoint)
 
         from_language = "es"
         to_language = ["cs"]

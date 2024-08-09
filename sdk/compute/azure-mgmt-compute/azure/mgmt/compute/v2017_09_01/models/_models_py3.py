@@ -26,7 +26,7 @@ class ResourceSku(_serialization.Model):  # pylint: disable=too-many-instance-at
     :ivar name: The name of SKU.
     :vartype name: str
     :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
      **Basic**.
     :vartype tier: str
     :ivar size: The Size of the SKU.

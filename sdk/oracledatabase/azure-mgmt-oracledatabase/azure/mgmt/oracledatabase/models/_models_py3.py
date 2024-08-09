@@ -378,8 +378,6 @@ class AutonomousDatabaseBackup(ProxyResource):
 class AutonomousDatabaseBackupListResult(_serialization.Model):
     """The response of a AutonomousDatabaseBackup list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The AutonomousDatabaseBackup items on this page. Required.
@@ -390,7 +388,6 @@ class AutonomousDatabaseBackupListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -398,14 +395,18 @@ class AutonomousDatabaseBackupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutonomousDatabaseBackup"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.AutonomousDatabaseBackup"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The AutonomousDatabaseBackup items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackup]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -413,13 +414,11 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar autonomous_database_id: The OCID of the Autonomous Database. Required.
-    :vartype autonomous_database_id: str
-    :ivar database_size_in_t_bs: The size of the database in terabytes at the time the backup was
+    :ivar autonomous_database_ocid: The OCID of the Autonomous Database.
+    :vartype autonomous_database_ocid: str
+    :ivar database_size_in_tbs: The size of the database in terabytes at the time the backup was
      taken.
-    :vartype database_size_in_t_bs: int
+    :vartype database_size_in_tbs: float
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar display_name: The user-friendly name for the backup. The name does not have to be unique.
@@ -439,14 +438,16 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
      ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupLifecycleState
     :ivar retention_period_in_days: Retention period, in days, for long-term backups.
     :vartype retention_period_in_days: int
-    :ivar size_in_t_bs: The backup size in terabytes (TB).
-    :vartype size_in_t_bs: int
+    :ivar size_in_tbs: The backup size in terabytes (TB).
+    :vartype size_in_tbs: float
     :ivar time_available_til: Timestamp until when the backup will be available.
     :vartype time_available_til: ~datetime.datetime
+    :ivar time_started: The date and time the backup started.
+    :vartype time_started: str
     :ivar time_ended: The date and time the backup completed.
     :vartype time_ended: str
-    :ivar type: The type of backup. Known values are: "Incremental", "Full", and "LongTerm".
-    :vartype type: str or ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupType
+    :ivar backup_type: The type of backup. Known values are: "Incremental", "Full", and "LongTerm".
+    :vartype backup_type: str or ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupType
     :ivar provisioning_state: Azure resource provisioning state. Known values are: "Succeeded",
      "Failed", "Canceled", and "Provisioning".
     :vartype provisioning_state: str or
@@ -454,25 +455,26 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
     """
 
     _validation = {
-        "autonomous_database_id": {"required": True, "readonly": True},
-        "database_size_in_t_bs": {"readonly": True},
+        "autonomous_database_ocid": {"readonly": True, "max_length": 255, "min_length": 1},
+        "database_size_in_tbs": {"readonly": True},
         "db_version": {"readonly": True},
         "ocid": {"readonly": True, "max_length": 255, "min_length": 1},
         "is_automatic": {"readonly": True},
         "is_restorable": {"readonly": True},
         "lifecycle_details": {"readonly": True},
         "lifecycle_state": {"readonly": True},
-        "retention_period_in_days": {"maximum": 3650, "minimum": 90},
-        "size_in_t_bs": {"readonly": True},
+        "retention_period_in_days": {"maximum": 3650, "minimum": 60},
+        "size_in_tbs": {"readonly": True},
         "time_available_til": {"readonly": True},
+        "time_started": {"readonly": True},
         "time_ended": {"readonly": True},
-        "type": {"readonly": True},
+        "backup_type": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "autonomous_database_id": {"key": "autonomousDatabaseId", "type": "str"},
-        "database_size_in_t_bs": {"key": "databaseSizeInTBs", "type": "int"},
+        "autonomous_database_ocid": {"key": "autonomousDatabaseOcid", "type": "str"},
+        "database_size_in_tbs": {"key": "databaseSizeInTbs", "type": "float"},
         "db_version": {"key": "dbVersion", "type": "str"},
         "display_name": {"key": "displayName", "type": "str"},
         "ocid": {"key": "ocid", "type": "str"},
@@ -481,10 +483,11 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
         "lifecycle_details": {"key": "lifecycleDetails", "type": "str"},
         "lifecycle_state": {"key": "lifecycleState", "type": "str"},
         "retention_period_in_days": {"key": "retentionPeriodInDays", "type": "int"},
-        "size_in_t_bs": {"key": "sizeInTBs", "type": "int"},
+        "size_in_tbs": {"key": "sizeInTbs", "type": "float"},
         "time_available_til": {"key": "timeAvailableTil", "type": "iso-8601"},
+        "time_started": {"key": "timeStarted", "type": "str"},
         "time_ended": {"key": "timeEnded", "type": "str"},
-        "type": {"key": "type", "type": "str"},
+        "backup_type": {"key": "backupType", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
@@ -499,8 +502,8 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
         :paramtype retention_period_in_days: int
         """
         super().__init__(**kwargs)
-        self.autonomous_database_id = None
-        self.database_size_in_t_bs = None
+        self.autonomous_database_ocid = None
+        self.database_size_in_tbs = None
         self.db_version = None
         self.display_name = display_name
         self.ocid = None
@@ -509,10 +512,11 @@ class AutonomousDatabaseBackupProperties(_serialization.Model):  # pylint: disab
         self.lifecycle_details = None
         self.lifecycle_state = None
         self.retention_period_in_days = retention_period_in_days
-        self.size_in_t_bs = None
+        self.size_in_tbs = None
         self.time_available_til = None
+        self.time_started = None
         self.time_ended = None
-        self.type = None
+        self.backup_type = None
         self.provisioning_state = None
 
 
@@ -547,7 +551,7 @@ class AutonomousDatabaseBackupUpdateProperties(_serialization.Model):
     """
 
     _validation = {
-        "retention_period_in_days": {"maximum": 3650, "minimum": 90},
+        "retention_period_in_days": {"maximum": 3650, "minimum": 60},
     }
 
     _attribute_map = {
@@ -707,6 +711,12 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
     :vartype autonomous_database_id: str
     :ivar in_memory_area_in_gbs: The area assigned to In-Memory tables in Autonomous Database.
     :vartype in_memory_area_in_gbs: int
+    :ivar next_long_term_backup_time_stamp: The date and time when the next long-term backup would
+     be created.
+    :vartype next_long_term_backup_time_stamp: ~datetime.datetime
+    :ivar long_term_backup_schedule: Details for the long-term backup schedule.
+    :vartype long_term_backup_schedule:
+     ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
     :ivar is_preview: Indicates if the Autonomous Database version is a preview version.
     :vartype is_preview: bool
     :ivar local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
@@ -809,6 +819,7 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
         "connection_urls": {"readonly": True},
         "data_safe_status": {"readonly": True},
         "in_memory_area_in_gbs": {"readonly": True},
+        "next_long_term_backup_time_stamp": {"readonly": True},
         "is_preview": {"readonly": True},
         "local_adg_auto_failover_max_data_loss_limit": {"maximum": 3600, "minimum": 0},
         "memory_per_oracle_compute_unit_in_gbs": {"readonly": True},
@@ -883,6 +894,8 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
         "database_edition": {"key": "databaseEdition", "type": "str"},
         "autonomous_database_id": {"key": "autonomousDatabaseId", "type": "str"},
         "in_memory_area_in_gbs": {"key": "inMemoryAreaInGbs", "type": "int"},
+        "next_long_term_backup_time_stamp": {"key": "nextLongTermBackupTimeStamp", "type": "iso-8601"},
+        "long_term_backup_schedule": {"key": "longTermBackupSchedule", "type": "LongTermBackUpScheduleDetails"},
         "is_preview": {"key": "isPreview", "type": "bool"},
         "local_adg_auto_failover_max_data_loss_limit": {"key": "localAdgAutoFailoverMaxDataLossLimit", "type": "int"},
         "memory_per_oracle_compute_unit_in_gbs": {"key": "memoryPerOracleComputeUnitInGbs", "type": "int"},
@@ -947,6 +960,7 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
         vnet_id: Optional[str] = None,
         database_edition: Optional[Union[str, "_models.DatabaseEditionType"]] = None,
         autonomous_database_id: Optional[str] = None,
+        long_term_backup_schedule: Optional["_models.LongTermBackUpScheduleDetails"] = None,
         local_adg_auto_failover_max_data_loss_limit: Optional[int] = None,
         open_mode: Optional[Union[str, "_models.OpenModeType"]] = None,
         permission_level: Optional[Union[str, "_models.PermissionLevelType"]] = None,
@@ -1024,6 +1038,9 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
         :paramtype database_edition: str or ~azure.mgmt.oracledatabase.models.DatabaseEditionType
         :keyword autonomous_database_id: Autonomous Database ID.
         :paramtype autonomous_database_id: str
+        :keyword long_term_backup_schedule: Details for the long-term backup schedule.
+        :paramtype long_term_backup_schedule:
+         ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
         :keyword local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
          acceptable maximum data loss limit in seconds, up to which Automatic Failover will be triggered
          when necessary for a Local Autonomous Data Guard.
@@ -1094,6 +1111,8 @@ class AutonomousDatabaseBaseProperties(_serialization.Model):  # pylint: disable
         self.database_edition = database_edition
         self.autonomous_database_id = autonomous_database_id
         self.in_memory_area_in_gbs = None
+        self.next_long_term_backup_time_stamp = None
+        self.long_term_backup_schedule = long_term_backup_schedule
         self.is_preview = None
         self.local_adg_auto_failover_max_data_loss_limit = local_adg_auto_failover_max_data_loss_limit
         self.memory_per_oracle_compute_unit_in_gbs = None
@@ -1171,8 +1190,6 @@ class AutonomousDatabaseCharacterSet(ProxyResource):
 class AutonomousDatabaseCharacterSetListResult(_serialization.Model):
     """The response of a AutonomousDatabaseCharacterSet list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The AutonomousDatabaseCharacterSet items on this page. Required.
@@ -1183,7 +1200,6 @@ class AutonomousDatabaseCharacterSetListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1191,14 +1207,18 @@ class AutonomousDatabaseCharacterSetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutonomousDatabaseCharacterSet"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.AutonomousDatabaseCharacterSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The AutonomousDatabaseCharacterSet items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.AutonomousDatabaseCharacterSet]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class AutonomousDatabaseCharacterSetProperties(_serialization.Model):
@@ -1369,6 +1389,12 @@ class AutonomousDatabaseCloneProperties(
     :vartype autonomous_database_id: str
     :ivar in_memory_area_in_gbs: The area assigned to In-Memory tables in Autonomous Database.
     :vartype in_memory_area_in_gbs: int
+    :ivar next_long_term_backup_time_stamp: The date and time when the next long-term backup would
+     be created.
+    :vartype next_long_term_backup_time_stamp: ~datetime.datetime
+    :ivar long_term_backup_schedule: Details for the long-term backup schedule.
+    :vartype long_term_backup_schedule:
+     ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
     :ivar is_preview: Indicates if the Autonomous Database version is a preview version.
     :vartype is_preview: bool
     :ivar local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
@@ -1496,6 +1522,7 @@ class AutonomousDatabaseCloneProperties(
         "connection_urls": {"readonly": True},
         "data_safe_status": {"readonly": True},
         "in_memory_area_in_gbs": {"readonly": True},
+        "next_long_term_backup_time_stamp": {"readonly": True},
         "is_preview": {"readonly": True},
         "local_adg_auto_failover_max_data_loss_limit": {"maximum": 3600, "minimum": 0},
         "memory_per_oracle_compute_unit_in_gbs": {"readonly": True},
@@ -1575,6 +1602,8 @@ class AutonomousDatabaseCloneProperties(
         "database_edition": {"key": "databaseEdition", "type": "str"},
         "autonomous_database_id": {"key": "autonomousDatabaseId", "type": "str"},
         "in_memory_area_in_gbs": {"key": "inMemoryAreaInGbs", "type": "int"},
+        "next_long_term_backup_time_stamp": {"key": "nextLongTermBackupTimeStamp", "type": "iso-8601"},
+        "long_term_backup_schedule": {"key": "longTermBackupSchedule", "type": "LongTermBackUpScheduleDetails"},
         "is_preview": {"key": "isPreview", "type": "bool"},
         "local_adg_auto_failover_max_data_loss_limit": {"key": "localAdgAutoFailoverMaxDataLossLimit", "type": "int"},
         "memory_per_oracle_compute_unit_in_gbs": {"key": "memoryPerOracleComputeUnitInGbs", "type": "int"},
@@ -1645,6 +1674,7 @@ class AutonomousDatabaseCloneProperties(
         vnet_id: Optional[str] = None,
         database_edition: Optional[Union[str, "_models.DatabaseEditionType"]] = None,
         autonomous_database_id: Optional[str] = None,
+        long_term_backup_schedule: Optional["_models.LongTermBackUpScheduleDetails"] = None,
         local_adg_auto_failover_max_data_loss_limit: Optional[int] = None,
         open_mode: Optional[Union[str, "_models.OpenModeType"]] = None,
         permission_level: Optional[Union[str, "_models.PermissionLevelType"]] = None,
@@ -1725,6 +1755,9 @@ class AutonomousDatabaseCloneProperties(
         :paramtype database_edition: str or ~azure.mgmt.oracledatabase.models.DatabaseEditionType
         :keyword autonomous_database_id: Autonomous Database ID.
         :paramtype autonomous_database_id: str
+        :keyword long_term_backup_schedule: Details for the long-term backup schedule.
+        :paramtype long_term_backup_schedule:
+         ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
         :keyword local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
          acceptable maximum data loss limit in seconds, up to which Automatic Failover will be triggered
          when necessary for a Local Autonomous Data Guard.
@@ -1791,6 +1824,7 @@ class AutonomousDatabaseCloneProperties(
             vnet_id=vnet_id,
             database_edition=database_edition,
             autonomous_database_id=autonomous_database_id,
+            long_term_backup_schedule=long_term_backup_schedule,
             local_adg_auto_failover_max_data_loss_limit=local_adg_auto_failover_max_data_loss_limit,
             open_mode=open_mode,
             permission_level=permission_level,
@@ -1813,8 +1847,6 @@ class AutonomousDatabaseCloneProperties(
 class AutonomousDatabaseListResult(_serialization.Model):
     """The response of a AutonomousDatabase list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The AutonomousDatabase items on this page. Required.
@@ -1825,7 +1857,6 @@ class AutonomousDatabaseListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1833,14 +1864,18 @@ class AutonomousDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutonomousDatabase"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.AutonomousDatabase"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The AutonomousDatabase items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.AutonomousDatabase]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class AutonomousDatabaseNationalCharacterSet(ProxyResource):
@@ -1894,8 +1929,6 @@ class AutonomousDatabaseNationalCharacterSet(ProxyResource):
 class AutonomousDatabaseNationalCharacterSetListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The response of a AutonomousDatabaseNationalCharacterSet list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The AutonomousDatabaseNationalCharacterSet items on this page. Required.
@@ -1906,7 +1939,6 @@ class AutonomousDatabaseNationalCharacterSetListResult(_serialization.Model):  #
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1914,15 +1946,23 @@ class AutonomousDatabaseNationalCharacterSetListResult(_serialization.Model):  #
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutonomousDatabaseNationalCharacterSet"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: List["_models.AutonomousDatabaseNationalCharacterSet"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The AutonomousDatabaseNationalCharacterSet items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.oracledatabase.models.AutonomousDatabaseNationalCharacterSet]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class AutonomousDatabaseNationalCharacterSetProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -2092,6 +2132,12 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
     :vartype autonomous_database_id: str
     :ivar in_memory_area_in_gbs: The area assigned to In-Memory tables in Autonomous Database.
     :vartype in_memory_area_in_gbs: int
+    :ivar next_long_term_backup_time_stamp: The date and time when the next long-term backup would
+     be created.
+    :vartype next_long_term_backup_time_stamp: ~datetime.datetime
+    :ivar long_term_backup_schedule: Details for the long-term backup schedule.
+    :vartype long_term_backup_schedule:
+     ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
     :ivar is_preview: Indicates if the Autonomous Database version is a preview version.
     :vartype is_preview: bool
     :ivar local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
@@ -2194,6 +2240,7 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
         "connection_urls": {"readonly": True},
         "data_safe_status": {"readonly": True},
         "in_memory_area_in_gbs": {"readonly": True},
+        "next_long_term_backup_time_stamp": {"readonly": True},
         "is_preview": {"readonly": True},
         "local_adg_auto_failover_max_data_loss_limit": {"maximum": 3600, "minimum": 0},
         "memory_per_oracle_compute_unit_in_gbs": {"readonly": True},
@@ -2268,6 +2315,8 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
         "database_edition": {"key": "databaseEdition", "type": "str"},
         "autonomous_database_id": {"key": "autonomousDatabaseId", "type": "str"},
         "in_memory_area_in_gbs": {"key": "inMemoryAreaInGbs", "type": "int"},
+        "next_long_term_backup_time_stamp": {"key": "nextLongTermBackupTimeStamp", "type": "iso-8601"},
+        "long_term_backup_schedule": {"key": "longTermBackupSchedule", "type": "LongTermBackUpScheduleDetails"},
         "is_preview": {"key": "isPreview", "type": "bool"},
         "local_adg_auto_failover_max_data_loss_limit": {"key": "localAdgAutoFailoverMaxDataLossLimit", "type": "int"},
         "memory_per_oracle_compute_unit_in_gbs": {"key": "memoryPerOracleComputeUnitInGbs", "type": "int"},
@@ -2328,6 +2377,7 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
         vnet_id: Optional[str] = None,
         database_edition: Optional[Union[str, "_models.DatabaseEditionType"]] = None,
         autonomous_database_id: Optional[str] = None,
+        long_term_backup_schedule: Optional["_models.LongTermBackUpScheduleDetails"] = None,
         local_adg_auto_failover_max_data_loss_limit: Optional[int] = None,
         open_mode: Optional[Union[str, "_models.OpenModeType"]] = None,
         permission_level: Optional[Union[str, "_models.PermissionLevelType"]] = None,
@@ -2405,6 +2455,9 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
         :paramtype database_edition: str or ~azure.mgmt.oracledatabase.models.DatabaseEditionType
         :keyword autonomous_database_id: Autonomous Database ID.
         :paramtype autonomous_database_id: str
+        :keyword long_term_backup_schedule: Details for the long-term backup schedule.
+        :paramtype long_term_backup_schedule:
+         ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
         :keyword local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
          acceptable maximum data loss limit in seconds, up to which Automatic Failover will be triggered
          when necessary for a Local Autonomous Data Guard.
@@ -2454,6 +2507,7 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties):  # pylint:
             vnet_id=vnet_id,
             database_edition=database_edition,
             autonomous_database_id=autonomous_database_id,
+            long_term_backup_schedule=long_term_backup_schedule,
             local_adg_auto_failover_max_data_loss_limit=local_adg_auto_failover_max_data_loss_limit,
             open_mode=open_mode,
             permission_level=permission_level,
@@ -2613,6 +2667,9 @@ class AutonomousDatabaseUpdateProperties(_serialization.Model):  # pylint: disab
     :ivar database_edition: The Oracle Database Edition that applies to the Autonomous databases.
      Known values are: "StandardEdition" and "EnterpriseEdition".
     :vartype database_edition: str or ~azure.mgmt.oracledatabase.models.DatabaseEditionType
+    :ivar long_term_backup_schedule: Details for the long-term backup schedule.
+    :vartype long_term_backup_schedule:
+     ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
     :ivar local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
      acceptable maximum data loss limit in seconds, up to which Automatic Failover will be triggered
      when necessary for a Local Autonomous Data Guard.
@@ -2662,6 +2719,7 @@ class AutonomousDatabaseUpdateProperties(_serialization.Model):  # pylint: disab
         "license_model": {"key": "licenseModel", "type": "str"},
         "scheduled_operations": {"key": "scheduledOperations", "type": "ScheduledOperationsTypeUpdate"},
         "database_edition": {"key": "databaseEdition", "type": "str"},
+        "long_term_backup_schedule": {"key": "longTermBackupSchedule", "type": "LongTermBackUpScheduleDetails"},
         "local_adg_auto_failover_max_data_loss_limit": {"key": "localAdgAutoFailoverMaxDataLossLimit", "type": "int"},
         "open_mode": {"key": "openMode", "type": "str"},
         "permission_level": {"key": "permissionLevel", "type": "str"},
@@ -2689,6 +2747,7 @@ class AutonomousDatabaseUpdateProperties(_serialization.Model):  # pylint: disab
         license_model: Optional[Union[str, "_models.LicenseModel"]] = None,
         scheduled_operations: Optional["_models.ScheduledOperationsTypeUpdate"] = None,
         database_edition: Optional[Union[str, "_models.DatabaseEditionType"]] = None,
+        long_term_backup_schedule: Optional["_models.LongTermBackUpScheduleDetails"] = None,
         local_adg_auto_failover_max_data_loss_limit: Optional[int] = None,
         open_mode: Optional[Union[str, "_models.OpenModeType"]] = None,
         permission_level: Optional[Union[str, "_models.PermissionLevelType"]] = None,
@@ -2742,6 +2801,9 @@ class AutonomousDatabaseUpdateProperties(_serialization.Model):  # pylint: disab
         :keyword database_edition: The Oracle Database Edition that applies to the Autonomous
          databases. Known values are: "StandardEdition" and "EnterpriseEdition".
         :paramtype database_edition: str or ~azure.mgmt.oracledatabase.models.DatabaseEditionType
+        :keyword long_term_backup_schedule: Details for the long-term backup schedule.
+        :paramtype long_term_backup_schedule:
+         ~azure.mgmt.oracledatabase.models.LongTermBackUpScheduleDetails
         :keyword local_adg_auto_failover_max_data_loss_limit: Parameter that allows users to select an
          acceptable maximum data loss limit in seconds, up to which Automatic Failover will be triggered
          when necessary for a Local Autonomous Data Guard.
@@ -2780,6 +2842,7 @@ class AutonomousDatabaseUpdateProperties(_serialization.Model):  # pylint: disab
         self.license_model = license_model
         self.scheduled_operations = scheduled_operations
         self.database_edition = database_edition
+        self.long_term_backup_schedule = long_term_backup_schedule
         self.local_adg_auto_failover_max_data_loss_limit = local_adg_auto_failover_max_data_loss_limit
         self.open_mode = open_mode
         self.permission_level = permission_level
@@ -2861,8 +2924,6 @@ class AutonomousDbVersion(ProxyResource):
 class AutonomousDbVersionListResult(_serialization.Model):
     """The response of a AutonomousDbVersion list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The AutonomousDbVersion items on this page. Required.
@@ -2873,7 +2934,6 @@ class AutonomousDbVersionListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2881,14 +2941,18 @@ class AutonomousDbVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutonomousDbVersion"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.AutonomousDbVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The AutonomousDbVersion items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.AutonomousDbVersion]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class AutonomousDbVersionProperties(_serialization.Model):
@@ -3049,8 +3113,6 @@ class CloudExadataInfrastructure(TrackedResource):
 class CloudExadataInfrastructureListResult(_serialization.Model):
     """The response of a CloudExadataInfrastructure list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The CloudExadataInfrastructure items on this page. Required.
@@ -3061,7 +3123,6 @@ class CloudExadataInfrastructureListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3069,14 +3130,18 @@ class CloudExadataInfrastructureListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CloudExadataInfrastructure"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.CloudExadataInfrastructure"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The CloudExadataInfrastructure items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.CloudExadataInfrastructure]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class CloudExadataInfrastructureProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -3139,7 +3204,7 @@ class CloudExadataInfrastructureProperties(_serialization.Model):  # pylint: dis
     :ivar max_db_node_storage_size_in_gbs: The total local node storage available in GBs.
     :vartype max_db_node_storage_size_in_gbs: int
     :ivar data_storage_size_in_tbs: The quantity of data in the database, in terabytes.
-    :vartype data_storage_size_in_tbs: int
+    :vartype data_storage_size_in_tbs: float
     :ivar max_data_storage_in_tbs: The total available DATA disk group size.
     :vartype max_data_storage_in_tbs: float
     :ivar db_server_version: The software version of the database servers (dom0) in the Exadata
@@ -3217,7 +3282,7 @@ class CloudExadataInfrastructureProperties(_serialization.Model):  # pylint: dis
         "max_memory_in_gbs": {"key": "maxMemoryInGbs", "type": "int"},
         "db_node_storage_size_in_gbs": {"key": "dbNodeStorageSizeInGbs", "type": "int"},
         "max_db_node_storage_size_in_gbs": {"key": "maxDbNodeStorageSizeInGbs", "type": "int"},
-        "data_storage_size_in_tbs": {"key": "dataStorageSizeInTbs", "type": "int"},
+        "data_storage_size_in_tbs": {"key": "dataStorageSizeInTbs", "type": "float"},
         "max_data_storage_in_tbs": {"key": "maxDataStorageInTbs", "type": "float"},
         "db_server_version": {"key": "dbServerVersion", "type": "str"},
         "storage_server_version": {"key": "storageServerVersion", "type": "str"},
@@ -3466,8 +3531,6 @@ class CloudVmCluster(TrackedResource):
 class CloudVmClusterListResult(_serialization.Model):
     """The response of a CloudVmCluster list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The CloudVmCluster items on this page. Required.
@@ -3478,7 +3541,6 @@ class CloudVmClusterListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3486,14 +3548,18 @@ class CloudVmClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CloudVmCluster"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.CloudVmCluster"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The CloudVmCluster items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.CloudVmCluster]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -3612,7 +3678,7 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
     :vartype backup_subnet_cidr: str
     :ivar nsg_cidrs: CIDR blocks for additional NSG ingress rules. The VNET CIDRs used to provision
      the VM Cluster will be added by default.
-    :vartype nsg_cidrs: list[~azure.mgmt.oracledatabase.models.NSGCidr]
+    :vartype nsg_cidrs: list[~azure.mgmt.oracledatabase.models.NsgCidr]
     :ivar data_collection_options: Indicates user preferences for the various diagnostic collection
      options for the VM cluster/Cloud VM cluster/VMBM DBCS.
     :vartype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
@@ -3644,7 +3710,7 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         "cpu_core_count": {"required": True},
         "cluster_name": {"max_length": 11, "min_length": 1},
         "cloud_exadata_infrastructure_id": {"required": True},
-        "system_version": {"readonly": True, "max_length": 255, "min_length": 1},
+        "system_version": {"max_length": 255, "min_length": 1},
         "ssh_public_keys": {"required": True},
         "disk_redundancy": {"readonly": True},
         "scan_ip_ids": {"readonly": True},
@@ -3707,7 +3773,7 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         "nsg_url": {"key": "nsgUrl", "type": "str"},
         "subnet_id": {"key": "subnetId", "type": "str"},
         "backup_subnet_cidr": {"key": "backupSubnetCidr", "type": "str"},
-        "nsg_cidrs": {"key": "nsgCidrs", "type": "[NSGCidr]"},
+        "nsg_cidrs": {"key": "nsgCidrs", "type": "[NsgCidr]"},
         "data_collection_options": {"key": "dataCollectionOptions", "type": "DataCollectionOptions"},
         "display_name": {"key": "displayName", "type": "str"},
         "compute_nodes": {"key": "computeNodes", "type": "[str]"},
@@ -3741,11 +3807,12 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         data_storage_percentage: Optional[int] = None,
         is_local_backup_enabled: bool = False,
         is_sparse_diskgroup_enabled: bool = False,
+        system_version: Optional[str] = None,
         license_model: Optional[Union[str, "_models.LicenseModel"]] = None,
         scan_listener_port_tcp: Optional[int] = None,
         scan_listener_port_tcp_ssl: Optional[int] = None,
         backup_subnet_cidr: Optional[str] = None,
-        nsg_cidrs: Optional[List["_models.NSGCidr"]] = None,
+        nsg_cidrs: Optional[List["_models.NsgCidr"]] = None,
         data_collection_options: Optional["_models.DataCollectionOptions"] = None,
         compute_nodes: Optional[List[str]] = None,
         db_servers: Optional[List[str]] = None,
@@ -3794,6 +3861,8 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         :keyword is_sparse_diskgroup_enabled: If true, sparse disk group is configured for the cloud VM
          cluster. If false, sparse disk group is not created.
         :paramtype is_sparse_diskgroup_enabled: bool
+        :keyword system_version: Operating system version of the image.
+        :paramtype system_version: str
         :keyword ssh_public_keys: The public key portion of one or more key pairs used for SSH access
          to the cloud VM cluster. Required.
         :paramtype ssh_public_keys: list[str]
@@ -3816,7 +3885,7 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         :paramtype backup_subnet_cidr: str
         :keyword nsg_cidrs: CIDR blocks for additional NSG ingress rules. The VNET CIDRs used to
          provision the VM Cluster will be added by default.
-        :paramtype nsg_cidrs: list[~azure.mgmt.oracledatabase.models.NSGCidr]
+        :paramtype nsg_cidrs: list[~azure.mgmt.oracledatabase.models.NsgCidr]
         :keyword data_collection_options: Indicates user preferences for the various diagnostic
          collection options for the VM cluster/Cloud VM cluster/VMBM DBCS.
         :paramtype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
@@ -3848,7 +3917,7 @@ class CloudVmClusterProperties(_serialization.Model):  # pylint: disable=too-man
         self.is_local_backup_enabled = is_local_backup_enabled
         self.cloud_exadata_infrastructure_id = cloud_exadata_infrastructure_id
         self.is_sparse_diskgroup_enabled = is_sparse_diskgroup_enabled
-        self.system_version = None
+        self.system_version = system_version
         self.ssh_public_keys = ssh_public_keys
         self.license_model = license_model
         self.disk_redundancy = None
@@ -4425,8 +4494,6 @@ class DbNodeAction(_serialization.Model):
 class DbNodeListResult(_serialization.Model):
     """The response of a DbNode list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The DbNode items on this page. Required.
@@ -4437,7 +4504,6 @@ class DbNodeListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4445,14 +4511,16 @@ class DbNodeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DbNode"], **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.DbNode"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The DbNode items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.DbNode]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class DbNodeProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -4641,8 +4709,6 @@ class DbServer(ProxyResource):
 class DbServerListResult(_serialization.Model):
     """The response of a DbServer list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The DbServer items on this page. Required.
@@ -4653,7 +4719,6 @@ class DbServerListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4661,14 +4726,16 @@ class DbServerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DbServer"], **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.DbServer"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The DbServer items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.DbServer]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class DbServerPatchingDetails(_serialization.Model):
@@ -4880,8 +4947,6 @@ class DbSystemShape(ProxyResource):
 class DbSystemShapeListResult(_serialization.Model):
     """The response of a DbSystemShape list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The DbSystemShape items on this page. Required.
@@ -4892,7 +4957,6 @@ class DbSystemShapeListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4900,14 +4964,16 @@ class DbSystemShapeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DbSystemShape"], **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.DbSystemShape"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The DbSystemShape items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.DbSystemShape]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class DbSystemShapeProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -5092,8 +5158,6 @@ class DnsPrivateView(ProxyResource):
 class DnsPrivateViewListResult(_serialization.Model):
     """The response of a DnsPrivateView list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The DnsPrivateView items on this page. Required.
@@ -5104,7 +5168,6 @@ class DnsPrivateViewListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5112,14 +5175,18 @@ class DnsPrivateViewListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DnsPrivateView"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.DnsPrivateView"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The DnsPrivateView items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.DnsPrivateView]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class DnsPrivateViewProperties(_serialization.Model):
@@ -5233,8 +5300,6 @@ class DnsPrivateZone(ProxyResource):
 class DnsPrivateZoneListResult(_serialization.Model):
     """The response of a DnsPrivateZone list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The DnsPrivateZone items on this page. Required.
@@ -5245,7 +5310,6 @@ class DnsPrivateZoneListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5253,14 +5317,18 @@ class DnsPrivateZoneListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DnsPrivateZone"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.DnsPrivateZone"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The DnsPrivateZone items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.DnsPrivateZone]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class DnsPrivateZoneProperties(_serialization.Model):
@@ -5619,8 +5687,6 @@ class GiVersion(ProxyResource):
 class GiVersionListResult(_serialization.Model):
     """The response of a GiVersion list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The GiVersion items on this page. Required.
@@ -5631,7 +5697,6 @@ class GiVersionListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5639,14 +5704,16 @@ class GiVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GiVersion"], **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.GiVersion"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The GiVersion items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.GiVersion]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class GiVersionProperties(_serialization.Model):
@@ -5672,6 +5739,64 @@ class GiVersionProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.version = None
+
+
+class LongTermBackUpScheduleDetails(_serialization.Model):
+    """Details for the long-term backup schedule.
+
+    :ivar repeat_cadence: The frequency of the long-term backup schedule. Known values are:
+     "OneTime", "Weekly", "Monthly", and "Yearly".
+    :vartype repeat_cadence: str or ~azure.mgmt.oracledatabase.models.RepeatCadenceType
+    :ivar time_of_backup: The timestamp for the long-term backup schedule. For a MONTHLY cadence,
+     months having fewer days than the provided date will have the backup taken on the last day of
+     that month.
+    :vartype time_of_backup: ~datetime.datetime
+    :ivar retention_period_in_days: Retention period, in days, for backups.
+    :vartype retention_period_in_days: int
+    :ivar is_disabled: Indicates if the long-term backup schedule should be deleted. The default
+     value is ``FALSE``.
+    :vartype is_disabled: bool
+    """
+
+    _validation = {
+        "retention_period_in_days": {"maximum": 2558, "minimum": 90},
+    }
+
+    _attribute_map = {
+        "repeat_cadence": {"key": "repeatCadence", "type": "str"},
+        "time_of_backup": {"key": "timeOfBackup", "type": "iso-8601"},
+        "retention_period_in_days": {"key": "retentionPeriodInDays", "type": "int"},
+        "is_disabled": {"key": "isDisabled", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        repeat_cadence: Optional[Union[str, "_models.RepeatCadenceType"]] = None,
+        time_of_backup: Optional[datetime.datetime] = None,
+        retention_period_in_days: Optional[int] = None,
+        is_disabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword repeat_cadence: The frequency of the long-term backup schedule. Known values are:
+         "OneTime", "Weekly", "Monthly", and "Yearly".
+        :paramtype repeat_cadence: str or ~azure.mgmt.oracledatabase.models.RepeatCadenceType
+        :keyword time_of_backup: The timestamp for the long-term backup schedule. For a MONTHLY
+         cadence, months having fewer days than the provided date will have the backup taken on the last
+         day of that month.
+        :paramtype time_of_backup: ~datetime.datetime
+        :keyword retention_period_in_days: Retention period, in days, for backups.
+        :paramtype retention_period_in_days: int
+        :keyword is_disabled: Indicates if the long-term backup schedule should be deleted. The default
+         value is ``FALSE``.
+        :paramtype is_disabled: bool
+        """
+        super().__init__(**kwargs)
+        self.repeat_cadence = repeat_cadence
+        self.time_of_backup = time_of_backup
+        self.retention_period_in_days = retention_period_in_days
+        self.is_disabled = is_disabled
 
 
 class MaintenanceWindow(_serialization.Model):
@@ -5828,7 +5953,7 @@ class Month(_serialization.Model):
         self.name = name
 
 
-class NSGCidr(_serialization.Model):
+class NsgCidr(_serialization.Model):
     """A rule for allowing inbound (INGRESS) IP packets.
 
     All required parameters must be populated in order to send to server.
@@ -6046,8 +6171,6 @@ class OracleSubscription(ProxyResource):
 class OracleSubscriptionListResult(_serialization.Model):
     """The response of a OracleSubscription list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The OracleSubscription items on this page. Required.
@@ -6058,7 +6181,6 @@ class OracleSubscriptionListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6066,14 +6188,18 @@ class OracleSubscriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OracleSubscription"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.OracleSubscription"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The OracleSubscription items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.OracleSubscription]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class OracleSubscriptionProperties(_serialization.Model):
@@ -6150,26 +6276,26 @@ class OracleSubscriptionUpdate(_serialization.Model):
     """The type used for update operations of the OracleSubscription.
 
     :ivar plan: Details of the resource plan.
-    :vartype plan: ~azure.mgmt.oracledatabase.models.ResourcePlanTypeUpdate
+    :vartype plan: ~azure.mgmt.oracledatabase.models.PlanUpdate
     :ivar properties: The updatable properties of the OracleSubscription.
     :vartype properties: ~azure.mgmt.oracledatabase.models.OracleSubscriptionUpdateProperties
     """
 
     _attribute_map = {
-        "plan": {"key": "plan", "type": "ResourcePlanTypeUpdate"},
+        "plan": {"key": "plan", "type": "PlanUpdate"},
         "properties": {"key": "properties", "type": "OracleSubscriptionUpdateProperties"},
     }
 
     def __init__(
         self,
         *,
-        plan: Optional["_models.ResourcePlanTypeUpdate"] = None,
+        plan: Optional["_models.PlanUpdate"] = None,
         properties: Optional["_models.OracleSubscriptionUpdateProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword plan: Details of the resource plan.
-        :paramtype plan: ~azure.mgmt.oracledatabase.models.ResourcePlanTypeUpdate
+        :paramtype plan: ~azure.mgmt.oracledatabase.models.PlanUpdate
         :keyword properties: The updatable properties of the OracleSubscription.
         :paramtype properties: ~azure.mgmt.oracledatabase.models.OracleSubscriptionUpdateProperties
         """
@@ -6288,6 +6414,64 @@ class Plan(_serialization.Model):
         :paramtype publisher: str
         :keyword product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
          the OfferID specified for the artifact at the time of Data Market onboarding. Required.
+        :paramtype product: str
+        :keyword promotion_code: A publisher provided promotion code as provisioned in Data Market for
+         the said product/artifact.
+        :paramtype promotion_code: str
+        :keyword version: The version of the desired product/artifact.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code
+        self.version = version
+
+
+class PlanUpdate(_serialization.Model):
+    """ResourcePlanTypeUpdate model definition.
+
+    :ivar name: A user defined name of the 3rd Party Artifact that is being procured.
+    :vartype name: str
+    :ivar publisher: The publisher of the 3rd Party Artifact that is being bought. E.g. NewRelic.
+    :vartype publisher: str
+    :ivar product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
+     the OfferID specified for the artifact at the time of Data Market onboarding.
+    :vartype product: str
+    :ivar promotion_code: A publisher provided promotion code as provisioned in Data Market for the
+     said product/artifact.
+    :vartype promotion_code: str
+    :ivar version: The version of the desired product/artifact.
+    :vartype version: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        publisher: Optional[str] = None,
+        product: Optional[str] = None,
+        promotion_code: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: A user defined name of the 3rd Party Artifact that is being procured.
+        :paramtype name: str
+        :keyword publisher: The publisher of the 3rd Party Artifact that is being bought. E.g.
+         NewRelic.
+        :paramtype publisher: str
+        :keyword product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
+         the OfferID specified for the artifact at the time of Data Market onboarding.
         :paramtype product: str
         :keyword promotion_code: A publisher provided promotion code as provisioned in Data Market for
          the said product/artifact.
@@ -6542,62 +6726,30 @@ class ProfileType(_serialization.Model):
         self.value = value
 
 
-class ResourcePlanTypeUpdate(_serialization.Model):
-    """ResourcePlanTypeUpdate model definition.
+class RestoreAutonomousDatabaseDetails(_serialization.Model):
+    """Details to restore an Oracle Autonomous Database.
 
-    :ivar name: A user defined name of the 3rd Party Artifact that is being procured.
-    :vartype name: str
-    :ivar publisher: The publisher of the 3rd Party Artifact that is being bought. E.g. NewRelic.
-    :vartype publisher: str
-    :ivar product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
-     the OfferID specified for the artifact at the time of Data Market onboarding.
-    :vartype product: str
-    :ivar promotion_code: A publisher provided promotion code as provisioned in Data Market for the
-     said product/artifact.
-    :vartype promotion_code: str
-    :ivar version: The version of the desired product/artifact.
-    :vartype version: str
+    All required parameters must be populated in order to send to server.
+
+    :ivar timestamp: The time to restore the database to. Required.
+    :vartype timestamp: ~datetime.datetime
     """
 
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "publisher": {"key": "publisher", "type": "str"},
-        "product": {"key": "product", "type": "str"},
-        "promotion_code": {"key": "promotionCode", "type": "str"},
-        "version": {"key": "version", "type": "str"},
+    _validation = {
+        "timestamp": {"required": True},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        publisher: Optional[str] = None,
-        product: Optional[str] = None,
-        promotion_code: Optional[str] = None,
-        version: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    _attribute_map = {
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, timestamp: datetime.datetime, **kwargs: Any) -> None:
         """
-        :keyword name: A user defined name of the 3rd Party Artifact that is being procured.
-        :paramtype name: str
-        :keyword publisher: The publisher of the 3rd Party Artifact that is being bought. E.g.
-         NewRelic.
-        :paramtype publisher: str
-        :keyword product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
-         the OfferID specified for the artifact at the time of Data Market onboarding.
-        :paramtype product: str
-        :keyword promotion_code: A publisher provided promotion code as provisioned in Data Market for
-         the said product/artifact.
-        :paramtype promotion_code: str
-        :keyword version: The version of the desired product/artifact.
-        :paramtype version: str
+        :keyword timestamp: The time to restore the database to. Required.
+        :paramtype timestamp: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
-        self.version = version
+        self.timestamp = timestamp
 
 
 class SaasSubscriptionDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -6833,6 +6985,146 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
+class SystemVersion(ProxyResource):
+    """SystemVersion resource Definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.SystemVersionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "SystemVersionProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.SystemVersionProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.oracledatabase.models.SystemVersionProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SystemVersionListResult(_serialization.Model):
+    """The response of a SystemVersion list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The SystemVersion items on this page. Required.
+    :vartype value: list[~azure.mgmt.oracledatabase.models.SystemVersion]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SystemVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.SystemVersion"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The SystemVersion items on this page. Required.
+        :paramtype value: list[~azure.mgmt.oracledatabase.models.SystemVersion]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SystemVersionProperties(_serialization.Model):
+    """System Version Resource model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar system_version: A valid Oracle System Version. Required.
+    :vartype system_version: str
+    """
+
+    _validation = {
+        "system_version": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "system_version": {"key": "systemVersion", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.system_version = None
+
+
+class SystemVersionsFilter(_serialization.Model):
+    """SystemVersions filter.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar gi_version: Grid Infrastructure version. Required.
+    :vartype gi_version: str
+    :ivar shape: Exadata shape. Required.
+    :vartype shape: str
+    :ivar is_latest_version: Check If we have to list only latest versions.
+    :vartype is_latest_version: bool
+    """
+
+    _validation = {
+        "gi_version": {"required": True},
+        "shape": {"required": True},
+    }
+
+    _attribute_map = {
+        "gi_version": {"key": "giVersion", "type": "str"},
+        "shape": {"key": "shape", "type": "str"},
+        "is_latest_version": {"key": "isLatestVersion", "type": "bool"},
+    }
+
+    def __init__(self, *, gi_version: str, shape: str, is_latest_version: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword gi_version: Grid Infrastructure version. Required.
+        :paramtype gi_version: str
+        :keyword shape: Exadata shape. Required.
+        :paramtype shape: str
+        :keyword is_latest_version: Check If we have to list only latest versions.
+        :paramtype is_latest_version: bool
+        """
+        super().__init__(**kwargs)
+        self.gi_version = gi_version
+        self.shape = shape
+        self.is_latest_version = is_latest_version
+
+
 class ValidationError(_serialization.Model):
     """validation error.
 
@@ -6948,8 +7240,6 @@ class VirtualNetworkAddress(ProxyResource):
 class VirtualNetworkAddressListResult(_serialization.Model):
     """The response of a VirtualNetworkAddress list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The VirtualNetworkAddress items on this page. Required.
@@ -6960,7 +7250,6 @@ class VirtualNetworkAddressListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6968,14 +7257,18 @@ class VirtualNetworkAddressListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualNetworkAddress"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.VirtualNetworkAddress"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The VirtualNetworkAddress items on this page. Required.
         :paramtype value: list[~azure.mgmt.oracledatabase.models.VirtualNetworkAddress]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class VirtualNetworkAddressProperties(_serialization.Model):

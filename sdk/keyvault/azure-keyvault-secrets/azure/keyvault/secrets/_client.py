@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 from functools import partial
-from typing import Any, Optional
+from typing import Any, cast, Dict, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -70,7 +71,18 @@ class SecretClient(KeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def set_secret(self, name: str, value: str, **kwargs: Any) -> KeyVaultSecret:
+    def set_secret(
+        self,
+        name: str,
+        value: str,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        **kwargs: Any,
+    ) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
@@ -99,10 +111,6 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
@@ -112,7 +120,7 @@ class SecretClient(KeyVaultClientBase):
 
         parameters = self._models.SecretSetParameters(
             value=value,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
             content_type=content_type,
             secret_attributes=attributes
         )
@@ -126,7 +134,18 @@ class SecretClient(KeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret_properties(self, name: str, version: Optional[str] = None, **kwargs: Any) -> SecretProperties:
+    def update_secret_properties(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        **kwargs: Any,
+    ) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
         This method updates properties of the secret, such as whether it's enabled, but can't change the secret's
@@ -157,10 +176,6 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
@@ -171,7 +186,7 @@ class SecretClient(KeyVaultClientBase):
         parameters = self._models.SecretUpdateParameters(
             content_type=content_type,
             secret_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=tags,
         )
 
         bundle = self._client.update_secret(
@@ -258,7 +273,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         backup_result = self._client.backup_secret(self.vault_url, name, **kwargs)
-        return backup_result.value
+        return cast(bytes, backup_result.value)
 
     @distributed_trace
     def restore_secret_backup(self, backup: bytes, **kwargs: Any) -> SecretProperties:
@@ -319,12 +334,13 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
         pipeline_response, deleted_secret_bundle = self._client.delete_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
@@ -447,12 +463,13 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
         pipeline_response, recovered_secret_bundle = self._client.recover_deleted_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         recovered_secret = SecretProperties._from_secret_bundle(recovered_secret_bundle)
 
         command = partial(self.get_secret, name=name, **kwargs)

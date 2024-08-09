@@ -114,7 +114,6 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -127,7 +126,7 @@ class ChatChoice(_model_base.Model):
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     message: "_models.ChatResponseMessage" = rest_field()
@@ -138,7 +137,7 @@ class ChatChoice(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
+        finish_reason: Union[str, "_models.CompletionsFinishReason"],
         message: "_models.ChatResponseMessage",
     ): ...
 
@@ -159,7 +158,6 @@ class ChatCompletions(_model_base.Model):
     "completes"
     provided prompt data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -469,157 +467,9 @@ class ChatCompletionsNamedFunctionToolSelection(
         super().__init__(*args, type="function", **kwargs)
 
 
-class ContentItem(_model_base.Model):
-    """An abstract representation of a structured content item within a chat message.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, TextContentItem
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated object type. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The discriminated object type. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ImageContentItem(ContentItem, discriminator="image_url"):
-    """A structured chat content item containing an image reference.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated object type: always 'image_url' for this type. Required. Default
-     value is "image_url".
-    :vartype type: str
-    :ivar image_url: An internet location, which must be accessible to the model,from which the
-     image may be retrieved. Required.
-    :vartype image_url: ~azure.ai.inference.models.ImageUrl
-    """
-
-    type: Literal["image_url"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type: always 'image_url' for this type. Required. Default value is
-     \"image_url\"."""
-    image_url: "_models.ImageUrl" = rest_field()
-    """An internet location, which must be accessible to the model,from which the image may be
-     retrieved. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image_url: "_models.ImageUrl",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="image_url", **kwargs)
-
-
-class ImageUrl(_model_base.Model):
-    """An internet location from which the model may retrieve an image.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar url: The URL of the image. Required.
-    :vartype url: str
-    :ivar detail: The evaluation quality setting to use, which controls relative prioritization of
-     speed, token consumption, and
-     accuracy. Known values are: "auto", "low", and "high".
-    :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
-    """
-
-    url: str = rest_field()
-    """The URL of the image. Required."""
-    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field()
-    """The evaluation quality setting to use, which controls relative prioritization of speed, token
-     consumption, and
-     accuracy. Known values are: \"auto\", \"low\", and \"high\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        url: str,
-        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class TextContentItem(ContentItem, discriminator="text"):
-    """A structured chat content item containing plain text.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated object type: always 'text' for this type. Required. Default value
-     is "text".
-    :vartype type: str
-    :ivar text: The content of the message. Required.
-    :vartype text: str
-    """
-
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type: always 'text' for this type. Required. Default value is
-     \"text\"."""
-    text: str = rest_field()
-    """The content of the message. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="text", **kwargs)
-
-
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
      "user", "assistant", and "tool".
@@ -667,7 +517,6 @@ class CompletionsUsage(_model_base.Model):
     Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
     other consumers.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
@@ -694,6 +543,40 @@ class CompletionsUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ContentItem(_model_base.Model):
+    """An abstract representation of a structured content item within a chat message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageContentItem, TextContentItem
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The discriminated object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
     ): ...
 
     @overload
@@ -747,7 +630,6 @@ class EmbeddingInput(_model_base.Model):
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
      of the
@@ -788,7 +670,6 @@ class EmbeddingsResult(_model_base.Model):
     clustering,
     recommendations, and other similar scenarios.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique identifier for the embeddings result. Required.
     :vartype id: str
@@ -833,34 +714,24 @@ class EmbeddingsResult(_model_base.Model):
 class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar input_tokens: Number of tokens in the request prompt. Required.
-    :vartype input_tokens: int
-    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
-     identical to ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type="query"). Required.
+    :ivar prompt_tokens: Number of tokens in the request. Required.
     :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
+    :ivar total_tokens: Total number of tokens transacted in this request/response.
+     Should equal the number of tokens in the request. Required.
     :vartype total_tokens: int
     """
 
-    input_tokens: int = rest_field()
-    """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens used for the prompt sent to the AI model. Typically identical to
-     ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type=\"query\"). Required."""
+    """Number of tokens in the request. Required."""
     total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response. Required."""
+    """Total number of tokens transacted in this request/response.
+    Should equal the number of tokens in the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
     ): ...
@@ -963,10 +834,86 @@ class FunctionDefinition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ImageContentItem(ContentItem, discriminator="image_url"):
+    """A structured chat content item containing an image reference.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type: always 'image_url' for this type. Required. Default
+     value is "image_url".
+    :vartype type: str
+    :ivar image_url: An internet location, which must be accessible to the model,from which the
+     image may be retrieved. Required.
+    :vartype image_url: ~azure.ai.inference.models.ImageUrl
+    """
+
+    type: Literal["image_url"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'image_url' for this type. Required. Default value is
+     \"image_url\"."""
+    image_url: "_models.ImageUrl" = rest_field()
+    """An internet location, which must be accessible to the model,from which the image may be
+     retrieved. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: "_models.ImageUrl",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="image_url", **kwargs)
+
+
+class ImageUrl(_model_base.Model):
+    """An internet location from which the model may retrieve an image.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar url: The URL of the image. Required.
+    :vartype url: str
+    :ivar detail: The evaluation quality setting to use, which controls relative prioritization of
+     speed, token consumption, and
+     accuracy. Known values are: "auto", "low", and "high".
+    :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+    """
+
+    url: str = rest_field()
+    """The URL of the image. Required."""
+    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field()
+    """The evaluation quality setting to use, which controls relative prioritization of speed, token
+     consumption, and
+     accuracy. Known values are: \"auto\", \"low\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -1014,7 +961,6 @@ class StreamingChatChoiceUpdate(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -1027,7 +973,7 @@ class StreamingChatChoiceUpdate(_model_base.Model):
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     delta: "_models.ChatResponseMessage" = rest_field()
@@ -1038,7 +984,7 @@ class StreamingChatChoiceUpdate(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
+        finish_reason: Union[str, "_models.CompletionsFinishReason"],
         delta: "_models.ChatResponseMessage",
     ): ...
 
@@ -1061,7 +1007,6 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     "completes"
     provided prompt data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -1154,6 +1099,42 @@ class SystemMessage(ChatRequestMessage, discriminator="system"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
+
+
+class TextContentItem(ContentItem, discriminator="text"):
+    """A structured chat content item containing plain text.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type: always 'text' for this type. Required. Default value
+     is "text".
+    :vartype type: str
+    :ivar text: The content of the message. Required.
+    :vartype text: str
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'text' for this type. Required. Default value is
+     \"text\"."""
+    text: str = rest_field()
+    """The content of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="text", **kwargs)
 
 
 class ToolMessage(ChatRequestMessage, discriminator="tool"):

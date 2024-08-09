@@ -31,6 +31,11 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         # Extract any task specific settings
         model = kwargs.pop("model", None)
         task = kwargs.pop("task", None)
+        # Convert task to lowercase first letter, this is when we create
+        # object from the schema, using dict object from the REST api response.
+        # TextCompletion => textCompletion
+        if task:
+            task = task[0].lower() + task[1:]
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
         hyperparameters = kwargs.pop("hyperparameters", None)

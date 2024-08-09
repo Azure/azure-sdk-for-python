@@ -3,4 +3,3 @@ type_check_samples = false
 verifytypes = false
 pyright = false
 mypy = true
-strict_sphinx = true

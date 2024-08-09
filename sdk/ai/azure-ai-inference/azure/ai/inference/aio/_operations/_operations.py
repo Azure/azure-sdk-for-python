@@ -53,7 +53,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -62,7 +62,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         *,
         messages: List[_models.ChatRequestMessage],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -77,6 +77,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
     @overload
@@ -84,7 +85,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -95,7 +96,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
@@ -109,6 +110,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
@@ -127,11 +129,11 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+        :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
-         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+         This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
+         and "pass-through". Default value is None.
+        :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
          frequency in generated text.
@@ -186,9 +188,12 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
-         Default value is None.
+         same seed and parameters should return the same result. Determinism is not guaranteed. Default
+         value is None.
         :paramtype seed: int
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -207,6 +212,8 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                       frequency increases and decrease the likelihood of the model repeating the same
                       statements verbatim. Supported range is [-2, 2].
                     "max_tokens": 0,  # Optional. The maximum number of tokens to generate.
+                    "model": "str",  # Optional. ID of the specific AI model to use, if more than
+                      one model is available on the endpoint.
                     "presence_penalty": 0.0,  # Optional. A value that influences the probability
                       of generated tokens appearing based on their existing presence in generated text.
                       Positive values will make tokens less likely to appear when they already exist
@@ -217,7 +224,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                       "json_object".
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.".
+                      parameters should return the same result. Determinism is not guaranteed.
                     "stop": [
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
@@ -304,6 +311,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                 "frequency_penalty": frequency_penalty,
                 "max_tokens": max_tokens,
                 "messages": messages,
+                "model": model,
                 "presence_penalty": presence_penalty,
                 "response_format": response_format,
                 "seed": seed,
@@ -323,7 +331,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            unknown_params=unknown_params,
+            extra_parameters=extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -436,7 +444,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -445,7 +453,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         *,
         input: List[str],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -457,7 +465,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -468,7 +476,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[str] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -484,11 +492,11 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          To embed multiple inputs in a single request, pass an array
          of strings or array of token arrays. Required.
         :paramtype input: list[str]
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+        :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
-         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+         This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
+         and "pass-through". Default value is None.
+        :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -587,7 +595,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embed_request(
-            unknown_params=unknown_params,
+            extra_parameters=extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -700,7 +708,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -709,7 +717,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         *,
         input: List[_models.EmbeddingInput],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -721,7 +729,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -732,7 +740,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.EmbeddingInput] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        extra_parameters: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -748,11 +756,11 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          array.
          The input must not exceed the max input tokens for the model. Required.
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+        :keyword extra_parameters: Controls what happens if unknown parameters are passed in the JSON
          request payload.
-         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
-         and "pass_through". Default value is None.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+         This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop",
+         and "pass-through". Default value is None.
+        :paramtype extra_parameters: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -859,7 +867,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embed_request(
-            unknown_params=unknown_params,
+            extra_parameters=extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

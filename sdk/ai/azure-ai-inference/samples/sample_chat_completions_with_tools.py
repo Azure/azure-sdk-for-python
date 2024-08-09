@@ -13,11 +13,11 @@ USAGE:
     python sample_chat_completions_with_tools.py
 
     Set these two environment variables before running the sample:
-    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
 
@@ -26,10 +26,10 @@ def sample_chat_completions_with_tools():
     import json
 
     try:
-        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
-        key = os.environ["CHAT_COMPLETIONS_KEY"]
+        endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
+        key = os.environ["AZURE_AI_CHAT_KEY"]
     except KeyError:
-        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
+        print("Missing environment variable 'AZURE_AI_CHAT_ENDPOINT' or 'AZURE_AI_CHAT_KEY'")
         print("Set them before running this sample.")
         exit()
 
@@ -111,7 +111,7 @@ def sample_chat_completions_with_tools():
 
             tool_call = response.choices[0].message.tool_calls[0]
 
-            if isinstance(tool_call, ChatCompletionsFunctionToolCall):
+            if type(tool_call) is ChatCompletionsFunctionToolCall:
 
                 function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
                 print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")

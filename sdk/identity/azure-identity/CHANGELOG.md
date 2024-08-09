@@ -1,8 +1,27 @@
 # Release History
 
-## 1.17.0 (Unreleased)
+## 1.18.0b2 (2024-08-09)
 
 ### Features Added
+
+- Added support of `send_certificate_chain` keyword argument when using certs with the synchronous `OnBehalfOfCredential`. ([#36810](https://github.com/Azure/azure-sdk-for-python/pull/36810))
+- `AzurePowerShellCredential` now supports using secure strings when authenticating with PowerShell. ([#36653](https://github.com/Azure/azure-sdk-for-python/pull/36653))
+
+## 1.18.0b1 (2024-07-16)
+
+- Fixed the issue that `SharedTokenCacheCredential` was not picklable.
+
+### Other Changes
+
+- The synchronous `ManagedIdentityCredential` was updated to use MSAL (Microsoft Authentication Library) for handling most of the underlying managed identity implementations.
+
+## 1.17.1 (2024-06-21)
+
+### Bugs Fixed
+
+- Continue to attempt requesting token if the probing request receives non-json response. ([#36184](https://github.com/Azure/azure-sdk-for-python/pull/36184))
+
+## 1.17.0 (2024-06-18)
 
 ### Breaking Changes
 
@@ -13,8 +32,6 @@
 ### Bugs Fixed
 
 - Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
-
-### Other Changes
 
 ## 1.17.0b2 (2024-06-11)
 
