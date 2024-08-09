@@ -1070,14 +1070,23 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+        snapshot_name1 = self.get_resource_name("snapshot1")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
 
-        items = self.client.list_configuration_settings(snapshot_name=snapshot_name)
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name1)
         assert len(list(items)) == 1
+
+        snapshot_name2 = self.get_resource_name("snapshot2")
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
+        response = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+        
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name2)
+        assert len(list(items)) == 0
 
         self.tear_down()
 

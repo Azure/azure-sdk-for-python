@@ -1093,14 +1093,23 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+        snapshot_name1 = self.get_resource_name("snapshot1")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
-        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name))
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name1))
         assert len(items) == 1
+
+        snapshot_name2 = self.get_resource_name("snapshot2")
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
+        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        created_snapshot = await response.result()
+        assert created_snapshot.status == "ready"
+
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name2))
+        assert len(items) == 0
 
         await self.tear_down()
 
