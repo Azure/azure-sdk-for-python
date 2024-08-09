@@ -3,6 +3,7 @@
 ### 4.7.1 (Unreleased)
 
 #### Features Added
+* Added response headers directly to SDK item operation responses. See [PR 35791](https://github.com/Azure/azure-sdk-for-python/pull/35791).
 * Added Retry Policy for Container Recreate in the Python SDK. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Breaking Changes
