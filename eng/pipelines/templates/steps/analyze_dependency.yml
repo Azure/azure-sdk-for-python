@@ -13,16 +13,10 @@ steps:
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    - template: /eng/common/pipelines/templates/steps/verify-readmes.yml
-      parameters:
-        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-        Condition: succeededOrFailed()
-  - ${{ else }}:
-    - template: /eng/common/pipelines/templates/steps/verify-readme.yml
-      parameters:
-        ScanPath: ${{ parameters.ScanPath }}
-        Condition: succeededOrFailed()
+  - template: /eng/common/pipelines/templates/steps/verify-readmes.yml
+    parameters:
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+      Condition: succeededOrFailed()
 
   - pwsh: |
       sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"

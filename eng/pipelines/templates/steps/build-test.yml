@@ -45,10 +45,9 @@ steps:
       Write-Host (Get-Command python).Source
     displayName: 'Prep Environment'
 
-  - ${{if eq(parameters.TestProxy, true) }}:
-    - template: /eng/common/testproxy/test-proxy-tool.yml
-      parameters:
-        runProxy: false
+  - template: /eng/common/testproxy/test-proxy-tool.yml
+    parameters:
+      runProxy: false
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml

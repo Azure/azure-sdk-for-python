@@ -28,3 +28,5 @@ steps:
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
     displayName: Resolve targeted packages
+    # if targeting has been set by matrix, this value will already be populated
+    condition: eq(variables['TargetingString]'], '')
