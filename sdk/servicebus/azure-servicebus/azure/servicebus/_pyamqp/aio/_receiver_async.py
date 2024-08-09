@@ -184,8 +184,8 @@ class ReceiverLink(Link):
     async def _remove_pending_receipts(self, frame):
 
         # TODO: Coming from detach with an error do we want to raise in the callback?
-        # for delivery in self._pending_receipts:
-        #     await delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, frame[2])
+        for delivery in self._pending_receipts:
+            await delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, frame[2])
         self._pending_receipts = []
 
     async def _update_pending_receipts(self):

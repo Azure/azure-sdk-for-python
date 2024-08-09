@@ -1069,10 +1069,20 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             message_delivery.error = TimeoutError("The service did not respond in time,"
                 " message may or may not have been settled")
         else:
-            # NotDelivered and other unknown errors
-            self._process_receive_error(
+            # We receive a Detach frame while waiting for disposition.
+            message_delivery.reason = reason
+            try:
+                self._process_receive_error(
                 message_delivery,
-                condition=ErrorCondition.UnknownError
+                condition=state[0],
+                description=state[1],
+                info=state[2]
+            )
+            except:
+                # Other unknown errors, no state available
+                self._process_receive_error(
+                    message_delivery,
+                    condition=ErrorCondition.UnknownError
             )
 
 

@@ -184,8 +184,8 @@ class ReceiverLink(Link):
                 continue
 
     def _remove_pending_receipts(self, frame):
-        # for delivery in self._pending_receipts:
-        #     delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
+        for delivery in self._pending_receipts:
+            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, frame[2])
         self._pending_receipts = []
 
     def attach(self):
