@@ -174,7 +174,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -250,7 +250,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         self.bsc.key_encryption_key.kid = 'Invalid'

@@ -178,7 +178,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        blob = await self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -257,7 +257,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        blob = await self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         self.bsc.key_encryption_key.kid = 'Invalid'
