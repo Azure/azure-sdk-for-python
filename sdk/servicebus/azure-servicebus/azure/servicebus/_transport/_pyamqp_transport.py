@@ -1091,7 +1091,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         # pylint: disable=protected-access
-        receive_drain_timeout = .2 # 200 ms
+        receive_drain_timeout = 2 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False

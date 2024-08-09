@@ -859,7 +859,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
 
                         elif len(messages) == 1:
                             print("Starting second sleep")
-                            time.sleep(10) # ensure renewer expires
+                            time.sleep(20) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
                             assert not results
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
