@@ -422,10 +422,7 @@ class WorkspaceConnection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
-        if not rest_obj:
-            return None
-
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
 
         popped_metadata = conn_class._get_required_metadata_fields()
@@ -456,7 +453,7 @@ class WorkspaceConnection(Resource):
             # No default in pop, this should fail if we somehow don't get a resource ID
             rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         connection = conn_class(**rest_kwargs)
-        return cast(Optional["WorkspaceConnection"], connection)
+        return cast(WorkspaceConnection, connection)
 
     def _validate(self) -> str:
         return str(self.name)

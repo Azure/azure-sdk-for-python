@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def convert_windows_timezone_to_iana():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.timezone import MapsTimezoneClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
         print(result)

@@ -6,7 +6,8 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, TYPE_CHECKING
+    Any, Callable, Optional, Union,
+    TYPE_CHECKING
 )
 from urllib.parse import parse_qs
 
@@ -36,6 +37,7 @@ def generate_account_sas(
     expiry: Union["datetime", str],
     *,
     services: Union[Services, str] = Services(blob=True),
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the DataLake service.
@@ -77,6 +79,10 @@ def generate_account_sas(
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -87,18 +93,21 @@ def generate_account_sas(
         permission=permission,
         expiry=expiry,
         services=services,
+        sts_hook=sts_hook,
         **kwargs
     )
 
 
 def generate_file_system_sas(
-        account_name,  # type: str
-        file_system_name,  # type: str
-        credential,  # type: Union[str, UserDelegationKey]
-        permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        **kwargs # type: Any
-    ):
+    account_name,  # type: str
+    file_system_name,  # type: str
+    credential,  # type: Union[str, UserDelegationKey]
+    permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    *,
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
+    **kwargs  # type: Any
+):
     # type: (...) -> str
     """Generates a shared access signature for a file system.
 
@@ -182,6 +191,10 @@ def generate_file_system_sas(
         generating and distributing the SAS.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -192,18 +205,22 @@ def generate_file_system_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
-        **kwargs)
+        sts_hook=sts_hook,
+        **kwargs
+    )
 
 
 def generate_directory_sas(
-        account_name,  # type: str
-        file_system_name,  # type: str
-        directory_name,  # type: str
-        credential,  # type: Union[str, UserDelegationKey]
-        permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        **kwargs # type: Any
-    ):
+    account_name,  # type: str
+    file_system_name,  # type: str
+    directory_name,  # type: str
+    credential,  # type: Union[str, UserDelegationKey]
+    permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    *,
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
+    **kwargs  # type: Any
+):
     # type: (...) -> str
     """Generates a shared access signature for a directory.
 
@@ -289,6 +306,10 @@ def generate_directory_sas(
         generating and distributing the SAS.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -303,19 +324,23 @@ def generate_directory_sas(
         expiry=expiry,
         sdd=depth,
         is_directory=True,
-        **kwargs)
+        sts_hook=sts_hook,
+        **kwargs
+    )
 
 
 def generate_file_sas(
-        account_name,  # type: str
-        file_system_name,  # type: str
-        directory_name,  # type: str
-        file_name,  # type: str
-        credential,  # type: Union[str, UserDelegationKey]
-        permission=None,  # type: Optional[Union[FileSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        **kwargs  # type: Any
-    ):
+    account_name,  # type: str
+    file_system_name,  # type: str
+    directory_name,  # type: str
+    file_name,  # type: str
+    credential,  # type: Union[str, UserDelegationKey]
+    permission=None,  # type: Optional[Union[FileSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    *,
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
+    **kwargs  # type: Any
+):
     # type: (...) -> str
     """Generates a shared access signature for a file.
 
@@ -403,6 +428,10 @@ def generate_file_sas(
         generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -418,7 +447,9 @@ def generate_file_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
-        **kwargs)
+        sts_hook=sts_hook,
+        **kwargs
+    )
 
 def _is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):

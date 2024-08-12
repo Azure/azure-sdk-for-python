@@ -157,9 +157,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         :rtype: list[CacheItem]
         """
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         items = []
-        for item in cache.find(credential_type):
+        for item in cache.search(credential_type):
             environment = item.get("environment")
             if environment in self._environment_aliases:
                 items.append(item)
@@ -232,9 +232,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         if "home_account_id" not in account:
             return None
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
                 query={"home_account_id": account["home_account_id"]},
@@ -253,9 +253,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         if "home_account_id" not in account:
             return []
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]
