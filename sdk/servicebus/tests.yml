@@ -30,8 +30,3 @@ extends:
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           Location: 'usgovarizona'
-        China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
-          Location: 'chinanorth3'
