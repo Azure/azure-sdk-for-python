@@ -50,7 +50,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    @distributed_trace
     def _try_fill_api_key(self, connection: WorkspaceConnection) -> None:
         """Try to fill in a connection's credentials with it's actual values.
         Connection data retrievals normally return an empty credential object that merely includes the
