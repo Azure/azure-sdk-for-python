@@ -212,8 +212,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         otherwise the total size of the file."""
 
     def __init__(
-        self,
-        client: "FileOperations" = None,  # type: ignore [assignment]
+        self, client: "FileOperations" = None,  # type: ignore [assignment]
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
