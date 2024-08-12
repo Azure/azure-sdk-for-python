@@ -35,24 +35,16 @@ from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
-
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
-        PipelineRequest,
-        PipelineResponse
-    )
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, str):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
@@ -96,7 +88,8 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
             return False
         return True
     # retry if invalid content md5
-    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+    validate_content = response.context.get('validate_content', None)
+    if validate_content is True and response.http_response.headers.get('content-md5'):
         computed_md5 = response.http_request.headers.get('content-md5', None) or \
                        encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
         if response.http_response.headers['content-md5'] != computed_md5:
@@ -131,20 +124,31 @@ class StorageHeadersPolicy(HeadersPolicy):
         custom_id = request.context.options.pop('client_request_id', None)
         request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
 
-    # def on_response(self, request, response):
-    #     # raise exception if the echoed client request id from the service is not identical to the one we sent
-    #     if self.request_id_header_name in response.http_response.headers:
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+        is_success = response.http_response.status_code < 300
+        # Validate structured body PUT/GET requests
+        if ('x-ms-structured-body' in request.http_request.headers and
+                'x-ms-structured-content-length' in request.http_request.headers and
+                'x-ms-structured-body' not in response.http_response.headers and is_success):
+            raise ValueError("Response did not acknowledge structured body. "
+                             "Unexpected data may have been persisted to storage.")
+        elif ('x-ms-structured-body' in request.http_request.headers and
+              'x-ms-structured-body' not in response.http_response.headers and is_success):
+            raise ValueError("Response did not acknowledge structured body. Unknown structure in response body.")
 
-    #         client_request_id = request.http_request.headers.get(self.request_id_header_name)
-
-    #         if response.http_response.headers[self.request_id_header_name] != client_request_id:
-    #             raise AzureError(
-    #                 "Echoed client request ID: {} does not match sent client request ID: {}.  "
-    #                 "Service request ID: {}".format(
-    #                     response.http_response.headers[self.request_id_header_name], client_request_id,
-    #                     response.http_response.headers['x-ms-request-id']),
-    #                 response=response.http_response
-    #             )
+    # # raise exception if the echoed client request id from the service is not identical to the one we sent
+    # if self.request_id_header_name in response.http_response.headers:
+    #
+    #     client_request_id = request.http_request.headers.get(self.request_id_header_name)
+    #
+    #     if response.http_response.headers[self.request_id_header_name] != client_request_id:
+    #         raise AzureError(
+    #             "Echoed client request ID: {} does not match sent client request ID: {}.  "
+    #             "Service request ID: {}".format(
+    #                 response.http_response.headers[self.request_id_header_name], client_request_id,
+    #                 response.http_response.headers['x-ms-request-id']),
+    #             response=response.http_response
+    #         )
 
 
 class StorageHosts(SansIOHTTPPolicy):
@@ -364,15 +368,16 @@ class StorageContentValidation(SansIOHTTPPolicy):
         return md5.digest()
 
     def on_request(self, request: "PipelineRequest") -> None:
-        validate_content = request.context.options.pop('validate_content', False)
-        if validate_content and request.http_request.method != 'GET':
+        validate_content = request.context.options.pop('validate_content', None)
+        if validate_content is True and request.http_request.method != 'GET':
             computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
             request.http_request.headers[self.header_name] = computed_md5
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
-        if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        validate_content = request.context.options.pop('validate_content', None)
+        if validate_content is True and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
@@ -451,7 +456,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -471,14 +476,12 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param request: A pipeline request object.
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: A pipeline response object.
-        :type response: ~azure.core.pipeline.PipelineResponse or None
+        :param Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param PipelineRequest request: A pipeline request object.
+        :param Optional[PipelineResponse] response: A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :type error: ~azure.core.exceptions.AzureError or None
+        :type error: Optional[AzureError]
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -612,7 +615,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -664,7 +667,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
