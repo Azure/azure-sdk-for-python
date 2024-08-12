@@ -414,3 +414,12 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Check if Receiver is alive.
         :param ServiceBusReceiver receiver: The receiver.
         """
+
+    @staticmethod
+    @abstractmethod
+    def check_if_exception_is_retriable(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
+        """

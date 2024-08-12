@@ -369,3 +369,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Check if receiver is live.
         :param ServiceBusReceiver receiver: Receiver.
         """
+
+    @staticmethod
+    @abstractmethod
+    async def check_if_exception_is_retriable(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
+        """

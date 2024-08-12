@@ -186,23 +186,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
         )
 
-        try:
-            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
-            # the receiver should no longer be used and should create a new session receiver
-            # instance to receive from session. There are pitfalls WRT both next session IDs,
-            # and the diversity of session failure modes, that motivates us to disallow this.
-            if (
-                self._session
-                and self._running
-                and isinstance(error, (SessionLockLostError, ServiceBusConnectionError))
-            ):
-                self._session._lock_lost = True
-                if self._amqp_transport.KIND == "uamqp":
-                    # Close handler on uamqp session lock lost
-                    await self._close_handler()
-                raise error
-        except AttributeError:
-            pass
+        await self._amqp_transport.check_if_exception_is_retriable(self, error)
 
         if error._shutdown_handler:
             await self._close_handler()

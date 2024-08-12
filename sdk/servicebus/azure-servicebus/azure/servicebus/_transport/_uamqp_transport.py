@@ -1265,5 +1265,21 @@ try:
             except AttributeError:
                 pass
 
+        @staticmethod
+        def check_if_exception_is_retriable(receiver, error):
+            try:
+                # If SessionLockLostError or ServiceBusConnectionError happen when a
+                # session receiver is running, the receiver should no longer be used and
+                # should create a new session receiver instance to receive from session.
+                # There are pitfalls WRT both next session IDs, and the diversity of session
+                # failure modes, that motivates us to disallow this.
+                if receiver._session and receiver._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
+                    receiver._session._lock_lost = True  # type: ignore
+                    # Only close for uamqp, we let pyamqp close the connection via the retry loop.
+                    receiver._close_handler()
+                    raise error
+            except AttributeError:
+                pass
+
 except ImportError:
     pass

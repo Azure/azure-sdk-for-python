@@ -25,7 +25,7 @@ try:
         get_span_link_from_message,
     )
     from ..._common.constants import ServiceBusReceiveMode
-    from ...exceptions import MessageLockLostError, SessionLockLostError
+    from ...exceptions import MessageLockLostError, SessionLockLostError, ServiceBusConnectionError
 
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
@@ -468,6 +468,29 @@ try:
                     raise SessionLockLostError(error=receiver._session.auto_renew_error)
             except AttributeError:
                 pass
+    
+    @staticmethod
+    async def check_if_exception_is_retriable(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
+        """
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+            # the receiver should no longer be used and should create a new session receiver
+            # instance to receive from session. There are pitfalls WRT both next session IDs,
+            # and the diversity of session failure modes, that motivates us to disallow this.
+            if (
+                receiver._session
+                and receiver._running
+                and isinstance(error, (SessionLockLostError, ServiceBusConnectionError))
+            ):
+                receiver._session._lock_lost = True
+                await receiver._close_handler()
+                raise error
+        except AttributeError:
+            pass
 
 except ImportError:
     pass
