@@ -1,4 +1,3 @@
-
 # Azure Core shared client library for Python
 
 Azure core provides shared exceptions and modules for Python SDK client libraries.
@@ -228,6 +227,10 @@ foo = Foo(
     attr=NULL
 )
 ```
+
+### Pylint Check for `connection_verify` Hardcoded Settings
+
+A custom pylint checker has been added to ensure that the `connection_verify` setting is not hardcoded to a boolean value. This check helps to ensure that the `connection_verify` setting can be adjusted by the user and is not fixed to a specific value in the code.
 
 ## Contributing
 

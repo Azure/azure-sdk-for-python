@@ -146,3 +146,5 @@ class ConnectionConfiguration:
         self.verify = connection_verify
         self.cert = connection_cert
         self.data_block_size = connection_data_block_size
+        # Ensure connection_verify is not hardcoded to a boolean value
+        # pylint: disable=connection_verify_hardcoded

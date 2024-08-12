@@ -65,6 +65,7 @@ if __name__ == "__main__":
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
+                "--load-plugins=pylint_guidelines_checker.connection_verify_hardcoded",
                 os.path.join(args.target_package, top_level_module),
             ]
         )
