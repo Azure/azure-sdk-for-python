@@ -16,7 +16,7 @@ from devtools_testutils import EnvironmentVariableLoader, AzureRecordedTestCase
 
 TextAopcPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'spatio',
+    "spatio",
     spatio_endpoint="https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net",
     spatio_group="fakegroup",
 )
@@ -24,10 +24,7 @@ TextAopcPreparer = functools.partial(
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super().__init__(
-            name_prefix='',
-            random_name_length=42
-        )
+        super().__init__(name_prefix="", random_name_length=42)
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
 
@@ -64,7 +61,6 @@ class TextAnalyticsTest(AzureRecordedTestCase):
         for data_source_a, data_source_b in zip(data_sources_a, data_sources_b):
             assert data_source_a.entity_id == data_source_b.entity_id
             assert data_source_a.name == data_source_b.name
-
 
     def assert_healthcare_entities_equal(self, entity_a, entity_b):
         assert entity_a.text == entity_b.text

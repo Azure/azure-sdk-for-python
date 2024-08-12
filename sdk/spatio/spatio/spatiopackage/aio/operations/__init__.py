@@ -17,8 +17,8 @@ from ._operations import signedOperationsOperations
 from ._operations import LandingOperationsOperations
 from ._operations import ConformanceOperationsOperations
 from ._operations import SearchOperationsOperations
-from ._operations import GetOperationsOperations
-from ._operations import createOperationsOperations
+from ._operations import GetOperationsCollectionsOperations
+from ._operations import CreateOperationsCollectionsOperations
 from ._operations import updateOperationsOperations
 from ._operations import deleteOperationsOperations
 from ._operations import QueryablesOperationsOperations
@@ -59,8 +59,8 @@ __all__ = [
     "LandingOperationsOperations",
     "ConformanceOperationsOperations",
     "SearchOperationsOperations",
-    "GetOperationsOperations",
-    "createOperationsOperations",
+    "GetOperationsCollectionsOperations",
+    "CreateOperationsCollectionsOperations",
     "updateOperationsOperations",
     "deleteOperationsOperations",
     "QueryablesOperationsOperations",

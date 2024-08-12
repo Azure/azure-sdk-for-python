@@ -6,14 +6,15 @@ from spatiopackage import AzureOrbitalPlanetaryComputerClient
 
 SpatioPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'spatio',
+    "spatio",
     spatio_endpoint="https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net",
     spatio_group="fakegroup",
 )
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestAzureOrbitalPlanetaryComputerClient(AzureRecordedTestCase):
-    
+
     @classmethod
     def whatever(cls):
         credential = cls.get_credential(AzureOrbitalPlanetaryComputerClient)

@@ -45,7 +45,7 @@ class AzureOrbitalPlanetaryComputerClientConfiguration:  # pylint: disable=too-m
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure-test.net/.default"])
-        kwargs.setdefault("sdk_moniker", "spatio/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "spatiopackage/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

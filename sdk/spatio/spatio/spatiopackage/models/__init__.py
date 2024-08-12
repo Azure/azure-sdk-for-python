@@ -6,12 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models import Asset
 from ._models import AuthConfig
 from ._models import AzMapsClientId
 from ._models import AzMapsToken
 from ._models import BadRequest
 from ._models import Bounds
+from ._models import Collection
+from ._models import Collections
+from ._models import ConformanceClasses
 from ._models import DefaultLocation
+from ._models import Extent
 from ._models import FeaturePolygonDictStrRioTilerModelsInfo
 from ._models import GeoCatalogCollection
 from ._models import GeoTemplate
@@ -25,8 +30,10 @@ from ._models import IngestionDefinitionCreation
 from ._models import IngestionRun
 from ._models import IngestionRunSummary
 from ._models import IngestionSourceSummary
+from ._models import LandingPage
 from ._models import LegendConfig
 from ._models import Link
+from ._models import LinksItem
 from ._models import Metadata
 from ._models import Mosaic
 from ._models import MosaicInfo
@@ -37,6 +44,7 @@ from ._models import PartitionType
 from ._models import Polygon
 from ._models import PostFieldsExtension
 from ._models import Properties
+from ._models import Provider
 from ._models import QueryableDefinition
 from ._models import RegisterMosaic
 from ._models import RegisterMosaicIntersects
@@ -60,6 +68,7 @@ from ._models import SearchPostRequest
 from ._models import SearchPostRequestFields
 from ._models import SearchPostRequestIntersects
 from ._models import SortExtension
+from ._models import SpatialExtent
 from ._models import TMSBoundingBox
 from ._models import TileJson
 from ._models import TileMatrix
@@ -67,6 +76,7 @@ from ._models import TileMatrixSet
 from ._models import TileMatrixSetBoundingBox
 from ._models import TileMatrixSetCrs
 from ._models import TileSettings
+from ._models import TimeInterval
 from ._models import TitilerCoreModelsResponsesPoint
 from ._models import TitilerPgstacModelInfo
 from ._models import UserCollectionSettings
@@ -105,12 +115,17 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "Asset",
     "AuthConfig",
     "AzMapsClientId",
     "AzMapsToken",
     "BadRequest",
     "Bounds",
+    "Collection",
+    "Collections",
+    "ConformanceClasses",
     "DefaultLocation",
+    "Extent",
     "FeaturePolygonDictStrRioTilerModelsInfo",
     "GeoCatalogCollection",
     "GeoTemplate",
@@ -124,8 +139,10 @@ __all__ = [
     "IngestionRun",
     "IngestionRunSummary",
     "IngestionSourceSummary",
+    "LandingPage",
     "LegendConfig",
     "Link",
+    "LinksItem",
     "Metadata",
     "Mosaic",
     "MosaicInfo",
@@ -136,6 +153,7 @@ __all__ = [
     "Polygon",
     "PostFieldsExtension",
     "Properties",
+    "Provider",
     "QueryableDefinition",
     "RegisterMosaic",
     "RegisterMosaicIntersects",
@@ -159,6 +177,7 @@ __all__ = [
     "SearchPostRequestFields",
     "SearchPostRequestIntersects",
     "SortExtension",
+    "SpatialExtent",
     "TMSBoundingBox",
     "TileJson",
     "TileMatrix",
@@ -166,6 +185,7 @@ __all__ = [
     "TileMatrixSetBoundingBox",
     "TileMatrixSetCrs",
     "TileSettings",
+    "TimeInterval",
     "TitilerCoreModelsResponsesPoint",
     "TitilerPgstacModelInfo",
     "UserCollectionSettings",

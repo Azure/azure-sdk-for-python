@@ -40,9 +40,9 @@ from ...operations._operations import (
     build_collection_operations_queryables_api_collections_collection_id_queryables_get_request,
     build_conformance_operations_classes_api_conformance_get_request,
     build_container_operations_token_api_token_collection_id_get_request,
-    build_create_operations_collection_api_collections_post_request,
-    build_create_operations_collection_asset_request,
-    build_create_operations_partitiontype_api_collections_collection_id_config_partition_type_put_request,
+    build_create_operations_collections_collection_api_collections_post_request,
+    build_create_operations_collections_collection_asset_request,
+    build_create_operations_collections_partitiontype_api_collections_collection_id_config_partition_type_put_request,
     build_create_operations_static_image_api_collections_collection_id_image_static_post_request,
     build_delete_operations_collection_api_collections_collection_id_delete_request,
     build_delete_operations_collection_asset_api_collections_collection_id_assets_asset_id_delete_request,
@@ -53,22 +53,22 @@ from ...operations._operations import (
     build_geojson_operations_crop_api_collections_collection_id_items_item_id_crop_post_request,
     build_geojson_operations_crop_api_collections_collection_id_items_item_id_crop_width_x_height_format_post_request,
     build_geojson_operations_statistics_api_collections_collection_id_items_item_id_statistics_post_request,
-    build_get_operations_auth_config_api_config_auth_get_request,
-    build_get_operations_azmaps_client_id_api_config_map_id_get_request,
-    build_get_operations_azmaps_token_api_config_map_token_get_request,
     build_get_operations_classmap_legend_api_legend_classmap_classmap_name_get_request,
-    build_get_operations_collection_api_collections_collection_id_get_request,
-    build_get_operations_collection_mosaic_api_collections_collection_id_config_mosaics_mosaic_id_get_request,
-    build_get_operations_collection_mosaics_api_collections_collection_id_config_mosaics_get_request,
-    build_get_operations_collection_render_option_api_collections_collection_id_config_render_options_render_option_id_get_request,
-    build_get_operations_collection_render_options_api_collections_collection_id_config_render_options_get_request,
-    build_get_operations_collection_thumbnail_api_collections_collection_id_thumbnail_get_request,
-    build_get_operations_collection_tile_settings_api_collections_collection_id_config_tile_settings_get_request,
-    build_get_operations_collections_api_collections_get_request,
-    build_get_operations_config_api_collections_collection_id_config_get_request,
+    build_get_operations_collections_auth_config_api_config_auth_get_request,
+    build_get_operations_collections_azmaps_client_id_api_config_map_id_get_request,
+    build_get_operations_collections_azmaps_token_api_config_map_token_get_request,
+    build_get_operations_collections_collection_api_collections_collection_id_get_request,
+    build_get_operations_collections_collection_mosaic_api_collections_collection_id_config_mosaics_mosaic_id_get_request,
+    build_get_operations_collections_collection_mosaics_api_collections_collection_id_config_mosaics_get_request,
+    build_get_operations_collections_collection_render_option_api_collections_collection_id_config_render_options_render_option_id_get_request,
+    build_get_operations_collections_collection_render_options_api_collections_collection_id_config_render_options_get_request,
+    build_get_operations_collections_collection_thumbnail_api_collections_collection_id_thumbnail_get_request,
+    build_get_operations_collections_collection_tile_settings_api_collections_collection_id_config_tile_settings_get_request,
+    build_get_operations_collections_collections_api_collections_get_request,
+    build_get_operations_collections_config_api_collections_collection_id_config_get_request,
+    build_get_operations_collections_partitiontype_api_collections_collection_id_config_partition_type_get_request,
     build_get_operations_interval_legend_api_legend_interval_classmap_name_get_request,
     build_get_operations_legend_api_legend_colormap_cmap_name_get_request,
-    build_get_operations_partitiontype_api_collections_collection_id_config_partition_type_get_request,
     build_get_operations_static_image_api_collections_collection_id_image_static_id_get_request,
     build_info_operations_api_collections_collection_id_items_item_id_info_get_request,
     build_info_operations_geojson_api_collections_collection_id_items_item_id_info_geojson_get_request,
@@ -165,7 +165,7 @@ class IngestionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`ingestions` attribute.
     """
 
@@ -185,7 +185,7 @@ class IngestionsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: list of IngestionDefinition
-        :rtype: list[~spatio.models.IngestionDefinition]
+        :rtype: list[~spatiopackage.models.IngestionDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -260,7 +260,7 @@ class IngestionsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionDefinition
+        :rtype: ~spatiopackage.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -346,12 +346,12 @@ class IngestionsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param definition: Definition of the ingestion. Required.
-        :type definition: ~spatio.models.IngestionDefinitionCreation
+        :type definition: ~spatiopackage.models.IngestionDefinitionCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionDefinition
+        :rtype: ~spatiopackage.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -392,7 +392,7 @@ class IngestionsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionDefinition
+        :rtype: ~spatiopackage.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -424,7 +424,7 @@ class IngestionsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionDefinition
+        :rtype: ~spatiopackage.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -452,9 +452,9 @@ class IngestionsOperations:
         :type collection_id: str
         :param definition: Definition of the ingestion. Is one of the following types:
          IngestionDefinitionCreation, JSON, IO[bytes] Required.
-        :type definition: ~spatio.models.IngestionDefinitionCreation or JSON or IO[bytes]
+        :type definition: ~spatiopackage.models.IngestionDefinitionCreation or JSON or IO[bytes]
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionDefinition
+        :rtype: ~spatiopackage.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -553,7 +553,7 @@ class ItemsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`items` attribute.
     """
 
@@ -640,7 +640,7 @@ class ItemsOperations:
          the extent or all relevant temporal properties. Default value is None.
         :paramtype datetime: str
         :return: STACItemCollection. The STACItemCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.STACItemCollection
+        :rtype: ~spatiopackage.models.STACItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -765,7 +765,7 @@ class ItemsOperations:
         :param item_id: STAC Item id. Required.
         :type item_id: str
         :return: STACItem. The STACItem is compatible with MutableMapping
-        :rtype: ~spatio.models.STACItem
+        :rtype: ~spatiopackage.models.STACItem
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -875,12 +875,12 @@ class ItemsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param item: STAC Item or ItemCollection. Required.
-        :type item: ~spatio.models.STACPostOrPutItem
+        :type item: ~spatiopackage.models.STACPostOrPutItem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -950,12 +950,12 @@ class ItemsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param item: STAC Item or ItemCollection. Required.
-        :type item: ~spatio.models.STACPostOrPutItemCollection
+        :type item: ~spatiopackage.models.STACPostOrPutItemCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1042,9 +1042,10 @@ class ItemsOperations:
         :type collection_id: str
         :param item: STAC Item or ItemCollection. Is either a STACPostOrPutItem type or a
          STACPostOrPutItemCollection type. Required.
-        :type item: ~spatio.models.STACPostOrPutItem or ~spatio.models.STACPostOrPutItemCollection
+        :type item: ~spatiopackage.models.STACPostOrPutItem or
+         ~spatiopackage.models.STACPostOrPutItemCollection
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1189,12 +1190,12 @@ class ItemsOperations:
         :param item_id: Required.
         :type item_id: str
         :param item: STAC Item. Required.
-        :type item: ~spatio.models.STACPostOrPutItem
+        :type item: ~spatiopackage.models.STACPostOrPutItem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1266,7 +1267,7 @@ class ItemsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1315,7 +1316,7 @@ class ItemsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1354,9 +1355,9 @@ class ItemsOperations:
         :type item_id: str
         :param item: STAC Item. Is one of the following types: STACPostOrPutItem, JSON, IO[bytes]
          Required.
-        :type item: ~spatio.models.STACPostOrPutItem or JSON or IO[bytes]
+        :type item: ~spatiopackage.models.STACPostOrPutItem or JSON or IO[bytes]
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1499,12 +1500,12 @@ class ItemsOperations:
         :param item_id: Required.
         :type item_id: str
         :param item: STAC Item. Required.
-        :type item: ~spatio.models.STACPostOrPutItem
+        :type item: ~spatiopackage.models.STACPostOrPutItem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1576,7 +1577,7 @@ class ItemsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1625,7 +1626,7 @@ class ItemsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1664,9 +1665,9 @@ class ItemsOperations:
         :type item_id: str
         :param item: STAC Item. Is one of the following types: STACPostOrPutItem, JSON, IO[bytes]
          Required.
-        :type item: ~spatio.models.STACPostOrPutItem or JSON or IO[bytes]
+        :type item: ~spatiopackage.models.STACPostOrPutItem or JSON or IO[bytes]
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1801,7 +1802,7 @@ class ItemsOperations:
         :param item_id: Required.
         :type item_id: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1895,7 +1896,7 @@ class IngestionSourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`ingestion_sources` attribute.
     """
 
@@ -1911,7 +1912,7 @@ class IngestionSourcesOperations:
         """Get ingestion sources in a geo-catalog.
 
         :return: list of IngestionSourceSummary
-        :rtype: list[~spatio.models.IngestionSourceSummary]
+        :rtype: list[~spatiopackage.models.IngestionSourceSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1980,7 +1981,7 @@ class IngestionSourcesOperations:
         :type id: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2055,13 +2056,13 @@ class IngestionSourcesOperations:
         """Create a new ingestion source in a geo-catalog.
 
         :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation
+        :type ingestion_source: ~spatiopackage.models.SasTokenIngestionSourceCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2101,7 +2102,7 @@ class IngestionSourcesOperations:
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2132,7 +2133,7 @@ class IngestionSourcesOperations:
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2158,10 +2159,11 @@ class IngestionSourcesOperations:
 
         :param ingestion_source: Definition of the ingestion source. Is one of the following types:
          SasTokenIngestionSourceCreation, JSON, IO[bytes] Required.
-        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation or JSON or IO[bytes]
+        :type ingestion_source: ~spatiopackage.models.SasTokenIngestionSourceCreation or JSON or
+         IO[bytes]
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2266,13 +2268,13 @@ class IngestionSourcesOperations:
         :param id: Ingestion source id. Required.
         :type id: str
         :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation
+        :type ingestion_source: ~spatiopackage.models.SasTokenIngestionSourceCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2314,7 +2316,7 @@ class IngestionSourcesOperations:
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2347,7 +2349,7 @@ class IngestionSourcesOperations:
         :paramtype content_type: str
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2375,10 +2377,11 @@ class IngestionSourcesOperations:
         :type id: str
         :param ingestion_source: Definition of the ingestion source. Is one of the following types:
          SasTokenIngestionSourceCreation, JSON, IO[bytes] Required.
-        :type ingestion_source: ~spatio.models.SasTokenIngestionSourceCreation or JSON or IO[bytes]
+        :type ingestion_source: ~spatiopackage.models.SasTokenIngestionSourceCreation or JSON or
+         IO[bytes]
         :return: SasTokenIngestionSourceSummary. The SasTokenIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~spatio.models.SasTokenIngestionSourceSummary
+        :rtype: ~spatiopackage.models.SasTokenIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2532,7 +2535,7 @@ class IngestionGeoTemplatesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`ingestion_geo_templates` attribute.
     """
 
@@ -2548,7 +2551,7 @@ class IngestionGeoTemplatesOperations:
         """Get ingestion templates in a geo-catalog.
 
         :return: list of GeoTemplateSummary
-        :rtype: list[~spatio.models.GeoTemplateSummary]
+        :rtype: list[~spatiopackage.models.GeoTemplateSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2618,7 +2621,7 @@ class IngestionGeoTemplatesOperations:
         :param id: Ingestion template id. Required.
         :type id: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2698,12 +2701,12 @@ class IngestionGeoTemplatesOperations:
         """Create a new ingestion template in a geo-catalog.
 
         :param geo_template: Definition of the ingestion template. Required.
-        :type geo_template: ~spatio.models.GeoTemplateCreation
+        :type geo_template: ~spatiopackage.models.GeoTemplateCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2744,7 +2747,7 @@ class IngestionGeoTemplatesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2776,7 +2779,7 @@ class IngestionGeoTemplatesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2804,9 +2807,9 @@ class IngestionGeoTemplatesOperations:
 
         :param geo_template: Definition of the ingestion template. Is one of the following types:
          GeoTemplateCreation, JSON, IO[bytes] Required.
-        :type geo_template: ~spatio.models.GeoTemplateCreation or JSON or IO[bytes]
+        :type geo_template: ~spatiopackage.models.GeoTemplateCreation or JSON or IO[bytes]
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2913,12 +2916,12 @@ class IngestionGeoTemplatesOperations:
         :param id: Ingestion template id. Required.
         :type id: str
         :param geo_template: Definition of the ingestion template. Required.
-        :type geo_template: ~spatio.models.GeoTemplateCreation
+        :type geo_template: ~spatiopackage.models.GeoTemplateCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2961,7 +2964,7 @@ class IngestionGeoTemplatesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2995,7 +2998,7 @@ class IngestionGeoTemplatesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3025,9 +3028,9 @@ class IngestionGeoTemplatesOperations:
         :type id: str
         :param geo_template: Definition of the ingestion template. Is one of the following types:
          GeoTemplateCreation, JSON, IO[bytes] Required.
-        :type geo_template: ~spatio.models.GeoTemplateCreation or JSON or IO[bytes]
+        :type geo_template: ~spatiopackage.models.GeoTemplateCreation or JSON or IO[bytes]
         :return: GeoTemplate. The GeoTemplate is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoTemplate
+        :rtype: ~spatiopackage.models.GeoTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3183,7 +3186,7 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`operations` attribute.
     """
 
@@ -3207,7 +3210,7 @@ class Operations:
         :keyword _skip: Number of items to skip. Default value is None.
         :paramtype _skip: int
         :return: list of OperationSummary
-        :rtype: list[~spatio.models.OperationSummary]
+        :rtype: list[~spatiopackage.models.OperationSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3279,7 +3282,7 @@ class Operations:
         :param operation_id: Operation id. Required.
         :type operation_id: str
         :return: Operation. The Operation is compatible with MutableMapping
-        :rtype: ~spatio.models.Operation
+        :rtype: ~spatiopackage.models.Operation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3543,7 +3546,7 @@ class containerOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`container_operations` attribute.
     """
 
@@ -3573,7 +3576,7 @@ class containerOperationsOperations:
          approved users. Default value is None.
         :paramtype duration: int
         :return: SASToken. The SASToken is compatible with MutableMapping
-        :rtype: ~spatio.models.SASToken
+        :rtype: ~spatiopackage.models.SASToken
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3640,7 +3643,7 @@ class revokeOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`revoke_operations` attribute.
     """
 
@@ -3714,7 +3717,7 @@ class signedOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`signed_operations` attribute.
     """
 
@@ -3791,7 +3794,7 @@ class LandingOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`landing_operations` attribute.
     """
 
@@ -3803,14 +3806,35 @@ class LandingOperationsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def page_api_get(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def page_api_get(self, **kwargs: Any) -> _models.LandingPage:
         """Landing Page.
 
         Endpoint.
 
-        :return: None
-        :rtype: None
+        :return: LandingPage. The LandingPage is compatible with MutableMapping
+        :rtype: ~spatiopackage.models.LandingPage
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "conformsTo": [
+                        "str"
+                    ],
+                    "description": "str",
+                    "id": "str",
+                    "links": [
+                        {}
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "stac_version": "str",
+                    "title": "str",
+                    "type": "str"
+                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3823,7 +3847,7 @@ class LandingOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
 
         _request = build_landing_operations_page_api_get_request(
             api_version=self._config.api_version,
@@ -3835,19 +3859,28 @@ class LandingOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LandingPage, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class ConformanceOperationsOperations:
@@ -3856,7 +3889,7 @@ class ConformanceOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`conformance_operations` attribute.
     """
 
@@ -3868,16 +3901,24 @@ class ConformanceOperationsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def classes_api_conformance_get(  # pylint: disable=inconsistent-return-statements
-        self, **kwargs: Any
-    ) -> None:
+    async def classes_api_conformance_get(self, **kwargs: Any) -> _models.ConformanceClasses:
         """Conformance Classes.
 
         Endpoint.
 
-        :return: None
-        :rtype: None
+        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
+        :rtype: ~spatiopackage.models.ConformanceClasses
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "conformsTo": [
+                        "str"
+                    ]
+                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3890,7 +3931,7 @@ class ConformanceOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
 
         _request = build_conformance_operations_classes_api_conformance_get_request(
             api_version=self._config.api_version,
@@ -3902,19 +3943,28 @@ class ConformanceOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ConformanceClasses, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class SearchOperationsOperations:
@@ -3923,7 +3973,7 @@ class SearchOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`search_operations` attribute.
     """
 
@@ -4048,7 +4098,7 @@ class SearchOperationsOperations:
         Endpoint.
 
         :param body: Required.
-        :type body: ~spatio.models.SearchPostRequest
+        :type body: ~spatiopackage.models.SearchPostRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4151,7 +4201,7 @@ class SearchOperationsOperations:
         Endpoint.
 
         :param body: Is one of the following types: SearchPostRequest, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.SearchPostRequest or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.SearchPostRequest or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4255,14 +4305,14 @@ class SearchOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class GetOperationsOperations:
+class GetOperationsCollectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
-        :attr:`get_operations` attribute.
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :attr:`get_operations_collections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -4273,9 +4323,9 @@ class GetOperationsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def collections_api_collections_get(  # pylint: disable=inconsistent-return-statements
+    async def collections_api_collections_get(
         self, *, sign: Optional[bool] = None, duration: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    ) -> _models.Collections:
         """Get Collections.
 
         Endpoint.
@@ -4284,9 +4334,106 @@ class GetOperationsOperations:
         :paramtype sign: bool
         :keyword duration: Default value is None.
         :paramtype duration: int
-        :return: None
-        :rtype: None
+        :return: Collections. The Collections is compatible with MutableMapping
+        :rtype: ~spatiopackage.models.Collections
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "collections": [
+                        {
+                            "description": "str",
+                            "extent": {
+                                "spatial": {
+                                    "bbox": [
+                                        [
+                                            {}
+                                        ]
+                                    ]
+                                },
+                                "temporal": {
+                                    "interval": [
+                                        [
+                                            "str"
+                                        ]
+                                    ]
+                                }
+                            },
+                            "id": "str",
+                            "license": "str",
+                            "links": [
+                                {}
+                            ],
+                            "assets": {
+                                "str": {
+                                    "href": "str",
+                                    "constellation": "str",
+                                    "created": "2020-02-20 00:00:00",
+                                    "description": "str",
+                                    "end_datetime": "2020-02-20 00:00:00",
+                                    "gsd": 0.0,
+                                    "instruments": [
+                                        "str"
+                                    ],
+                                    "mission": "str",
+                                    "platform": "str",
+                                    "providers": [
+                                        {
+                                            "name": "str",
+                                            "description": "str",
+                                            "roles": [
+                                                "str"
+                                            ],
+                                            "url": "str"
+                                        }
+                                    ],
+                                    "roles": [
+                                        "str"
+                                    ],
+                                    "start_datetime": "2020-02-20 00:00:00",
+                                    "title": "str",
+                                    "type": "str",
+                                    "updated": "2020-02-20 00:00:00"
+                                }
+                            },
+                            "keywords": [
+                                "str"
+                            ],
+                            "providers": [
+                                {
+                                    "name": "str",
+                                    "description": "str",
+                                    "roles": [
+                                        "str"
+                                    ],
+                                    "url": "str"
+                                }
+                            ],
+                            "stac_extensions": [
+                                "str"
+                            ],
+                            "stac_version": "str",
+                            "summaries": {
+                                "str": {}
+                            },
+                            "title": "str",
+                            "type": "str"
+                        }
+                    ],
+                    "links": [
+                        {
+                            "href": "str",
+                            "hreflang": "str",
+                            "length": 0,
+                            "rel": "str",
+                            "title": "str",
+                            "type": "str"
+                        }
+                    ]
+                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -4299,9 +4446,9 @@ class GetOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Collections] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collections_api_collections_get_request(
+        _request = build_get_operations_collections_collections_api_collections_get_request(
             sign=sign,
             duration=duration,
             api_version=self._config.api_version,
@@ -4313,24 +4460,33 @@ class GetOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Collections, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def collection_api_collections_collection_id_get(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def collection_api_collections_collection_id_get(  # pylint: disable=name-too-long
         self, collection_id: str, *, sign: Optional[bool] = None, duration: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    ) -> _models.Collection:
         """Get Collection.
 
         Endpoint.
@@ -4341,9 +4497,92 @@ class GetOperationsOperations:
         :paramtype sign: bool
         :keyword duration: Default value is None.
         :paramtype duration: int
-        :return: None
-        :rtype: None
+        :return: Collection. The Collection is compatible with MutableMapping
+        :rtype: ~spatiopackage.models.Collection
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "description": "str",
+                    "extent": {
+                        "spatial": {
+                            "bbox": [
+                                [
+                                    {}
+                                ]
+                            ]
+                        },
+                        "temporal": {
+                            "interval": [
+                                [
+                                    "str"
+                                ]
+                            ]
+                        }
+                    },
+                    "id": "str",
+                    "license": "str",
+                    "links": [
+                        {}
+                    ],
+                    "assets": {
+                        "str": {
+                            "href": "str",
+                            "constellation": "str",
+                            "created": "2020-02-20 00:00:00",
+                            "description": "str",
+                            "end_datetime": "2020-02-20 00:00:00",
+                            "gsd": 0.0,
+                            "instruments": [
+                                "str"
+                            ],
+                            "mission": "str",
+                            "platform": "str",
+                            "providers": [
+                                {
+                                    "name": "str",
+                                    "description": "str",
+                                    "roles": [
+                                        "str"
+                                    ],
+                                    "url": "str"
+                                }
+                            ],
+                            "roles": [
+                                "str"
+                            ],
+                            "start_datetime": "2020-02-20 00:00:00",
+                            "title": "str",
+                            "type": "str",
+                            "updated": "2020-02-20 00:00:00"
+                        }
+                    },
+                    "keywords": [
+                        "str"
+                    ],
+                    "providers": [
+                        {
+                            "name": "str",
+                            "description": "str",
+                            "roles": [
+                                "str"
+                            ],
+                            "url": "str"
+                        }
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "stac_version": "str",
+                    "summaries": {
+                        "str": {}
+                    },
+                    "title": "str",
+                    "type": "str"
+                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -4356,9 +4595,9 @@ class GetOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Collection] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_api_collections_collection_id_get_request(
+        _request = build_get_operations_collections_collection_api_collections_collection_id_get_request(
             collection_id=collection_id,
             sign=sign,
             duration=duration,
@@ -4371,24 +4610,33 @@ class GetOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Collection, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def collection_thumbnail_api_collections_collection_id_thumbnail_get(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def collection_thumbnail_api_collections_collection_id_thumbnail_get(  # pylint: disable=name-too-long
         self, collection_id: str, **kwargs: Any
-    ) -> None:
+    ) -> _models.ImageResponse:
         """Get Collection Thumbnail.
 
         Get thumbnail for given collection.
@@ -4402,9 +4650,17 @@ class GetOperationsOperations:
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :return: None
-        :rtype: None
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~spatiopackage.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "url": "str"
+                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -4417,32 +4673,43 @@ class GetOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImageResponse] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_thumbnail_api_collections_collection_id_thumbnail_get_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
+        _request = (
+            build_get_operations_collections_collection_thumbnail_api_collections_collection_id_thumbnail_get_request(
+                collection_id=collection_id,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ImageResponse, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def azmaps_token_api_config_map_token_get(self, **kwargs: Any) -> _models.AzMapsToken:
@@ -4453,7 +4720,7 @@ class GetOperationsOperations:
         with the Azure Maps API service.
 
         :return: AzMapsToken. The AzMapsToken is compatible with MutableMapping
-        :rtype: ~spatio.models.AzMapsToken
+        :rtype: ~spatiopackage.models.AzMapsToken
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4478,7 +4745,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.AzMapsToken] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_azmaps_token_api_config_map_token_get_request(
+        _request = build_get_operations_collections_azmaps_token_api_config_map_token_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4520,7 +4787,7 @@ class GetOperationsOperations:
         authenticate with the Azure Maps API service.
 
         :return: AzMapsClientId. The AzMapsClientId is compatible with MutableMapping
-        :rtype: ~spatio.models.AzMapsClientId
+        :rtype: ~spatiopackage.models.AzMapsClientId
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4544,7 +4811,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.AzMapsClientId] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_azmaps_client_id_api_config_map_id_get_request(
+        _request = build_get_operations_collections_azmaps_client_id_api_config_map_id_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4585,7 +4852,7 @@ class GetOperationsOperations:
         GeoCatalog instance.
 
         :return: AuthConfig. The AuthConfig is compatible with MutableMapping
-        :rtype: ~spatio.models.AuthConfig
+        :rtype: ~spatiopackage.models.AuthConfig
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4612,7 +4879,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.AuthConfig] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_auth_config_api_config_auth_get_request(
+        _request = build_get_operations_collections_auth_config_api_config_auth_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4656,7 +4923,7 @@ class GetOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :return: UserCollectionSettings. The UserCollectionSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.UserCollectionSettings
+        :rtype: ~spatiopackage.models.UserCollectionSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4747,7 +5014,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.UserCollectionSettings] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_config_api_collections_collection_id_config_get_request(
+        _request = build_get_operations_collections_config_api_collections_collection_id_config_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4808,7 +5075,7 @@ class GetOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_mosaics_api_collections_collection_id_config_mosaics_get_request(
+        _request = build_get_operations_collections_collection_mosaics_api_collections_collection_id_config_mosaics_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4846,7 +5113,7 @@ class GetOperationsOperations:
         :param mosaic_id: Required.
         :type mosaic_id: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4877,14 +5144,12 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
 
-        _request = (
-            build_get_operations_collection_mosaic_api_collections_collection_id_config_mosaics_mosaic_id_get_request(
-                collection_id=collection_id,
-                mosaic_id=mosaic_id,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
+        _request = build_get_operations_collections_collection_mosaic_api_collections_collection_id_config_mosaics_mosaic_id_get_request(
+            collection_id=collection_id,
+            mosaic_id=mosaic_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -4941,7 +5206,7 @@ class GetOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_render_options_api_collections_collection_id_config_render_options_get_request(
+        _request = build_get_operations_collections_collection_render_options_api_collections_collection_id_config_render_options_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4979,7 +5244,7 @@ class GetOperationsOperations:
         :param render_option_id: Required.
         :type render_option_id: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5033,7 +5298,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.RenderOption] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_render_option_api_collections_collection_id_config_render_options_render_option_id_get_request(
+        _request = build_get_operations_collections_collection_render_option_api_collections_collection_id_config_render_options_render_option_id_get_request(
             collection_id=collection_id,
             render_option_id=render_option_id,
             api_version=self._config.api_version,
@@ -5079,7 +5344,7 @@ class GetOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :return: TileSettings. The TileSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.TileSettings
+        :rtype: ~spatiopackage.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5110,7 +5375,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.TileSettings] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_collection_tile_settings_api_collections_collection_id_config_tile_settings_get_request(
+        _request = build_get_operations_collections_collection_tile_settings_api_collections_collection_id_config_tile_settings_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5161,7 +5426,7 @@ class GetOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~spatio.models.PartitionType
+        :rtype: ~spatiopackage.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5185,7 +5450,7 @@ class GetOperationsOperations:
 
         cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
 
-        _request = build_get_operations_partitiontype_api_collections_collection_id_config_partition_type_get_request(
+        _request = build_get_operations_collections_partitiontype_api_collections_collection_id_config_partition_type_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5220,14 +5485,14 @@ class GetOperationsOperations:
         return deserialized  # type: ignore
 
 
-class createOperationsOperations:
+class CreateOperationsCollectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
-        :attr:`create_operations` attribute.
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :attr:`create_operations_collections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -5252,12 +5517,12 @@ class createOperationsOperations:
         The collection that was created.
 
         :param body: Required.
-        :type body: ~spatio.models.GeoCatalogCollection
+        :type body: ~spatiopackage.models.GeoCatalogCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5356,7 +5621,7 @@ class createOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5419,7 +5684,7 @@ class createOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5477,9 +5742,9 @@ class createOperationsOperations:
         The collection that was created.
 
         :param body: Is one of the following types: GeoCatalogCollection, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.GeoCatalogCollection or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.GeoCatalogCollection or JSON or IO[bytes]
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5578,7 +5843,7 @@ class createOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_create_operations_collection_api_collections_post_request(
+        _request = build_create_operations_collections_collection_api_collections_post_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5635,7 +5900,7 @@ class createOperationsOperations:
         :param body: Required.
         :type body: JSON
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5710,7 +5975,7 @@ class createOperationsOperations:
         :keyword data: Required.
         :paramtype data: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5781,7 +6046,7 @@ class createOperationsOperations:
         :keyword data: Required.
         :paramtype data: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5854,7 +6119,7 @@ class createOperationsOperations:
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_create_operations_collection_asset_request(
+        _request = build_create_operations_collections_collection_asset_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             files=_files,
@@ -5874,7 +6139,7 @@ class createOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200,201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -5914,7 +6179,7 @@ class createOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.PartitionType
+        :type body: ~spatiopackage.models.PartitionType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6021,7 +6286,7 @@ class createOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is one of the following types: PartitionType, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.PartitionType or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.PartitionType or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6055,15 +6320,13 @@ class createOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = (
-            build_create_operations_partitiontype_api_collections_collection_id_config_partition_type_put_request(
-                collection_id=collection_id,
-                content_type=content_type,
-                api_version=self._config.api_version,
-                content=_content,
-                headers=_headers,
-                params=_params,
-            )
+        _request = build_create_operations_collections_partitiontype_api_collections_collection_id_config_partition_type_put_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -6091,7 +6354,7 @@ class updateOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`update_operations` attribute.
     """
 
@@ -6124,12 +6387,12 @@ class updateOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.GeoCatalogCollection
+        :type body: ~spatiopackage.models.GeoCatalogCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6230,7 +6493,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6295,7 +6558,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6355,9 +6618,9 @@ class updateOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is one of the following types: GeoCatalogCollection, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.GeoCatalogCollection or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.GeoCatalogCollection or JSON or IO[bytes]
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6518,7 +6781,7 @@ class updateOperationsOperations:
         :param body: Required.
         :type body: JSON
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6595,7 +6858,7 @@ class updateOperationsOperations:
         :keyword file: Default value is None.
         :paramtype file: bytes
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6675,7 +6938,7 @@ class updateOperationsOperations:
         :keyword file: Default value is None.
         :paramtype file: bytes
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6803,12 +7066,12 @@ class updateOperationsOperations:
         :param queryable_name: Required.
         :type queryable_name: str
         :param body: Required.
-        :type body: ~spatio.models.QueryableDefinition
+        :type body: ~spatiopackage.models.QueryableDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.QueryableDefinition
+        :rtype: ~spatiopackage.models.QueryableDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6860,7 +7123,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.QueryableDefinition
+        :rtype: ~spatiopackage.models.QueryableDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6902,7 +7165,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.QueryableDefinition
+        :rtype: ~spatiopackage.models.QueryableDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6937,9 +7200,9 @@ class updateOperationsOperations:
         :param queryable_name: Required.
         :type queryable_name: str
         :param body: Is one of the following types: QueryableDefinition, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.QueryableDefinition or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.QueryableDefinition or JSON or IO[bytes]
         :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~spatio.models.QueryableDefinition
+        :rtype: ~spatiopackage.models.QueryableDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7042,12 +7305,12 @@ class updateOperationsOperations:
         :param mosaic_id: Required.
         :type mosaic_id: str
         :param body: Required.
-        :type body: ~spatio.models.Mosaic
+        :type body: ~spatiopackage.models.Mosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7096,7 +7359,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7139,7 +7402,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7171,9 +7434,9 @@ class updateOperationsOperations:
         :param mosaic_id: Required.
         :type mosaic_id: str
         :param body: Is one of the following types: Mosaic, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Mosaic or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Mosaic or JSON or IO[bytes]
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7280,12 +7543,12 @@ class updateOperationsOperations:
         :param render_option_id: Required.
         :type render_option_id: str
         :param body: Required.
-        :type body: ~spatio.models.RenderOption
+        :type body: ~spatiopackage.models.RenderOption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7386,7 +7649,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7452,7 +7715,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7511,9 +7774,9 @@ class updateOperationsOperations:
         :param render_option_id: Required.
         :type render_option_id: str
         :param body: Is one of the following types: RenderOption, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.RenderOption or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.RenderOption or JSON or IO[bytes]
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7658,12 +7921,12 @@ class updateOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.TileSettings
+        :type body: ~spatiopackage.models.TileSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: TileSettings. The TileSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.TileSettings
+        :rtype: ~spatiopackage.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7710,7 +7973,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: TileSettings. The TileSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.TileSettings
+        :rtype: ~spatiopackage.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7745,7 +8008,7 @@ class updateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: TileSettings. The TileSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.TileSettings
+        :rtype: ~spatiopackage.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7775,9 +8038,9 @@ class updateOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is one of the following types: TileSettings, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.TileSettings or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.TileSettings or JSON or IO[bytes]
         :return: TileSettings. The TileSettings is compatible with MutableMapping
-        :rtype: ~spatio.models.TileSettings
+        :rtype: ~spatiopackage.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7871,7 +8134,7 @@ class deleteOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`delete_operations` attribute.
     """
 
@@ -7958,7 +8221,7 @@ class deleteOperationsOperations:
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
-        :rtype: ~spatio.models.GeoCatalogCollection
+        :rtype: ~spatiopackage.models.GeoCatalogCollection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8224,7 +8487,7 @@ class QueryablesOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`queryables_operations` attribute.
     """
 
@@ -8289,7 +8552,7 @@ class CollectionOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`collection_operations` attribute.
     """
 
@@ -8359,7 +8622,7 @@ class setOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`set_operations` attribute.
     """
 
@@ -8386,7 +8649,7 @@ class setOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: list[~spatio.models.QueryableDefinition]
+        :type body: list[~spatiopackage.models.QueryableDefinition]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8441,7 +8704,7 @@ class setOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is either a [QueryableDefinition] type or a IO[bytes] type. Required.
-        :type body: list[~spatio.models.QueryableDefinition] or IO[bytes]
+        :type body: list[~spatiopackage.models.QueryableDefinition] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8501,7 +8764,7 @@ class addOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`add_operations` attribute.
     """
 
@@ -8523,12 +8786,12 @@ class addOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.Mosaic
+        :type body: ~spatiopackage.models.Mosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8575,7 +8838,7 @@ class addOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8610,7 +8873,7 @@ class addOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8640,9 +8903,9 @@ class addOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is one of the following types: Mosaic, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Mosaic or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Mosaic or JSON or IO[bytes]
         :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~spatio.models.Mosaic
+        :rtype: ~spatiopackage.models.Mosaic
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8740,12 +9003,12 @@ class addOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.RenderOption
+        :type body: ~spatiopackage.models.RenderOption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8838,7 +9101,7 @@ class addOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8896,7 +9159,7 @@ class addOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -8949,9 +9212,9 @@ class addOperationsOperations:
         :param collection_id: Required.
         :type collection_id: str
         :param body: Is one of the following types: RenderOption, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.RenderOption or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.RenderOption or JSON or IO[bytes]
         :return: RenderOption. The RenderOption is compatible with MutableMapping
-        :rtype: ~spatio.models.RenderOption
+        :rtype: ~spatiopackage.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -9091,7 +9354,7 @@ class boundsOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`bounds_operations` attribute.
     """
 
@@ -9115,7 +9378,7 @@ class boundsOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :return: Bounds. The Bounds is compatible with MutableMapping
-        :rtype: ~spatio.models.Bounds
+        :rtype: ~spatiopackage.models.Bounds
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -9183,7 +9446,7 @@ class infoOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`info_operations` attribute.
     """
 
@@ -9268,7 +9531,7 @@ class infoOperationsOperations:
         :paramtype assets: list[str]
         :return: FeaturePolygonDictStrRioTilerModelsInfo. The FeaturePolygonDictStrRioTilerModelsInfo
          is compatible with MutableMapping
-        :rtype: ~spatio.models.FeaturePolygonDictStrRioTilerModelsInfo
+        :rtype: ~spatiopackage.models.FeaturePolygonDictStrRioTilerModelsInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -9381,7 +9644,7 @@ class infoOperationsOperations:
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :return: TitilerPgstacModelInfo. The TitilerPgstacModelInfo is compatible with MutableMapping
-        :rtype: ~spatio.models.TitilerPgstacModelInfo
+        :rtype: ~spatiopackage.models.TitilerPgstacModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -9478,7 +9741,7 @@ class availableOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`available_operations` attribute.
     """
 
@@ -9551,7 +9814,7 @@ class assetOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`asset_operations` attribute.
     """
 
@@ -9604,7 +9867,7 @@ class assetOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -9705,7 +9968,7 @@ class statisticsOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`statistics_operations` attribute.
     """
 
@@ -9761,7 +10024,7 @@ class statisticsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -9861,7 +10124,7 @@ class geojsonOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`geojson_operations` attribute.
     """
 
@@ -9907,7 +10170,7 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Required.
-        :type body: ~spatio.models.Geojson
+        :type body: ~spatiopackage.models.Geojson
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
          Default value is None.
         :paramtype coord_crs: str
@@ -9925,7 +10188,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -10027,7 +10290,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -10123,7 +10386,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -10200,7 +10463,7 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Geojson or JSON or IO[bytes]
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
          Default value is None.
         :paramtype coord_crs: str
@@ -10218,7 +10481,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -10369,7 +10632,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -10379,7 +10642,7 @@ class geojsonOperationsOperations:
         :param width: Required.
         :type width: int
         :param body: Required.
-        :type body: ~spatio.models.Geojson
+        :type body: ~spatiopackage.models.Geojson
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -10400,12 +10663,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -10442,7 +10705,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -10496,7 +10759,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -10527,12 +10790,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -10569,7 +10832,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -10617,7 +10880,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -10648,12 +10911,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -10690,7 +10953,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -10737,7 +11000,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -10747,7 +11010,7 @@ class geojsonOperationsOperations:
         :param width: Required.
         :type width: int
         :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Geojson or JSON or IO[bytes]
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -10768,12 +11031,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -10810,7 +11073,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -10928,13 +11191,13 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Required.
-        :type body: ~spatio.models.Geojson
+        :type body: ~spatiopackage.models.Geojson
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -10955,7 +11218,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -10964,7 +11227,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11001,7 +11264,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11055,7 +11318,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -11082,7 +11345,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11091,7 +11354,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11128,7 +11391,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11176,7 +11439,7 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -11203,7 +11466,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11212,7 +11475,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11249,7 +11512,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11296,13 +11559,13 @@ class geojsonOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Geojson or JSON or IO[bytes]
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -11323,7 +11586,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11332,7 +11595,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11369,7 +11632,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11490,10 +11753,10 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Required.
-        :type body: ~spatio.models.Geojson
+        :type body: ~spatiopackage.models.Geojson
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -11514,7 +11777,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11523,7 +11786,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11560,7 +11823,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11620,7 +11883,7 @@ class geojsonOperationsOperations:
         :type body: JSON
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -11641,7 +11904,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11650,7 +11913,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11687,7 +11950,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11741,7 +12004,7 @@ class geojsonOperationsOperations:
         :type body: IO[bytes]
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -11762,7 +12025,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11771,7 +12034,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11808,7 +12071,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -11858,10 +12121,10 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.Geojson or JSON or IO[bytes]
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -11882,7 +12145,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -11891,7 +12154,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -11928,7 +12191,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -12018,7 +12281,7 @@ class tileOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`tile_operations` attribute.
     """
 
@@ -12075,12 +12338,12 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -12107,10 +12370,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -12147,7 +12410,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -12262,7 +12525,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param collection_id: STAC Collection Identifier. Required.
@@ -12271,7 +12534,7 @@ class tileOperationsOperations:
         :type item_id: str
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12294,10 +12557,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -12334,7 +12597,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -12449,10 +12712,10 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -12481,10 +12744,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -12521,7 +12784,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -12636,7 +12899,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -12645,7 +12908,7 @@ class tileOperationsOperations:
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12668,10 +12931,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -12708,7 +12971,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -12823,7 +13086,7 @@ class tileOperationsOperations:
         :type scale: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -12832,7 +13095,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12855,10 +13118,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -12895,7 +13158,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -13018,10 +13281,10 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -13044,10 +13307,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -13084,7 +13347,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -13197,7 +13460,7 @@ class tileOperationsOperations:
         :type y: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -13206,7 +13469,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
@@ -13231,10 +13494,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -13271,7 +13534,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -13390,12 +13653,12 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -13418,10 +13681,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -13458,7 +13721,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -13570,12 +13833,12 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -13611,13 +13874,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -13654,7 +13917,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -13788,7 +14051,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param searchid: Search Id (pgSTAC Search Hash). Required.
@@ -13804,7 +14067,7 @@ class tileOperationsOperations:
         :type y: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -13829,13 +14092,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -13872,7 +14135,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14006,10 +14269,10 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -14047,13 +14310,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14090,7 +14353,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14224,7 +14487,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -14240,7 +14503,7 @@ class tileOperationsOperations:
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -14265,13 +14528,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14308,7 +14571,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14442,7 +14705,7 @@ class tileOperationsOperations:
         :type scale: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -14458,7 +14721,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -14483,13 +14746,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14526,7 +14789,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14673,10 +14936,10 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -14701,13 +14964,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14744,7 +15007,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14876,7 +15139,7 @@ class tileOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -14892,7 +15155,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
@@ -14919,13 +15182,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14962,7 +15225,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15107,12 +15370,12 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -15137,13 +15400,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15180,7 +15443,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15278,7 +15541,7 @@ class tilejsonOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`tilejson_operations` attribute.
     """
 
@@ -15325,7 +15588,7 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -15334,7 +15597,7 @@ class tilejsonOperationsOperations:
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -15363,10 +15626,10 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15403,13 +15666,13 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: TileJson. The TileJson is compatible with MutableMapping
-        :rtype: ~spatio.models.TileJson
+        :rtype: ~spatiopackage.models.TileJson
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -15552,12 +15815,12 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -15586,10 +15849,10 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15626,13 +15889,13 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: TileJson. The TileJson is compatible with MutableMapping
-        :rtype: ~spatio.models.TileJson
+        :rtype: ~spatiopackage.models.TileJson
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -15777,14 +16040,14 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -15815,13 +16078,13 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15858,7 +16121,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15880,7 +16143,7 @@ class tilejsonOperationsOperations:
          to True in PgSTAC). Default value is None.
         :paramtype skipcovered: bool
         :return: TileJson. The TileJson is compatible with MutableMapping
-        :rtype: ~spatio.models.TileJson
+        :rtype: ~spatiopackage.models.TileJson
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -16033,12 +16296,12 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -16069,13 +16332,13 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
+        :paramtype pixel_selection: str or ~spatiopackage.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16112,7 +16375,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16134,7 +16397,7 @@ class tilejsonOperationsOperations:
          to True in PgSTAC). Default value is None.
         :paramtype skipcovered: bool
         :return: TileJson. The TileJson is compatible with MutableMapping
-        :rtype: ~spatio.models.TileJson
+        :rtype: ~spatiopackage.models.TileJson
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -16250,7 +16513,7 @@ class wmtsOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`wmts_operations` attribute.
     """
 
@@ -16297,14 +16560,14 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -16333,10 +16596,10 @@ class wmtsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16373,7 +16636,7 @@ class wmtsOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16483,10 +16746,10 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -16515,10 +16778,10 @@ class wmtsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16555,7 +16818,7 @@ class wmtsOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16647,12 +16910,12 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -16730,10 +16993,10 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~spatio.models.ImageType
+        :paramtype tile_format: str or ~spatiopackage.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -16796,7 +17059,7 @@ class pointOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`point_operations` attribute.
     """
 
@@ -16854,10 +17117,10 @@ class pointOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :return: TitilerCoreModelsResponsesPoint. The TitilerCoreModelsResponsesPoint is compatible
          with MutableMapping
-        :rtype: ~spatio.models.TitilerCoreModelsResponsesPoint
+        :rtype: ~spatiopackage.models.TitilerCoreModelsResponsesPoint
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -16941,7 +17204,7 @@ class previewOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`preview_operations` attribute.
     """
 
@@ -16985,7 +17248,7 @@ class previewOperationsOperations:
 
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -17009,7 +17272,7 @@ class previewOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -17018,7 +17281,7 @@ class previewOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17055,7 +17318,7 @@ class previewOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17159,7 +17422,7 @@ class previewOperationsOperations:
         :type item_id: str
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
-        :paramtype format: str or ~spatio.models.ImageType
+        :paramtype format: str or ~spatiopackage.models.ImageType
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -17179,7 +17442,7 @@ class previewOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -17188,7 +17451,7 @@ class previewOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17225,7 +17488,7 @@ class previewOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17299,7 +17562,7 @@ class partOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`part_operations` attribute.
     """
 
@@ -17356,7 +17619,7 @@ class partOperationsOperations:
         :type maxy: float
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -17387,12 +17650,12 @@ class partOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17429,7 +17692,7 @@ class partOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17547,7 +17810,7 @@ class partOperationsOperations:
         :type maxy: float
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
-        :type format: str or ~spatio.models.ImageType
+        :type format: str or ~spatiopackage.models.ImageType
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -17574,7 +17837,7 @@ class partOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling
+        :paramtype resampling: str or ~spatiopackage.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -17583,7 +17846,7 @@ class partOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm
+        :paramtype algorithm: str or ~spatiopackage.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17620,7 +17883,7 @@ class partOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
+        :paramtype colormap_name: str or ~spatiopackage.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17699,7 +17962,7 @@ class registerOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`register_operations` attribute.
     """
 
@@ -17719,12 +17982,12 @@ class registerOperationsOperations:
         Register a Search query.
 
         :param body: Required.
-        :type body: ~spatio.models.RegisterMosaic
+        :type body: ~spatiopackage.models.RegisterMosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.RegisterResponse
+        :rtype: ~spatiopackage.models.RegisterResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -17796,7 +18059,7 @@ class registerOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.RegisterResponse
+        :rtype: ~spatiopackage.models.RegisterResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -17832,7 +18095,7 @@ class registerOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.RegisterResponse
+        :rtype: ~spatiopackage.models.RegisterResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -17863,9 +18126,9 @@ class registerOperationsOperations:
         Register a Search query.
 
         :param body: Is one of the following types: RegisterMosaic, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.RegisterMosaic or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.RegisterMosaic or JSON or IO[bytes]
         :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.RegisterResponse
+        :rtype: ~spatiopackage.models.RegisterResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -17985,7 +18248,7 @@ class assetsOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`assets_operations` attribute.
     """
 
@@ -18020,7 +18283,7 @@ class assetsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :type tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -18136,7 +18399,7 @@ class assetsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~spatiopackage.models.Tilematrixsetid
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -18305,7 +18568,7 @@ class getOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`get_operations` attribute.
     """
 
@@ -18591,7 +18854,7 @@ class CreateOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`create_operations` attribute.
     """
 
@@ -18613,12 +18876,12 @@ class CreateOperationsOperations:
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param body: Required.
-        :type body: ~spatio.models.ImageRequest
+        :type body: ~spatiopackage.models.ImageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.ImageResponse
+        :rtype: ~spatiopackage.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -18662,7 +18925,7 @@ class CreateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.ImageResponse
+        :rtype: ~spatiopackage.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -18690,7 +18953,7 @@ class CreateOperationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.ImageResponse
+        :rtype: ~spatiopackage.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -18713,9 +18976,9 @@ class CreateOperationsOperations:
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param body: Is one of the following types: ImageRequest, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.ImageRequest or JSON or IO[bytes]
+        :type body: ~spatiopackage.models.ImageRequest or JSON or IO[bytes]
         :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~spatio.models.ImageResponse
+        :rtype: ~spatiopackage.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -18806,7 +19069,7 @@ class matrixOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`matrix_operations` attribute.
     """
 
@@ -18877,7 +19140,7 @@ class matrixOperationsOperations:
         :param tile_matrix_set_id: Required.
         :type tile_matrix_set_id: str
         :return: TileMatrixSet. The TileMatrixSet is compatible with MutableMapping
-        :rtype: ~spatio.models.TileMatrixSet
+        :rtype: ~spatiopackage.models.TileMatrixSet
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -18985,7 +19248,7 @@ class IngestionsRunsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~spatio.aio.AzureOrbitalPlanetaryComputerClient`'s
+        :class:`~spatiopackage.aio.AzureOrbitalPlanetaryComputerClient`'s
         :attr:`runs` attribute.
     """
 
@@ -19005,7 +19268,7 @@ class IngestionsRunsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: list of IngestionRunSummary
-        :rtype: list[~spatio.models.IngestionRunSummary]
+        :rtype: list[~spatiopackage.models.IngestionRunSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -19087,7 +19350,7 @@ class IngestionsRunsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionRun
+        :rtype: ~spatiopackage.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -19182,7 +19445,7 @@ class IngestionsRunsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionRun
+        :rtype: ~spatiopackage.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -19287,7 +19550,7 @@ class IngestionsRunsOperations:
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~spatio.models.IngestionRun
+        :rtype: ~spatiopackage.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:

@@ -19,8 +19,9 @@ from ._configuration import AzureOrbitalPlanetaryComputerClientConfiguration
 from .operations import (
     CollectionOperationsOperations,
     ConformanceOperationsOperations,
+    CreateOperationsCollectionsOperations,
     CreateOperationsOperations,
-    GetOperationsOperations,
+    GetOperationsCollectionsOperations,
     IngestionGeoTemplatesOperations,
     IngestionSourcesOperations,
     IngestionsOperations,
@@ -35,7 +36,6 @@ from .operations import (
     availableOperationsOperations,
     boundsOperationsOperations,
     containerOperationsOperations,
-    createOperationsOperations,
     deleteOperationsOperations,
     geojsonOperationsOperations,
     getOperationsOperations,
@@ -64,77 +64,79 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
     """AzureOrbitalPlanetaryComputerClient.
 
     :ivar ingestions: IngestionsOperations operations
-    :vartype ingestions: spatio.aio.operations.IngestionsOperations
+    :vartype ingestions: spatiopackage.aio.operations.IngestionsOperations
     :ivar items: ItemsOperations operations
-    :vartype items: spatio.aio.operations.ItemsOperations
+    :vartype items: spatiopackage.aio.operations.ItemsOperations
     :ivar ingestion_sources: IngestionSourcesOperations operations
-    :vartype ingestion_sources: spatio.aio.operations.IngestionSourcesOperations
+    :vartype ingestion_sources: spatiopackage.aio.operations.IngestionSourcesOperations
     :ivar ingestion_geo_templates: IngestionGeoTemplatesOperations operations
-    :vartype ingestion_geo_templates: spatio.aio.operations.IngestionGeoTemplatesOperations
+    :vartype ingestion_geo_templates: spatiopackage.aio.operations.IngestionGeoTemplatesOperations
     :ivar operations: Operations operations
-    :vartype operations: spatio.aio.operations.Operations
+    :vartype operations: spatiopackage.aio.operations.Operations
     :ivar container_operations: containerOperationsOperations operations
-    :vartype container_operations: spatio.aio.operations.containerOperationsOperations
+    :vartype container_operations: spatiopackage.aio.operations.containerOperationsOperations
     :ivar revoke_operations: revokeOperationsOperations operations
-    :vartype revoke_operations: spatio.aio.operations.revokeOperationsOperations
+    :vartype revoke_operations: spatiopackage.aio.operations.revokeOperationsOperations
     :ivar signed_operations: signedOperationsOperations operations
-    :vartype signed_operations: spatio.aio.operations.signedOperationsOperations
+    :vartype signed_operations: spatiopackage.aio.operations.signedOperationsOperations
     :ivar landing_operations: LandingOperationsOperations operations
-    :vartype landing_operations: spatio.aio.operations.LandingOperationsOperations
+    :vartype landing_operations: spatiopackage.aio.operations.LandingOperationsOperations
     :ivar conformance_operations: ConformanceOperationsOperations operations
-    :vartype conformance_operations: spatio.aio.operations.ConformanceOperationsOperations
+    :vartype conformance_operations: spatiopackage.aio.operations.ConformanceOperationsOperations
     :ivar search_operations: SearchOperationsOperations operations
-    :vartype search_operations: spatio.aio.operations.SearchOperationsOperations
-    :ivar get_operations: GetOperationsOperations operations
-    :vartype get_operations: spatio.aio.operations.GetOperationsOperations
-    :ivar create_operations: createOperationsOperations operations
-    :vartype create_operations: spatio.aio.operations.createOperationsOperations
+    :vartype search_operations: spatiopackage.aio.operations.SearchOperationsOperations
+    :ivar get_operations_collections: GetOperationsCollectionsOperations operations
+    :vartype get_operations_collections:
+     spatiopackage.aio.operations.GetOperationsCollectionsOperations
+    :ivar create_operations_collections: CreateOperationsCollectionsOperations operations
+    :vartype create_operations_collections:
+     spatiopackage.aio.operations.CreateOperationsCollectionsOperations
     :ivar update_operations: updateOperationsOperations operations
-    :vartype update_operations: spatio.aio.operations.updateOperationsOperations
+    :vartype update_operations: spatiopackage.aio.operations.updateOperationsOperations
     :ivar delete_operations: deleteOperationsOperations operations
-    :vartype delete_operations: spatio.aio.operations.deleteOperationsOperations
+    :vartype delete_operations: spatiopackage.aio.operations.deleteOperationsOperations
     :ivar queryables_operations: QueryablesOperationsOperations operations
-    :vartype queryables_operations: spatio.aio.operations.QueryablesOperationsOperations
+    :vartype queryables_operations: spatiopackage.aio.operations.QueryablesOperationsOperations
     :ivar collection_operations: CollectionOperationsOperations operations
-    :vartype collection_operations: spatio.aio.operations.CollectionOperationsOperations
+    :vartype collection_operations: spatiopackage.aio.operations.CollectionOperationsOperations
     :ivar set_operations: setOperationsOperations operations
-    :vartype set_operations: spatio.aio.operations.setOperationsOperations
+    :vartype set_operations: spatiopackage.aio.operations.setOperationsOperations
     :ivar add_operations: addOperationsOperations operations
-    :vartype add_operations: spatio.aio.operations.addOperationsOperations
+    :vartype add_operations: spatiopackage.aio.operations.addOperationsOperations
     :ivar bounds_operations: boundsOperationsOperations operations
-    :vartype bounds_operations: spatio.aio.operations.boundsOperationsOperations
+    :vartype bounds_operations: spatiopackage.aio.operations.boundsOperationsOperations
     :ivar info_operations: infoOperationsOperations operations
-    :vartype info_operations: spatio.aio.operations.infoOperationsOperations
+    :vartype info_operations: spatiopackage.aio.operations.infoOperationsOperations
     :ivar available_operations: availableOperationsOperations operations
-    :vartype available_operations: spatio.aio.operations.availableOperationsOperations
+    :vartype available_operations: spatiopackage.aio.operations.availableOperationsOperations
     :ivar asset_operations: assetOperationsOperations operations
-    :vartype asset_operations: spatio.aio.operations.assetOperationsOperations
+    :vartype asset_operations: spatiopackage.aio.operations.assetOperationsOperations
     :ivar statistics_operations: statisticsOperationsOperations operations
-    :vartype statistics_operations: spatio.aio.operations.statisticsOperationsOperations
+    :vartype statistics_operations: spatiopackage.aio.operations.statisticsOperationsOperations
     :ivar geojson_operations: geojsonOperationsOperations operations
-    :vartype geojson_operations: spatio.aio.operations.geojsonOperationsOperations
+    :vartype geojson_operations: spatiopackage.aio.operations.geojsonOperationsOperations
     :ivar tile_operations: tileOperationsOperations operations
-    :vartype tile_operations: spatio.aio.operations.tileOperationsOperations
+    :vartype tile_operations: spatiopackage.aio.operations.tileOperationsOperations
     :ivar tilejson_operations: tilejsonOperationsOperations operations
-    :vartype tilejson_operations: spatio.aio.operations.tilejsonOperationsOperations
+    :vartype tilejson_operations: spatiopackage.aio.operations.tilejsonOperationsOperations
     :ivar wmts_operations: wmtsOperationsOperations operations
-    :vartype wmts_operations: spatio.aio.operations.wmtsOperationsOperations
+    :vartype wmts_operations: spatiopackage.aio.operations.wmtsOperationsOperations
     :ivar point_operations: pointOperationsOperations operations
-    :vartype point_operations: spatio.aio.operations.pointOperationsOperations
+    :vartype point_operations: spatiopackage.aio.operations.pointOperationsOperations
     :ivar preview_operations: previewOperationsOperations operations
-    :vartype preview_operations: spatio.aio.operations.previewOperationsOperations
+    :vartype preview_operations: spatiopackage.aio.operations.previewOperationsOperations
     :ivar part_operations: partOperationsOperations operations
-    :vartype part_operations: spatio.aio.operations.partOperationsOperations
+    :vartype part_operations: spatiopackage.aio.operations.partOperationsOperations
     :ivar register_operations: registerOperationsOperations operations
-    :vartype register_operations: spatio.aio.operations.registerOperationsOperations
+    :vartype register_operations: spatiopackage.aio.operations.registerOperationsOperations
     :ivar assets_operations: assetsOperationsOperations operations
-    :vartype assets_operations: spatio.aio.operations.assetsOperationsOperations
+    :vartype assets_operations: spatiopackage.aio.operations.assetsOperationsOperations
     :ivar get_operations: getOperationsOperations operations
-    :vartype get_operations: spatio.aio.operations.getOperationsOperations
+    :vartype get_operations: spatiopackage.aio.operations.getOperationsOperations
     :ivar create_operations: CreateOperationsOperations operations
-    :vartype create_operations: spatio.aio.operations.CreateOperationsOperations
+    :vartype create_operations: spatiopackage.aio.operations.CreateOperationsOperations
     :ivar matrix_operations: matrixOperationsOperations operations
-    :vartype matrix_operations: spatio.aio.operations.matrixOperationsOperations
+    :vartype matrix_operations: spatiopackage.aio.operations.matrixOperationsOperations
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -199,8 +201,10 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
         self.search_operations = SearchOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.get_operations = GetOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.create_operations = createOperationsOperations(
+        self.get_operations_collections = GetOperationsCollectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.create_operations_collections = CreateOperationsCollectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.update_operations = updateOperationsOperations(

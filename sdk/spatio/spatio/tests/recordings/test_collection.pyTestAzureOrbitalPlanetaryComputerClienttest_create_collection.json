@@ -1,4 +1,561 @@
 {
-  "Entries": [],
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net/api/collections/integration-test-collection-772?api-version=2024-01-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-spatiopackage/1.0 Python/3.12.5 (Windows-11-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Length": "9650",
+        "Content-Type": "application/json",
+        "Date": "Thu, 08 Aug 2024 22:48:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "type": "Collection",
+        "links": [
+          {
+            "rel": "items",
+            "type": "application/geo+json",
+            "href": "https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net/api/collections/integration-test-collection-772/items"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net/api/"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net/api/"
+          },
+          {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://micerutest.gkefbud8evgraxeq.uksouth.geocatalog.ppe.spatio.azure-test.net/api/collections/integration-test-collection-772"
+          },
+          {
+            "rel": "license",
+            "href": "https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/TermsConditions/Sentinel_Data_Terms_and_Conditions.pdf",
+            "title": "Copernicus Sentinel data terms"
+          },
+          {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+          }
+        ],
+        "title": "integration-test-collection-772",
+        "extent": {
+          "spatial": {
+            "bbox": [
+              [
+                -180,
+                -90,
+                180,
+                90
+              ]
+            ]
+          },
+          "temporal": {
+            "interval": [
+              [
+                "2015-06-27T10:25:31Z",
+                null
+              ]
+            ]
+          }
+        },
+        "license": "proprietary",
+        "keywords": [
+          "Sentinel",
+          "Copernicus",
+          "ESA",
+          "Satellite",
+          "Global",
+          "Imagery",
+          "Reflectance"
+        ],
+        "providers": [
+          {
+            "url": "https://sentinel.esa.int/web/sentinel/missions/sentinel-2",
+            "name": "Sanitized",
+            "roles": [
+              "producer",
+              "licensor"
+            ]
+          },
+          {
+            "url": "https://www.esri.com/",
+            "name": "Sanitized",
+            "roles": [
+              "processor"
+            ]
+          },
+          {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Sanitized",
+            "roles": [
+              "host",
+              "processor"
+            ]
+          }
+        ],
+        "summaries": {
+          "gsd": [
+            10,
+            20,
+            60
+          ],
+          "eo:bands": [
+            {
+              "name": "Sanitized",
+              "description": "aerosol optical thickness"
+            },
+            {
+              "gsd": 60,
+              "name": "Sanitized",
+              "common_name": "coastal",
+              "description": "coastal aerosol",
+              "center_wavelength": 0.443,
+              "full_width_half_max": 0.027
+            },
+            {
+              "gsd": 10,
+              "name": "Sanitized",
+              "common_name": "blue",
+              "description": "visible blue",
+              "center_wavelength": 0.49,
+              "full_width_half_max": 0.098
+            },
+            {
+              "gsd": 10,
+              "name": "Sanitized",
+              "common_name": "green",
+              "description": "visible green",
+              "center_wavelength": 0.56,
+              "full_width_half_max": 0.045
+            },
+            {
+              "gsd": 10,
+              "name": "Sanitized",
+              "common_name": "red",
+              "description": "visible red",
+              "center_wavelength": 0.665,
+              "full_width_half_max": 0.038
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "rededge",
+              "description": "vegetation classification red edge",
+              "center_wavelength": 0.704,
+              "full_width_half_max": 0.019
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "rededge",
+              "description": "vegetation classification red edge",
+              "center_wavelength": 0.74,
+              "full_width_half_max": 0.018
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "rededge",
+              "description": "vegetation classification red edge",
+              "center_wavelength": 0.783,
+              "full_width_half_max": 0.028
+            },
+            {
+              "gsd": 10,
+              "name": "Sanitized",
+              "common_name": "nir",
+              "description": "near infrared",
+              "center_wavelength": 0.842,
+              "full_width_half_max": 0.145
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "rededge",
+              "description": "vegetation classification red edge",
+              "center_wavelength": 0.865,
+              "full_width_half_max": 0.033
+            },
+            {
+              "gsd": 60,
+              "name": "Sanitized",
+              "description": "water vapor",
+              "center_wavelength": 0.945,
+              "full_width_half_max": 0.026
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "swir16",
+              "description": "short-wave infrared, snow/ice/cloud classification",
+              "center_wavelength": 1.61,
+              "full_width_half_max": 0.143
+            },
+            {
+              "gsd": 20,
+              "name": "Sanitized",
+              "common_name": "swir22",
+              "description": "short-wave infrared, snow/ice/cloud classification",
+              "center_wavelength": 2.19,
+              "full_width_half_max": 0.242
+            }
+          ],
+          "platform": [
+            "Sentinel-2A",
+            "Sentinel-2B"
+          ],
+          "instruments": [
+            "msi"
+          ],
+          "constellation": [
+            "sentinel-2"
+          ],
+          "view:off_nadir": [
+            0
+          ]
+        },
+        "description": "The [Sentinel-2](https://sentinel.esa.int/web/sentinel/missions/sentinel-2) program provides global imagery in thirteen spectral bands at 10m-60m resolution and a revisit time of approximately five days.  This dataset represents the global Sentinel-2 archive, from 2016 to the present, processed to L2A (bottom-of-atmosphere) using [Sen2Cor](https://step.esa.int/main/snap-supported-plugins/sen2cor/) and converted to [cloud-optimized GeoTIFF](https://www.cogeo.org/) format.",
+        "item_assets": {
+          "AOT": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Aerosol optical thickness (AOT)"
+          },
+          "B01": {
+            "gsd": 60.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 1 - Coastal aerosol - 60m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "coastal",
+                "description": "Band 1 - Coastal aerosol",
+                "center_wavelength": 0.443,
+                "full_width_half_max": 0.027
+              }
+            ]
+          },
+          "B02": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 2 - Blue - 10m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "blue",
+                "description": "Band 2 - Blue",
+                "center_wavelength": 0.49,
+                "full_width_half_max": 0.098
+              }
+            ]
+          },
+          "B03": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 3 - Green - 10m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "green",
+                "description": "Band 3 - Green",
+                "center_wavelength": 0.56,
+                "full_width_half_max": 0.045
+              }
+            ]
+          },
+          "B04": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 4 - Red - 10m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "red",
+                "description": "Band 4 - Red",
+                "center_wavelength": 0.665,
+                "full_width_half_max": 0.038
+              }
+            ]
+          },
+          "B05": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 5 - Vegetation red edge 1 - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "rededge",
+                "description": "Band 5 - Vegetation red edge 1",
+                "center_wavelength": 0.704,
+                "full_width_half_max": 0.019
+              }
+            ]
+          },
+          "B06": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 6 - Vegetation red edge 2 - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "rededge",
+                "description": "Band 6 - Vegetation red edge 2",
+                "center_wavelength": 0.74,
+                "full_width_half_max": 0.018
+              }
+            ]
+          },
+          "B07": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 7 - Vegetation red edge 3 - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "rededge",
+                "description": "Band 7 - Vegetation red edge 3",
+                "center_wavelength": 0.783,
+                "full_width_half_max": 0.028
+              }
+            ]
+          },
+          "B08": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 8 - NIR - 10m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "nir",
+                "description": "Band 8 - NIR",
+                "center_wavelength": 0.842,
+                "full_width_half_max": 0.145
+              }
+            ]
+          },
+          "B09": {
+            "gsd": 60.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 9 - Water vapor - 60m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "description": "Band 9 - Water vapor",
+                "center_wavelength": 0.945,
+                "full_width_half_max": 0.026
+              }
+            ]
+          },
+          "B11": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 11 - SWIR (1.6) - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "swir16",
+                "description": "Band 11 - SWIR (1.6)",
+                "center_wavelength": 1.61,
+                "full_width_half_max": 0.143
+              }
+            ]
+          },
+          "B12": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 12 - SWIR (2.2) - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "swir22",
+                "description": "Band 12 - SWIR (2.2)",
+                "center_wavelength": 2.19,
+                "full_width_half_max": 0.242
+              }
+            ]
+          },
+          "B8A": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Band 8A - Vegetation red edge 4 - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "rededge",
+                "description": "Band 8A - Vegetation red edge 4",
+                "center_wavelength": 0.865,
+                "full_width_half_max": 0.033
+              }
+            ]
+          },
+          "SCL": {
+            "gsd": 20.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Scene classfication map (SCL)"
+          },
+          "WVP": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "Water vapour (WVP)"
+          },
+          "visual": {
+            "gsd": 10.0,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "True color image",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "red",
+                "description": "Band 4 - Red",
+                "center_wavelength": 0.665,
+                "full_width_half_max": 0.038
+              },
+              {
+                "name": "Sanitized",
+                "common_name": "green",
+                "description": "Band 3 - Green",
+                "center_wavelength": 0.56,
+                "full_width_half_max": 0.045
+              },
+              {
+                "name": "Sanitized",
+                "common_name": "blue",
+                "description": "Band 2 - Blue",
+                "center_wavelength": 0.49,
+                "full_width_half_max": 0.098
+              }
+            ]
+          },
+          "preview": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "thumbnail"
+            ],
+            "title": "Thumbnail"
+          },
+          "safe-manifest": {
+            "type": "application/xml",
+            "roles": [
+              "metadata"
+            ],
+            "title": "SAFE manifest"
+          },
+          "granule-metadata": {
+            "type": "application/xml",
+            "roles": [
+              "metadata"
+            ],
+            "title": "Granule metadata"
+          },
+          "inspire-metadata": {
+            "type": "application/xml",
+            "roles": [
+              "metadata"
+            ],
+            "title": "INSPIRE metadata"
+          },
+          "product-metadata": {
+            "type": "application/xml",
+            "roles": [
+              "metadata"
+            ],
+            "title": "Product metadata"
+          },
+          "datastrip-metadata": {
+            "type": "application/xml",
+            "roles": [
+              "metadata"
+            ],
+            "title": "Datastrip metadata"
+          }
+        },
+        "msft:region": "westeurope",
+        "stac_version": "1.0.0",
+        "msft:_created": "2024-08-08T22:48:54.470911Z",
+        "msft:_updated": "2024-08-08T22:48:54.470911Z",
+        "stac_extensions": [
+          "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+          "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+        ],
+        "msft:short_description": "The Sentinel-2 program provides global imagery in thirteen spectral bands at 10m-60m resolution and a revisit time of approximately five days.  This dataset contains the global Sentinel-2 archive, from 2016 to the present, processed to L2A (bottom-of-atmosphere)."
+      }
+    }
+  ],
   "Variables": {}
 }

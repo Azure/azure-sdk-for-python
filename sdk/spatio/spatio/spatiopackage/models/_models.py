@@ -26,6 +26,105 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
+class Asset(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#asset-object.
+
+
+    :ivar title: Title.
+    :vartype title: str
+    :ivar description: Description.
+    :vartype description: str
+    :ivar start_datetime: Start Datetime.
+    :vartype start_datetime: ~datetime.datetime
+    :ivar end_datetime: End Datetime.
+    :vartype end_datetime: ~datetime.datetime
+    :ivar created: Created.
+    :vartype created: ~datetime.datetime
+    :ivar updated: Updated.
+    :vartype updated: ~datetime.datetime
+    :ivar platform: Platform.
+    :vartype platform: str
+    :ivar instruments: Instruments.
+    :vartype instruments: list[str]
+    :ivar constellation: Constellation.
+    :vartype constellation: str
+    :ivar mission: Mission.
+    :vartype mission: str
+    :ivar providers: Providers.
+    :vartype providers: list[~spatiopackage.models.Provider]
+    :ivar gsd: Gsd.
+    :vartype gsd: float
+    :ivar href: Href. Required.
+    :vartype href: str
+    :ivar type: Type.
+    :vartype type: str
+    :ivar roles: Roles.
+    :vartype roles: list[str]
+    """
+
+    title: Optional[str] = rest_field()
+    """Title."""
+    description: Optional[str] = rest_field()
+    """Description."""
+    start_datetime: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    """Start Datetime."""
+    end_datetime: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    """End Datetime."""
+    created: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    """Created."""
+    updated: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    """Updated."""
+    platform: Optional[str] = rest_field()
+    """Platform."""
+    instruments: Optional[List[str]] = rest_field()
+    """Instruments."""
+    constellation: Optional[str] = rest_field()
+    """Constellation."""
+    mission: Optional[str] = rest_field()
+    """Mission."""
+    providers: Optional[List["_models.Provider"]] = rest_field()
+    """Providers."""
+    gsd: Optional[float] = rest_field()
+    """Gsd."""
+    href: str = rest_field()
+    """Href. Required."""
+    type: Optional[str] = rest_field()
+    """Type."""
+    roles: Optional[List[str]] = rest_field()
+    """Roles."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        href: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        start_datetime: Optional[datetime.datetime] = None,
+        end_datetime: Optional[datetime.datetime] = None,
+        created: Optional[datetime.datetime] = None,
+        updated: Optional[datetime.datetime] = None,
+        platform: Optional[str] = None,
+        instruments: Optional[List[str]] = None,
+        constellation: Optional[str] = None,
+        mission: Optional[str] = None,
+        providers: Optional[List["_models.Provider"]] = None,
+        gsd: Optional[float] = None,
+        type: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class AuthConfig(_model_base.Model):
     """Configuration for MSAL authentication in frontend application.
 
@@ -191,6 +290,161 @@ class Bounds(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class Collection(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md.
+
+
+    :ivar id: Id. Required.
+    :vartype id: str
+    :ivar description: Description. Required.
+    :vartype description: str
+    :ivar stac_version: Stac Version.
+    :vartype stac_version: str
+    :ivar links: Links. Required.
+    :vartype links: list[~spatiopackage.models.LinksItem]
+    :ivar stac_extensions: Stac Extensions.
+    :vartype stac_extensions: list[str]
+    :ivar title: Title.
+    :vartype title: str
+    :ivar type: Type.
+    :vartype type: str
+    :ivar assets: Assets.
+    :vartype assets: dict[str, ~spatiopackage.models.Asset]
+    :ivar license: License. Required.
+    :vartype license: str
+    :ivar extent:
+     https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object.
+     Required.
+    :vartype extent: ~spatiopackage.models.Extent
+    :ivar keywords: Keywords.
+    :vartype keywords: list[str]
+    :ivar providers: Providers.
+    :vartype providers: list[~spatiopackage.models.Provider]
+    :ivar summaries: Summaries.
+    :vartype summaries: dict[str, any]
+    """
+
+    id: str = rest_field()
+    """Id. Required."""
+    description: str = rest_field()
+    """Description. Required."""
+    stac_version: Optional[str] = rest_field()
+    """Stac Version."""
+    links: List["_models.LinksItem"] = rest_field()
+    """Links. Required."""
+    stac_extensions: Optional[List[str]] = rest_field()
+    """Stac Extensions."""
+    title: Optional[str] = rest_field()
+    """Title."""
+    type: Optional[str] = rest_field()
+    """Type."""
+    assets: Optional[Dict[str, "_models.Asset"]] = rest_field()
+    """Assets."""
+    license: str = rest_field()
+    """License. Required."""
+    extent: "_models.Extent" = rest_field()
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object.
+     Required."""
+    keywords: Optional[List[str]] = rest_field()
+    """Keywords."""
+    providers: Optional[List["_models.Provider"]] = rest_field()
+    """Providers."""
+    summaries: Optional[Dict[str, Any]] = rest_field()
+    """Summaries."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        description: str,
+        links: List["_models.LinksItem"],
+        license: str,
+        extent: "_models.Extent",
+        stac_version: Optional[str] = None,
+        stac_extensions: Optional[List[str]] = None,
+        title: Optional[str] = None,
+        type: Optional[str] = None,
+        assets: Optional[Dict[str, "_models.Asset"]] = None,
+        keywords: Optional[List[str]] = None,
+        providers: Optional[List["_models.Provider"]] = None,
+        summaries: Optional[Dict[str, Any]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class Collections(_model_base.Model):
+    """http://docs.opengeospatial.org/is/17-069r3/17-069r3.html#_feature_collections_rootcollections.
+
+
+    :ivar links: Links. Required.
+    :vartype links: list[~spatiopackage.models.Link]
+    :ivar collections: Collections. Required.
+    :vartype collections: list[~spatiopackage.models.Collection]
+    """
+
+    links: List["_models.Link"] = rest_field()
+    """Links. Required."""
+    collections: List["_models.Collection"] = rest_field()
+    """Collections. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        links: List["_models.Link"],
+        collections: List["_models.Collection"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ConformanceClasses(_model_base.Model):
+    """https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints.
+
+
+    :ivar conforms_to: Conformsto. Required.
+    :vartype conforms_to: list[str]
+    """
+
+    conforms_to: List[str] = rest_field(name="conformsTo")
+    """Conformsto. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        conforms_to: List[str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class DefaultLocation(_model_base.Model):
     """Defines a default location for showcasing a collection.
 
@@ -226,16 +480,56 @@ class DefaultLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class Extent(_model_base.Model):
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object.
+
+
+    :ivar spatial:
+     https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object.
+     Required.
+    :vartype spatial: ~spatiopackage.models.SpatialExtent
+    :ivar temporal:
+     https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object.
+     Required.
+    :vartype temporal: ~spatiopackage.models.TimeInterval
+    """
+
+    spatial: "_models.SpatialExtent" = rest_field()
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object.
+     Required."""
+    temporal: "_models.TimeInterval" = rest_field()
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        spatial: "_models.SpatialExtent",
+        temporal: "_models.TimeInterval",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class FeaturePolygonDictStrRioTilerModelsInfo(_model_base.Model):
     """Feature Model.
 
 
     :ivar type: Type. Required. "Feature"
-    :vartype type: str or ~spatio.models.FeaturePolygonDictStrRioTilerModelsInfoType
+    :vartype type: str or ~spatiopackage.models.FeaturePolygonDictStrRioTilerModelsInfoType
     :ivar geometry: Polygon Model. Required.
-    :vartype geometry: ~spatio.models.Polygon
+    :vartype geometry: ~spatiopackage.models.Polygon
     :ivar properties: Properties. Required.
-    :vartype properties: dict[str, ~spatio.models.RioTilerModelsInfo]
+    :vartype properties: dict[str, ~spatiopackage.models.RioTilerModelsInfo]
     :ivar id: Id.
     :vartype id: any
     :ivar bbox: Bbox.
@@ -281,7 +575,7 @@ class GeoCatalogCollection(_model_base.Model):  # pylint: disable=too-many-insta
     All required parameters must be populated in order to send to server.
 
     :ivar type: Type. Required. "Collection"
-    :vartype type: str or ~spatio.models.GeoCatalogCollectionType
+    :vartype type: str or ~spatiopackage.models.GeoCatalogCollectionType
     :ivar stac_version: Stac Version. Required.
     :vartype stac_version: str
     :ivar id: Id. Required.
@@ -387,7 +681,7 @@ class GeoTemplateSummary(_model_base.Model):
     :ivar version: Ingestion template version. Required.
     :vartype version: int
     :ivar kind: Ingestion template kind. Required. Known values are: "user" and "system".
-    :vartype kind: str or ~spatio.models.GeoTemplateKind
+    :vartype kind: str or ~spatiopackage.models.GeoTemplateKind
     """
 
     id: str = rest_field()
@@ -436,14 +730,14 @@ class GeoTemplate(GeoTemplateSummary):
     :ivar version: Ingestion template version. Required.
     :vartype version: int
     :ivar kind: Ingestion template kind. Required. Known values are: "user" and "system".
-    :vartype kind: str or ~spatio.models.GeoTemplateKind
+    :vartype kind: str or ~spatiopackage.models.GeoTemplateKind
     :ivar description: Ingestion template description. Required.
     :vartype description: str
     :ivar version_comment: Ingestion template version comment. Required.
     :vartype version_comment: str
     :ivar crawling_strategy: Ingestion template crawling strategy. Required. Known values are:
      "oneScenePerFile", "oneScenePerFolder", and "indexFile".
-    :vartype crawling_strategy: str or ~spatio.models.CrawlingStrategy
+    :vartype crawling_strategy: str or ~spatiopackage.models.CrawlingStrategy
     :ivar content: Ingestion template content. Required.
     :vartype content: str
     """
@@ -495,7 +789,7 @@ class GeoTemplateCreation(_model_base.Model):
     :vartype description: str
     :ivar crawling_strategy: Ingestion template crawling strategy. Required. Known values are:
      "oneScenePerFile", "oneScenePerFolder", and "indexFile".
-    :vartype crawling_strategy: str or ~spatio.models.CrawlingStrategy
+    :vartype crawling_strategy: str or ~spatiopackage.models.CrawlingStrategy
     :ivar content: Ingestion template content. Required.
     :vartype content: str
     :ivar version_comment: Ingestion template version comment. Required.
@@ -552,7 +846,7 @@ class ImageRequest(_model_base.Model):
     :ivar rows: Rows. Required.
     :vartype rows: int
     :ivar format: Known values are: "png" and "cog".
-    :vartype format: str or ~spatio.models.ImageRequestFormat
+    :vartype format: str or ~spatiopackage.models.ImageRequestFormat
     :ivar show_branding: Showbranding.
     :vartype show_branding: bool
     :ivar mask: Mask.
@@ -637,7 +931,7 @@ class IngestionDefinitionCreation(_model_base.Model):
 
     :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
      "GeoTemplate".
-    :vartype import_type: str or ~spatio.models.IngestionType
+    :vartype import_type: str or ~spatiopackage.models.IngestionType
     :ivar source_catalog_url: Source catalog URL. *Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
     :ivar geo_template_id: Geo-template used for crawl and transform items. *Required for
@@ -688,7 +982,7 @@ class IngestionDefinition(IngestionDefinitionCreation):
 
     :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
      "GeoTemplate".
-    :vartype import_type: str or ~spatio.models.IngestionType
+    :vartype import_type: str or ~spatiopackage.models.IngestionType
     :ivar source_catalog_url: Source catalog URL. *Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
     :ivar geo_template_id: Geo-template used for crawl and transform items. *Required for
@@ -742,7 +1036,7 @@ class IngestionRun(_model_base.Model):
     :ivar parent_run_id: Run id which this run is associated to becase has been retried or rerun.
     :vartype parent_run_id: str
     :ivar operation: Operation. Required.
-    :vartype operation: ~spatio.models.Operation
+    :vartype operation: ~spatiopackage.models.Operation
     """
 
     id: str = rest_field()
@@ -779,7 +1073,7 @@ class IngestionRunSummary(_model_base.Model):
     :ivar id: Run id. Required.
     :vartype id: str
     :ivar operation: Operation summary. Required.
-    :vartype operation: ~spatio.models.OperationSummary
+    :vartype operation: ~spatiopackage.models.OperationSummary
     """
 
     id: str = rest_field()
@@ -813,7 +1107,7 @@ class IngestionSourceSummary(_model_base.Model):
     :ivar id: Ingestion source id. Required.
     :vartype id: str
     :ivar source_type: Ingestion source type. Required. "SasToken"
-    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :vartype source_type: str or ~spatiopackage.models.IngestionSourceType
     :ivar created: Created time in UTC format. Required.
     :vartype created: ~datetime.datetime
     """
@@ -845,6 +1139,70 @@ class IngestionSourceSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class LandingPage(_model_base.Model):
+    """https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints.
+
+
+    :ivar id: Id. Required.
+    :vartype id: str
+    :ivar description: Description. Required.
+    :vartype description: str
+    :ivar title: Title.
+    :vartype title: str
+    :ivar stac_version: Stac Version.
+    :vartype stac_version: str
+    :ivar stac_extensions: Stac Extensions.
+    :vartype stac_extensions: list[str]
+    :ivar conforms_to: Conformsto. Required.
+    :vartype conforms_to: list[str]
+    :ivar links: Links. Required.
+    :vartype links: list[~spatiopackage.models.LinksItem]
+    :ivar type: Type.
+    :vartype type: str
+    """
+
+    id: str = rest_field()
+    """Id. Required."""
+    description: str = rest_field()
+    """Description. Required."""
+    title: Optional[str] = rest_field()
+    """Title."""
+    stac_version: Optional[str] = rest_field()
+    """Stac Version."""
+    stac_extensions: Optional[List[str]] = rest_field()
+    """Stac Extensions."""
+    conforms_to: List[str] = rest_field(name="conformsTo")
+    """Conformsto. Required."""
+    links: List["_models.LinksItem"] = rest_field()
+    """Links. Required."""
+    type: Optional[str] = rest_field()
+    """Type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        description: str,
+        conforms_to: List[str],
+        links: List["_models.LinksItem"],
+        title: Optional[str] = None,
+        stac_version: Optional[str] = None,
+        stac_extensions: Optional[List[str]] = None,
+        type: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class LegendConfig(_model_base.Model):
     """Defines settings to customize legend generation.
 
@@ -852,7 +1210,7 @@ class LegendConfig(_model_base.Model):
      ``none``
      (note, ``none`` is a string literal). Known values are: "continuous", "classmap", "interval",
      and "none".
-    :vartype type: str or ~spatio.models.LegendConfigType
+    :vartype type: str or ~spatiopackage.models.LegendConfigType
     :ivar labels: List of string labels that will be flex spaced-between under the legend image.
     :vartype labels: list[str]
     :ivar trim_start: The number of items to trim from the start of the legend definition. Used if
@@ -923,7 +1281,7 @@ class Link(_model_base.Model):
      "image/jpeg", "image/jpg", "image/webp", "application/x-binary", "application/xml",
      "application/json", "application/geo+json", "text/html", "text/plain", and
      "application/x-protobuf".
-    :vartype type: str or ~spatio.models.LinkType
+    :vartype type: str or ~spatiopackage.models.LinkType
     :ivar href: Href. Required.
     :vartype href: str
     :ivar hreflang: Hreflang.
@@ -971,11 +1329,15 @@ class Link(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class LinksItem(_model_base.Model):
+    """LinksItem."""
+
+
 class Metadata(_model_base.Model):
     """Metadata Model.
 
     :ivar type: Type. Known values are: "mosaic" and "search".
-    :vartype type: str or ~spatio.models.MetadataType
+    :vartype type: str or ~spatiopackage.models.MetadataType
     :ivar bounds: Bounds.
     :vartype bounds: any
     :ivar minzoom: Minzoom.
@@ -1080,11 +1442,11 @@ class MosaicInfo(_model_base.Model):
 
 
     :ivar mosaics: Mosaics. Required.
-    :vartype mosaics: list[~spatio.models.Mosaic]
+    :vartype mosaics: list[~spatiopackage.models.Mosaic]
     :ivar render_options: Renderoptions. Required.
-    :vartype render_options: list[~spatio.models.RenderOption]
+    :vartype render_options: list[~spatiopackage.models.RenderOption]
     :ivar default_location: Defines a default location for showcasing a collection.
-    :vartype default_location: ~spatio.models.DefaultLocation
+    :vartype default_location: ~spatiopackage.models.DefaultLocation
     :ivar default_custom_query: A list of CQL-JSON expressions to use as the default for  this
      collection.
     :vartype default_custom_query: dict[str, any]
@@ -1128,7 +1490,7 @@ class OperationSummary(_model_base.Model):
     :vartype id: str
     :ivar status: Run status. Required. Known values are: "Pending", "Running", "Finished", and
      "Canceled".
-    :vartype status: str or ~spatio.models.OperationStatus
+    :vartype status: str or ~spatiopackage.models.OperationStatus
     """
 
     id: str = rest_field()
@@ -1164,11 +1526,11 @@ class Operation(OperationSummary):
     :vartype id: str
     :ivar status: Run status. Required. Known values are: "Pending", "Running", "Finished", and
      "Canceled".
-    :vartype status: str or ~spatio.models.OperationStatus
+    :vartype status: str or ~spatiopackage.models.OperationStatus
     :ivar creation_time: The UTC time at which the operation was created. Required.
     :vartype creation_time: ~datetime.datetime
     :ivar status_history: The history of the operation status in time. Required.
-    :vartype status_history: list[~spatio.models.OperationStatusHistoryItem]
+    :vartype status_history: list[~spatiopackage.models.OperationStatusHistoryItem]
     :ivar start_time: The UTC time at which the operation was started.
     :vartype start_time: ~datetime.datetime
     :ivar finish_time: The UTC time at which the operation finished its execution.
@@ -1235,7 +1597,7 @@ class OperationStatusHistoryItem(_model_base.Model):
     :vartype time: ~datetime.datetime
     :ivar status: The status of the operation. Required. Known values are: "Pending", "Running",
      "Finished", and "Canceled".
-    :vartype status: str or ~spatio.models.OperationStatus
+    :vartype status: str or ~spatiopackage.models.OperationStatus
     :ivar error_message: If the status is failed, the error message.
     :vartype error_message: str
     """
@@ -1272,7 +1634,7 @@ class PartitionType(_model_base.Model):
     """PartitionType.
 
     :ivar scheme: The type of partitioning to use. Known values are: "year", "month", and "none".
-    :vartype scheme: str or ~spatio.models.PartitionTypeScheme
+    :vartype scheme: str or ~spatiopackage.models.PartitionTypeScheme
     """
 
     scheme: Optional[Union[str, "_models.PartitionTypeScheme"]] = rest_field()
@@ -1303,7 +1665,7 @@ class Polygon(_model_base.Model):
     :ivar coordinates: Coordinates. Required.
     :vartype coordinates: list[list[any]]
     :ivar type: Type. Required. "Polygon"
-    :vartype type: str or ~spatio.models.PolygonType
+    :vartype type: str or ~spatiopackage.models.PolygonType
     :ivar bbox: Bbox.
     :vartype bbox: any
     """
@@ -1402,6 +1764,50 @@ class Properties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class Provider(_model_base.Model):
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#provider-object.
+
+
+    :ivar name: Name. Required.
+    :vartype name: str
+    :ivar description: Description.
+    :vartype description: str
+    :ivar roles: Roles.
+    :vartype roles: list[str]
+    :ivar url: Url.
+    :vartype url: str
+    """
+
+    name: str = rest_field()
+    """Name. Required."""
+    description: Optional[str] = rest_field()
+    """Description."""
+    roles: Optional[List[str]] = rest_field()
+    """Roles."""
+    url: Optional[str] = rest_field()
+    """Url."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+        url: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class QueryableDefinition(_model_base.Model):
     """QueryableDefinition.
 
@@ -1414,7 +1820,7 @@ class QueryableDefinition(_model_base.Model):
     :ivar create_index: Create Index.
     :vartype create_index: bool
     :ivar data_type: Known values are: "number", "float", "text", and "array".
-    :vartype data_type: str or ~spatio.models.QueryableDefinitionDataType
+    :vartype data_type: str or ~spatiopackage.models.QueryableDefinitionDataType
     """
 
     name: str = rest_field()
@@ -1457,7 +1863,7 @@ class RegisterMosaic(_model_base.Model):
     :ivar bbox: Bbox.
     :vartype bbox: any
     :ivar intersects: Intersects.
-    :vartype intersects: ~spatio.models.RegisterMosaicIntersects
+    :vartype intersects: ~spatiopackage.models.RegisterMosaicIntersects
     :ivar query: Query.
     :vartype query: dict[str, dict[str, any]]
     :ivar filter: Filter.
@@ -1467,9 +1873,9 @@ class RegisterMosaic(_model_base.Model):
     :ivar sortby: Sortby.
     :vartype sortby: any
     :ivar filter_lang: Filter-Lang. Known values are: "cql-json", "cql-text", and "cql2-json".
-    :vartype filter_lang: str or ~spatio.models.RegisterMosaicFilterLang
+    :vartype filter_lang: str or ~spatiopackage.models.RegisterMosaicFilterLang
     :ivar metadata: Metadata Model.
-    :vartype metadata: ~spatio.models.Metadata
+    :vartype metadata: ~spatiopackage.models.Metadata
     """
 
     collections: Optional[List[str]] = rest_field()
@@ -1531,7 +1937,7 @@ class RegisterResponse(_model_base.Model):
     :ivar searchid: Searchid. Required.
     :vartype searchid: str
     :ivar links: Links.
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     """
 
     searchid: str = rest_field()
@@ -1572,7 +1978,7 @@ class RenderOption(_model_base.Model):
     :vartype description: str
     :ivar type: The type of render option. Known values are: "raster-tile", "vt-polygon", and
      "vt-line".
-    :vartype type: str or ~spatio.models.RenderOptionType
+    :vartype type: str or ~spatiopackage.models.RenderOptionType
     :ivar options: A URL query-string encoded string of TiTiler rendering options. Valid only for
      ``raster-tile`` types.  See 'Query Parameters':
      https://developmentseed.org/titiler/endpoints/cog/#description.
@@ -1580,14 +1986,14 @@ class RenderOption(_model_base.Model):
     :ivar vector_options: Options for rendering vector tiles. Valid only for ``vt-polygon``  and
      ``vt-line``
      types.
-    :vartype vector_options: ~spatio.models.RenderOptionVectorOptions
+    :vartype vector_options: ~spatiopackage.models.RenderOptionVectorOptions
     :ivar min_zoom: Zoom level at which to start rendering the layer.
     :vartype min_zoom: int
     :ivar legend: An optional legend configuration.
-    :vartype legend: ~spatio.models.RenderOptionLegend
+    :vartype legend: ~spatiopackage.models.RenderOptionLegend
     :ivar conditions: A list of property/value conditions that must be in the active mosaic CQL for
      this render option to be enabled.
-    :vartype conditions: list[~spatio.models.RenderOptionCondition]
+    :vartype conditions: list[~spatiopackage.models.RenderOptionCondition]
     """
 
     id: str = rest_field()
@@ -1682,7 +2088,7 @@ class RenderOptionLegend(LegendConfig):
      ``none``
      (note, ``none`` is a string literal). Known values are: "continuous", "classmap", "interval",
      and "none".
-    :vartype type: str or ~spatio.models.LegendConfigType
+    :vartype type: str or ~spatiopackage.models.LegendConfigType
     :ivar labels: List of string labels that will be flex spaced-between under the legend image.
     :vartype labels: list[str]
     :ivar trim_start: The number of items to trim from the start of the legend definition. Used if
@@ -1838,7 +2244,7 @@ class RioTilerModelsInfo(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype dtype: str
     :ivar nodata_type: rio-tiler Nodata types. Required. Known values are: "Alpha", "Mask",
      "Internal", "Nodata", and "None".
-    :vartype nodata_type: str or ~spatio.models.NodataTypes
+    :vartype nodata_type: str or ~spatiopackage.models.NodataTypes
     :ivar colorinterp: Colorinterp.
     :vartype colorinterp: list[str]
     :ivar scale: Scale.
@@ -2010,9 +2416,9 @@ class SasTokenIngestionSourceCreation(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar source_type: Ingestion source type. Required. "SasToken"
-    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :vartype source_type: str or ~spatiopackage.models.IngestionSourceType
     :ivar connection_info: SAS token connection information. Required.
-    :vartype connection_info: ~spatio.models.SasTokenConnectionCreation
+    :vartype connection_info: ~spatiopackage.models.SasTokenConnectionCreation
     """
 
     source_type: Union[str, "_models.IngestionSourceType"] = rest_field(name="sourceType")
@@ -2046,11 +2452,11 @@ class SasTokenIngestionSourceSummary(IngestionSourceSummary):
     :ivar id: Ingestion source id. Required.
     :vartype id: str
     :ivar source_type: Ingestion source type. Required. "SasToken"
-    :vartype source_type: str or ~spatio.models.IngestionSourceType
+    :vartype source_type: str or ~spatiopackage.models.IngestionSourceType
     :ivar created: Created time in UTC format. Required.
     :vartype created: ~datetime.datetime
     :ivar connection_info: SAS token connection information. Required.
-    :vartype connection_info: ~spatio.models.SasTokenConnection
+    :vartype connection_info: ~spatiopackage.models.SasTokenConnection
     """
 
     connection_info: "_models.SasTokenConnection" = rest_field(name="connectionInfo")
@@ -2097,7 +2503,7 @@ class Search(_model_base.Model):
     :ivar usecount: Usecount. Required.
     :vartype usecount: int
     :ivar metadata: Metadata Model. Required.
-    :vartype metadata: ~spatio.models.Metadata
+    :vartype metadata: ~spatiopackage.models.Metadata
     """
 
     hash: str = rest_field()
@@ -2151,7 +2557,7 @@ class SearchPostRequest(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar bbox: Bbox.
     :vartype bbox: any
     :ivar intersects: Intersects.
-    :vartype intersects: ~spatio.models.SearchPostRequestIntersects
+    :vartype intersects: ~spatiopackage.models.SearchPostRequestIntersects
     :ivar datetime: Datetime.
     :vartype datetime: str
     :ivar limit: Limit.
@@ -2165,15 +2571,15 @@ class SearchPostRequest(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar query: Query.
     :vartype query: dict[str, dict[str, any]]
     :ivar sortby: Sortby.
-    :vartype sortby: list[~spatio.models.SortExtension]
+    :vartype sortby: list[~spatiopackage.models.SortExtension]
     :ivar fields: Fields.
-    :vartype fields: list[~spatio.models.SearchPostRequestFields]
+    :vartype fields: list[~spatiopackage.models.SearchPostRequestFields]
     :ivar filter: Filter.
     :vartype filter: dict[str, any]
     :ivar filter_crs: Filter-Crs.
     :vartype filter_crs: str
     :ivar filter_lang: Known values are: "cql-json", "cql2-json", and "cql2-text".
-    :vartype filter_lang: str or ~spatio.models.SearchPostRequestFilterLang
+    :vartype filter_lang: str or ~spatiopackage.models.SearchPostRequestFilterLang
     :ivar token: Token.
     :vartype token: str
     """
@@ -2284,7 +2690,7 @@ class SortExtension(_model_base.Model):
     :ivar field: Field. Required.
     :vartype field: str
     :ivar direction: An enumeration. Required. Known values are: "asc" and "desc".
-    :vartype direction: str or ~spatio.models.SortDirections
+    :vartype direction: str or ~spatiopackage.models.SortDirections
     """
 
     field: str = rest_field()
@@ -2298,6 +2704,35 @@ class SortExtension(_model_base.Model):
         *,
         field: str,
         direction: Union[str, "_models.SortDirections"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SpatialExtent(_model_base.Model):
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object.
+
+
+    :ivar bbox: Bbox. Required.
+    :vartype bbox: list[list[any]]
+    """
+
+    bbox: List[List[Any]] = rest_field()
+    """Bbox. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bbox: List[List[Any]],
     ): ...
 
     @overload
@@ -2329,11 +2764,11 @@ class STACItem(_model_base.Model):
     :ivar bbox: Required.
     :vartype bbox: list[int]
     :ivar properties: Required.
-    :vartype properties: ~spatio.models.Properties
+    :vartype properties: ~spatiopackage.models.Properties
     :ivar assets: Required.
     :vartype assets: any
     :ivar links: Required.
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     :ivar collection: Required.
     :vartype collection: str
     """
@@ -2393,9 +2828,9 @@ class STACItemCollection(_model_base.Model):
     :ivar type: Required.
     :vartype type: str
     :ivar features: Required.
-    :vartype features: list[~spatio.models.STACItem]
+    :vartype features: list[~spatiopackage.models.STACItem]
     :ivar links: Required.
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     :ivar stac_version:
     :vartype stac_version: str
     :ivar number_matched:
@@ -2455,11 +2890,11 @@ class STACPostOrPutItem(_model_base.Model):
     :ivar bbox: Required.
     :vartype bbox: list[int]
     :ivar properties: Required.
-    :vartype properties: ~spatio.models.Properties
+    :vartype properties: ~spatiopackage.models.Properties
     :ivar assets: Required.
     :vartype assets: any
     :ivar links: Required.
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     :ivar collection: Required.
     :vartype collection: str
     """
@@ -2520,9 +2955,9 @@ class STACPostOrPutItemCollection(_model_base.Model):
     :ivar type: Required.
     :vartype type: str
     :ivar features: Required.
-    :vartype features: list[~spatio.models.STACItem]
+    :vartype features: list[~spatiopackage.models.STACItem]
     :ivar links:
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     :ivar stac_version:
     :vartype stac_version: str
     :ivar number_matched:
@@ -2584,7 +3019,7 @@ class TileJson(_model_base.Model):  # pylint: disable=too-many-instance-attribut
     :ivar legend: Legend.
     :vartype legend: str
     :ivar scheme: Known values are: "xyz" and "tms".
-    :vartype scheme: str or ~spatio.models.TileJsonScheme
+    :vartype scheme: str or ~spatiopackage.models.TileJsonScheme
     :ivar tiles: Tiles. Required.
     :vartype tiles: list[str]
     :ivar grids: Grids.
@@ -2693,7 +3128,7 @@ class TileMatrix(_model_base.Model):  # pylint: disable=too-many-instance-attrib
      the origin
      for numbering tile rows and columns. This corner is also a corner of the (0, 0)
      tile. Known values are: "topLeft" and "bottomLeft".
-    :vartype corner_of_origin: str or ~spatio.models.TileMatrixCornerOfOrigin
+    :vartype corner_of_origin: str or ~spatiopackage.models.TileMatrixCornerOfOrigin
     :ivar point_of_origin: Precise position in CRS coordinates of the corner of origin (e.g. the
      top-left
      corner) for this tile matrix. This position is also a corner of the (0, 0)
@@ -2800,14 +3235,14 @@ class TileMatrixSet(_model_base.Model):
     :ivar ordered_axes: Orderedaxes.
     :vartype ordered_axes: list[str]
     :ivar crs: Coordinate Reference System (CRS). Required.
-    :vartype crs: ~spatio.models.TileMatrixSetCrs
+    :vartype crs: ~spatiopackage.models.TileMatrixSetCrs
     :ivar well_known_scale_set: Reference to a well-known scale set.
     :vartype well_known_scale_set: str
     :ivar bounding_box: Minimum bounding rectangle surrounding the tile matrix set, in the
      supported CRS.
-    :vartype bounding_box: ~spatio.models.TileMatrixSetBoundingBox
+    :vartype bounding_box: ~spatiopackage.models.TileMatrixSetBoundingBox
     :ivar tile_matrices: Describes scale levels and its tile matrices. Required.
-    :vartype tile_matrices: list[~spatio.models.TileMatrix]
+    :vartype tile_matrices: list[~spatiopackage.models.TileMatrix]
     """
 
     title: Optional[str] = rest_field()
@@ -2975,7 +3410,7 @@ class TileSettings(_model_base.Model):
      raster tile. Required.
     :vartype max_items_per_tile: int
     :ivar default_location: Defines a default location for showcasing a collection.
-    :vartype default_location: ~spatio.models.DefaultLocation
+    :vartype default_location: ~spatiopackage.models.DefaultLocation
     """
 
     min_zoom: int = rest_field(name="minZoom")
@@ -2995,6 +3430,35 @@ class TileSettings(_model_base.Model):
         min_zoom: int,
         max_items_per_tile: int,
         default_location: Optional["_models.DefaultLocation"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TimeInterval(_model_base.Model):
+    """https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object.
+
+
+    :ivar interval: Interval. Required.
+    :vartype interval: list[list[str]]
+    """
+
+    interval: List[List[str]] = rest_field()
+    """Interval. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interval: List[List[str]],
     ): ...
 
     @overload
@@ -3058,9 +3522,9 @@ class TitilerPgstacModelInfo(_model_base.Model):
      ref:
     https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915.
      Required.
-    :vartype search: ~spatio.models.Search
+    :vartype search: ~spatiopackage.models.Search
     :ivar links: Links.
-    :vartype links: list[~spatio.models.Link]
+    :vartype links: list[~spatiopackage.models.Link]
     """
 
     search: "_models.Search" = rest_field()
@@ -3096,9 +3560,9 @@ class UserCollectionSettings(_model_base.Model):
 
 
     :ivar tile_settings: TileSettings. Required.
-    :vartype tile_settings: ~spatio.models.TileSettings
+    :vartype tile_settings: ~spatiopackage.models.TileSettings
     :ivar mosaic_info: MosaicInfo. Required.
-    :vartype mosaic_info: ~spatio.models.MosaicInfo
+    :vartype mosaic_info: ~spatiopackage.models.MosaicInfo
     """
 
     tile_settings: "_models.TileSettings" = rest_field(name="tileSettings")
