@@ -12,10 +12,9 @@ import warnings
 from io import BytesIO
 from itertools import islice
 from typing import (
-    Any, AsyncIterator, Awaitable,
-    Generator, Callable, cast, Dict,
-    Generic, IO, Optional, overload,
-    Tuple, Union, TYPE_CHECKING
+    Any, AsyncIterator, Awaitable, Generator,
+    Callable, cast, IO, Optional, Tuple, Union,
+    TYPE_CHECKING
 )
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
