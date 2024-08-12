@@ -27,7 +27,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 class AdditionalNetworkInterfaceConfiguration(_serialization.Model):
     """Specifies the settings for a network interface to attach to the node type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the network interface. Required.
     :vartype name: str
@@ -88,7 +88,7 @@ class ScalingMechanism(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AddRemoveIncrementalNamedPartitionScalingMechanism, PartitionInstanceCountScaleMechanism
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the mechanism associated with this scaling policy. Required. Known values
      are: "ScalePartitionInstanceCount" and "AddRemoveIncrementalNamedPartition".
@@ -117,11 +117,11 @@ class ScalingMechanism(_serialization.Model):
         self.kind: Optional[str] = None
 
 
-class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
+class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):  # pylint: disable=name-too-long
     """Represents a scaling mechanism for adding or removing named partitions of a stateless service.
     Partition names are in the format '0','1'...'N-1'.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the mechanism associated with this scaling policy. Required. Known values
      are: "ScalePartitionInstanceCount" and "AddRemoveIncrementalNamedPartition".
@@ -173,7 +173,7 @@ class ApplicationHealthPolicy(_serialization.Model):
     """Defines a health policy used to evaluate the health of an application or one of its children
     entities.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar consider_warning_as_error: Indicates whether warnings are treated with the same severity
      as errors. Required.
@@ -641,7 +641,7 @@ class ApplicationTypeVersionsCleanupPolicy(_serialization.Model):
     """The policy used to clean up unused versions. When the policy is not specified explicitly, the
     default unused application versions to keep will be 3.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar max_unused_versions_to_keep: Number of unused versions per application type to keep.
      Required.
@@ -809,7 +809,7 @@ class ApplicationUpgradePolicy(_serialization.Model):
 class ApplicationUserAssignedIdentity(_serialization.Model):
     """ApplicationUserAssignedIdentity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The friendly name of user assigned identity. Required.
     :vartype name: str
@@ -891,7 +891,7 @@ class ScalingTrigger(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AveragePartitionLoadScalingTrigger, AverageServiceLoadScalingTrigger
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the trigger associated with this scaling policy. Required. Known values
      are: "AveragePartitionLoadTrigger" and "AverageServiceLoadTrigger".
@@ -922,7 +922,7 @@ class ScalingTrigger(_serialization.Model):
 class AveragePartitionLoadScalingTrigger(ScalingTrigger):
     """Represents a scaling trigger related to an average load of a metric/resource of a partition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the trigger associated with this scaling policy. Required. Known values
      are: "AveragePartitionLoadTrigger" and "AverageServiceLoadTrigger".
@@ -989,7 +989,7 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger):
 class AverageServiceLoadScalingTrigger(ScalingTrigger):
     """Represents a scaling policy related to an average load of a metric/resource of a service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the trigger associated with this scaling policy. Required. Known values
      are: "AveragePartitionLoadTrigger" and "AverageServiceLoadTrigger".
@@ -1109,7 +1109,7 @@ class AzureActiveDirectory(_serialization.Model):
 class ClientCertificate(_serialization.Model):
     """Client certificate definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar is_admin: Indicates if the client certificate has admin access to the cluster. Non admin
      clients can perform only read only operations on the cluster. Required.
@@ -1165,7 +1165,7 @@ class ClientCertificate(_serialization.Model):
 class ClusterHealthPolicy(_serialization.Model):
     """Defines a health policy used to evaluate the health of the cluster or of a cluster node.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
      reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
@@ -1250,7 +1250,7 @@ class ClusterHealthPolicy(_serialization.Model):
 class ClusterMonitoringPolicy(_serialization.Model):
     """Describes the monitoring policies for the cluster upgrade.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar health_check_wait_duration: The length of time to wait after completing an upgrade domain
      before performing health checks. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
@@ -1330,7 +1330,7 @@ class ClusterMonitoringPolicy(_serialization.Model):
 class ClusterUpgradeDeltaHealthPolicy(_serialization.Model):
     """Describes the delta health policies for the cluster upgrade.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
      degradation allowed during cluster upgrades.
@@ -1491,7 +1491,7 @@ class ClusterUpgradePolicy(_serialization.Model):
 class EndpointRangeDescription(_serialization.Model):
     """Port range details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start_port: Starting port of a range of ports. Required.
     :vartype start_port: int
@@ -1576,15 +1576,15 @@ class FrontendConfiguration(_serialization.Model):
     :ivar load_balancer_backend_address_pool_id: The resource Id of the Load Balancer backend
      address pool that the VM instances of the node type are associated with. The format of the
      resource Id is
-     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.
+     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.  # pylint: disable=line-too-long
     :vartype load_balancer_backend_address_pool_id: str
     :ivar load_balancer_inbound_nat_pool_id: The resource Id of the Load Balancer inbound NAT pool
      that the VM instances of the node type are associated with. The format of the resource Id is
-     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/inboundNatPools/:code:`<inboundNatPoolName>`'.
+     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/inboundNatPools/:code:`<inboundNatPoolName>`'.  # pylint: disable=line-too-long
     :vartype load_balancer_inbound_nat_pool_id: str
     :ivar application_gateway_backend_address_pool_id: The resource Id of application gateway
      backend address pool. The format of the resource Id is
-     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/applicationGateways/:code:`<applicationGatewayName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.
+     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/applicationGateways/:code:`<applicationGatewayName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.  # pylint: disable=line-too-long
     :vartype application_gateway_backend_address_pool_id: str
     """
 
@@ -1612,16 +1612,16 @@ class FrontendConfiguration(_serialization.Model):
         :keyword load_balancer_backend_address_pool_id: The resource Id of the Load Balancer backend
          address pool that the VM instances of the node type are associated with. The format of the
          resource Id is
-         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.
+         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.  # pylint: disable=line-too-long
         :paramtype load_balancer_backend_address_pool_id: str
         :keyword load_balancer_inbound_nat_pool_id: The resource Id of the Load Balancer inbound NAT
          pool that the VM instances of the node type are associated with. The format of the resource Id
          is
-         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/inboundNatPools/:code:`<inboundNatPoolName>`'.
+         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/inboundNatPools/:code:`<inboundNatPoolName>`'.  # pylint: disable=line-too-long
         :paramtype load_balancer_inbound_nat_pool_id: str
         :keyword application_gateway_backend_address_pool_id: The resource Id of application gateway
          backend address pool. The format of the resource Id is
-         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/applicationGateways/:code:`<applicationGatewayName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.
+         '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/applicationGateways/:code:`<applicationGatewayName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.  # pylint: disable=line-too-long
         :paramtype application_gateway_backend_address_pool_id: str
         """
         super().__init__(**kwargs)
@@ -1634,7 +1634,7 @@ class FrontendConfiguration(_serialization.Model):
 class IpConfiguration(_serialization.Model):
     """Specifies an IP configuration of the network interface.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the network interface. Required.
     :vartype name: str
@@ -1737,10 +1737,10 @@ class IpConfiguration(_serialization.Model):
         self.public_ip_address_configuration = public_ip_address_configuration
 
 
-class IpConfigurationPublicIPAddressConfiguration(_serialization.Model):
+class IpConfigurationPublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """The public IP address configuration of the network interface.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the network interface. Required.
     :vartype name: str
@@ -1786,43 +1786,10 @@ class IpConfigurationPublicIPAddressConfiguration(_serialization.Model):
         self.public_ip_address_version = public_ip_address_version
 
 
-class IPTag(_serialization.Model):
-    """IPTag associated with the object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar ip_tag_type: The IP tag type. Required.
-    :vartype ip_tag_type: str
-    :ivar tag: The value of the IP tag. Required.
-    :vartype tag: str
-    """
-
-    _validation = {
-        "ip_tag_type": {"required": True},
-        "tag": {"required": True},
-    }
-
-    _attribute_map = {
-        "ip_tag_type": {"key": "ipTagType", "type": "str"},
-        "tag": {"key": "tag", "type": "str"},
-    }
-
-    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs: Any) -> None:
-        """
-        :keyword ip_tag_type: The IP tag type. Required.
-        :paramtype ip_tag_type: str
-        :keyword tag: The value of the IP tag. Required.
-        :paramtype tag: str
-        """
-        super().__init__(**kwargs)
-        self.ip_tag_type = ip_tag_type
-        self.tag = tag
-
-
 class IpTag(_serialization.Model):
     """The IP tag associated with the public IP address.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage. Required.
     :vartype ip_tag_type: str
@@ -1855,7 +1822,7 @@ class IpTag(_serialization.Model):
 class LoadBalancingRule(_serialization.Model):
     """Describes a load balancing rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
      unique within the Load Balancer. Acceptable values are between 1 and 65534. Required.
@@ -2039,7 +2006,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource identifier.
     :vartype id: str
@@ -2098,7 +2065,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource identifier.
     :vartype id: str
@@ -2199,7 +2166,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype subnet_id: str
     :ivar ip_tags: The list of IP tags associated with the default public IP address of the
      cluster.
-    :vartype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IPTag]
+    :vartype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IpTag]
     :ivar ipv6_address: IPv6 address for the cluster if IPv6 is enabled.
     :vartype ipv6_address: str
     :ivar enable_service_public_ip: Setting this to true will link the IPv4 address as the
@@ -2297,7 +2264,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         },
         "enable_ipv6": {"key": "properties.enableIpv6", "type": "bool"},
         "subnet_id": {"key": "properties.subnetId", "type": "str"},
-        "ip_tags": {"key": "properties.ipTags", "type": "[IPTag]"},
+        "ip_tags": {"key": "properties.ipTags", "type": "[IpTag]"},
         "ipv6_address": {"key": "properties.ipv6Address", "type": "str"},
         "enable_service_public_ip": {"key": "properties.enableServicePublicIP", "type": "bool"},
         "auxiliary_subnets": {"key": "properties.auxiliarySubnets", "type": "[Subnet]"},
@@ -2344,7 +2311,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         application_type_versions_cleanup_policy: Optional["_models.ApplicationTypeVersionsCleanupPolicy"] = None,
         enable_ipv6: Optional[bool] = None,
         subnet_id: Optional[str] = None,
-        ip_tags: Optional[List["_models.IPTag"]] = None,
+        ip_tags: Optional[List["_models.IpTag"]] = None,
         enable_service_public_ip: Optional[bool] = None,
         auxiliary_subnets: Optional[List["_models.Subnet"]] = None,
         service_endpoints: Optional[List["_models.ServiceEndpoint"]] = None,
@@ -2431,7 +2398,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype subnet_id: str
         :keyword ip_tags: The list of IP tags associated with the default public IP address of the
          cluster.
-        :paramtype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IPTag]
+        :paramtype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IpTag]
         :keyword enable_service_public_ip: Setting this to true will link the IPv4 address as the
          ServicePublicIP of the IPv6 address. It can only be set to True if IPv6 is enabled on the
          cluster.
@@ -2638,7 +2605,7 @@ class ManagedIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.servicefabricmanagedclusters.models.ManagedIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
-    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.servicefabricmanagedclusters.models.UserAssignedIdentity]
     """
@@ -2668,7 +2635,7 @@ class ManagedIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.servicefabricmanagedclusters.models.ManagedIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.servicefabricmanagedclusters.models.UserAssignedIdentity]
         """
@@ -2852,7 +2819,7 @@ class Partition(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     NamedPartitionScheme, SingletonPartitionScheme, UniformInt64RangePartitionScheme
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
      "Singleton", "UniformInt64Range", and "Named".
@@ -2885,7 +2852,7 @@ class Partition(_serialization.Model):
 class NamedPartitionScheme(Partition):
     """Describes the named partition scheme of the service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
      "Singleton", "UniformInt64Range", and "Named".
@@ -2918,7 +2885,7 @@ class NamedPartitionScheme(Partition):
 class NetworkSecurityRule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a network security rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Network security rule name. Required.
     :vartype name: str
@@ -3088,7 +3055,7 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
     :ivar is_primary: Indicates the Service Fabric system services for the cluster will run on this
      node type. This setting cannot be changed once the node type is created.
     :vartype is_primary: bool
-    :ivar vm_instance_count: The number of nodes in the node type. :code:`<br />`:code:`<br />`\
+    :ivar vm_instance_count: The number of nodes in the node type. :code:`<br />`:code:`<br />`\\
      **Values:** :code:`<br />`-1 - Use when auto scale rules are configured or sku.capacity is
      defined :code:`<br />` 0 - Not supported :code:`<br />` >0 - Use for manual scale.
     :vartype vm_instance_count: int
@@ -3211,8 +3178,8 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
      the service fabric runtime.
     :vartype vm_setup_actions: list[str or
      ~azure.mgmt.servicefabricmanagedclusters.models.VmSetupAction]
-    :ivar security_type: Specifies the security type of the nodeType. Only TrustedLaunch is
-     currently supported. "TrustedLaunch"
+    :ivar security_type: Specifies the security type of the nodeType. Only Standard and
+     TrustedLaunch are currently supported. Known values are: "TrustedLaunch" and "Standard".
     :vartype security_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.SecurityType
     :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType. Can
      only be used with TrustedLaunch SecurityType.
@@ -3229,6 +3196,10 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
     :ivar nat_gateway_id: Specifies the resource id of a NAT Gateway to attach to the subnet of
      this node type. Node type must use custom load balancer.
     :vartype nat_gateway_id: str
+    :ivar nat_configurations: Specifies the NAT configuration on default public Load Balancer for
+     the node type. This is only supported for node types use the default public Load Balancer.
+    :vartype nat_configurations:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeNatConfig]
     :ivar vm_image_plan: Specifies information about the marketplace image used to create the
      virtual machine. This element is only used for marketplace images. Before you can use a
      marketplace image from an API, you must enable the image for programmatic use. In the Azure
@@ -3245,6 +3216,9 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
      secondary network interfaces to attach to the node type.
     :vartype additional_network_interface_configurations:
      list[~azure.mgmt.servicefabricmanagedclusters.models.AdditionalNetworkInterfaceConfiguration]
+    :ivar computer_name_prefix: Specifies the computer name prefix. Limited to 9 characters. If
+     specified, allows for a longer name to be specified for the node type name.
+    :vartype computer_name_prefix: str
     """
 
     _validation = {
@@ -3307,6 +3281,7 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         "enable_node_public_i_pv6": {"key": "properties.enableNodePublicIPv6", "type": "bool"},
         "vm_shared_gallery_image_id": {"key": "properties.vmSharedGalleryImageId", "type": "str"},
         "nat_gateway_id": {"key": "properties.natGatewayId", "type": "str"},
+        "nat_configurations": {"key": "properties.natConfigurations", "type": "[NodeTypeNatConfig]"},
         "vm_image_plan": {"key": "properties.vmImagePlan", "type": "VmImagePlan"},
         "service_artifact_reference_id": {"key": "properties.serviceArtifactReferenceId", "type": "str"},
         "dscp_configuration_id": {"key": "properties.dscpConfigurationId", "type": "str"},
@@ -3314,6 +3289,7 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
             "key": "properties.additionalNetworkInterfaceConfigurations",
             "type": "[AdditionalNetworkInterfaceConfiguration]",
         },
+        "computer_name_prefix": {"key": "properties.computerNamePrefix", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3363,12 +3339,14 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         enable_node_public_i_pv6: Optional[bool] = None,
         vm_shared_gallery_image_id: Optional[str] = None,
         nat_gateway_id: Optional[str] = None,
+        nat_configurations: Optional[List["_models.NodeTypeNatConfig"]] = None,
         vm_image_plan: Optional["_models.VmImagePlan"] = None,
         service_artifact_reference_id: Optional[str] = None,
         dscp_configuration_id: Optional[str] = None,
         additional_network_interface_configurations: Optional[
             List["_models.AdditionalNetworkInterfaceConfiguration"]
         ] = None,
+        computer_name_prefix: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3379,9 +3357,9 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         :keyword is_primary: Indicates the Service Fabric system services for the cluster will run on
          this node type. This setting cannot be changed once the node type is created.
         :paramtype is_primary: bool
-        :keyword vm_instance_count: The number of nodes in the node type. :code:`<br />`:code:`<br />`\
-         **Values:** :code:`<br />`-1 - Use when auto scale rules are configured or sku.capacity is
-         defined :code:`<br />` 0 - Not supported :code:`<br />` >0 - Use for manual scale.
+        :keyword vm_instance_count: The number of nodes in the node type. :code:`<br />`:code:`<br
+         />`\\ **Values:** :code:`<br />`-1 - Use when auto scale rules are configured or sku.capacity
+         is defined :code:`<br />` 0 - Not supported :code:`<br />` >0 - Use for manual scale.
         :paramtype vm_instance_count: int
         :keyword data_disk_size_gb: Disk size for the managed disk attached to the vms on the node type
          in GBs.
@@ -3498,8 +3476,8 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
          bootstrapping the service fabric runtime.
         :paramtype vm_setup_actions: list[str or
          ~azure.mgmt.servicefabricmanagedclusters.models.VmSetupAction]
-        :keyword security_type: Specifies the security type of the nodeType. Only TrustedLaunch is
-         currently supported. "TrustedLaunch"
+        :keyword security_type: Specifies the security type of the nodeType. Only Standard and
+         TrustedLaunch are currently supported. Known values are: "TrustedLaunch" and "Standard".
         :paramtype security_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.SecurityType
         :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType.
          Can only be used with TrustedLaunch SecurityType.
@@ -3516,6 +3494,10 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         :keyword nat_gateway_id: Specifies the resource id of a NAT Gateway to attach to the subnet of
          this node type. Node type must use custom load balancer.
         :paramtype nat_gateway_id: str
+        :keyword nat_configurations: Specifies the NAT configuration on default public Load Balancer
+         for the node type. This is only supported for node types use the default public Load Balancer.
+        :paramtype nat_configurations:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeNatConfig]
         :keyword vm_image_plan: Specifies information about the marketplace image used to create the
          virtual machine. This element is only used for marketplace images. Before you can use a
          marketplace image from an API, you must enable the image for programmatic use. In the Azure
@@ -3532,6 +3514,9 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
          secondary network interfaces to attach to the node type.
         :paramtype additional_network_interface_configurations:
          list[~azure.mgmt.servicefabricmanagedclusters.models.AdditionalNetworkInterfaceConfiguration]
+        :keyword computer_name_prefix: Specifies the computer name prefix. Limited to 9 characters. If
+         specified, allows for a longer name to be specified for the node type name.
+        :paramtype computer_name_prefix: str
         """
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
@@ -3578,10 +3563,12 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         self.enable_node_public_i_pv6 = enable_node_public_i_pv6
         self.vm_shared_gallery_image_id = vm_shared_gallery_image_id
         self.nat_gateway_id = nat_gateway_id
+        self.nat_configurations = nat_configurations
         self.vm_image_plan = vm_image_plan
         self.service_artifact_reference_id = service_artifact_reference_id
         self.dscp_configuration_id = dscp_configuration_id
         self.additional_network_interface_configurations = additional_network_interface_configurations
+        self.computer_name_prefix = computer_name_prefix
 
 
 class NodeTypeActionParameters(_serialization.Model):
@@ -3720,10 +3707,56 @@ class NodeTypeListSkuResult(_serialization.Model):
         self.next_link = next_link
 
 
+class NodeTypeNatConfig(_serialization.Model):
+    """Provides information about NAT configuration on the default public Load Balancer for the node
+    type.
+
+    :ivar backend_port: The internal port for the NAT configuration.
+    :vartype backend_port: int
+    :ivar frontend_port_range_start: The port range start for the external endpoint.
+    :vartype frontend_port_range_start: int
+    :ivar frontend_port_range_end: The port range end for the external endpoint.
+    :vartype frontend_port_range_end: int
+    """
+
+    _validation = {
+        "backend_port": {"maximum": 65535, "minimum": 1},
+        "frontend_port_range_start": {"maximum": 65534, "minimum": 1},
+        "frontend_port_range_end": {"maximum": 65534, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "backend_port": {"key": "backendPort", "type": "int"},
+        "frontend_port_range_start": {"key": "frontendPortRangeStart", "type": "int"},
+        "frontend_port_range_end": {"key": "frontendPortRangeEnd", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        backend_port: Optional[int] = None,
+        frontend_port_range_start: Optional[int] = None,
+        frontend_port_range_end: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backend_port: The internal port for the NAT configuration.
+        :paramtype backend_port: int
+        :keyword frontend_port_range_start: The port range start for the external endpoint.
+        :paramtype frontend_port_range_start: int
+        :keyword frontend_port_range_end: The port range end for the external endpoint.
+        :paramtype frontend_port_range_end: int
+        """
+        super().__init__(**kwargs)
+        self.backend_port = backend_port
+        self.frontend_port_range_start = frontend_port_range_start
+        self.frontend_port_range_end = frontend_port_range_end
+
+
 class NodeTypeSku(_serialization.Model):
     """Describes a node type sku.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The sku name. :code:`<br />`:code:`<br />`Name is internally generated and is used
      in auto-scale scenarios.:code:`<br />` Property does not allow to be changed to other values
@@ -3949,7 +3982,7 @@ class OperationResult(_serialization.Model):
 class PartitionInstanceCountScaleMechanism(ScalingMechanism):
     """Represents a scaling mechanism for adding or removing instances of stateless service partition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Specifies the mechanism associated with this scaling policy. Required. Known values
      are: "ScalePartitionInstanceCount" and "AddRemoveIncrementalNamedPartition".
@@ -4008,18 +4041,22 @@ class ResourceAzStatus(_serialization.Model):
     :vartype resource_type: str
     :ivar is_zone_resilient: VM Size name.
     :vartype is_zone_resilient: bool
+    :ivar details: Zone resiliency status details for the resource.
+    :vartype details: str
     """
 
     _validation = {
         "resource_name": {"readonly": True},
         "resource_type": {"readonly": True},
         "is_zone_resilient": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
         "resource_name": {"key": "resourceName", "type": "str"},
         "resource_type": {"key": "resourceType", "type": "str"},
         "is_zone_resilient": {"key": "isZoneResilient", "type": "bool"},
+        "details": {"key": "details", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -4028,12 +4065,13 @@ class ResourceAzStatus(_serialization.Model):
         self.resource_name = None
         self.resource_type = None
         self.is_zone_resilient = None
+        self.details = None
 
 
 class RollingUpgradeMonitoringPolicy(_serialization.Model):
     """The policy used for monitoring the application upgrade.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failure_action: The compensating action to perform when a Monitored upgrade encounters
      monitoring policy or health policy violations. Invalid indicates the failure action is invalid.
@@ -4129,7 +4167,7 @@ class RollingUpgradeMonitoringPolicy(_serialization.Model):
         self.upgrade_domain_timeout = upgrade_domain_timeout
 
 
-class RuntimeResumeApplicationUpgradeParameters(_serialization.Model):
+class RuntimeResumeApplicationUpgradeParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters for Resume Upgrade action. The upgrade domain name must be specified.
 
     :ivar upgrade_domain_name: The upgrade domain name. Expected to be the next upgrade domain if
@@ -4154,7 +4192,7 @@ class RuntimeResumeApplicationUpgradeParameters(_serialization.Model):
 class ScalingPolicy(_serialization.Model):
     """Specifies a metric to load balance a service during runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scaling_mechanism: Specifies the mechanism associated with this scaling policy. Required.
     :vartype scaling_mechanism: ~azure.mgmt.servicefabricmanagedclusters.models.ScalingMechanism
@@ -4190,7 +4228,7 @@ class ScalingPolicy(_serialization.Model):
 class ServiceCorrelation(_serialization.Model):
     """Creates a particular correlation between services.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scheme: The ServiceCorrelationScheme which describes the relationship between this
      service and the service specified via ServiceName. Required. Known values are:
@@ -4233,7 +4271,7 @@ class ServiceCorrelation(_serialization.Model):
 class ServiceEndpoint(_serialization.Model):
     """The service endpoint properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service: The type of the endpoint service. Required.
     :vartype service: str
@@ -4265,7 +4303,7 @@ class ServiceEndpoint(_serialization.Model):
 class ServiceLoadMetric(_serialization.Model):
     """Specifies a metric to load balance a service during runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the metric. If the service chooses to report load during runtime, the
      load metric name should match the name that is specified in Name exactly. Note that metric
@@ -4342,7 +4380,7 @@ class ServicePlacementPolicy(_serialization.Model):
     ServicePlacementPreferPrimaryDomainPolicy, ServicePlacementRequiredDomainPolicy,
     ServicePlacementRequireDomainDistributionPolicy
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4380,7 +4418,7 @@ class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
     fault or upgrade domain should not be used for placement of the instances or replicas of that
     service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4411,10 +4449,10 @@ class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
         self.domain_name = domain_name
 
 
-class ServicePlacementNonPartiallyPlaceServicePolicy(ServicePlacementPolicy):
+class ServicePlacementNonPartiallyPlaceServicePolicy(ServicePlacementPolicy):  # pylint: disable=name-too-long
     """ServicePlacementNonPartiallyPlaceServicePolicy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4437,7 +4475,7 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(ServicePlacementPolicy):
         self.type: str = "NonPartiallyPlaceService"
 
 
-class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
+class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):  # pylint: disable=name-too-long
     """Describes the policy to be used for placement of a Service Fabric service where the service's
     Primary replicas should optimally be placed in a particular domain.
 
@@ -4450,7 +4488,7 @@ class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
     Primary replica
     may not end up located in this domain due to failures, capacity limits, or other constraints.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4487,7 +4525,7 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
     """Describes the policy to be used for placement of a Service Fabric service where the instances
     or replicas of that service must be placed in a particular domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4520,7 +4558,7 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
         self.domain_name = domain_name
 
 
-class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
+class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):  # pylint: disable=name-too-long
     """Describes the policy to be used for placement of a Service Fabric service where two replicas
     from the same partition should never be placed in the same fault or upgrade domain.
 
@@ -4534,7 +4572,7 @@ class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
     this
     policy should be set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of placement policy for a service fabric service. Following are the
      possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
@@ -4745,7 +4783,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
@@ -4896,7 +4934,7 @@ class ServiceTypeHealthPolicy(_serialization.Model):
     """Represents the health policy used to evaluate the health of services belonging to a service
     type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar max_percent_unhealthy_services: The maximum allowed percentage of unhealthy services.
 
@@ -5021,7 +5059,7 @@ class ServiceUpdateParameters(_serialization.Model):
 class SettingsParameterDescription(_serialization.Model):
     """Describes a parameter in fabric settings of the cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The parameter name of fabric setting. Required.
     :vartype name: str
@@ -5054,7 +5092,7 @@ class SettingsParameterDescription(_serialization.Model):
 class SettingsSectionDescription(_serialization.Model):
     """Describes a section in the fabric settings of the cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The section name of the fabric settings. Required.
     :vartype name: str
@@ -5089,7 +5127,7 @@ class SettingsSectionDescription(_serialization.Model):
 class SingletonPartitionScheme(Partition):
     """SingletonPartitionScheme.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
      "Singleton", "UniformInt64Range", and "Named".
@@ -5114,7 +5152,7 @@ class SingletonPartitionScheme(Partition):
 class Sku(_serialization.Model):
     """Service Fabric managed cluster Sku definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Sku Name. Required. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.servicefabricmanagedclusters.models.SkuName
@@ -5142,7 +5180,7 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
@@ -5351,7 +5389,7 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
@@ -5538,7 +5576,7 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
 class Subnet(_serialization.Model):
     """Describes a Subnet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Subnet name. Required.
     :vartype name: str
@@ -5688,7 +5726,7 @@ class UniformInt64RangePartitionScheme(Partition):
     """Describes a partitioning scheme where an integer range is allocated evenly across a number of
     partitions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
      "Singleton", "UniformInt64Range", and "Named".
@@ -5768,7 +5806,7 @@ class VaultCertificate(_serialization.Model):
     """Describes a single certificate reference in a Key Vault, and where the certificate should
     reside on the VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -5825,7 +5863,7 @@ class VaultCertificate(_serialization.Model):
 class VaultSecretGroup(_serialization.Model):
     """Specifies set of certificates that should be installed onto the virtual machines.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
      VaultCertificates. Required.
@@ -5924,7 +5962,7 @@ class VmManagedIdentity(_serialization.Model):
 
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
      scale set under the node type. Each entry will be an ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: list[str]
     """
 
@@ -5936,7 +5974,7 @@ class VmManagedIdentity(_serialization.Model):
         """
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set under the node type. Each entry will be an ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: list[str]
         """
         super().__init__(**kwargs)
@@ -5969,7 +6007,7 @@ class VMSize(_serialization.Model):
 class VmssDataDisk(_serialization.Model):
     """Managed data disk description.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
      data disks within the VM and therefore must be unique for each data disk attached to a VM. Lun
@@ -6034,7 +6072,7 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the extension. Required.
     :vartype name: str

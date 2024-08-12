@@ -68,6 +68,7 @@ class DirectoryOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -91,6 +92,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -131,6 +139,7 @@ class DirectoryOperations:
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -344,6 +353,7 @@ class DirectoryOperations:
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -364,6 +374,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -404,6 +421,7 @@ class DirectoryOperations:
             url=self._config.url,
             timeout=timeout,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -826,6 +844,7 @@ class DirectoryOperations:
         replace_if_exists: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
@@ -861,6 +880,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -924,6 +950,7 @@ class DirectoryOperations:
             file_last_write_time=_file_last_write_time,
             file_change_time=_file_change_time,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,

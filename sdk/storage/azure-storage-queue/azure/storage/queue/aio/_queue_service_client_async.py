@@ -82,11 +82,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             :caption: Creating the QueueServiceClient with an account url and credential.
 
         .. literalinclude:: ../samples/queue_samples_authentication_async.py
-            :start-after: [START async_create_queue_service_client_token]
-            :end-before: [END async_create_queue_service_client_token]
+            :start-after: [START async_create_queue_service_client_oauth]
+            :end-before: [END async_create_queue_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the QueueServiceClient with Azure Identity credentials.
+            :caption: Creating the QueueServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(

@@ -127,7 +127,7 @@ class EnvironmentCredential:
         """Close the credential's transport session."""
         self.__exit__()
 
-    @log_get_token("EnvironmentCredential")
+    @log_get_token
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:

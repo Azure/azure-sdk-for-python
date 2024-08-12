@@ -7,10 +7,6 @@ extends:
       ServiceDirectory: maps
       MatrixReplace:
         - TestSamples=.*/true
-      CloudConfig:
-        Public:
-          SubscriptionConfigurations:
-            - $(sub-config-azure-cloud-test-resources)
       Clouds: Public
       EnvVars:
         TEST_MODE: "RunLiveNoRecord"

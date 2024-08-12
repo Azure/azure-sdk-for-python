@@ -10,18 +10,18 @@ extends:
       SupportedClouds: 'Public,UsGov,China'
       CloudConfig:
         Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
-          ServiceConnection: azure-sdk-tests
-        China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
           ServiceConnection: usgov_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
+        China:
+          ServiceConnection: china_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureChinaMsft.json
           Location: 'chinanorth3'
-      MatrixReplace:
-        - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:

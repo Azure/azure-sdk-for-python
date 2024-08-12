@@ -37,65 +37,68 @@ class BreakingChangeType(str, Enum):
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
+    REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
 
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
-        "The client '{}.{}' was deleted or renamed in the current version"
+        "The client '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
-        "The '{}.{}' client method '{}' was deleted or renamed in the current version"
+        "The '{}' client method '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLASS_MSG = \
-        "The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
+        "The model or publicly exposed class '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLASS_METHOD_MSG = \
-        "The '{}.{}' method '{}' was deleted or renamed in the current version"
+        "The '{}' method '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
+        "The publicly exposed function '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "The '{}.{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
+        "The '{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
+        "The function '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
+        "The '{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
-        "The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
+        "The function '{}' had a '{}' parameter '{}' inserted in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
-        "The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
+        "The client '{}' had its instance variable '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
-        "The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
+        "The model or publicly exposed class '{}' had its instance variable '{}' deleted or renamed " \
         "in the current version"
     REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
-        "The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
+        "The '{}' enum had its value '{}' deleted or renamed in the current version"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "The class '{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "The publicly exposed function '{}' had its parameter '{}' default value changed from '{}' to '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "The class '{}.{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
+        "The class '{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
         "the current version"
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had default value '{}' removed from its parameter '{}' in " \
+        "The publicly exposed function '{}' had default value '{}' removed from its parameter '{}' in " \
         "the current version"
     CHANGED_PARAMETER_ORDERING_MSG = \
-        "The class '{}.{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
+        "The class '{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
+        "The publicly exposed function '{}' had its parameters re-ordered from '{}' to '{}' in " \
         "the current version"
     CHANGED_PARAMETER_KIND_MSG = \
-        "The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "The class '{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "The function '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
-        "The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
+        "The class '{}' method '{}' changed from '{}' to '{}' in the current version."
     CHANGED_FUNCTION_KIND_MSG = \
-        "The function '{}.{}' changed from '{}' to '{}' in the current version."
+        "The function '{}' changed from '{}' to '{}' in the current version."
     REMOVED_OR_RENAMED_MODULE_MSG = \
         "The '{}' module was deleted or renamed in the current version"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
-        "The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
+        "The class '{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
     REMOVED_FUNCTION_KWARGS_MSG = \
-        "The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
+        "The function '{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
+    REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
+        "The '{}' client had operation group '{}' deleted or renamed in the current version"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -476,11 +479,19 @@ class BreakingChangesTracker:
                 for property in deleted_props:
                     bc = None
                     if self.class_name.endswith("Client"):
-                        bc = (
-                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                            self.module_name, self.class_name, property
-                        )
+                        property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+                        if property_type is not None and property_type.lower().endswith("operations"):
+                            bc = (
+                                self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
+                                BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
+                                self.module_name, self.class_name, property
+                            )
+                        else:
+                            bc = (
+                                self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
+                                BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                                self.module_name, self.class_name, property
+                            )
                     elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
                         if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
                             and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
@@ -614,9 +625,10 @@ class BreakingChangesTracker:
 
         formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
-            msg, *args = bc
+            # Extract the message and the change type, skip the module name
+            msg, bc_type, _, *args = bc
             # For simple breaking changes reporting, prepend the change code to the message
-            msg = "({}): " + msg + "\n"
+            msg = f"({bc_type}): " + msg + "\n"
             formatted += msg.format(*args)
         
         formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"

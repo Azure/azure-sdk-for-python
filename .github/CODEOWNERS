@@ -18,6 +18,8 @@
 # SDK
 ###########
 
+/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+
 # Catch all
 /sdk/ @lmazuel
 
@@ -98,6 +100,10 @@
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
 
+# ServiceLabel: %Communication - Call Automation
+# PRLabel: %Communication - Call Automation
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
@@ -148,9 +154,17 @@
 # PRLabel: %DevCenter
 /sdk/devcenter/                                                      @drielenr @leti367 @sebrenna
 
+# ServiceLabel: %Defender EASM
+# PRLabel: %Defender EASM
+/sdk/easm/                                                           @nathanfalke
+
+# ServiceLabel: %Face
+# PRLabel: %Face
+/sdk/face/                                                           @zihyunting
+
 # ServiceLabel: %Cognitive - Health Insights
 # PRLabel: %Cognitive - Health Insights
-/sdk/healthinsights/                                                 @tomsft
+/sdk/healthinsights/                                                 @tomsft @koen-mertens
 
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
@@ -207,7 +221,7 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz @pilchie
+/sdk/cosmos/                                                         @annatisch @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
@@ -251,27 +265,7 @@
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @achauhan-scc @kingernupur @ninghu @YusakuNo1
-
-# PRLabel: %ML-Data
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                                          @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_datastore/                                     @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_store/                                 @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_set/                                   @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_store_entity/                          @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/data.py                                  @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/data.py                     @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/feature_set.py              @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_data/                                         @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_store/                                @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_store_entity/                         @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_set/                                  @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_data_operations.py                          @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_datastore_operations.py                     @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_store_operations.py                 @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_store_entity_operations.py          @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_set_operations.py                   @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
-/sdk/ml/data-experiences.tests.yml                                                      @sogansky @code-vicar @pritamDas9191 @achauhan-scc @kingernupur
+/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur 
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
@@ -301,40 +295,10 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230
 /sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871
 
-# PRLabel: %ML-RegistryManagement
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/registry/                           @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_registry_operations.py          @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_registry/                         @hugoaponte @Man-MSFT
-
-# PRLabel: %ML-Assets
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                          @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                        @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_code_operations.py              @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_component_operations.py         @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_environment_operations.py       @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_model_operations.py             @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/                           @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_deployment/                       @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_endpoint/                         @hugoaponte @Man-MSFT
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/                             @hugoaponte @Man-MSFT
-
-# PRLabel: %ML-Inference
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_batch_deployment_operations.py    @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_batch_endpoint_operations.py      @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_online_deployment_operations.py   @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_online_endpoint_operations.py     @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_deployment/                          @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_endpoint/                            @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-/sdk/ml/production-experiences.tests.yml                                      @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
-
 # PRLabel: %ML-Workspace
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @seanyao1 @debuggerXi
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @seanyao1 @debuggerXi
-
-# PRLabel: %ML-WorkspaceConnections
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @achauhan-scc @kingernupur @ninghu @YusakuNo1
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @achauhan-scc @kingernupur @ninghu @YusakuNo1
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
@@ -345,7 +309,7 @@
 
 # ServiceLabel: %Maps
 # PRLabel: %Maps
-/sdk/maps/                                                           @alextts627
+/sdk/maps/                                                           @dubiety @Lakicar95
 
 # ServiceLabel: %Mixed Reality
 # PRLabel: %Mixed Reality
@@ -798,7 +762,7 @@
 #/<NotInRepo>/          @sffamily @chenkennt
 
 # ServiceLabel: %Service Attention %Storsimple
-#/<NotInRepo>/          @anoobbacker @ganzee @manuaery @patelkunal
+#/<NotInRepo>/          @anoobbacker @ganzee @manuaery
 
 # ServiceLabel: %Service Attention %Stream Analytics
 #/<NotInRepo>/          @atpham256
@@ -867,15 +831,16 @@
 ###########
 # Eng Sys
 ###########
-/eng/                                                                @scbedd @weshaggard @benbp
-/eng/common/                                                         @Azure/azure-sdk-eng
-/.github/workflows/                                                  @Azure/azure-sdk-eng
+# TEMPORARY COMMENTING FOR PROOF-OF-CONCEPT.
+#/eng/                                                                @scbedd @weshaggard @benbp
+#/eng/common/                                                         @Azure/azure-sdk-eng
+#/.github/workflows/                                                  @Azure/azure-sdk-eng
 
-/tools/                                                              @scbedd @mccoyp
+#/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
-/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+#/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
+#/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+#/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 /pylintrc                                                            @l0lawrence
