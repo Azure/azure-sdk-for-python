@@ -293,8 +293,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["x-ms-creation-time"] = self._deserialize(
@@ -377,7 +375,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2574,19 +2572,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-
-        if response.status_code == 202:
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -2845,8 +2835,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "bytearray", response.headers.get("x-ms-blob-content-md5")
             )
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
@@ -2908,7 +2896,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "bytearray", response.headers.get("x-ms-blob-content-md5")
             )
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -1358,131 +1358,57 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-            response_headers["Content-Disposition"] = self._deserialize(
-                "str", response.headers.get("Content-Disposition")
-            )
-            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["x-ms-copy-completion-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
-            )
-            response_headers["x-ms-copy-status-description"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-status-description")
-            )
-            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-            response_headers["x-ms-copy-progress"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-progress")
-            )
-            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-            response_headers["x-ms-content-md5"] = self._deserialize(
-                "bytearray", response.headers.get("x-ms-content-md5")
-            )
-            response_headers["x-ms-server-encrypted"] = self._deserialize(
-                "bool", response.headers.get("x-ms-server-encrypted")
-            )
-            response_headers["x-ms-file-attributes"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-attributes")
-            )
-            response_headers["x-ms-file-creation-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-creation-time")
-            )
-            response_headers["x-ms-file-last-write-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-last-write-time")
-            )
-            response_headers["x-ms-file-change-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-change-time")
-            )
-            response_headers["x-ms-file-permission-key"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-permission-key")
-            )
-            response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-            response_headers["x-ms-file-parent-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-parent-id")
-            )
-            response_headers["x-ms-lease-duration"] = self._deserialize(
-                "str", response.headers.get("x-ms-lease-duration")
-            )
-            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
+        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-content-md5"] = self._deserialize("bytearray", response.headers.get("x-ms-content-md5"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if response.status_code == 206:
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-            response_headers["Content-Disposition"] = self._deserialize(
-                "str", response.headers.get("Content-Disposition")
-            )
-            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["x-ms-copy-completion-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
-            )
-            response_headers["x-ms-copy-status-description"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-status-description")
-            )
-            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-            response_headers["x-ms-copy-progress"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-progress")
-            )
-            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-            response_headers["x-ms-content-md5"] = self._deserialize(
-                "bytearray", response.headers.get("x-ms-content-md5")
-            )
-            response_headers["x-ms-server-encrypted"] = self._deserialize(
-                "bool", response.headers.get("x-ms-server-encrypted")
-            )
-            response_headers["x-ms-file-attributes"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-attributes")
-            )
-            response_headers["x-ms-file-creation-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-creation-time")
-            )
-            response_headers["x-ms-file-last-write-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-last-write-time")
-            )
-            response_headers["x-ms-file-change-time"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-change-time")
-            )
-            response_headers["x-ms-file-permission-key"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-permission-key")
-            )
-            response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-            response_headers["x-ms-file-parent-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-file-parent-id")
-            )
-            response_headers["x-ms-lease-duration"] = self._deserialize(
-                "str", response.headers.get("x-ms-lease-duration")
-            )
-            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
-
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

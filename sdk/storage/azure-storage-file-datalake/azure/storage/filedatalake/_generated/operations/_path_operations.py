@@ -1742,8 +1742,6 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if response.status_code == 206:
             response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
             response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
@@ -1778,7 +1776,7 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
