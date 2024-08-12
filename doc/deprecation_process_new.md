@@ -6,7 +6,7 @@ This guide describes the step-by-step process for deprecating an `azure-*` packa
 
 The overall idea is that PyPI does not support an official deprecation logic. We concluded that the best way is:
 - Change the classifier as `Inactive`, to showcase in metadata that this package is longer worked on.
-- Add a disclaimer on the main Readme file to explain deprecation, and provide a migration guide as necessary. While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
+- Add a disclaimer on the main Readme file to explain deprecation, and provide a migration guide as necessary.
 - Push a new release to PyPI.
 
 # Step 1: Determine package that needs deprecation
@@ -142,6 +142,9 @@ Create a new PR targeting the `main` branch of the repository. Post the PR in th
 # Step 7: Update API Documentation
 
 ## Update github.io docs
+
+- Remove all documentation related to the deprecated package on github.io.
+- **Note**: Be careful with deletion in this account.
 
 Follow this guide to Manually release Github.IO docs
 - https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1087/Manually-Releasing-Github.IO-Docs
