@@ -22,7 +22,6 @@ from ...exceptions import (
     EventDataSendError,
     OperationTimeoutError
 )
-from ..._constants import MAX_BUFFER_LENGTH
 
 
 if TYPE_CHECKING:
@@ -254,7 +253,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await asyncio.sleep(0.05)
 
     @staticmethod
-    async def _receive_task(consumer, max_batch_size):
+    async def _receive_task(consumer):
         # pylint:disable=protected-access
         max_retries = consumer._client._config.max_retries
         retried_times = 0
@@ -262,16 +261,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         try:
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
-                    # set a default value of consumer._prefetch for buffer length
-                    buff_length = MAX_BUFFER_LENGTH
                     await consumer._open() # pylint: disable=protected-access
-                    async with consumer._message_buffer_lock:
-                        buff_length = len(consumer._message_buffer)
-                    if buff_length <= max_batch_size:
-                        running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(
-                            batch=consumer._prefetch
-                        )
-                    await asyncio.sleep(0.05)
+                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
@@ -323,7 +314,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
-        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer, max_batch_size))
+        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
 
         tasks = [callback_task, receive_task]
         try:
