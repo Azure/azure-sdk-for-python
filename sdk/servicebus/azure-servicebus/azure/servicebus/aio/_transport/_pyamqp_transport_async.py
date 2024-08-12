@@ -52,7 +52,8 @@ from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
     OperationTimeoutError,
     SessionLockLostError,
-    ServiceBusConnectionError
+    ServiceBusConnectionError,
+    MessageSettlementError,
 )
 
 if TYPE_CHECKING:
@@ -331,9 +332,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> None:
         # pylint: disable=protected-access
         try:
-            if handler._link._is_closed:
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced,
-                                    description="Link is closed.", retryable=True)
+            # if handler._link._is_closed:
+            #     raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced,
+            #                         description="Link is closed.", retryable=True)
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -382,6 +383,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
 
+        except TimeoutError as te:
+            raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
