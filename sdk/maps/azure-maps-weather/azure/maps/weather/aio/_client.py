@@ -20,7 +20,7 @@ from ._configuration import MapsWeatherClientConfiguration
 from .operations import WeatherOperations
 
 
-class MapsWeatherClient:  # pylint: disable=client-accepts-api-version-keyword
+class MapsWeatherClient(WeatherOperations):  # pylint: disable=client-accepts-api-version-keyword
     """MapsWeatherClient.
 
     :ivar weather: WeatherOperations operations
@@ -71,8 +71,14 @@ class MapsWeatherClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.weather = WeatherOperations(self._client, self._config, self._serialize, self._deserialize)
 
+        super().__init__(
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
+        )
+        
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
