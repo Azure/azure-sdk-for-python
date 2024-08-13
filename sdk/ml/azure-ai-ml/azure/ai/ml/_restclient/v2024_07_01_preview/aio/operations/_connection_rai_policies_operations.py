@@ -18,12 +18,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._private_link_resources_operations import build_list_request
+from ...operations._connection_rai_policies_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateLinkResourcesOperations:
-    """PrivateLinkResourcesOperations async operations.
+class ConnectionRaiPoliciesOperations:
+    """ConnectionRaiPoliciesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,38 +49,29 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
+        connection_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateLinkResourceListResult"]:
-        """Called by Client (Portal, CLI, etc) to get available "private link resources" for the
-        workspace.
-        Each "private link resource" is a connection endpoint (IP address) to the resource.
-        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
-        resolution.
-        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
-        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
+    ) -> AsyncIterable["_models.RaiPolicyPropertiesBasicResourceArmPaginatedResult"]:
+        """List the specified Content Filters associated with the Azure OpenAI connection.
 
-        Called by Client (Portal, CLI, etc) to get available "private link resources" for the
-        workspace.
-        Each "private link resource" is a connection endpoint (IP address) to the resource.
-        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
-        resolution.
-        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
-        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
+        List the specified Content Filters associated with the Azure OpenAI connection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
+        :param connection_name: Friendly name of the workspace connection.
+        :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of
-         cls(response)
+        :return: An iterator like instance of either RaiPolicyPropertiesBasicResourceArmPaginatedResult
+         or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.RaiPolicyPropertiesBasicResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RaiPolicyPropertiesBasicResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -92,6 +83,7 @@ class PrivateLinkResourcesOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    connection_name=connection_name,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -104,6 +96,7 @@ class PrivateLinkResourcesOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    connection_name=connection_name,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -113,11 +106,11 @@ class PrivateLinkResourcesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateLinkResourceListResult", pipeline_response)
+            deserialized = self._deserialize("RaiPolicyPropertiesBasicResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -140,4 +133,4 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/connections/{connectionName}/raiPolicies"}  # type: ignore
