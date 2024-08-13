@@ -84,37 +84,31 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
 
 
 def get_access_conditions(lease: Optional[Union[ShareLeaseClient, str]]) -> Optional[LeaseAccessConditions]:
-    if not lease:
-        return None
     if isinstance(lease, ShareLeaseClient):
         lease_id = lease.id
     else:
         lease_id = lease
-    return LeaseAccessConditions(lease_id=lease_id)
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 def get_source_access_conditions(
     lease: Optional[Union[ShareLeaseClient, str]]
 ) -> Optional[SourceLeaseAccessConditions]:
-    if not lease:
-        return None
     if isinstance(lease, ShareLeaseClient):
         lease_id = lease.id
     else:
         lease_id = lease
-    return SourceLeaseAccessConditions(source_lease_id=lease_id)
+    return SourceLeaseAccessConditions(source_lease_id=lease_id) if lease_id else None
 
 
 def get_dest_access_conditions(
     lease: Optional[Union[ShareLeaseClient, str]]
 ) -> Optional[DestinationLeaseAccessConditions]:
-    if not lease:
-        return None
     if isinstance(lease, ShareLeaseClient):
         lease_id = lease.id
     else:
         lease_id = lease
-    return DestinationLeaseAccessConditions(destination_lease_id=lease_id)
+    return DestinationLeaseAccessConditions(destination_lease_id=lease_id) if lease_id else None
 
 
 def get_smb_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
