@@ -202,7 +202,6 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
       Pool: azsdk-pool-mms-ubuntu-2004-general
-      SparseCheckoutPaths: [ "eng/" ]
       DependsOn:
         - 'Build_Linux'
         - 'Build_Windows'

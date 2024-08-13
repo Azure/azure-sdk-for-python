@@ -22,6 +22,7 @@ from corehttp.exceptions import BaseError
 import aiohttp
 import httpx
 import pytest
+import os
 
 from utils import ASYNC_TRANSPORTS
 
@@ -85,6 +86,8 @@ def test_invalid_policy_error():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_transport_socket_timeout(transport):
+    os.environ.pop("SSL_CERT_DIR", None)
+    os.environ.pop("REQUESTS_CA_BUNDLE", None)
     request = HttpRequest("GET", "https://bing.com")
     policies = [UserAgentPolicy("myusergant")]
     # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
