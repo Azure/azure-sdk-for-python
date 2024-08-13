@@ -75,10 +75,10 @@ foreach($key in $batches.Keys) {
 }
 
 # set the values for the matrix
-$platformMatrixFile.matrix.TargetingString = $batchValues[0..($versionCount - 1)]
+$matrix.matrix.TargetingString = $batchValues[0..($versionCount - 1)]
 
 # set the values for include
-$platformMatrixFile.include[0].CoverageConfig.ubuntu2004_39_coverage.TargetingString = $batchValues[$versionCount]
-$platformMatrixFile.include[1].Config.Ubuntu2004_312.TargetingString = $batchValues[$versionCount+1]
+$matrix.include[0].CoverageConfig.ubuntu2004_39_coverage.TargetingString = $batchValues[$versionCount]
+$matrix.include[1].Config.Ubuntu2004_312.TargetingString = $batchValues[$versionCount+1]
 
-$platformMatrixFile | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
+$matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
