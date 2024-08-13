@@ -9,7 +9,7 @@ import os
 import json
 import jsondiff
 import pytest
-from breaking_changes_checker.changelog_tracker import ChangelogTracker
+from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 
 
@@ -67,6 +67,73 @@ def test_new_class_property_added():
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
+
+
+def test_async_mgmt_cleanup_check():
+    stable = {
+        "azure.mgmt.contentsafety": {
+            "class_nodes": {
+                "AnalyzeTextResult": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "blocklists_match": "Optional",
+                        "categories_analysis": "List[_models.TextCategoriesAnalysis]",
+                        "new_class_att": "str"
+                    }
+                },
+            }
+        },
+        "azure.mgmt.aio.contentsafety": {
+            "class_nodes": {
+                "AnalyzeTextResult": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "blocklists_match": "Optional",
+                        "categories_analysis": "List[_models.TextCategoriesAnalysis]",
+                        "new_class_att": "str"
+                    }
+                },
+            }
+        }
+    }
+
+    current = {
+        "azure.mgmt.contentsafety": {
+            "class_nodes": {
+                "AnalyzeTextResult": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "blocklists_match": "Optional",
+                        "categories_analysis": "List[_models.TextCategoriesAnalysis]",
+                    }
+                },
+            }
+        },
+        "azure.mgmt.aio.contentsafety": {
+            "class_nodes": {
+                "AnalyzeTextResult": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "blocklists_match": "Optional",
+                        "categories_analysis": "List[_models.TextCategoriesAnalysis]",
+                    }
+                },
+            }
+        }
+    }
+
+    diff = jsondiff.diff(stable, current)
+    bc = ChangelogTracker(stable, current, diff, "azure-mgmt-contentsafety", changelog=True)
+    bc.run_checks()
+
+    # Should only have 1 breaking change reported instead of 2
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == BreakingChangesTracker.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG
 
 
 def test_new_class_property_added_init():
