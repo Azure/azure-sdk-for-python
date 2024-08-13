@@ -16,7 +16,6 @@ from azure.storage.blob._shared.streams import (
     StructuredMessageConstants,
     StructuredMessageDecodeStream,
     StructuredMessageEncodeStream,
-    StructuredMessageError,
     StructuredMessageProperties,
 )
 from azure.storage.extensions import crc64
@@ -510,7 +509,7 @@ class TestStructuredMessageDecodeStream:
             invalid_segment)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError) as e:
+        with pytest.raises(ValueError) as e:
             stream.read()
         assert 'CRC64 mismatch' in str(e.value)
 
@@ -526,7 +525,7 @@ class TestStructuredMessageDecodeStream:
         stream = StructuredMessageDecodeStream(message_stream, length)
         # Since we only check CRC on segment borders, some reads will succeed, but we test
         # to ensure eventually the stream reading will error out.
-        with pytest.raises(StructuredMessageError) as e:
+        with pytest.raises(ValueError) as e:
             read = 0
             while read < len(data):
                 stream.read(512)
@@ -543,7 +542,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
     @pytest.mark.parametrize("message_length", [100, 1234567])  # Correct value: 1057
@@ -557,7 +556,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
     @pytest.mark.parametrize("segment_count", [2, 123])  # Correct value: 4
@@ -571,7 +570,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
     @pytest.mark.parametrize("segment_number", [1, 123])  # Correct value: 2
@@ -590,7 +589,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
     @pytest.mark.parametrize("segment_size", [123, 345])  # Correct value: 256
@@ -610,7 +609,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
     @pytest.mark.parametrize("segment_size", [123, 345])  # Correct value: 256
@@ -624,7 +623,7 @@ class TestStructuredMessageDecodeStream:
         message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
-        with pytest.raises(StructuredMessageError):
+        with pytest.raises(ValueError):
             stream.read()
 
 
