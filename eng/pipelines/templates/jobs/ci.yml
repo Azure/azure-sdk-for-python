@@ -220,7 +220,7 @@ jobs:
             filePath: '/eng/scripts/distribute-packages-to-matrix.ps1'
             arguments: '-PackageInfo "$(Build.ArtifactStagingDirectory)/PackageInfo" -PlatformJson $(Build.SourcesDirectory)/eng/pipelines/templates/stages/platform-matrix.json'
           displayName: 'Distribute Packages to Matrix'
-          conditon: eq(variables['Build.Reason'], 'PullRequest')
+          condition: eq(variables['Build.Reason'], 'PullRequest')
 
       CloudConfig:
         Cloud: Public
