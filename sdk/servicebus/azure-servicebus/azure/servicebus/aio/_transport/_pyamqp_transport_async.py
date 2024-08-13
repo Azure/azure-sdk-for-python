@@ -19,6 +19,7 @@ from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
     AMQPConnectionError,
     AMQPError,
+    AMQPException,
     MessageException,
     AMQPLinkError,
     ErrorCondition,
@@ -357,7 +358,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
         
-        except AMQPLinkError as ae:
+        except AMQPException as ae:
             if (
                 ae.condition == ErrorCondition.IllegalState
             ):
