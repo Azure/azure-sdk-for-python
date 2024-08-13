@@ -21,9 +21,9 @@ from ._models_py3 import OperationDetails
 from ._models_py3 import SnapshotListResult
 from ._models_py3 import SnapshotUpdateParameters
 
-from ._azure_app_configuration_enums import CompositionType
 from ._azure_app_configuration_enums import ConfigurationSettingFields
 from ._azure_app_configuration_enums import LabelFields
+from ._azure_app_configuration_enums import SnapshotComposition
 from ._azure_app_configuration_enums import SnapshotFields
 from ._azure_app_configuration_enums import SnapshotStatus
 from ._azure_app_configuration_enums import State
@@ -46,9 +46,9 @@ __all__ = [
     "OperationDetails",
     "SnapshotListResult",
     "SnapshotUpdateParameters",
-    "CompositionType",
     "ConfigurationSettingFields",
     "LabelFields",
+    "SnapshotComposition",
     "SnapshotFields",
     "SnapshotStatus",
     "State",

@@ -101,7 +101,7 @@ class ConfigurationSnapshot(_serialization.Model):  # pylint: disable=too-many-i
      are composed. The 'key' composition type ensures there are no two key-values containing the
      same key. The 'key_label' composition type ensures there are no two key-values containing the
      same key and label. Known values are: "key" and "key_label".
-    :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
+    :vartype composition_type: str or ~azure.appconfiguration.models.SnapshotComposition
     :ivar created: The time that the snapshot was created.
     :vartype created: ~datetime.datetime
     :ivar expires: The time that the snapshot will expire.
@@ -150,7 +150,7 @@ class ConfigurationSnapshot(_serialization.Model):  # pylint: disable=too-many-i
         self,
         *,
         filters: List["_models.ConfigurationSettingsFilter"],
-        composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
+        composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -163,7 +163,7 @@ class ConfigurationSnapshot(_serialization.Model):  # pylint: disable=too-many-i
          snapshot are composed. The 'key' composition type ensures there are no two key-values
          containing the same key. The 'key_label' composition type ensures there are no two key-values
          containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
+        :paramtype composition_type: str or ~azure.appconfiguration.models.SnapshotComposition
         :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
          archived state before expiring. This property is only writable during the creation of a
          snapshot. If not specified, the default lifetime of key-value revisions will be used.

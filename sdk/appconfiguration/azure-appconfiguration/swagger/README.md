@@ -20,9 +20,18 @@ version-tolerant: false
 ```yaml
 directive:
   from: swagger-document
-  where: $.parameters.KeyValueFields.items
+  where: $.parameters.KeyValueFields
   transform: >
-    $["x-ms-enum"]["name"] = "ConfigurationSettingFields"
+    $.items["x-ms-enum"]["name"] = "ConfigurationSettingFields"
+```
+
+### Rename the enum "CompositionType" to "SnapshotComposition"
+```yaml
+directive:
+  from: swagger-document
+  where: $.definitions.Snapshot.properties
+  transform: >
+    $.composition_type["x-ms-enum"].name = "SnapshotComposition"
 ```
 
 ### Rename the model "Label" to "ConfigurationSettingLabel"

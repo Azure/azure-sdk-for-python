@@ -10,16 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompositionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The composition type describes how the key-values within the snapshot are composed. The 'key'
-    composition type ensures there are no two key-values containing the same key. The 'key_label'
-    composition type ensures there are no two key-values containing the same key and label.
-    """
-
-    KEY = "key"
-    KEY_LABEL = "key_label"
-
-
 class ConfigurationSettingFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ConfigurationSettingFields."""
 
@@ -37,6 +27,16 @@ class LabelFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LabelFields."""
 
     NAME = "name"
+
+
+class SnapshotComposition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The composition type describes how the key-values within the snapshot are composed. The 'key'
+    composition type ensures there are no two key-values containing the same key. The 'key_label'
+    composition type ensures there are no two key-values containing the same key and label.
+    """
+
+    KEY = "key"
+    KEY_LABEL = "key_label"
 
 
 class SnapshotFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
