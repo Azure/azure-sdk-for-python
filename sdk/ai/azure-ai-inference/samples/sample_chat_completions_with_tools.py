@@ -7,7 +7,7 @@ DESCRIPTION:
     This sample demonstrates how to do chat completions using a synchronous client,
     with the assistance of tools. In this sample, we use a mock function tool to retrieve
     flight information in order to answer a query about the next flight between two
-    cities.
+    cities. Make sure that the AI model you use supports tools.
 
 USAGE:
     python sample_chat_completions_with_tools.py
@@ -55,18 +55,22 @@ def sample_chat_completions_with_tools():
         destination_city (str): The destination city.
 
         Returns:
-        str: The airline name, fight number, date and time of the next flight between the cities.
+        str: The airline name, fight number, date and time of the next flight between the cities, in JSON format.
         """
         if origin_city == "Seattle" and destination_city == "Miami":
-            return "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."
-        else:
-            return "Sorry, I don't have that information."
+            return json.dumps({
+                "airline": "Delta",
+                "flight_number": "DL123",
+                "flight_date": "May 7th, 2024",
+                "flight_time": "10:00AM"})
+        return json.dump({"error": "No flights found between the cities"})
 
-    # Define a 'tool' that the model can use to retrieves flight information
+
+    # Define a function 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsToolDefinition(
         function=FunctionDefinition(
             name="get_flight_info",
-            description="Returns information about the next flight between two cities. This includes the name of the airline, flight number and the date and time of the next flight",
+            description="Returns information about the next flight between two cities. This includes the name of the airline, flight number and the date and time of the next flight, in JSON format.",
             parameters={
                 "type": "object",
                 "properties": {
@@ -114,7 +118,7 @@ def sample_chat_completions_with_tools():
 
             # Only tools of type function are supported. Make a function call.
             function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
-            print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
+            print(f"Calling function `{tool_call.function.name}` with arguments {function_args}.")
             callable_func = locals()[tool_call.function.name]
 
             function_response = callable_func(**function_args)
