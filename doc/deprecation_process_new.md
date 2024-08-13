@@ -36,7 +36,6 @@ If the last released version was 1.2.3b1, the version should be 1.2.3b2.
 > ### Other Changes
 >
 > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
->
 > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
    
 If the last released version was 1.2.3, the version should be 1.2.4.
@@ -46,7 +45,6 @@ If the last released version was 1.2.3, the version should be 1.2.4.
 > ### Other Changes
 >
 > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
->
 > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
 Update the version in the `azure/mypackage/_version.py` file. This file may be called `version.py` if your package is very old.
@@ -101,7 +99,7 @@ More instruction can be found at: https://aka.ms/azsdk/release-checklist
 
 # Step 5: Create a new PR to remove package from ci.yml
 
-Remove the package artifact from `azure-mypackage/ci.yml`. This would look like removing the `name` and corresponding `safeName` lines from under `Artifacts` here:
+- Remove the package artifact from `azure-mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
 ```
 extends:
@@ -111,7 +109,10 @@ extends:
       safeName: azuremypackage
 ```
 
-Create a new PR targeting the `main` branch of the repository. Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47). You're responsible for fixing any CI issue related to this PR.
+- Create a new PR targeting the `main` branch of the repository.
+- Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
+- Once the PR has been approved, merge.
+- You're responsible for fixing any CI issue related to this PR.
 
 # Step 6: Update API Documentation
 
