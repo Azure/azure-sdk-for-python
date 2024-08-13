@@ -815,18 +815,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
-        except AMQPLinkError as le:
-            if (
-                le.condition == ErrorCondition.InternalError
-                and isinstance(le.description, str)
-                and le.description.startswith("Delivery tag")
-            ):
-                raise RuntimeError("Link error occurred during settle operation.") from le
-
-            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
-
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
+        
+        except AMQPException as ae:
+            if (
+                ae.condition == ErrorCondition.IllegalState
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from ae
+
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
