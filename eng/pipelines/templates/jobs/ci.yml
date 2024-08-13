@@ -209,6 +209,27 @@ jobs:
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
+      PreGenerationSteps:
+
+        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.12'
+          conditon: eq(variables['Build.Reason'], 'PullRequest')
+        - pwsh: |
+            python -m pip install "./tools/azure-sdk-tools[build]"
+          displayName: 'Prep Environment'
+          conditon: eq(variables['Build.Reason'], 'PullRequest')
+        - task: PythonScript@0
+          displayName: 'Ensure service coverage'
+          conditon: eq(variables['Build.Reason'], 'PullRequest')
+          inputs:
+            scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/batch_pr_tests.py'
+            arguments: >-
+              --package_info="$(Build.ArtifactStagingDirectory)/PackageInfo"
+              --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/platform-matrix.json
+
+
       CloudConfig:
         Cloud: Public
       AdditionalParameters:
@@ -240,12 +261,11 @@ jobs:
         - task: UsePythonVersion@0
           inputs:
             versionSpec: '3.12'
+          condition: Build
         - pwsh: |
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
-        - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
-          parameters:
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
           inputs:
