@@ -1412,6 +1412,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if len(blobs) == 0:
             return iter([])
+        if self.is_azurite is True:
+            kwargs['azurite_name'] = self.account_name
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
