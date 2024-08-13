@@ -213,7 +213,7 @@ jobs:
 
         - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
-        - task: PowerShell@5
+        - task: AzurePowerShell@5
           inputs:
             targetType: 'filePath'
             pwsh: true
