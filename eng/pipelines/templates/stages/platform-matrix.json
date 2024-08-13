@@ -12,7 +12,8 @@
     },
     "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
-    "TestSamples": "false"
+    "TestSamples": "false",
+    "TargetingString": ""
   },
   "include": [
     {
@@ -22,7 +23,8 @@
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TargetingString": ""
         }
       }
     },
@@ -33,7 +35,8 @@
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TargetingString": ""
         }
       }
     }
