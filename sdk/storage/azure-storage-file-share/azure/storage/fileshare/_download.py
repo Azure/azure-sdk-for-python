@@ -227,7 +227,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.name = name
         self.path = path
         self.share = share
-        self.properties = None  # type: ignore [assignment]
         self.size = 0
 
         self._client = client
