@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------_
-from typing import (  # pylint: disable=unused-import
-    Any, Dict, List, Optional, Tuple,
+from typing import (
+    Any, cast, Dict, List, Optional, Tuple,
     TYPE_CHECKING
 )
 
@@ -65,14 +65,14 @@ def deserialize_file_stream(
 
 # Extracts out file permission
 def deserialize_permission(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> Optional[str]:  # pylint: disable=unused-argument
-    return obj.permission
+    return cast(Optional[str], obj.permission)
 
 
 # Extracts out file permission key
 def deserialize_permission_key(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> Optional[str]:  # pylint: disable=unused-argument
     if response is None or headers is None:
         return None
-    return headers.get('x-ms-file-permission-key', None)
+    return cast(Optional[str], headers.get('x-ms-file-permission-key', None))
 
 
 def get_file_ranges_result(ranges: ShareFileRangeList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
