@@ -30,7 +30,9 @@ from azure.communication.callautomation._generated.models import (
     StopTranscriptionRequest,
     UpdateTranscriptionRequest,
     HoldRequest,
-    UnholdRequest
+    UnholdRequest,
+    StopMediaStreamingRequest,
+    StartMediaStreamingRequest
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -49,6 +51,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.tones = [DtmfTone.ONE, DtmfTone.TWO, DtmfTone.THREE, DtmfTone.POUND]
         self.operation_context = "test_operation_context"
         self.locale = "en-US"
+        self.operation_callback_url = "https://localhost"
         self.call_media_operations = Mock()
 
         self.call_connection_client = CallConnectionClient(
@@ -530,3 +533,62 @@ class TestCallMediaClient(unittest.TestCase):
         actual_hold_request = mock_unhold.call_args[0][1]
 
         self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        
+    def test_start_media_streaming(self):
+        mock_start_media_streaming = Mock()
+        self.call_media_operations.start_media_streaming = mock_start_media_streaming
+
+        self.call_connection_client.start_media_streaming(
+            operation_callback_url=self.operation_callback_url,
+            operation_context=self.operation_context)
+
+        expected_start_media_streaming_request = StartMediaStreamingRequest(
+            operation_callback_uri=self.operation_callback_url,
+            operation_context=self.operation_context)
+
+        mock_start_media_streaming.assert_called_once()
+        actual_call_connection_id = mock_start_media_streaming.call_args[0][0]
+        actual_start_media_streaming_request = mock_start_media_streaming.call_args[0][1]
+        self.assertEqual(self.call_connection_id,actual_call_connection_id)
+        self.assertEqual(expected_start_media_streaming_request.operation_callback_uri,
+                        actual_start_media_streaming_request.operation_callback_uri)
+        self.assertEqual(expected_start_media_streaming_request.operation_context,
+                        actual_start_media_streaming_request.operation_context)
+
+    def test_start_media_steaming_with_no_param(self):
+        mock_start_media_streaming = Mock()
+        self.call_media_operations.start_media_streaming = mock_start_media_streaming
+
+        self.call_connection_client.start_media_streaming()
+
+        mock_start_media_streaming.assert_called_once()
+        actual_call_connection_id = mock_start_media_streaming.call_args[0][0]
+        self.assertEqual(self.call_connection_id,actual_call_connection_id)
+
+    def test_stop_media_streaming(self):
+        mock_stop_media_streaming = Mock()
+        self.call_media_operations.stop_media_streaming = mock_stop_media_streaming
+
+        self.call_connection_client.stop_media_streaming(
+           operation_callback_url=self.operation_callback_url)
+
+        expected_stop_media_streaming_request = StopMediaStreamingRequest(
+           operation_callback_uri=self.operation_callback_url)
+
+        mock_stop_media_streaming.assert_called_once()
+
+        actual_call_connection_id = mock_stop_media_streaming.call_args[0][0]
+        actual_stop_media_streaming_request = mock_stop_media_streaming.call_args[0][1]
+        self.assertEqual(self.call_connection_id,actual_call_connection_id)
+        self.assertEqual(expected_stop_media_streaming_request.operation_callback_uri,
+                        actual_stop_media_streaming_request.operation_callback_uri)
+
+    def test_stop_media_streaming_with_no_param(self):
+        mock_stop_media_streaming = Mock()
+        self.call_media_operations.stop_media_streaming = mock_stop_media_streaming
+
+        self.call_connection_client.stop_media_streaming()
+
+        mock_stop_media_streaming.assert_called_once()
+        actual_call_connection_id = mock_stop_media_streaming.call_args[0][0]
+        self.assertEqual(self.call_connection_id,actual_call_connection_id)

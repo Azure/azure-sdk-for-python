@@ -36,13 +36,17 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             cls.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING')
             cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
-            cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
+            cls.file_source_url = os.environ.get('FILE_SOURCE_URL'),
+            cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT')
+            cls.transport_url = os.environ.get('TRANSPORT_URL')
         else:
             print("Recorded Test")
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
             cls.servicebus_connection_str =  "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
-            cls.file_source_url = "https://REDACTED/prompt.wav"
+            cls.file_source_url = "https://REDACTED/prompt.wav",
+            cls.cognitive_service_endpoint = "https://sanitized/"
+            cls.transport_url ="wss://REDACTED"
 
         cls.dispatcher_callback = cls.dispatcher_endpoint + '/api/servicebuscallback/events'
         cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
@@ -267,3 +271,54 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         finally:
             while unique_id in self.wait_for_event_flags: self.wait_for_event_flags.remove(unique_id)
             pass
+
+    def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
+        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
+        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
+
+        unique_id = self._unique_key_gen(caller, target)
+        if is_live():
+            dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
+            response = requests.post(dispatcher_url)
+
+            if response is None:
+                raise ValueError("Response cannot be None")
+
+            print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
+
+            self.wait_for_event_flags.append(unique_id)
+            thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
+            thread.start()
+
+        # create a call with options either media streaming or transcription.
+        create_call_result = call_automation_client_caller.create_call(
+            target_participant=target, 
+            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
+            media_streaming_configuration=options if not is_transcription else None,
+            transcription_configuration=options if is_transcription else None,
+            cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
+            )
+
+        if create_call_result is None:
+            raise ValueError("Invalid create_call_result")
+
+        caller_connection_id = create_call_result.call_connection_id
+        if caller_connection_id is None:
+            raise ValueError("Caller connection ID is None")
+
+        # wait for incomingCallContext
+        incoming_call_event = self.check_for_event('IncomingCall', unique_id, timedelta(seconds=30))
+        if incoming_call_event is None:
+            raise ValueError("incoming_call_event is None")
+        incoming_call_context = incoming_call_event["incomingCallContext"]
+
+        # answer the call
+        answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
+        if answer_call_result is None:
+            raise ValueError("Invalid answer_call result")
+
+        call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
+        call_connection_target = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
+        self.open_call_connections[unique_id] = call_connection_caller
+
+        return unique_id, call_connection_caller, call_connection_target
