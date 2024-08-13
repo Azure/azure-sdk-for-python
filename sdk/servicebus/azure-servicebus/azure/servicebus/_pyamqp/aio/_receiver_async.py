@@ -60,6 +60,7 @@ class ReceiverLink(Link):
         self._first_frame = None
         self._received_delivery_tags = set()
         self._pending_receipts = []
+        self._still_receiving = False
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -98,9 +99,13 @@ class ReceiverLink(Link):
     async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
+        async with self._drain_lock:   
+            self._still_receiving = True
         self.received_delivery_id = frame[1] # delivery_id
         # If more is false --> this is the last frame of the message
         if not frame[5]:
+            async with self._drain_lock:  
+                self._still_receiving = False
             self.delivery_count += 1
             self.current_link_credit -= 1
             self.total_link_credit -= 1

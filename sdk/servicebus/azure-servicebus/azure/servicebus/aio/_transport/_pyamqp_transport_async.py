@@ -530,9 +530,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 receiving = await amqp_receive_client.do_work_async()
                 received = amqp_receive_client._received_messages.qsize() - before
 
-                if received > 0:
-                    # If we received messages, reset the drain timeout
-                    time_sent = time.time()
+                async with receiver._handler._link._drain_lock:
+                    if received > 0 or receiver._handler._link._still_receiving:
+                        # If we received messages, reset the drain timeout
+                        time_sent = time.time()
 
                 if (
                     not first_message_received
