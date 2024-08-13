@@ -1,14 +1,9 @@
 # Release History
 
-## 1.2.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.2.1 (2024-08-13)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fix endpoint parsing issues
 
 ## 1.2.0 (2024-08-08)
 
