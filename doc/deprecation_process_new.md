@@ -13,8 +13,6 @@ The overall idea is that PyPI does not support an official deprecation logic. We
 
 Clone the `azure-sdk-for-python` repository and update the following files of your package.
 
-Example PR [here](TODO: link to example).
-
 ## README.md
 
 Replace the existing text with a disclaimer in the following format, with migration guide provided as necessary:
@@ -83,7 +81,7 @@ Update `setup.py` to change the `Development Status` classifier to `Development 
 
 **Note: This needs to be your LAST commit on the PR. More information can be found at [the bottom of the guide under "More details - Order of Development Status commit in PR"].**
 
-`Inactive` packages are disabled from most CI verificiation, therefore the CI should be faster and have fewer requirements.
+`Inactive` packages are disabled from most CI verification, therefore the CI should be faster and have fewer requirements.
 
 ## Post your PR in the Python review channel
 
@@ -91,7 +89,7 @@ Post your PR in the [review channel for Python.](https://teams.microsoft.com/l/c
 
 ## Merge PR
 
-Once the PR is merged, move to the next step.
+Once the PR is approved by the codeowner and merged, move to the next step.
 
 # Step 4: Trigger a release 
 
@@ -117,13 +115,13 @@ Create a new PR targeting the `main` branch of the repository. Post the PR in th
 
 # Step 6: Update API Documentation
 
-## Update github.io docs
+## Remove the entry in the github.io docs
 
-- Remove all documentation related to the deprecated package on github.io.
-- **Note**: Be careful with deletion in this account.
-
-Follow this guide to Manually release Github.IO docs
-- https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1087/Manually-Releasing-Github.IO-Docs
+- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If the reference exists, move to the next step.
+- Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo.
+- Remove the line entry for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)
+- Create a PR and leave it in the Python reviews channel.
+- Leave the PR in the Python reviews channel.
 
 ## Update docs.microsoft.com
 
