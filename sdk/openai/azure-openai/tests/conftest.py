@@ -174,7 +174,7 @@ def build_kwargs(args, api_type):
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
     if test_feature.startswith("test_assistants"):
-        if api_type in ["asst_azure", "azure"]:
+        if api_type in ["asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
         elif api_type == "gpt_4_openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
