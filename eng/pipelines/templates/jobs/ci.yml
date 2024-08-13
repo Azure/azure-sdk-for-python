@@ -221,7 +221,6 @@ jobs:
           inputs:
             pwsh: true
             filePath: eng/scripts/distribute-packages-to-matrix.ps1
-            arguments:
             arguments: >-
               -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
               -PlatformMatrix "$(Build.SourcesDirectory)/eng/pipelines/templates/stages/platform-matrix.json
