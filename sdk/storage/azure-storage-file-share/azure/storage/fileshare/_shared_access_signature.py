@@ -14,7 +14,6 @@ from urllib.parse import parse_qs
 from ._shared import sign_string
 from ._shared.constants import X_MS_VERSION
 from ._shared.models import Services
-from ._shared.parser import _str
 from ._shared.shared_access_signature import QueryStringConstants, SharedAccessSignature, _SharedAccessHelper
 
 if TYPE_CHECKING:
@@ -131,9 +130,9 @@ class FileSharedAccessSignature(SharedAccessSignature):
         """
         resource_path = share_name
         if directory_name is not None:
-            resource_path += '/' + _str(directory_name)
+            resource_path += '/' + str(directory_name)
         if file_name is not None:
-            resource_path += '/' + _str(file_name)
+            resource_path += '/' + str(file_name)
 
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
