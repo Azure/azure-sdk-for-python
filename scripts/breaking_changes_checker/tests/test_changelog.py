@@ -69,7 +69,7 @@ def test_new_class_property_added():
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
-def test_async_mgmt_cleanup_check():
+def test_async_cleanup_check():
     stable = {
         "azure.mgmt.contentsafety": {
             "class_nodes": {
