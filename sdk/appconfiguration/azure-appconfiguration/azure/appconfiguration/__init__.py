@@ -24,6 +24,7 @@ from ._generated.models import (
     LabelFields,
     SnapshotFields,
     ConfigurationSettingFields,
+    SnapshotComposition,
 )
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
@@ -38,6 +39,7 @@ __all__ = [
     "ConfigurationSnapshot",
     "SnapshotStatus",
     "SnapshotFields",
+    "SnapshotComposition",
     "LabelFields",
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",
