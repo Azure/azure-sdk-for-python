@@ -29,9 +29,9 @@ def get_tropical_storm_locations():
     maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_weather_client.get_tropical_storm_locations(
-            year=2022,
-            basin_id="AL",
-            government_storm_id=92022
+            year=2021,
+            basin_id="NP",
+            government_storm_id=2
         )
         print(result)
     except HttpResponseError as exception:

@@ -31,7 +31,7 @@ async def get_current_air_quality():
     try:
         async with maps_weather_client:
             result = await maps_weather_client.get_current_air_quality(coordinates=[25.0338053, 121.5640089])
-        if __name__ == '__main__':
+            print(result)
     
     except HttpResponseError as exception:
         if exception.error is not None:
