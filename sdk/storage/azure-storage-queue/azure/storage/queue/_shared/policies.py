@@ -37,7 +37,10 @@ from .models import LocationMode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+        PipelineRequest,
+        PipelineResponse
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -138,8 +141,8 @@ class StorageHeadersPolicy(HeadersPolicy):
                 'x-ms-structured-body' not in response.http_response.headers and is_success):
             raise ValueError("Response did not acknowledge structured body. "
                              "Unexpected data may have been persisted to storage.")
-        elif ('x-ms-structured-body' in request.http_request.headers and
-              'x-ms-structured-body' not in response.http_response.headers and is_success):
+        if ('x-ms-structured-body' in request.http_request.headers and
+                'x-ms-structured-body' not in response.http_response.headers and is_success):
             raise ValueError("Response did not acknowledge structured body. Unknown structure in response body.")
 
     # # raise exception if the echoed client request id from the service is not identical to the one we sent
