@@ -41,7 +41,7 @@ class WebPubSubServiceClient(
     """
 
     def __init__(self, hub: str, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        _endpoint = "{endpoint}"
+        _endpoint = "{Endpoint}"
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -86,7 +86,7 @@ class WebPubSubServiceClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
