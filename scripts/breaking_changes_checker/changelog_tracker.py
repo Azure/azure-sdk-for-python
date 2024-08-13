@@ -54,15 +54,16 @@ class ChangelogTracker(BreakingChangesTracker):
         non_aio_changes = [fa for fa in self.features_added if "aio" not in fa[2]]
         non_aio_changes = non_aio_changes + [bc for bc in self.breaking_changes if "aio" not in bc[2]]
         # Remove all aio related changes from the main list if the sync version of the change exists
+        def remove_aio_changes(change_list: List, change: tuple) -> None:
+            for c in change_list:
+                if "aio" in c[2]:
+                    if change[1] == c[1] and change[3:] == c[3:]:
+                        change_list.remove(c)
+                        break
+
         for c in non_aio_changes:
-            for fa in self.features_added:
-                if "aio" in fa[2]:
-                    if c[1] == fa[1] and c[3:] == fa[3:]:
-                        self.features_added.remove(fa)
-            for bc in self.breaking_changes:
-                if "aio" in bc[2]:
-                    if c[1] == bc[1] and c[3:] == bc[3:]:
-                        self.breaking_changes.remove(bc)
+            remove_aio_changes(self.features_added, c)
+            remove_aio_changes(self.breaking_changes, c)
 
     def run_non_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
