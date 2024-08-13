@@ -43,7 +43,9 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 model_id=recorded_variables.get("model_id1"),
                 description="model1",
                 build_mode="template",
-                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_training_data_classifier_sas_url),
+                azure_blob_source=AzureBlobContentSource(
+                    container_url=documentintelligence_training_data_classifier_sas_url
+                ),
             )
             poller = await client.begin_build_document_model(request)
             model_1 = await poller.result()
@@ -52,7 +54,9 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 model_id=recorded_variables.get("model_id2"),
                 description="model2",
                 build_mode="template",
-                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_training_data_classifier_sas_url),
+                azure_blob_source=AzureBlobContentSource(
+                    container_url=documentintelligence_training_data_classifier_sas_url
+                ),
             )
             poller = await client.begin_build_document_model(request)
             model_2 = await poller.result()
@@ -63,12 +67,14 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         azure_blob_source=AzureBlobContentSource(
-                            container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-A/train"
+                            container_url=documentintelligence_training_data_classifier_sas_url,
+                            prefix="IRS-1040-A/train",
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         azure_blob_source=AzureBlobContentSource(
-                            container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-B/train"
+                            container_url=documentintelligence_training_data_classifier_sas_url,
+                            prefix="IRS-1040-B/train",
                         )
                     ),
                 },

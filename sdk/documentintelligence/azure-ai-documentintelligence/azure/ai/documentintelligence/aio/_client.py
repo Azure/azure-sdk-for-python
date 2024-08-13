@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -107,7 +108,7 @@ class DocumentIntelligenceClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DocumentIntelligenceClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -195,7 +196,7 @@ class DocumentIntelligenceAdministrationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DocumentIntelligenceAdministrationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

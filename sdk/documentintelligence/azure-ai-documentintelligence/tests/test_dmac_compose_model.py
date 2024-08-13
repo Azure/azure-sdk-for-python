@@ -41,7 +41,9 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             model_id=recorded_variables.get("model_id1"),
             description="model1",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_training_data_classifier_sas_url),
+            azure_blob_source=AzureBlobContentSource(
+                container_url=documentintelligence_training_data_classifier_sas_url
+            ),
         )
         poller = client.begin_build_document_model(request)
         model_1 = poller.result()
@@ -50,7 +52,9 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             model_id=recorded_variables.get("model_id2"),
             description="model2",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_training_data_classifier_sas_url),
+            azure_blob_source=AzureBlobContentSource(
+                container_url=documentintelligence_training_data_classifier_sas_url
+            ),
         )
         poller = client.begin_build_document_model(request)
         model_2 = poller.result()

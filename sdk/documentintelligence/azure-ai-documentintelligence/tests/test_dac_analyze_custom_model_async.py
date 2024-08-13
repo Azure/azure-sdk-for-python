@@ -25,9 +25,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(is_async=True)
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(
@@ -39,9 +37,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(is_async=True)
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(
@@ -53,9 +49,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(is_async=True)
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
                 await client.begin_analyze_document(
@@ -68,9 +62,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(is_async=True)
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
                 await client.begin_analyze_document(
@@ -87,9 +79,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         di_admin_client = DocumentIntelligenceAdministrationClient(
             documentintelligence_endpoint, get_credential(is_async=True)
         )
-        di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(is_async=True)
-        )
+        di_client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
 
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("model_id", str(uuid.uuid4()))
