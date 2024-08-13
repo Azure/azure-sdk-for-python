@@ -4,11 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 from azure.core import MatchConditions
 
-from ._lease import ShareLeaseClient
 from ._parser import _datetime_to_str, _get_file_permission
 from ._generated.models import (
     SourceModifiedAccessConditions,
@@ -17,6 +16,9 @@ from ._generated.models import (
     DestinationLeaseAccessConditions,
     CopyFileSmbInfo
 )
+
+if TYPE_CHECKING:
+    from ._lease import ShareLeaseClient
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -84,7 +86,7 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
     )
 
 
-def get_access_conditions(lease: Optional[Union[ShareLeaseClient, str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(lease: Optional[Union["ShareLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
     try:
         lease_id = lease.id  # type: ignore
     except AttributeError:
@@ -93,7 +95,7 @@ def get_access_conditions(lease: Optional[Union[ShareLeaseClient, str]]) -> Opti
 
 
 def get_source_access_conditions(
-    lease: Optional[Union[ShareLeaseClient, str]]
+    lease: Optional[Union["ShareLeaseClient", str]]
 ) -> Optional[SourceLeaseAccessConditions]:
     try:
         lease_id = lease.id  # type: ignore
@@ -103,7 +105,7 @@ def get_source_access_conditions(
 
 
 def get_dest_access_conditions(
-    lease: Optional[Union[ShareLeaseClient, str]]
+    lease: Optional[Union["ShareLeaseClient", str]]
 ) -> Optional[DestinationLeaseAccessConditions]:
     try:
         lease_id = lease.id  # type: ignore
