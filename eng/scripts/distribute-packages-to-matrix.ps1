@@ -28,7 +28,7 @@ if (!(Test-Path $PlatformMatrix)) {
 }
 
 $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json
-$platformMatrixFile = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
+$matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
 
 # determine batch size and initialize batches
 $versionCount = $matrix.matrix.PythonVersion.Count
