@@ -9,41 +9,7 @@ The overall idea is that PyPI does not support an official deprecation logic. We
 - Add a disclaimer on the main Readme file to explain deprecation, and provide a migration guide as necessary.
 - Push a new release to PyPI.
 
-# Step 1: Determine package that needs deprecation
-
-## OPTIONAL - Run the script to list packages that may need deprecation
-
-If you know the package that you want to deprecate, skip to step 1b.
-
-TODO: Test out script + merge Krista's PR.
-
-If you would like to check for packages that have not been released in over 2 years as part of a periodic cleanup, you can run the following script locally.
-
-This script (scripts/old_packages/output_old_packages.py) can be run locally to generate an excel/csv with a list of packages that have not been released in over two years.
-
-The CSV provides the following information:
-- Package name
-- Last released version
-- Last released date
-- Development Status
-- Action: This can be manually updated to track whether or not to deprecate. 
-- Notes: Additional notes, such as instructions on the new service/REST API to refer the customer to.
-- Status: This can be manually updated to track whether the deprecation of the package is done.
-
-To run the script:
-```
-azure-sdk-for-python> cd scripts/old_packages
-azure-sdk-for-python/scripts/old_packages> python output_old_packages.py
-```
-
-## Verify deprecated status of the package
-
-TODO: How to verify? Provide examples. azurecharts is disabled: https://azurecharts.com/timeboards/deprecations?ref=blog.tomkerkhove.be
-
-To confirm that they need deprecation, you can:
-- Refer to [this chart](https://azurecharts.com/timeboards/deprecations?ref=blog.tomkerkhove.be) to see whether the service has been deprecated/end-of-life
-
-# Step 2: Updates to the package files
+# Step 1: Updates to the package files
 
 Clone the `azure-sdk-for-python` repository and update the following files of your package.
 
@@ -97,11 +63,11 @@ More information on specifics of versioning can be found at [the bottom of the g
 
 - Add `ci_enabled = false` if not already present.
 
-# Step 3: Resolve all open issues/PRs corresponding to the library.
+# Step 2: Resolve all open issues/PRs corresponding to the library.
 
 If there is a Track 2, provide a link to the new package or an existing migration guide before closing.
 
-# Step 4: Create a PR
+# Step 3: Create a PR
 
 Create a PR targeting the `main` branch. Follow steps listed below.
 
@@ -127,7 +93,7 @@ Post your PR in the [review channel for Python.](https://teams.microsoft.com/l/c
 
 Once the PR is merged, move to the next step.
 
-# Step 5: Trigger a release 
+# Step 4: Trigger a release 
 
 A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time.
 
@@ -135,7 +101,7 @@ More instruction can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: Check to make sure that the new version of the package has been released on PyPI, even if the `Publish package to feed` step fails in the CI.**
 
-# Step 6: Create a new PR to remove package from ci.yml
+# Step 5: Create a new PR to remove package from ci.yml
 
 Remove the package artifact from `azure-mypackage/ci.yml`. This would look like removing the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
@@ -149,7 +115,7 @@ extends:
 
 Create a new PR targeting the `main` branch of the repository. Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47). You're responsible for fixing any CI issue related to this PR.
 
-# Step 7: Update API Documentation
+# Step 6: Update API Documentation
 
 ## Update github.io docs
 
