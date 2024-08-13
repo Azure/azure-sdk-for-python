@@ -15,7 +15,8 @@ from ._generated.models import (
     LeaseAccessConditions,
     SourceLeaseAccessConditions,
     DestinationLeaseAccessConditions,
-    CopyFileSmbInfo)
+    CopyFileSmbInfo
+)
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -84,30 +85,30 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
 
 
 def get_access_conditions(lease: Optional[Union[ShareLeaseClient, str]]) -> Optional[LeaseAccessConditions]:
-    if isinstance(lease, ShareLeaseClient):
-        lease_id = lease.id
-    else:
-        lease_id = lease
+    try:
+        lease_id = lease.id  # type: ignore
+    except AttributeError:
+        lease_id = lease  # type: ignore
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 def get_source_access_conditions(
     lease: Optional[Union[ShareLeaseClient, str]]
 ) -> Optional[SourceLeaseAccessConditions]:
-    if isinstance(lease, ShareLeaseClient):
-        lease_id = lease.id
-    else:
-        lease_id = lease
+    try:
+        lease_id = lease.id  # type: ignore
+    except AttributeError:
+        lease_id = lease  # type: ignore
     return SourceLeaseAccessConditions(source_lease_id=lease_id) if lease_id else None
 
 
 def get_dest_access_conditions(
     lease: Optional[Union[ShareLeaseClient, str]]
 ) -> Optional[DestinationLeaseAccessConditions]:
-    if isinstance(lease, ShareLeaseClient):
-        lease_id = lease.id
-    else:
-        lease_id = lease
+    try:
+        lease_id = lease.id  # type: ignore
+    except AttributeError:
+        lease_id = lease  # type: ignore
     return DestinationLeaseAccessConditions(destination_lease_id=lease_id) if lease_id else None
 
 
