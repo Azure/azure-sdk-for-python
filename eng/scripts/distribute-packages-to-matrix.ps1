@@ -30,7 +30,7 @@ if (!(Test-Path $PlatformMatrix)) {
 $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json
 $platformMatrixFile = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
 
-# determine batch dize
+# determine batch size and initialize batches
 $versionCount = $matrix.matrix.PythonVersion.Count
 $includeCount = $matrix.include.Count
 $batchCount = $versionCount + $includeCount
@@ -39,6 +39,9 @@ if ($batchCount -eq 0) {
     exit 0
 }
 $batchSize = $packageProperties.Count % $batchCount
+# batches is a hashtable because you cannot instantiate an array of empty arrays
+# the add method will merely invoke and silently NOT add a new item
+# using a hashtable bypasses this limitation
 $batches = @{}
 for ($i = 0; $i -lt $batchCount; $i++) {
     $batches[$i] = @()
@@ -47,11 +50,6 @@ for ($i = 0; $i -lt $batchCount; $i++) {
 # what situations can we have with the calculated batch size of 6? (number of platforms + include)
 # 1. < 6 packages we simply exit. default distribution will be fine
 # 2. >= 6 packages we rotate and assign 1 to each batch until all work is exhausted
-if ($packageProperties.Count -lt $batchCount) {
-    Write-Error "Not enough packages to distribute to all batches, skipping without updating platform matrix file $PlatformMatrix"
-    exit 0
-}
-
 $batchCounter = 0
 $batchValues = @()
 
@@ -71,7 +69,7 @@ else {
     }
 }
 
-# simplify the batches down
+# simplify the batches down to single values that will be added to the matrix
 foreach($key in $batches.Keys) {
     $batchValues += $batches[$key] -join ","
 }
