@@ -202,6 +202,7 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
       Pool: azsdk-pool-mms-ubuntu-2004-general
+      SparseCheckoutPaths: [ "eng/" ]
       DependsOn:
         - 'Build_Linux'
         - 'Build_Windows'
@@ -212,6 +213,10 @@ jobs:
       PreGenerationSteps:
 
         - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
+        - pwsh: |
+            Get-ChildItem -R $(Build.SourcesDirectory) | % { Write-Host $_.FullName }
+          displayName: Dump Visible Artifacts
 
         - pwsh: |
             ./eng/scripts/distribute-packages-to-matrix.ps1 `
