@@ -19,7 +19,6 @@ from .._pyamqp import (
     __version__,
 )
 from .._pyamqp.error import (
-    AMQPLinkError,
     ErrorCondition,
     AMQPException,
     AMQPError,
@@ -817,7 +816,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
-        
+
         except AMQPException as ae:
             if (
                 ae.condition == ErrorCondition.IllegalState

@@ -13,7 +13,7 @@ from .link import Link
 from .constants import LinkState, Role
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPException, AMQPLinkError, ErrorCondition
+from .error import AMQPException, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
