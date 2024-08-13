@@ -4,25 +4,25 @@
 trigger:
   branches:
     include:
-    - main
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/healthinsights/
+      - sdk/healthinsights/
 
 pr:
   branches:
     include:
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - feature/*
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/healthinsights/
+      - sdk/healthinsights/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -30,8 +30,5 @@ extends:
     ServiceDirectory: healthinsights
     TestProxy: true
     Artifacts:
-
-    - name: azure-healthinsights-radiologyinsights
-      safeName: azurehealthinsightsradiologyinsights
-      skipVerifyChangeLog: true
-
+      - name: azure-healthinsights-radiologyinsights
+        safeName: azurehealthinsightsradiologyinsights
