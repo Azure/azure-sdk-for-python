@@ -82,7 +82,7 @@ class TestClientAsync(AzureRecordedTestCase):
 
         client = openai.AsyncAzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=LATEST,
         )
         messages = [
@@ -112,7 +112,7 @@ class TestClientAsync(AzureRecordedTestCase):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
-        credential = DefaultAzureCredential()
+        credential = get_credential(is_async=True)
         access_token = await credential.get_token("https://cognitiveservices.azure.com/.default")
 
         client = openai.AsyncAzureOpenAI(
@@ -224,7 +224,7 @@ class TestClientAsync(AzureRecordedTestCase):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            credential = DefaultAzureCredential()
+            credential = get_credential(is_async=True)
             access_token = await credential.get_token("https://cognitiveservices.azure.com/.default")
             os.environ["AZURE_OPENAI_AD_TOKEN"] = access_token.token
 

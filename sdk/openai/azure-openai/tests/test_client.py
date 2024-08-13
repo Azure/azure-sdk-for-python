@@ -79,7 +79,7 @@ class TestClient(AzureRecordedTestCase):
 
         client = openai.AzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=LATEST,
         )
         messages = [
@@ -110,7 +110,7 @@ class TestClient(AzureRecordedTestCase):
         ]
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token=DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token,
+            azure_ad_token=get_credential().get_token("https://cognitiveservices.azure.com/.default").token,
             api_version=LATEST,
         )
         completion = client.chat.completions.create(messages=messages, **kwargs)
@@ -211,7 +211,7 @@ class TestClient(AzureRecordedTestCase):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
 
             try:
                 client = openai.AzureOpenAI()

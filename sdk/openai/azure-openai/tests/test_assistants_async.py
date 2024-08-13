@@ -339,6 +339,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             delete_file = await client_async.files.delete(file.id)
             assert delete_file.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -419,6 +420,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert deleted_vector_store.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -535,6 +537,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
