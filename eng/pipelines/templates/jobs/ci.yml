@@ -223,7 +223,7 @@ jobs:
             filePath: eng/scripts/distribute-packages-to-matrix.ps1
             arguments: >-
               -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-              -PlatformMatrix "$(Build.SourcesDirectory)/eng/pipelines/templates/stages/platform-matrix.json
+              -PlatformMatrix "$(Build.SourcesDirectory)/eng/pipelines/templates/stages/platform-matrix.json"
           displayName: 'Distribute Packages to Matrix'
           condition: eq(variables['Build.Reason'], 'PullRequest')
 
