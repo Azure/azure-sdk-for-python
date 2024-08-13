@@ -9,7 +9,7 @@ import threading
 import warnings
 from io import BytesIO
 from typing import (
-    Any, Callable, Generator, IO, Iterator, Optional, Tuple, Union,
+    Any, Callable, Generator, IO, Iterator, Optional, Tuple,
     TYPE_CHECKING
 )
 
@@ -228,7 +228,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.path = path
         self.share = share
         self.properties = None  # type: ignore [assignment]
-        self.size = None  # type: ignore [assignment]
+        self.size = 0
 
         self._client = client
         self._config = config
@@ -385,7 +385,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
-    def readall(self) -> Union[bytes, str]:
+    def readall(self) -> bytes:
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
@@ -396,7 +396,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
+            return data.decode(self._encoding)  # type: ignore [return-value]
         return data
 
     def content_as_bytes(self, max_concurrency=1):

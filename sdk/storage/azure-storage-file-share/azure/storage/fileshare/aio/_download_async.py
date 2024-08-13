@@ -13,7 +13,7 @@ from io import BytesIO
 from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable, Generator,
-    Callable, cast, IO, Optional, Tuple, Union,
+    Callable, cast, IO, Optional, Tuple,
     TYPE_CHECKING
 )
 
@@ -59,7 +59,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
     async def _update_progress(self, length: int) -> None:
         if self.progress_lock_async:
-            async with self.progress_lock_async:  # pylint: disable=not-async-context-manager
+            async with self.progress_lock_async:
                 self.progress_total += length
         else:
             self.progress_total += length
@@ -70,7 +70,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
     async def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:
         if self.stream_lock_async:
-            async with self.stream_lock_async:  # pylint: disable=not-async-context-manager
+            async with self.stream_lock_async:
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
                 self.stream.write(chunk_data)
         else:
@@ -188,7 +188,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.path = path
         self.share = share
         self.properties = None  # type: ignore [assignment]
-        self.size = None  # type: ignore [assignment]
+        self.size = 0
 
         self._client = client
         self._config = config
@@ -224,7 +224,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     async def _setup(self) -> None:
         self._response = await self._initial_request()
-        self.properties = cast("FileProperties", self._response.properties)  # type: ignore [attr-defined]
+        self.properties = self._response.properties  # type: ignore [attr-defined]
         self.properties.name = self.name
         self.properties.path = self.path
         self.properties.share = self.share
@@ -344,7 +344,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size
         )
 
-    async def readall(self) -> Union[bytes, str]:
+    async def readall(self) -> bytes:
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
@@ -355,7 +355,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         await self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
+            return data.decode(self._encoding)  # type: ignore [return-value]
         return data
 
     async def content_as_bytes(self, max_concurrency=1):
