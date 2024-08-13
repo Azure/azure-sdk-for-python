@@ -8,8 +8,7 @@ import sys
 import pathlib
 import subprocess
 import pytest
-from devtools_testutils import AzureRecordedTestCase
-from azure.identity import DefaultAzureCredential
+from devtools_testutils import AzureRecordedTestCase, get_credential
 from conftest import (
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
@@ -60,7 +59,7 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
             os.environ["OPENAI_API_TYPE"] = "azure"
 
             try:
