@@ -16,9 +16,6 @@ from pathlib import Path
 from typing import List, Optional, Union, Dict
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import AzureError
-from azure.core.pipeline import PipelineRequest
-
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
@@ -134,7 +131,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     # Expected JSON request payload in regression tests. These are common to
     # sync and async tests, therefore they are defined here.
-    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD = '{"messages": [{"role": "system", "content": "system prompt"}, {"role": "user", "content": "user prompt 1"}, {"role": "assistant", "tool_calls": [{"function": {"name": "my-first-function-name", "arguments": {"first_argument": "value1", "second_argument": "value2"}}, "type": "function"}, {"function": {"name": "my-second-function-name", "arguments": {"first_argument": "value1"}}, "type": "function"}]}, {"role": "tool", "tool_call_id": "some id", "content": "function response"}, {"role": "assistant", "content": "assistant prompt"}, {"role": "user", "content": [{"type": "text", "text": "user prompt 2"}, {"type": "image_url", "image_url": {"url": "https://does.not.exit/image.png", "detail": "high"}}]}], "stream": true, "frequency_penalty": 0.123, "max_tokens": 321, "model": "some-model-id", "presence_penalty": 4.567, "response_format": {"type": "json_object"}, "seed": 654, "stop": ["stop1", "stop2"], "temperature": 8.976, "tool_choice": "auto", "tools": [{"function": {"name": "my-first-function-name", "description": "My first function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "string", "description": "First argument description"}, "second_argument": {"type": "string", "description": "Second argument description"}}, "required": ["first_argument", "second_argument"]}}, "type": "function"}, {"function": {"name": "my-second-function-name", "description": "My second function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "int", "description": "First argument description"}}, "required": ["first_argument"]}}, "type": "function"}], "top_p": 9.876, "key1": 1, "key2": true, "key3": "Some value", "key4": [1, 2, 3], "key5": {"key6": 2, "key7": false, "key8": "Some other value", "key9": [4, 5, 6, 7]}}'
+    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD = '{"messages": [{"role": "system", "content": "system prompt"}, {"role": "user", "content": "user prompt 1"}, {"role": "assistant", "tool_calls": [{"function": {"name": "my-first-function-name", "arguments": {"first_argument": "value1", "second_argument": "value2"}}, "id": "some-id", "type": "function"}, {"function": {"name": "my-second-function-name", "arguments": {"first_argument": "value1"}}, "id": "some-other-id", "type": "function"}]}, {"role": "tool", "tool_call_id": "some id", "content": "function response"}, {"role": "assistant", "content": "assistant prompt"}, {"role": "user", "content": [{"type": "text", "text": "user prompt 2"}, {"type": "image_url", "image_url": {"url": "https://does.not.exit/image.png", "detail": "high"}}]}], "stream": true, "frequency_penalty": 0.123, "max_tokens": 321, "model": "some-model-id", "presence_penalty": 4.567, "response_format": {"type": "json_object"}, "seed": 654, "stop": ["stop1", "stop2"], "temperature": 8.976, "tool_choice": "auto", "tools": [{"function": {"name": "my-first-function-name", "description": "My first function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "string", "description": "First argument description"}, "second_argument": {"type": "string", "description": "Second argument description"}}, "required": ["first_argument", "second_argument"]}}, "type": "function"}, {"function": {"name": "my-second-function-name", "description": "My second function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "int", "description": "First argument description"}}, "required": ["first_argument"]}}, "type": "function"}], "top_p": 9.876, "key1": 1, "key2": true, "key3": "Some value", "key4": [1, 2, 3], "key5": {"key6": 2, "key7": false, "key8": "Some other value", "key9": [4, 5, 6, 7]}}'
 
     EMBEDDINGDS_JSON_REQUEST_PAYLOAD = '{"input": ["first phrase", "second phrase", "third phrase"], "dimensions": 2048, "encoding_format": "ubinary", "input_type": "query", "model": "some-model-id", "key1": 1, "key2": true, "key3": "Some value", "key4": [1, 2, 3], "key5": {"key6": 2, "key7": false, "key8": "Some other value", "key9": [4, 5, 6, 7]}}'
 
@@ -147,13 +144,19 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     # See the "Data plane - inference" row in the table here for latest AOAI api-version:
     # https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
-    def _load_aoai_chat_credentials(self, *, bad_key: bool, **kwargs):
+    def _load_aoai_chat_credentials(self, *, key_auth: bool, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_openai_chat_endpoint")
-        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
-        credential = AzureKeyCredential("")
-        headers = {"api-key": key}
+        if key_auth:
+            key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
+            headers = {"api-key": key}
+            credential = AzureKeyCredential("")
+            credential_scopes: list[str]=[]
+        else:
+            credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
+            credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
+            headers = {}
         api_version = "2024-06-01"
-        return endpoint, credential, headers, api_version
+        return endpoint, credential, credential_scopes, headers, api_version
 
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
@@ -178,6 +181,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
         endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
         return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
+        return sdk.ChatCompletionsClient(
+            endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
+        )
+
     # Methos to create the different sync and async clients directly
     def _create_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
@@ -185,27 +194,25 @@ class ModelClientTestBase(AzureRecordedTestCase):
             endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
         )
 
-    def _create_async_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
-        endpoint, credential, headers, api_version = self._load_aoai_chat_credentials(bad_key=bad_key, **kwargs)
-        return async_sdk.ChatCompletionsClient(
+    def _create_aoai_chat_client(self, *, key_auth: bool = True, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
+            key_auth=key_auth, bad_key=bad_key, **kwargs)
+        return sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
+            credential_scopes=credential_scopes,
             headers=headers,
             api_version=api_version,
             logging_enable=LOGGING_ENABLED,
         )
 
-    def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
-        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
-        return sdk.ChatCompletionsClient(
-            endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
-        )
-
-    def _create_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
-        endpoint, credential, headers, api_version = self._load_aoai_chat_credentials(bad_key=bad_key, **kwargs)
-        return sdk.ChatCompletionsClient(
+    def _create_async_aoai_chat_client(self, *, key_auth: bool = True, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
+            key_auth=True, bad_key=bad_key, **kwargs)
+        return async_sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
+            credential_scopes=credential_scopes,
             headers=headers,
             api_version=api_version,
             logging_enable=LOGGING_ENABLED,
@@ -249,7 +256,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
         headers = self.pipeline_request.http_request.headers
         assert headers["Content-Type"] == "application/json"
-        assert headers["Content-Length"] == "1800"
+        assert headers["Content-Length"] == "1840"
         assert headers["extra-parameters"] == "pass-through"
         assert headers["Accept"] == "application/json"
         assert headers["some_header"] == "some_header_value"

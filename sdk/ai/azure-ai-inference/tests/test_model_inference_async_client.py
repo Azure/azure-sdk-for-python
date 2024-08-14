@@ -223,12 +223,14 @@ class TestModelAsyncClient(ModelClientTestBase):
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id"
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id"
                                 ),
                             ]
                         ),
@@ -318,12 +320,14 @@ class TestModelAsyncClient(ModelClientTestBase):
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id"
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id"
                                 ),
                             ]
                         ),
@@ -394,12 +398,14 @@ class TestModelAsyncClient(ModelClientTestBase):
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id"
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id"
                                 ),
                             ]
                         ),
@@ -571,7 +577,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_input_image_file(self, **kwargs):
@@ -603,7 +609,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_input_image_url(self, **kwargs):
@@ -624,6 +630,20 @@ class TestModelAsyncClient(ModelClientTestBase):
         )
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        await client.close()
+
+    # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy_async
+    async def test_async_chat_completions_with_entra_id_auth(self, **kwargs):
+        client = self._create_async_aoai_chat_client(key_auth=False, **kwargs)
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
+            sdk.models.UserMessage(content="How many feet are in a mile?"),
+        ]
+        response = await client.complete(messages=messages)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"], True)
         await client.close()
 
     # **********************************************************************************
