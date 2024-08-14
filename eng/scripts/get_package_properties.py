@@ -8,7 +8,6 @@ from ci_tools.parsing import ParsedSetup
 
 additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
-        os.path.join("sdk", "storage", "azure-storage-blob"),
         os.path.join("sdk", "servicebus", "azure-servicebus"),
         os.path.join("sdk", "eventhub", "azure-eventhub"),
         os.path.join("sdk", "tables", "azure-data-table"),
@@ -29,7 +28,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
         os.path.join("sdk", "ai", "azure-ai-doctranslation"),
         os.path.join("sdk", "compute", "azure-mgmt-compute"),
         os.path.join("sdk", "communication", "azure-communication-chat"),
-        os.path.join("sdk", "communication", "azure-communication-identity")
+        os.path.join("sdk", "communication", "azure-communication-identity"),
+        os.path.join("sdk", "storage", "azure-storage-blob")
     ],
     "azure-mgmt-core": [
         os.path.join("sdk", "compute", "azure-mgmt-compute"),
