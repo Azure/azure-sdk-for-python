@@ -114,8 +114,8 @@ def test_get_token(stderr):
     assert match, "couldn't find encoded script in command line"
     encoded_script = match.groups()[0]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-    assert "TenantId" not in decoded_script
-    assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
+    assert "tenantId = ''" in decoded_script
+    assert f"'ResourceUrl' = '{scope}'" in decoded_script
 
     assert Popen().communicate.call_count == 1
     args, kwargs = Popen().communicate.call_args
@@ -292,7 +292,7 @@ def test_windows_powershell_fallback(error_message):
 
 def test_multitenant_authentication():
     first_token = "***"
-    second_tenant = "second-tenant"
+    second_tenant = "12345"
     second_token = first_token * 2
 
     def fake_Popen(command, **_):
@@ -301,11 +301,12 @@ def test_multitenant_authentication():
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
-        tenant = match.groups()[1]
+        match = re.search(r"\$tenantId\s*=\s*'([^']*)'", decoded_script)
+        assert match
+        tenant = match.group(1)
 
-        assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
-        token = first_token if tenant is None else second_token
+        assert not tenant or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if not tenant else second_token
         stdout = "azsdk%{}%{}".format(token, int(time.time()) + 3600)
 
         communicate = Mock(return_value=(stdout, ""))
@@ -333,10 +334,11 @@ def test_multitenant_authentication_not_allowed():
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
-        tenant = match.groups()[1]
+        match = re.search(r"\$tenantId\s*=\s*'([^']*)'", decoded_script)
+        assert match
+        tenant = match.group(1)
 
-        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
+        assert not tenant, "credential shouldn't accept an explicit tenant ID"
         stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
 
         communicate = Mock(return_value=(stdout, ""))
@@ -348,5 +350,5 @@ def test_multitenant_authentication_not_allowed():
         assert token.token == expected_token
 
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-            token = credential.get_token("scope", tenant_id="some-tenant")
+            token = credential.get_token("scope", tenant_id="12345")
             assert token.token == expected_token

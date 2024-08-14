@@ -73,18 +73,21 @@ async def test_default_credential(live_service_principal):
 
 
 @pytest.mark.manual
+@pytest.mark.asyncio
 async def test_cli_credential():
     credential = AzureCliCredential()
     await get_token(credential)
 
 
 @pytest.mark.manual
+@pytest.mark.asyncio
 async def test_dev_cli_credential():
     credential = AzureDeveloperCliCredential()
     await get_token(credential)
 
 
 @pytest.mark.manual
+@pytest.mark.asyncio
 async def test_powershell_credential():
     credential = AzurePowerShellCredential()
     await get_token(credential)

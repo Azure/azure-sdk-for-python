@@ -4,7 +4,7 @@
 
 *Authoring*
 
-**Features**
+### Features Added
 
   - Model JSONEntity has a new parameter children
   - Model EntityLabel has a new parameter children
@@ -12,7 +12,7 @@
   - Model EntityLabelObject has a new parameter children
   - Model ModelFeatureInformation has a new parameter is_required
 
-**Breaking changes**
+### Breaking Changes
 
   - Operation ExamplesOperations.add has a new signature
   - Operation ExamplesOperations.batch has a new signature
