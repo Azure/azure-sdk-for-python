@@ -75,7 +75,7 @@ jobs:
     - task: AzureCLI@2
       displayName: 'login to azure sdk engineering system'
       inputs:
-        azureSubscription: 'Azure SDK Engineering System (a18897a6-7e44-457d-9260-f2854c0aca42)'
+        azureSubscription: 'Azure SDK Engineering System'
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: 'az login --identity'
