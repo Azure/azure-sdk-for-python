@@ -22,7 +22,7 @@ The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`,
 
 This is the overall status of your library and indicates whether you can release your library today.
 
-- <code style="color: red;">BLOCKED</code> - your library is currently blocked from release. It is failing required/mandatory checks (marked in red) or has its CI disabled due to non-compliance with required checks.
+- $${\color{red}BLOCKED}$$ - your library is currently blocked from release. It is failing required/mandatory checks (marked in red) or has its CI disabled due to non-compliance with required checks.
 
     If your CI has been disabled, please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyrpoject.toml file.
 
