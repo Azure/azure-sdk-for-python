@@ -22,69 +22,69 @@ The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`,
 
 This is the overall status of your library and indicates whether you can release your library today.
 
-- <span style="color: red;">BLOCKED</span> - your library is currently blocked from release. It is failing required/mandatory checks (marked in red) or has its CI disabled due to non-compliance with required checks.
+- <code style="color: red;">BLOCKED</code> - your library is currently blocked from release. It is failing required/mandatory checks (marked in red) or has its CI disabled due to non-compliance with required checks.
 
     If your CI has been disabled, please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyrpoject.toml file.
 
-- <span style="color: orange;">NEEDS_ACTION</span> - your library is not blocked from release today, but if action(s) are not taken, it may be blocked in the near future. Please take action to fix/re-enable any checks highlighted in yellow.
+- <code style="color: orange;">NEEDS_ACTION</code> - your library is not blocked from release today, but if action(s) are not taken, it may be blocked in the near future. Please take action to fix/re-enable any checks highlighted in yellow.
 
-- <span style="color: green;">GOOD</span> - your library is passing and in compliance with all required checks and can release without issues.
+- <code style="color: green;">GOOD</code> - your library is passing and in compliance with all required checks and can release without issues.
 
 ### MyPy (required check):
 
 [MyPy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#mypy) is a static type checker, and is mandatory to run on the source code of all libraries. To learn more about static type checking in our repo, see our [Static Type Checking Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - The library is failing the MyPy check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
-- <span style="color: orange;">DISABLED</span> - MyPy is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
-- <span style="color: orange;">WARNING</span> - The library passes the currently pinned version of MyPy in the repo, but is failing the next-mypy check (the next version of MyPy the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of MyPy or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
-- <span style="color: green;">PASSED</span> - The library passes both current MyPy and next-MyPy.
+- <code style="color: red;">FAILED</code> - The library is failing the MyPy check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
+- <code style="color: orange;">DISABLED</code> - MyPy is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
+- <code style="color: orange;">WARNING</code> - The library passes the currently pinned version of MyPy in the repo, but is failing the next-mypy check (the next version of MyPy the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of MyPy or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- <code style="color: green;">PASSED</code> - The library passes both current MyPy and next-MyPy.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Pylint (required check):
 
 [Pylint](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pylint) is a linter, and is mandatory to run on all libraries. To learn more about linting in our repo, see our [Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - The library is failing the Pylint check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
-- <span style="color: orange;">DISABLED</span> - Pylint is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
-- <span style="color: orange;">WARNING</span> - The library passes the currently pinned version of Pylint in the repo, but is failing the next-pylint check (the next version of Pylint the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pylint or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
-- <span style="color: green;">PASSED</span> - The library passes both current Pylint and next-Pylint.
+- <code style="color: red;">FAILED</code> - The library is failing the Pylint check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
+- <code style="color: orange;">DISABLED</code> - Pylint is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
+- <code style="color: orange;">WARNING</code> - The library passes the currently pinned version of Pylint in the repo, but is failing the next-pylint check (the next version of Pylint the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pylint or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- <code style="color: green;">PASSED</code> - The library passes both current Pylint and next-Pylint.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Sphinx (required check):
 
 [Sphinx](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker) is a tool which builds/validates our documentation, and is mandatory to run on all libraries. To learn more about Sphinx/docstrings in our repo, see [Docstrings](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/docstring.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - The library is failing the Sphinx check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
-- <span style="color: orange;">DISABLED</span> - Sphinx is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
-- <span style="color: green;">PASSED</span> - The library passes Sphinx.
+- <code style="color: red;">FAILED</code> - The library is failing the Sphinx check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
+- <code style="color: orange;">DISABLED</code> - Sphinx is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
+- <code style="color: green;">PASSED</code> - The library passes Sphinx.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Tests - CI (required check):
 
 [Tests - CI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation-tox-test-environments) checks the status of the most recent (python - {service-directory})scheduled build of your library's recorded tests. This is the same CI that will run when kicking a release build. To learn more about tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - The library is failing CI recorded tests. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
-- <span style="color: orange;">DISABLED</span> - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.
-- <span style="color: green;">PASSED</span> - The library passes CI recorded tests.
+- <code style="color: red;">FAILED</code> - The library is failing CI recorded tests. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
+- <code style="color: orange;">DISABLED</code> - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.
+- <code style="color: green;">PASSED</code> - The library passes CI recorded tests.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Tests - Live:
 
 [Tests - Live](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#nightly-live-checks) checks the status of the most recent (python - {service-directory} - tests)scheduled build of your library's live tests. To learn more about setting up live tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - The library is failing live tests. Errors should be investigated and fixed promptly to ensure there are no issues with releasing the current state of your library.
-- <span style="color: orange;">DISABLED</span> - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.
-- <span style="color: green;">PASSED</span> - The library passes live tests.
+- <code style="color: red;">FAILED</code> - The library is failing live tests. Errors should be investigated and fixed promptly to ensure there are no issues with releasing the current state of your library.
+- <code style="color: orange;">DISABLED</code> - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.
+- <code style="color: green;">PASSED</code> - The library passes live tests.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Pyright:
 
 [Pyright](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pyright) is a static type checker, and is recommended to run on the source code of all libraries. To learn more about static type checking in our repo, see our [Static Type Checking Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md). Possible statuses include:
 
-- <span style="color: red;">FAILED</span> - Pyright is enabled for the library and the library is failing the check. This will block the release of your library and should be fixed immediately.
-- <span style="color: orange;">DISABLED</span> - Pyright is not enabled for your library in the pyproject.toml file.
-- <span style="color: orange;">WARNING</span> -  Pyright is enabled for the library and the library passes the currently pinned version of Pyright in the repo, but is failing the next-pyright check (the next version of Pyright the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pyright or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
-- <span style="color: green;">PASSED</span> - The library passes both current Pyright and next-pyright.
+- <code style="color: red;">FAILED</code> - Pyright is enabled for the library and the library is failing the check. This will block the release of your library and should be fixed immediately.
+- <code style="color: orange;">DISABLED</code> - Pyright is not enabled for your library in the pyproject.toml file.
+- <code style="color: orange;">WARNING</code> -  Pyright is enabled for the library and the library passes the currently pinned version of Pyright in the repo, but is failing the next-pyright check (the next version of Pyright the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pyright or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- <code style="color: green;">PASSED</code> - The library passes both current Pyright and next-pyright.
 - UNKNOWN - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
 ### Type check samples:

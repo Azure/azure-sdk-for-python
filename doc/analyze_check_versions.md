@@ -1,6 +1,6 @@
 # Analyze check versions
 
-This table is help clarify the currently pinned version of tools we run in CI and when versions for the tools will be bumped to keep up with the latest improvements and bug fixes.
+This table is to clarify the currently pinned version of tools we run in CI and when versions for the tools will be bumped to keep up with the latest improvements and bug fixes.
 
 
 | Tool | Current Version | Next Version | Next Version Merge Date |
