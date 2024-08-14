@@ -26,7 +26,7 @@ This is the overall status of your library and indicates whether you can release
 
     If your CI has been disabled, please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyrpoject.toml file.
 
-- $${\color{yellow}NEEDS_ACTION}$$ - your library is not blocked from release today, but if action(s) are not taken, it may be blocked in the near future. Please take action to fix/re-enable any checks highlighted in yellow.
+- $${\color{yellow}NEEDS \space ACTION}$$ - your library is not blocked from release today, but if action(s) are not taken, it may be blocked in the near future. Please take action to fix/re-enable any checks highlighted in yellow.
 
 - $${\color{green}GOOD}$$ - your library is passing and in compliance with all required checks and can release without issues.
 
