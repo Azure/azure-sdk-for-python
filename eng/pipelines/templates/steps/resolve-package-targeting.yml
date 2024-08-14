@@ -25,8 +25,12 @@ steps:
         $setting = $packageProperties -join ","
       }
 
-      Write-Host "Setting TargetingString to $setting"
+      Write-Host "Setting TargetingString to: `n$setting"
       Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
-    displayName: Resolve targeted packages
+    displayName: Resolve Targeted Packages
     # if targeting has been set by matrix, this value will already be populated
     condition: eq(variables['TargetingString'], '')
+  - pwsh: |
+      Write-Host "This run is targeting: `n$(TargetingString)"
+    displayName: Resolve Targeted Packages
+    condition: ne(variables['TargetingString'], '')
