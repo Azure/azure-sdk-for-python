@@ -84,7 +84,7 @@ def sample_chat_completions_streaming_with_tools():
                 "flight_number": "DL123",
                 "flight_date": "May 7th, 2024",
                 "flight_time": "10:00AM"})
-        return json.dump({"error": "No flights found between the cities"})
+        return json.dumps({"error": "No flights found between the cities"})
 
     # Define a function 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsToolDefinition(
@@ -135,7 +135,9 @@ def sample_chat_completions_streaming_with_tools():
         stream=True)
 
     # At this point we expect a function tool call in the model response
-    function_args = ""
+    tool_call_id: str = ""
+    function_name: str = ""
+    function_args: str = ""
     for update in response:
         # Detect a function tool call in the model response,
         # get the function name, id, and concatenate the function-call arguments

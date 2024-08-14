@@ -63,7 +63,7 @@ def sample_chat_completions_with_tools():
                 "flight_number": "DL123",
                 "flight_date": "May 7th, 2024",
                 "flight_time": "10:00AM"})
-        return json.dump({"error": "No flights found between the cities"})
+        return json.dumps({"error": "No flights found between the cities"})
 
 
     # Define a function 'tool' that the model can use to retrieves flight information

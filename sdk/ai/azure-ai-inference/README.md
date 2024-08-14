@@ -1,6 +1,6 @@
 # Azure AI Inference client library for Python
 
-The client Library (in preview) does inference, including chat completions, for AI models deployed by [Azure AI Studio](https://ai.azure.com) and [Azure Machine Learning Studio](https://ml.azure.com/). It supports Serverless API endpoints and Managed Compute endpoints. The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library (in preview) does inference, including chat completions, for AI models deployed by [Azure AI Studio](https://ai.azure.com) and [Azure Machine Learning Studio](https://ml.azure.com/). It supports Serverless API endpoints and Managed Compute endpoints. The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://aka.ms/azureai/modelinference). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -12,7 +12,7 @@ Use the model inference client library to:
 
 With some minor adjustments, this client library can also be configured to do inference for Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples).
 
-[Product documentation](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api)
+[Product documentation](https://aka.ms/azureai/modelinference)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples)
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/python/reference)
 | [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
@@ -185,7 +185,7 @@ Embeddings operations target the URL route `images/embeddings` on the provided e
 
 ### Inference using Azure OpenAI endpoints
 
-The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
+The request and response payloads of the [Azure AI Model Inference API](https://aka.ms/azureai/modelinference) is compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
 
 ## Examples
 
