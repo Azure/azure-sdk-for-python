@@ -41,6 +41,7 @@ jobs:
     - script: |
         python -m pip install tools/azure-sdk-tools[build]
         python -m pip install azure-identity
+        python -m pip install azure-storage-blob
       displayName: 'Prep Environment'
 
     - pwsh: |
@@ -79,7 +80,7 @@ jobs:
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           python scripts/devops_tasks/generate_ml_sample_update.py --ml-repo "$(mlrepo)" --ml-wheel-folder "$(Build.ArtifactStagingDirectory)/azure-ai-ml" --build-id "$(Build.BuildId)" --storage-account-name "$(StorageAccountName)"
-          exit $LASTEXITCODE
+          exit $LASTEXITCODE;
 
     - pwsh: |
         cat "$(mlrepo)/sdk/python/setup.sh"
