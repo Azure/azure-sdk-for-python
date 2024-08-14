@@ -43,19 +43,13 @@ from azure.ai.ml.constants._common import (
     DefaultOpenEncoding,
     WorkspaceDiscoveryUrlKey,
 )
-from azure.ai.ml.exceptions import MlException
+from azure.ai.ml.exceptions import MlException, ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
 
-DEVELOPER_URL_MFE_ENV_VAR = "AZUREML_DEV_URL_MFE"
-
 # Prefix used when hitting MFE skipping ARM
 MFE_PATH_PREFIX = "/mferp/managementfrontend"
-
-
-def _get_mfe_url_override() -> Optional[str]:
-    return os.getenv(DEVELOPER_URL_MFE_ENV_VAR)
 
 
 def _is_https_url(url: str) -> Union[bool, str]:
@@ -236,10 +230,6 @@ def load_file(file_path: str) -> str:
     :return: A string representation of the local file's contents.
     :rtype: str
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     try:
         with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
@@ -265,10 +255,6 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     try:
         with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
@@ -300,10 +286,6 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     if source is None:
         return {}
@@ -389,10 +371,7 @@ def dump_yaml_to_file(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
         Details will be provided in the error message.
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
     if dest is None:
@@ -504,10 +483,6 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
     :return: The resolved URL
     :rtype: str
     """
-    from azure.ai.ml.exceptions import ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     try:
         # Check if the URL is an azureml URL
@@ -555,10 +530,6 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
     :rtype: None
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the path is not a valid ml flow folder.
     """
-    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     if not isinstance(path, str):
         path = path.as_posix()
@@ -1100,10 +1071,6 @@ def is_internal_component_data(data: Dict[str, Any], *, raise_if_not_enabled: bo
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the data is an internal component data but
         internal components is not enabled.
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
     schema = data.get(CommonYamlFields.SCHEMA, None)
 

@@ -194,7 +194,7 @@ def get_storage_details_for_registry_assets(
 
 
 def get_registry_client(credential, registry_name, workspace_location: Optional[str] = None, **kwargs):
-    base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+    base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name(), credential)
     kwargs.pop("base_url", None)
 
     service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
