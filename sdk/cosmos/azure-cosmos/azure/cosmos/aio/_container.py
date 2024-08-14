@@ -21,16 +21,18 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-from datetime import datetime, timezone
-from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast
-from typing_extensions import Literal
+import warnings
+from datetime import datetime
+from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
+from typing_extensions import Literal
 
 from ._cosmos_client_connection_async import CosmosClientConnection
+from ._scripts import ScriptsProxy
 from .._base import (
     build_options as _build_options,
     validate_cache_staleness_value,
@@ -39,13 +41,16 @@ from .._base import (
     GenerateGuidId,
     _set_properties_cache
 )
+from .._change_feed.aio.change_feed_state import ChangeFeedState
+from .._routing import routing_range
+from .._routing.routing_range import Range
+from .._utils import is_key_exists_and_not_none, is_base64_encoded
 from ..offer import ThroughputProperties
-from ._scripts import ScriptsProxy
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined
+    _Undefined, PartitionKey
 )
 
 __all__ = ("ContainerProxy",)
@@ -131,6 +136,26 @@ class ContainerProxy:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
+
+    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
+        container_properties = await self._get_properties()
+        partition_key_definition = container_properties.get("partitionKey")
+        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+
+        is_prefix_partition_key = await self.__is_prefix_partition_key(partition_key_value)
+
+        return partition_key._get_epk_range_for_partition_key(partition_key_value, is_prefix_partition_key)
+
+    async def __is_prefix_partition_key(self, partition_key: PartitionKeyType) -> bool:
+
+        properties = await self._get_properties()
+        pk_properties = properties.get("partitionKey")
+        partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+        if partition_key_definition.kind != "MultiHash":
+            return False
+        if isinstance(partition_key, list) and len(partition_key_definition['paths']) == len(partition_key):
+            return False
+        return True
 
     @distributed_trace_async
     async def read(
@@ -480,62 +505,196 @@ class ContainerProxy:
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    @distributed_trace
-    def query_items_change_feed(
-        self,
-        *,
-        partition_key_range_id: Optional[str] = None,
-        is_start_from_beginning: bool = False,
-        start_time: Optional[datetime] = None,
-        continuation: Optional[str] = None,
-        max_item_count: Optional[int] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+    @overload
+    async def query_items_change_feed(
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            # -> would RU usage be more efficient, bug to backend team? deprecate it or using FeedRange to convert?
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default, it's start from current (false).
-        :keyword ~datetime.datetime start_time: Specifies a point of time to start change feed. Provided value will be
-            converted to UTC. This value will be ignored if `is_start_from_beginning` is set to true.
-        :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
-            ranges. This is used to process the change feed in parallel across multiple consumers.
-        :keyword str continuation: e_tag value to be used as continuation for reading change feed.
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword partition_key: partition key at which ChangeFeed requests are targeted.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current (NOW)
+        :param PartitionKeyType partition_key: The partition key that is used to define the scope (logical partition or a subset of a container)
+        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        response_hook = kwargs.pop('response_hook', None)
-        if priority is not None:
-            kwargs['priority'] = priority
+        ...
+
+    @overload
+    async def query_items_change_feed(
+            self,
+            *,
+            feed_range: Optional[str] = None,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :param str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current (NOW)
+        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+        """
+        ...
+
+    @overload
+    async def query_items_change_feed(
+            self,
+            *,
+            continuation: Optional[str] = None,
+            max_item_count: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :param str continuation: The continuation token retrieved from previous response.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+        """
+        ...
+
+    @distributed_trace
+    async def query_items_change_feed(
+            self,
+            *args: Any,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+
+        if is_key_exists_and_not_none(kwargs, "priority"):
+            kwargs['priority'] = kwargs['priority']
         feed_options = _build_options(kwargs)
-        feed_options["isStartFromBeginning"] = is_start_from_beginning
-        if start_time is not None and is_start_from_beginning is False:
-            feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
-        if partition_key_range_id is not None:
-            feed_options["partitionKeyRangeId"] = partition_key_range_id
-        if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if continuation is not None:
-            feed_options["continuation"] = continuation
+
+        change_feed_state_context = {}
+        # Back compatibility with deprecation warnings for partition_key_range_id
+        if (args and args[0] is not None) or is_key_exists_and_not_none(kwargs, "partition_key_range_id"):
+            warnings.warn(
+                "partition_key_range_id is deprecated. Please pass in feed_range instead.",
+                DeprecationWarning
+            )
+
+            try:
+                change_feed_state_context["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
+            except KeyError:
+                change_feed_state_context['partitionKeyRangeId'] = args[0]
+
+        # Back compatibility with deprecation warnings for is_start_from_beginning
+        if (len(args) >= 2 and args[1] is not None) or is_key_exists_and_not_none(kwargs, "is_start_from_beginning"):
+            warnings.warn(
+                "is_start_from_beginning is deprecated. Please pass in start_time instead.",
+                DeprecationWarning
+            )
+
+            try:
+                is_start_from_beginning = kwargs.pop('is_start_from_beginning')
+            except KeyError:
+                is_start_from_beginning = args[1]
+
+            if is_start_from_beginning:
+                change_feed_state_context["startTime"] = "Beginning"
+
+        # parse start_time
+        if is_key_exists_and_not_none(kwargs, "start_time"):
+            if change_feed_state_context.get("startTime") is not None:
+                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
+
+            start_time = kwargs.pop('start_time')
+            if not isinstance(start_time, (datetime, str)):
+                raise TypeError(
+                    "'start_time' must be either a datetime object, or either the values 'now' or 'beginning'.")
+            change_feed_state_context["startTime"] = start_time
+
+        # parse continuation token
+        if len(args) >= 3 and args[2] is not None or is_key_exists_and_not_none(feed_options, "continuation"):
+            try:
+                continuation = feed_options.pop('continuation')
+            except KeyError:
+                continuation = args[2]
+
+            # there are two types of continuation token we support currently:
+            # v1 version: the continuation token would just be the _etag,
+            # which is being returned when customer is using partition_key_range_id,
+            # which is under deprecation and does not support split/merge
+            # v2 version: the continuation token will be base64 encoded composition token which includes full change feed state
+            if is_base64_encoded(continuation):
+                change_feed_state_context["continuationFeedRange"] = continuation
+            else:
+                change_feed_state_context["continuationPkRangeId"] = continuation
+
+        if len(args) >= 4 and args[3] is not None or is_key_exists_and_not_none(kwargs, "max_item_count"):
+            try:
+                feed_options["maxItemCount"] = kwargs.pop('max_item_count')
+            except KeyError:
+                feed_options["maxItemCount"] = args[3]
+
+        if is_key_exists_and_not_none(kwargs, "partition_key"):
+            partition_key = kwargs.pop("partition_key")
+            change_feed_state_context["partitionKey"] = await self._set_partition_key(partition_key)
+            change_feed_state_context["partitionKeyFeedRange"] = await self._get_epk_range_for_partition_key(partition_key)
+
+        if is_key_exists_and_not_none(kwargs, "feed_range"):
+            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+
+        # validate exclusive or in-compatible parameters
+        if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
+            # if continuation token is in v1 format, throw exception if feed_range is set
+            if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+                raise ValueError("feed_range and continuation are incompatible")
+        elif is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
+            # if continuation token is in v2 format, since the token itself contains the full change feed state
+            # so we will ignore other parameters if they passed in
+            if is_key_exists_and_not_none(change_feed_state_context, "partitionKeyRangeId"):
+                raise ValueError("partition_key_range_id and continuation are incompatible")
+        else:
+            # validation when no continuation is passed
+            exclusive_keys = ["partitionKeyRangeId", "partitionKey", "feedRange"]
+            count = sum(1 for key in exclusive_keys if
+                        key in change_feed_state_context and change_feed_state_context[key] is not None)
+            if count > 1:
+                raise ValueError(
+                    "partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
+
+        container_properties = await self._get_properties()
+        container_rid = container_properties.get("_rid")
+        change_feed_state = ChangeFeedState.from_json(self.container_link, container_rid, change_feed_state_context)
+        feed_options["changeFeedState"] = change_feed_state
+        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        response_hook = kwargs.pop('response_hook', None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
+
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -1098,3 +1257,17 @@ class ContainerProxy:
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+
+    async def read_feed_ranges(
+            self,
+            **kwargs: Any
+    ) -> List[str]:
+        partition_key_ranges =\
+            await self.client_connection._routing_map_provider.get_overlapping_ranges(
+                self.container_link,
+                # default to full range
+                [Range("", "FF", True, False)])
+
+        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string() for partitionKeyRange in partition_key_ranges]
+
+
