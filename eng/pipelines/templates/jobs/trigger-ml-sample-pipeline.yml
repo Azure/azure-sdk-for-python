@@ -65,14 +65,6 @@ jobs:
       displayName: Display setup.sh pre-update
 
     - task: AzureCLI@2
-      displayName: 'Azure CLI Login'
-      inputs:
-        azureSubscription: 'OpenAPI Platform - Preview'
-        scriptType: pscore
-        scriptLocation: inlineScript
-        inlineScript: 'az login --identity'
-
-    - task: AzureCLI@2
       displayName: 'login to azure sdk engineering system'
       inputs:
         azureSubscription: 'Azure SDK Engineering System'
