@@ -1,9 +1,9 @@
-# Azure Maps Timezone Package client library for Python
+# Azure Maps Weather Package client library for Python
 
-This package contains a Python SDK for Azure Maps Services for Timezone.
+This package contains a Python SDK for Azure Maps Services for Weather.
 Read more about Azure Maps Services [here](https://docs.microsoft.com/azure/azure-maps/)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/timezone) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/weather) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
 
 ## _Disclaimer_
 
@@ -25,15 +25,15 @@ az maps account create --resource-group <resource-group-name> --account-name <ac
 
 ### Install the package
 
-Install the Azure Maps Service Timezone SDK.
+Install the Azure Maps Service Weather SDK.
 
 ```bash
-pip install azure-maps-timezone
+pip install azure-maps-weather
 ```
 
-### Create and Authenticate the TimezoneClient
+### Create and Authenticate the MapsWeatherClient
 
-To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
+To create a client object to access the Azure Maps Weather API, you will need a **credential** object. Azure Maps Weather client also support two ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
@@ -45,11 +45,11 @@ Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an inst
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.timezone import TimezoneClient
+from azure.maps.weather import MapsWeatherClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-timezone_client = TimezoneClient(
+maps_weather_client = MapsWeatherClient(
     credential=credential,
 )
 ```
@@ -74,21 +74,21 @@ You will also need to specify the Azure Maps resource you intend to use by speci
 
 ```python
 import os
-from azure.maps.timezone import TimezoneClient
+from azure.maps.weather import MapsWeatherClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-timezone_client = TimezoneClient(credential=credential)
+weather_client = MapsWeatherClient(credential=credential)
 ```
 
 ## Key concepts
 
-The Azure Maps Timezone client library for Python allows you to interact with each of the components through the use of a dedicated client object.
+The Azure Maps Weather client library for Python allows you to interact with each of the components through the use of a dedicated client object.
 
 ### Sync Clients
 
-`TimezoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
-Once you initialized a `TimezoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
+`MapsWeatherClient` is the primary client for developers using the Azure Maps Weather client library for Python.
+Once you initialized a `MapsWeatherClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Weather service that you can access.
 
 ### Async Clients
 
@@ -99,187 +99,600 @@ Async clients and credentials should be closed when they're no longer needed. Th
 
 ## Examples
 
-The following sections provide several code snippets covering some of the most common Azure Maps Timezone tasks, including:
+The following sections provide several code snippets covering some of the most common Azure Maps Weather tasks, including:
 
-- [Get timezone by id](#get-timezone-by-id)
-- [Get timezone by coordinates](#get-timezone-by-coordinates)
-- [Get iana version](#get-iana-version)
-- [Get iana timezone ids](#get-iana-timezone-ids)
-- [Get windows timezone ids](#get-windows-timezone-ids)
-- [Convert windows timezone to iana](#convert-windows-timezone-to-iana)
+- [Azure Maps Weather Package client library for Python](#azure-maps-weather-package-client-library-for-python)
+  - [_Disclaimer_](#disclaimer)
+  - [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Install the package](#install-the-package)
+    - [Create and Authenticate the MapsWeatherClient](#create-and-authenticate-the-mapsweatherclient)
+      - [1. Authenticate with a Subscription Key Credential](#1-authenticate-with-a-subscription-key-credential)
+      - [2. Authenticate with an Microsoft Entra ID credential](#2-authenticate-with-an-microsoft-entra-id-credential)
+  - [Key concepts](#key-concepts)
+    - [Sync Clients](#sync-clients)
+    - [Async Clients](#async-clients)
+  - [Examples](#examples)
+    - [Get air quality daily forecasts](#get-air-quality-daily-forecasts)
+    - [Get air quality hourly forecasts](#get-air-quality-hourly-forecasts)
+    - [Get current air quality](#get-current-air-quality)
+    - [Get current conditions](#get-current-conditions)
+    - [Get daily forecast](#get-daily-forecast)
+    - [Get daily historical actuals](#get-daily-historical-actuals)
+    - [Get daily historical normals](#get-daily-historical-normals)
+    - [Get daily historical records](#get-daily-historical-records)
+    - [Get daily indices](#get-daily-indices)
+    - [Get hourly forecast](#get-hourly-forecast)
+    - [Get minute forecast](#get-minute-forecast)
+    - [Get quarter day forecast](#get-quarter-day-forecast)
+    - [Get severe weather alerts](#get-severe-weather-alerts)
+    - [Get tropical storm active](#get-tropical-storm-active)
+    - [Get tropical storm forecast](#get-tropical-storm-forecast)
+    - [Get tropical storm locations](#get-tropical-storm-locations)
+    - [Get tropical storm search](#get-tropical-storm-search)
+    - [Get weather along route](#get-weather-along-route)
+  - [Troubleshooting](#troubleshooting)
+    - [General](#general)
+    - [Logging](#logging)
+    - [Additional](#additional)
+  - [Next steps](#next-steps)
+    - [More sample code](#more-sample-code)
+    - [Additional documentation](#additional-documentation)
+  - [Contributing](#contributing)
 
-### Get timezone by id
+### Get air quality daily forecasts
 
-This API returns current, historical, and future time zone information for the specified IANA time zone ID.
+This API returns daily air quality forecasts for the next one to seven days that include pollutant levels, potential risks and suggested precautions.
 
 ```python
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_timezone_by_id():
+def get_air_quality_daily_forecasts():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_timezone_by_id(timezone_id="sr-Latn-RS")
-        print(result)
+        result = maps_weather_client.get_air_quality_daily_forecasts(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_timezone_by_id()
+    get_air_quality_daily_forecasts()
 ```
 
-### Get timezone by coordinates
+### Get air quality hourly forecasts
 
-This API returns current, historical, and future time zone information for a specified latitude-longitude pair.
+This API returns hourly air quality forecasts for the next one to 96 hours that include pollutant levels, potential risks and suggested precautions.
 
 ```python
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_timezone_by_coordinates():
+def get_air_quality_hourly_forecasts():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
-        print(result)
+        result = maps_weather_client.get_air_quality_hourly_forecasts(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_timezone_by_coordinates()
+    get_air_quality_hourly_forecasts()
 ```
 
-### Get iana version
+### Get current air quality
 
-This API returns the current IANA version number as Metadata.
+This API returns current air quality information that includes potential risks and suggested precautions.
 
 ```python
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_iana_version():
+def get_current_air_quality():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_iana_version()
-        print(result)
+        result = maps_weather_client.get_current_air_quality(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
+
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_iana_version()
+    get_current_air_quality()
 ```
 
-### Get iana timezone ids
+### Get current conditions
 
-This API returns a full list of IANA time zone IDs. Updates to the IANA service will be reflected in the system within one day.
+This API returns current weather conditions.
 
 ```python
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_iana_timezone_ids():
+def get_current_conditions():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_iana_timezone_ids()
-        print(result)
+        result = maps_weather_client.get_current_conditions(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_iana_timezone_ids()
+    get_current_conditions()
 ```
 
-### Get windows timezone ids
+### Get daily forecast
 
-This API returns a full list of Windows time zone IDs.
+This API returns a daily detailed weather forecast for the next 1, 5, 10, 15, 25, or 45 days.
 
 ```python
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_windows_timezone_ids():
+def get_daily_forecast():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_windows_timezone_ids()
-        print(result)
+        result = maps_weather_client.get_daily_forecast(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_windows_timezone_ids()
+    get_daily_forecast()
 ```
-### Convert windows timezone to iana
 
-This API returns a corresponding IANA ID, given a valid Windows Time Zone ID.
+### Get daily historical actuals
+
+This API returns climatology data such as past daily actual observed temperatures, precipitation, snowfall and snow depth.
 
 ```python
 import os
+import json
+import datetime
 
 from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def convert_windows_timezone_to_iana():
+def get_daily_historical_actuals():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import TimezoneClient
+    from azure.maps.weather import MapsWeatherClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
-        print(result)
+        result = maps_weather_client.get_daily_historical_actuals(
+            coordinates=[40.760139, -73.961968],
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 31)
+        )
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    convert_windows_timezone_to_iana()
+    get_daily_historical_actuals()
+```
+
+### Get daily historical normals
+
+This API returns climatology data such as past daily normal temperatures, precipitation and cooling/heating degree day information for a given location.
+
+```python
+import os
+import json
+import datetime
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_daily_historical_normals():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_daily_historical_normals(
+            coordinates=[40.760139, -73.961968],
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 31)
+        )
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_daily_historical_normals()
+```
+
+### Get daily historical records
+
+This API returns climatology data such as past daily record temperatures, precipitation and snowfall at a given location.
+
+```python
+import os
+import json
+import datetime
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_daily_historical_records():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_daily_historical_records(
+            coordinates=[40.760139, -73.961968],
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 31)
+        )
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_daily_historical_records()
+```
+
+### Get daily indices
+
+This API returns if the weather conditions are optimal for a specific activity such as outdoor sporting activities, construction, or farming.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_daily_indices():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_daily_indices(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_daily_indices()
+```
+
+### Get hourly forecast
+
+This API returns a detailed hourly weather forecast for up to 24 hours or a daily forecast for up to 10 days.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_hourly_forecast():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_hourly_forecast(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_hourly_forecast()
+```
+
+### Get minute forecast
+
+This API returns a minute-by-minute forecast for the next 120 minutes in intervals of 1, 5 and 15 minutes.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_minute_forecast():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_minute_forecast(coordinates=[25.0338053, 121.5640089])
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_minute_forecast()
+```
+
+### Get quarter day forecast
+
+This API returns a Quarter-Day Forecast for the next 1, 5, 10, or 15 days.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_quarter_day_forecast():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_quarter_day_forecast(coordinates=[39.793451, -104.944511])
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_quarter_day_forecast()
+```
+
+### Get severe weather alerts
+
+This API returns information about severe weather conditions such as hurricanes, thunderstorms, flooding, lightning, heat waves or forest fires for a given location.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_severe_weather_alerts():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_severe_weather_alerts(coordinates=[39.793451, -104.944511])
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_severe_weather_alerts()
+```
+
+### Get tropical storm active
+
+This API returns a list of the active tropical storms issued by national weather forecasting agencies.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_tropical_storm_active():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_tropical_storm_active()
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_tropical_storm_active()
+```
+
+### Get tropical storm forecast
+
+This API returns a list of tropical storms forecasted by national weather forecasting agencies.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_tropical_storm_forecast():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_tropical_storm_forecast(
+            year=2021,
+            basin_id="NP",
+            government_storm_id=2
+        )
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_tropical_storm_forecast()
+```
+
+### Get tropical storm locations
+
+This API returns the location of tropical storms from individual national weather forecasting agencies.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_tropical_storm_locations():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_tropical_storm_locations(
+            year=2021,
+            basin_id="NP",
+            government_storm_id=2
+        )
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_tropical_storm_locations()
+```
+
+### Get tropical storm search
+
+This API returns a list of storms issued by national weather forecasting agencies.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_tropical_storm_search():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_tropical_storm_search(year=2022)
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_tropical_storm_search()
+```
+
+### Get weather along route
+
+This API returns a locationally precise, up-to-the-minute forecast that includes weather hazard assessments and notifications along a route.
+
+```python
+import os
+import json
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_weather_along_route():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.weather import MapsWeatherClient
+
+    maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_weather_client.get_weather_along_route(
+            query='25.033075,121.525694,0:25.0338053,121.5640089,2'
+        )
+        print(json.dumps(result, indent=4))
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_weather_along_route()
 ```
 
 ## Troubleshooting
 
 ### General
 
-Maps Timezone clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
+Maps Weather clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
 This list can be used for reference to catch thrown exceptions. To get the specific error code of the exception, use the `error_code` attribute, i.e, `exception.error_code`.
 
@@ -294,8 +707,8 @@ Detailed DEBUG level logging, including request/response bodies and unredacted h
 import sys
 import logging
 
-# Create a logger for the 'azure.maps.timezone' SDK
-logger = logging.getLogger('azure.maps.timezone')
+# Create a logger for the 'azure.maps.weather' SDK
+logger = logging.getLogger('azure.maps.weather')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -319,30 +732,42 @@ Still running into issues? If you encounter any bugs or have suggestions, please
 
 ### More sample code
 
-Get started with our [Maps Timezone samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples) ([Async Version samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples/async_samples)).
+Get started with our [Maps Weather samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather/samples) ([Async Version samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather/samples/async_samples)).
 
-Several Azure Maps Timezone Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Maps Timezone
+Several Azure Maps Weather Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Maps Weather.
 
 ```bash
 set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 
-pip install azure-maps-timezone --pre
+pip install azure-maps-weather --pre
 
-python samples/get_timezone_by_id.py
-python sample/get_timezone_by_coordinates.py
-python samples/get_iana_version.py
-python samples/get_iana_timezone_ids.py
-python samples/get_windows_timezone_ids.py
-python samples/convert_windows_timezone_to_iana.py
+python samples/get_air_quality_daily_forecasts.py
+python samples/get_air_quality_hourly_forecasts.py
+python samples/get_current_air_quality.py
+python samples/get_current_conditions.py
+python samples/get_daily_forecast.py
+python samples/get_daily_historical_actuals.py
+python samples/get_daily_historical_normals.py
+python samples/get_daily_historical_records.py
+python samples/get_daily_indices.py
+python samples/get_hourly_forecast.py
+python samples/get_minute_forecast.py
+python samples/get_quarter_day_forecast.py
+python samples/get_severe_weather_alerts.py
+python samples/get_tropical_storm_active.py
+python samples/get_tropical_storm_forecast.py
+python samples/get_tropical_storm_locations.py
+python samples/get_tropical_storm_search.py
+python samples/get_weather_along_route.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
 
-Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples/README.md)
+Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather/samples/README.md)
 
 ### Additional documentation
 
-For more extensive documentation on Azure Maps Timezone, see the [Azure Maps Timezone documentation](https://docs.microsoft.com/rest/api/maps/timezone) on docs.microsoft.com.
+For more extensive documentation on Azure Maps Weather, see the [Azure Maps Weather documentation](https://docs.microsoft.com/rest/api/maps/weather) on docs.microsoft.com.
 
 ## Contributing
 
