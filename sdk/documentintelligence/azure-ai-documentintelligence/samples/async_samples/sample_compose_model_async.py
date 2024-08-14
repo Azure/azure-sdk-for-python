@@ -121,7 +121,7 @@ async def sample_compose_model(classifier_id):
         print("Doc types the model can recognize:")
         for name, doc_type in model.doc_types.items():
             print(f"Doc Type: '{name}' which has the following fields:")
-            if doc_type.field_confidence:
+            if doc_type.field_confidence and doc_type.field_schema:
                 for field_name, field in doc_type.field_schema.items():
                     print(
                         f"Field: '{field_name}' has type '{field['type']}' and confidence score "
