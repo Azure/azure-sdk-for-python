@@ -514,11 +514,11 @@ class ShareProperties(DictMixin):
     enable_snapshot_virtual_directory_access: Optional[bool] = None
     """Specifies whether the snapshot virtual directory should be accessible at the root of the share
         mount point when NFS is enabled. if not specified, the default is True."""
-    paid_bursting_enabled: int
+    paid_bursting_enabled: Optional[int] = None
     """This property enables paid bursting."""
-    paid_bursting_bandwidth_mibps: int
+    paid_bursting_bandwidth_mibps: Optional[int] = None
     """The maximum throughput the file share can support in MiB/s."""
-    paid_bursting_iops: int
+    paid_bursting_iops: Optional[int] = None
     """The maximum IOPS the file share can support."""
 
     def __init__(self, **kwargs: Any) -> None:
