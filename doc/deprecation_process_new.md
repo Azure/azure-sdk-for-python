@@ -119,7 +119,7 @@ extends:
 
 ## Remove the entry in the github.io docs
 
-- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If the reference exists, move to the next step.
+- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If the reference exists, it needs to be removed. Otherwise, continue to the `Update docs.microsoft.com` step.
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo.
 - Remove the line entry for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)[TODO: link]
 - Create a PR and leave it in the (TODO: add where the PR should be left for review) for review.
