@@ -1,6 +1,6 @@
 # Python SDK Health Status Report
 
-The Python health status report is used to get a quick glance of your library's health and whether you pass CI checks to release your package.
+The Python health status report is used to get a quick glance of our SDK health and whether a library can pass CI checks to release the package.
 
 [aka.ms/azsdk/python/health](https://www.aka.ms/azsdk/python/health)
 
@@ -12,7 +12,7 @@ If this document does not answer your question, please post on the [Language - P
 
 The health report collects statuses from the most recent scheduled pipelines for your library. This includes your release pipeline (`python - {service-directory}`), your live tests pipeline (`python - {service-directory} - tests`), and your live tests-weekly pipeline (`python - {service-directory} - tests-weekly`). If a pipeline result is available, you can click on the status in the report to view the build result.
 
-The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`, and `Tests - CI`. If any of these checks are failing, your library will be blocked from releasing. If any of these checks are disabled, your library may be blocked from release in the future. If any of these checks are in a warning state, your library is not blocked from release today, but may be blocked in the near future. See below for more information on each check.
+The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`, and `Tests - CI`. If any of these checks are failing, your library will be blocked from releasing. If any of these checks are disabled, your library may be blocked from release in the future. If any of these are in a warning state, your library is not blocked from release today, but may be blocked in the near future. See below for more information on each check.
 
 > Note: A check can be re-enabled by removing the `check = false` from the library's pyproject.toml file. See [eng_sys_checks.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml) for more information on how we use pyproject.toml in this repo.
 
@@ -75,7 +75,7 @@ This is the overall status of your library and indicates whether you can release
 
 ### Tests - CI (required check):
 
-[Tests - CI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation-tox-test-environments) checks the status of the most recent (python - {service-directory})scheduled build of your library's recorded tests. This is the same CI that will run when kicking a release build. To learn more about tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
+[Tests - CI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation-tox-test-environments) checks the status of the most recent (python - {service-directory})scheduled build of your library's recorded tests. This is the same CI that will run when triggering a release build. To learn more about tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
 
 - $${\color{red}FAILED}$$ - The library is failing CI recorded tests. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
 - $${\color{yellow}DISABLED}$$ - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.
