@@ -19,7 +19,7 @@ jobs:
     variables:
       - name: StorageAccountName
         value: 'docsupport'
-      - template: variables/globals.yml
+      - template: /eng/pipelines/templates/variables/globals.yml
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
