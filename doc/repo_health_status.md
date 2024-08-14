@@ -10,7 +10,7 @@ If this document does not answer your question, please post on the [Language - P
 
 ## Overview
 
-The health report collects statuses from the most recent scheduled pipelines for your library. This includes your release pipeline (python - {service-directory}), your live tests pipeline (python - {service-directory} - tests), and your live tests-weekly pipeline (python - {service-directory} - tests-weekly). If a pipeline result is available, you can click on the status in the report to view the build result.
+The health report collects statuses from the most recent scheduled pipelines for your library. This includes your release pipeline (`python - {service-directory}`), your live tests pipeline (`python - {service-directory} - tests`), and your live tests-weekly pipeline (`python - {service-directory} - tests-weekly`). If a pipeline result is available, you can click on the status in the report to view the build result.
 
 The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`, and `Tests - CI`. If any of these checks are failing, your library will be blocked from releasing. If any of these checks are disabled, your library may be blocked from release in the future. If any of these checks are in a warning state, your library is not blocked from release today, but may be blocked in the near future. See below for more information on each check.
 
@@ -89,10 +89,10 @@ This is the overall status of your library and indicates whether you can release
 
 ### Type check samples:
 
-This `type_check_samples` option in the pyproject.toml is a recommended check that indicates whether type checkers should run on the samples/ directory. The actual status of the check is reported with the MyPy and Pyright (if enabled) status. Possible values include:
+This `type_check_samples` option in the pyproject.toml is a recommended check that indicates whether type checkers should run on the library's samples/ directory. The actual status of the check is reported with the MyPy and Pyright (if enabled) status. Possible values include:
 
-- ENABLED - The library opts-in to running type checking on the samples directory.
-- DISABLED - The library does not run type checking on the samples directory.
+- $${\color{black}ENABLED}$$ - The library opts-in to running type checking on the samples directory.
+- $${\color{black}DISABLED}$$ - The library does not run type checking on the samples directory.
 
 ### SLA - Bugs
 
