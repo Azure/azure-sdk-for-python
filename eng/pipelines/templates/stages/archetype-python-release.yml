@@ -52,12 +52,11 @@ stages:
                         ServiceDirectory: "template"
                         TestPipeline: ${{ parameters.TestPipeline }}
 
-                    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-                        parameters:
-                          PackageName: ${{artifact.name}}
-                          ServiceName: ${{parameters.ServiceDirectory}}
-                          ForRelease: true
+                    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceName: ${{parameters.ServiceDirectory}}
+                        ForRelease: true
 
                     - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
                       parameters:
