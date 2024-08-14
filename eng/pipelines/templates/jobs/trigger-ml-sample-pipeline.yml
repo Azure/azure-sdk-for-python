@@ -74,13 +74,13 @@ jobs:
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
-        Inline: >-
+        Inline: |
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           python scripts/devops_tasks/generate_ml_sample_update.py --ml-repo "$(mlrepo)" --ml-wheel-folder "$(Build.ArtifactStagingDirectory)/azure-ai-ml" --build-id "$(Build.BuildId)" --storage-account-name "$(StorageAccountName)"
-          exit $LASTEXITCODE;
+          exit $LASTEXITCODE
 
     - pwsh: |
         cat "$(mlrepo)/sdk/python/setup.sh"
