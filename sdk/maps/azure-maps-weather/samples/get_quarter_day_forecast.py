@@ -17,6 +17,7 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
@@ -28,8 +29,8 @@ def get_quarter_day_forecast():
 
     maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_weather_client.get_quarter_day_forecast(coordinates=[25.0338053, 121.5640089])
-        print(result)
+        result = maps_weather_client.get_quarter_day_forecast(coordinates=[39.793451, -104.944511])
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")

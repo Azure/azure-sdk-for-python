@@ -34,7 +34,7 @@ async def get_weather_along_route():
             result = await maps_weather_client.get_weather_along_route(
                 query='25.033075,121.525694,0:25.0338053,121.5640089,2'
             )
-            print(result)
+            print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")

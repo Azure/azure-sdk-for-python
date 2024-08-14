@@ -17,6 +17,7 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
+import json
 import datetime
 
 from azure.core.exceptions import HttpResponseError
@@ -30,11 +31,11 @@ def get_daily_historical_normals():
     maps_weather_client = MapsWeatherClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_weather_client.get_daily_historical_normals(
-            coordinates=[25.0338053, 121.5640089],
-            start_date=datetime.date(2020, 2, 2),
-            end_date=datetime.date(2020, 2, 8)
+            coordinates=[40.760139, -73.961968],
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 31)
         )
-        print(result)
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")

@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
@@ -31,7 +32,7 @@ async def get_tropical_storm_search():
     try:
         async with maps_weather_client:
             result = await maps_weather_client.get_tropical_storm_search(year=2022)
-            print(result)
+            print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")

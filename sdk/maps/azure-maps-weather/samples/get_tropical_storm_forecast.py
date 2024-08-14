@@ -17,6 +17,7 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
+import json
 
 from azure.core.exceptions import HttpResponseError
 
@@ -33,7 +34,7 @@ def get_tropical_storm_forecast():
             basin_id="NP",
             government_storm_id=2
         )
-        print(result)
+        print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")

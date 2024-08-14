@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 import os
+import json
 import datetime
 
 from azure.core.exceptions import HttpResponseError
@@ -32,11 +33,11 @@ async def get_daily_historical_actuals():
     try:
         async with maps_weather_client:
             result = await maps_weather_client.get_daily_historical_actuals(
-                coordinates=[25.0338053, 121.5640089],
-                start_date=datetime.date(2020, 2, 2),
-                end_date=datetime.date(2020, 2, 8)
+                coordinates=[40.760139, -73.961968],
+                start_date=datetime.date(2024, 1, 1),
+                end_date=datetime.date(2024, 1, 31)
             )
-            print(result)
+            print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
