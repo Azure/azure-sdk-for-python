@@ -97,6 +97,7 @@ class ServiceOperations:
         _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -159,6 +160,7 @@ class ServiceOperations:
         _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -249,6 +251,7 @@ class ServiceOperations:
             maxresults=maxresults,
             include=include,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,

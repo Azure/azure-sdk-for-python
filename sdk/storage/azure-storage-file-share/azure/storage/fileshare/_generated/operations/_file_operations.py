@@ -51,6 +51,7 @@ def build_create_request(
     file_content_disposition: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     file_attributes: str = "none",
     file_creation_time: str = "now",
@@ -65,7 +66,11 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -104,6 +109,10 @@ def build_create_request(
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
@@ -137,7 +146,11 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -186,7 +199,11 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -228,7 +245,11 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -268,6 +289,7 @@ def build_set_http_headers_request(
     file_content_md5: Optional[bytes] = None,
     file_content_disposition: Optional[str] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     file_attributes: str = "none",
     file_creation_time: str = "now",
@@ -282,7 +304,11 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -318,6 +344,10 @@ def build_set_http_headers_request(
         )
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
@@ -352,7 +382,11 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -399,7 +433,11 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -448,7 +486,11 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -495,7 +537,11 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -543,7 +589,11 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -597,7 +647,11 @@ def build_upload_range_request(
 
     comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -669,7 +723,11 @@ def build_upload_range_from_url_request(
     file_range_write_from_url: Literal["update"] = kwargs.pop(
         "file_range_write_from_url", _headers.pop("x-ms-write", "update")
     )
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -744,7 +802,11 @@ def build_get_range_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rangelist"] = kwargs.pop("comp", _params.pop("comp", "rangelist"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -803,7 +865,11 @@ def build_start_copy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -877,7 +943,11 @@ def build_abort_copy_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -923,7 +993,11 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -971,7 +1045,11 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1017,6 +1095,7 @@ def build_rename_request(
     file_last_write_time: Optional[str] = None,
     file_change_time: Optional[str] = None,
     file_permission: str = "inherit",
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
     file_content_type: Optional[str] = None,
@@ -1029,7 +1108,11 @@ def build_rename_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
+<<<<<<< HEAD
     version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+=======
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+>>>>>>> main
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1068,6 +1151,10 @@ def build_rename_request(
         _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
     if file_permission is not None:
         _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
     if metadata is not None:
@@ -1113,6 +1200,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -1140,6 +1228,13 @@ class FileOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -1208,6 +1303,7 @@ class FileOperations:
             file_content_disposition=_file_content_disposition,
             metadata=metadata,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -1683,6 +1779,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -1709,6 +1806,13 @@ class FileOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -1776,6 +1880,7 @@ class FileOperations:
             file_content_md5=_file_content_md5,
             file_content_disposition=_file_content_disposition,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -3020,6 +3125,7 @@ class FileOperations:
         replace_if_exists: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
@@ -3056,6 +3162,13 @@ class FileOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -3123,6 +3236,7 @@ class FileOperations:
             file_last_write_time=_file_last_write_time,
             file_change_time=_file_change_time,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             metadata=metadata,
             file_content_type=_file_content_type,

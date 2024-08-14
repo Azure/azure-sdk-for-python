@@ -1,9 +1,17 @@
 # Release History
 
-## 12.12.0b1 (Unreleased)
+## 12.12.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.12.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
 
 ## 12.11.0 (2024-07-18)
 

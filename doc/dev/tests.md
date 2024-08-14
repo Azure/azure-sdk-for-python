@@ -340,6 +340,9 @@ AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy`.
 If you need logging functionality for your testing, pytest also offers [logging][pytest_logging] capabilities either
 inline through the `caplog` fixture or with command line flags.
 
+If your tests use shared resources or configuration that needs to be set up at test-running time, you can refer to the
+[Pre-test setup][setup] section of our advanced testing guide for recommended practices.
+
 ### Configure live or playback testing mode
 
 "Live" tests refer to tests that make requests to actual Azure resources. "Playback" tests require a recording for each
@@ -516,10 +519,13 @@ Some sanitizers IDs that are often opted out of are:
 
 ## Functional vs. unit tests
 
-The tests written above are functional tests: they generate HTTP traffic and send data to the service. For tests that
-don't need to make HTTP requests -- i.e. unit tests -- the best practice is to have a separate test class from the one
-containing functional tests. For example, the `azure-data-tables` package has client-side validation for the table name
-and properties of the entity; below is an example of how these could be tested:
+The tests written above are functional tests: they generate HTTP traffic and send data to the service. Client operations
+that interact with the service should be tested by functional tests wherever possible.
+
+Tests that don't make HTTP requests -- e.g. tests for model serialization or mocked service interactions for complex
+scenarios --  can be referred to as "unit tests". For unit tests, the best practice is to have a separate test class
+from the one containing functional tests. For example, the `azure-data-tables` package has client-side validation for
+the table name and properties of the entity; below is an example of how these could be tested:
 
 ```python
 import pytest
@@ -600,6 +606,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]: https://github.com/theskumar/python-dotenv
 [recording_move]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
+[setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md#pre-test-setup
 [test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme

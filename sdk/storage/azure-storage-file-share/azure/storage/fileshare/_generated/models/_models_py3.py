@@ -1175,6 +1175,8 @@ class SharePermission(_serialization.Model):
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
      Required.
     :vartype permission: str
+    :ivar format: Known values are: "Sddl" and "Binary".
+    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
     """
 
     _validation = {
@@ -1183,16 +1185,22 @@ class SharePermission(_serialization.Model):
 
     _attribute_map = {
         "permission": {"key": "permission", "type": "str"},
+        "format": {"key": "format", "type": "str"},
     }
 
-    def __init__(self, *, permission: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, permission: str, format: Optional[Union[str, "_models.FilePermissionFormat"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
          Required.
         :paramtype permission: str
+        :keyword format: Known values are: "Sddl" and "Binary".
+        :paramtype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         """
         super().__init__(**kwargs)
         self.permission = permission
+        self.format = format
 
 
 class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -1239,6 +1247,17 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
     :vartype enabled_protocols: str
     :ivar root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
     :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+<<<<<<< HEAD
+=======
+    :ivar enable_snapshot_virtual_directory_access:
+    :vartype enable_snapshot_virtual_directory_access: bool
+    :ivar paid_bursting_enabled:
+    :vartype paid_bursting_enabled: bool
+    :ivar paid_bursting_max_iops:
+    :vartype paid_bursting_max_iops: int
+    :ivar paid_bursting_max_bandwidth_mibps:
+    :vartype paid_bursting_max_bandwidth_mibps: int
+>>>>>>> main
     """
 
     _validation = {
@@ -1266,6 +1285,13 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         "lease_duration": {"key": "LeaseDuration", "type": "str"},
         "enabled_protocols": {"key": "EnabledProtocols", "type": "str"},
         "root_squash": {"key": "RootSquash", "type": "str"},
+<<<<<<< HEAD
+=======
+        "enable_snapshot_virtual_directory_access": {"key": "EnableSnapshotVirtualDirectoryAccess", "type": "bool"},
+        "paid_bursting_enabled": {"key": "PaidBurstingEnabled", "type": "bool"},
+        "paid_bursting_max_iops": {"key": "PaidBurstingMaxIops", "type": "int"},
+        "paid_bursting_max_bandwidth_mibps": {"key": "PaidBurstingMaxBandwidthMibps", "type": "int"},
+>>>>>>> main
     }
 
     def __init__(
@@ -1289,6 +1315,13 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         lease_duration: Optional[Union[str, "_models.LeaseDurationType"]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+<<<<<<< HEAD
+=======
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_iops: Optional[int] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+>>>>>>> main
         **kwargs: Any
     ) -> None:
         """
@@ -1331,6 +1364,17 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         :paramtype enabled_protocols: str
         :keyword root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
         :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+<<<<<<< HEAD
+=======
+        :keyword enable_snapshot_virtual_directory_access:
+        :paramtype enable_snapshot_virtual_directory_access: bool
+        :keyword paid_bursting_enabled:
+        :paramtype paid_bursting_enabled: bool
+        :keyword paid_bursting_max_iops:
+        :paramtype paid_bursting_max_iops: int
+        :keyword paid_bursting_max_bandwidth_mibps:
+        :paramtype paid_bursting_max_bandwidth_mibps: int
+>>>>>>> main
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1351,6 +1395,13 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         self.lease_duration = lease_duration
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
+<<<<<<< HEAD
+=======
+        self.enable_snapshot_virtual_directory_access = enable_snapshot_virtual_directory_access
+        self.paid_bursting_enabled = paid_bursting_enabled
+        self.paid_bursting_max_iops = paid_bursting_max_iops
+        self.paid_bursting_max_bandwidth_mibps = paid_bursting_max_bandwidth_mibps
+>>>>>>> main
 
 
 class ShareProtocolSettings(_serialization.Model):
