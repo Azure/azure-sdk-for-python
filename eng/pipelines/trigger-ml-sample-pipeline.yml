@@ -17,7 +17,9 @@ jobs:
     displayName: "Build, Upload, and PR Azure ML Changeset"
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      - name: StorageAccountName
+        value: 'docsupport'
+      - template: ../variables/globals.yml
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -68,7 +70,7 @@ jobs:
     - task: AzurePowerShell@5
       displayName: Generate Samples Repo Changes
       inputs:
-        azureSubscription: 'Azure SDK Engineering System'
+        azureSubscription: 'Azure SDK Artifacts'
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
@@ -76,14 +78,18 @@ jobs:
           python scripts/devops_tasks/generate_ml_sample_update.py --ml-repo "$(mlrepo)" --ml-wheel-folder "$(Build.ArtifactStagingDirectory)/azure-ai-ml" --build-id "$(Build.BuildId)" --storage-account-name "$(StorageAccountName)";
           exit $LASTEXITCODE;
 
-    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-      parameters:
-        RepoName: azureml-examples
-        RepoOwner: Azure
-        PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-        PROwner: Azure
-        BaseBranchName: main
-        CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
-        PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
-        WorkingDirectory: $(mlrepo)
-        PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
+    - pwsh: |
+        cat "$(mlrepo)/sdk/python/setup.sh"
+      displayName: Display setup.sh post-update
+
+    # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+    #   parameters:
+    #     RepoName: azureml-examples
+    #     RepoOwner: Azure
+    #     PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+    #     PROwner: Azure
+    #     BaseBranchName: main
+    #     CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
+    #     PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
+    #     WorkingDirectory: $(mlrepo)
+    #     PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
