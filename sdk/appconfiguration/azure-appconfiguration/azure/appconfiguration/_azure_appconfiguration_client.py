@@ -151,17 +151,16 @@ class AzureAppConfigurationClient:
         **kwargs: Any,
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
-        key, label and accept_datetime.
+        key, label, tags and accept_datetime. For more information about supported filters, see
+        https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
 
         :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
-            of the filter. For more information about supported filters,
-            see https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters.
+            of the filter.
         :paramtype key_filter: str or None
         :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
-            of the filter. For more information about supported filters,
-            see https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters.
+            of the filter.
         :paramtype label_filter: str or None
-        :keyword tags_filter: A filter used to query by tags. Default value is None.
+        :keyword tags_filter: Filter results based on their tags.
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
@@ -482,17 +481,17 @@ class AzureAppConfigurationClient:
         **kwargs,
     ) -> ItemPaged[ConfigurationSetting]:
         """
-        Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
+        Find the ConfigurationSetting revision history, optionally filtered by key, label, tags and accept_datetime.
+        For more information about supported filters, see
+        https://learn.microsoft.com/azure/azure-app-configuration/rest-api-revisions?pivots=v23-11#supported-filters.
 
         :param key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
-            of the filter. For more information about supported filters,
-            see https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters.
+            of the filter.
         :type key_filter: str or None
         :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
-            of the filter. For more information about supported filters,
-            see https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters.
+            of the filter.
         :type label_filter: str or None
-        :keyword tags_filter: A filter used to query by tags. Default value is None.
+        :keyword tags_filter: Filter results based on their tags.
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
@@ -613,13 +612,15 @@ class AzureAppConfigurationClient:
     ) -> ItemPaged[ConfigurationSettingLabel]:
         """Gets a list of labels.
 
-        :keyword name: A filter for the name of the returned labels. Default value is None.
+        :keyword name: A filter for the name of the returned labels.  '*' can be used as wildcard
+            in the beginning or end of the filter. For more information about supported filters, see
+            https://learn.microsoft.com/azure/azure-app-configuration/rest-api-labels?pivots=v23-11#supported-filters.
         :paramtype name: str or None
         :keyword after: Instructs the server to return elements that appear after the element referred to
-            by the specified token. Default value is None.
+            by the specified token.
         :paramtype after: str or None
         :keyword accept_datetime: Requests the server to respond with the state of the resource at the
-            specified time. Default value is None.
+            specified time.
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
             Available fields see :class:`~azure.appconfiguration.LabelFields`.
