@@ -4,7 +4,7 @@ parameters:
     default: 'ml'
   - name: Artifacts
     type: object
-    default: 
+    default:
     - name: azure-ai-ml
       safeName: azureaiml
       skipVerifyChangeLog: true
@@ -39,9 +39,8 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        python -m pip install setuptools==58.3.0
-        python -m pip install -r eng/ci_tools.txt
-        python -m pip install -r eng/ml_sample_tools.txt
+        python -m pip install -r tools/azure-sdk-tools[build]
+        python -m pip install azure-identity
       displayName: 'Prep Environment'
 
     - pwsh: |
@@ -61,16 +60,31 @@ jobs:
         Get-ChildItem "$(mlrepo)" -R
       displayName: Output Staging Directory
 
+    - task: AzureCLI@2
+      displayName: 'Azure CLI Login'
+      inputs:
+        azureSubscription: 'OpenAPI Platform - Preview'
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: 'az login --identity'
+
+    - task: AzureCLI@2
+      displayName: 'login to azure sdk engineering system'
+      inputs:
+        azureSubscription: 'Azure SDK Engineering System (a18897a6-7e44-457d-9260-f2854c0aca42)'
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: 'az login --identity'
+
     - task: PythonScript@0
       displayName: 'Generate Samples Repo Changes'
-      env:
-        BLOB_CONNECTION_STRING: $(azure-sdk-docsupport-cs)
       inputs:
         scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
         arguments: >-
           --ml-repo="$(mlrepo)"
           --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
           --build-id="$(Build.BuildId)"
+          --storage-account-name="$(StorageAccountName)"
 
     - pwsh: |
         cat "$(mlrepo)/sdk/python/setup.sh"
