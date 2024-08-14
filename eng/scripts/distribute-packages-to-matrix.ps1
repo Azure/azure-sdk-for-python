@@ -56,13 +56,14 @@ $batchValues = @()
 # regular case is when we have more packages than batches
 if ($packageProperties.Count -ge $batchCount) {
     for ($i = 0; $i -lt $packageProperties.Count; $i++) {
+        Write-Host "Assigning package $($packageProperties[$i].Name) to batch $batchCounter"
         $batches[$batchCounter] += $packageProperties[$i].Name.Replace(".json", "")
         $batchCounter = ($batchCounter + 1) % $batchCount
     }
 }
 # the case where we have fewer packages than batches, we instead walk the batches
 # and assign packages to them, even if we end up assigning the same package twice
-# that's ok, we just don't want to have dead platforms
+# that's ok, we just don't want to have dead platforms running no tests
 else {
     for ($i = 0; $i -lt $batchCount; $i++) {
         $batches[$i] += $packageProperties[$i % $packageProperties.Count].Name.Replace(".json", "")
@@ -74,11 +75,11 @@ foreach($key in $batches.Keys) {
     $batchValues += $batches[$key] -join ","
 }
 
-# set the values for the matrix
-$matrix.matrix | Add-Member -MemberType NoteProperty -Name TargetingString -Value $batchValues[0..($versionCount - 1)]
-
 # set the values for include
-$matrix.include[0].CoverageConfig.ubuntu2004_39_coverage | Add-Member -MemberType NoteProperty -Name TargetingString -Value $batchValues[$versionCount]
-$matrix.include[1].Config.Ubuntu2004_312 | Add-Member -MemberType NoteProperty -Name TargetingString -Value $batchValues[$versionCount+1]
+$matrix.include[0].CoverageConfig.ubuntu2004_39_coverage | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[0]
+$matrix.include[1].Config.Ubuntu2004_312 | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[1]
+
+# set the values for the matrix
+$matrix.matrix | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[2..($batchValues.Length-1)]
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
