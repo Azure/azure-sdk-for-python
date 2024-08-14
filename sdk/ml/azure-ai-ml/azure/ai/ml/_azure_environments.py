@@ -273,7 +273,7 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
         ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION,
     )
     
-    return f"https://{cloud_name.lower()}{registry_discovery_region}.api.azureml.{cloud_suffix}/"
+    return f"https://{cloud_name.lower()}{registry_discovery_region}.api.ml.azure.{cloud_suffix}/"
 
 
 def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
