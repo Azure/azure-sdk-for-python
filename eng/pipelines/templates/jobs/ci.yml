@@ -213,10 +213,6 @@ jobs:
 
         - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
-        - pwsh: |
-            Get-ChildItem -R $(Build.SourcesDirectory) | % { Write-Host $_.FullName }
-          displayName: Dump Visible Artifacts
-
         - task: Powershell@2
           inputs:
             pwsh: true
