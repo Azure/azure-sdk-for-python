@@ -5,8 +5,7 @@
 # -------------------------------------------------------------------------
 import functools
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, overload
-from typing_extensions import Literal
+from typing import Any, Dict, List, Optional, Union, overload, cast
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -27,15 +26,16 @@ from ._generated.models import (
     SnapshotUpdateParameters,
     SnapshotStatus,
     SnapshotFields,
+    SnapshotComposition,
     LabelFields,
     ConfigurationSettingFields,
     ConfigurationSettingLabel,
-    ConfigurationSettingsFilter,
-    ConfigurationSnapshot,
 )
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPaged,
+    ConfigurationSettingsFilter,
+    ConfigurationSnapshot,
 )
 from ._utils import (
     prep_if_match,
@@ -644,7 +644,7 @@ class AzureAppConfigurationClient:
         name: str,
         filters: List[ConfigurationSettingsFilter],
         *,
-        composition_type: Optional[Literal["key", "key_label"]] = None,
+        composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
@@ -660,7 +660,7 @@ class AzureAppConfigurationClient:
             snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
-        :paramtype composition_type: str or None
+        :paramtype composition_type: str or ~azure.appconfiguration.SnapshotComposition or None
         :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a configuration
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
@@ -676,7 +676,12 @@ class AzureAppConfigurationClient:
         snapshot = ConfigurationSnapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
-        return self._impl.begin_create_snapshot(name=name, entity=snapshot, **kwargs)
+        return cast(
+            LROPoller[ConfigurationSnapshot],
+            self._impl.begin_create_snapshot(
+                name=name, entity=snapshot._to_generated(), cls=ConfigurationSnapshot._from_deserialized, **kwargs
+            ),
+        )
 
     @distributed_trace
     def archive_snapshot(
@@ -709,7 +714,7 @@ class AzureAppConfigurationClient:
             error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
             error_map.update({412: ResourceExistsError})
-        return self._impl.update_snapshot(
+        generated_snapshot = self._impl.update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
             if_match=prep_if_match(etag, match_condition),
@@ -717,6 +722,7 @@ class AzureAppConfigurationClient:
             error_map=error_map,
             **kwargs,
         )
+        return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
     def recover_snapshot(
@@ -748,7 +754,7 @@ class AzureAppConfigurationClient:
             error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
             error_map.update({412: ResourceExistsError})
-        return self._impl.update_snapshot(
+        generated_snapshot = self._impl.update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
             if_match=prep_if_match(etag, match_condition),
@@ -756,6 +762,7 @@ class AzureAppConfigurationClient:
             error_map=error_map,
             **kwargs,
         )
+        return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
     def get_snapshot(
@@ -772,7 +779,10 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        return self._impl.get_snapshot(name=name, if_match=None, if_none_match=None, select=fields, **kwargs)
+        generated_snapshot = self._impl.get_snapshot(
+            name=name, if_match=None, if_none_match=None, select=fields, **kwargs
+        )
+        return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
     def list_snapshots(
@@ -798,7 +808,13 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        return self._impl.get_snapshots(name=name, select=fields, status=status, **kwargs)  # type: ignore[return-value]
+        return self._impl.get_snapshots(  # type: ignore[return-value]
+            name=name,
+            select=fields,
+            status=status,
+            cls=lambda objs: [ConfigurationSnapshot._from_generated(x) for x in objs],
+            **kwargs,
+        )
 
     def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.

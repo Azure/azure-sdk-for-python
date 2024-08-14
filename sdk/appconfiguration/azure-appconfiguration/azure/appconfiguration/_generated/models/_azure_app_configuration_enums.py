@@ -56,7 +56,7 @@ class SnapshotFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The desired status of the snapshot."""
+    """The current status of the snapshot."""
 
     PROVISIONING = "provisioning"
     READY = "ready"

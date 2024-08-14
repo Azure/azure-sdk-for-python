@@ -41,19 +41,3 @@ directive:
     from: Label
     to: ConfigurationSettingLabel
 ```
-
-### Rename the model "KeyValueFilter" to "ConfigurationSettingsFilter"
-```yaml
-directive:
-  rename-model:
-    from: KeyValueFilter
-    to: ConfigurationSettingsFilter
-```
-
-### Rename the model "Snapshot" to "ConfigurationSnapshot"
-```yaml
-directive:
-  rename-model:
-    from: Snapshot
-    to: ConfigurationSnapshot
-```
