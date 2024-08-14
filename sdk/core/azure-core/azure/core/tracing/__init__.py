@@ -8,5 +8,6 @@ from azure.core.tracing._abstract_span import (
     HttpSpanMixin,
     Link,
 )
+from ._generative_ai_trace_injectors import start_generative_ai_traces, stop_generative_ai_traces, GenerativeAIPackage
 
 __all__ = ["AbstractSpan", "SpanKind", "HttpSpanMixin", "Link"]
