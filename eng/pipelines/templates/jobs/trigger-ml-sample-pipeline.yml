@@ -60,6 +60,10 @@ jobs:
         Get-ChildItem "$(mlrepo)" -R
       displayName: Output Staging Directory
 
+    - pwsh: |
+        cat "$(mlrepo)/sdk/python/setup.sh"
+      displayName: Display setup.sh pre-update
+
     - task: AzureCLI@2
       displayName: 'Azure CLI Login'
       inputs:
@@ -90,14 +94,14 @@ jobs:
         cat "$(mlrepo)/sdk/python/setup.sh"
       displayName: Display Updated setup.sh
 
-    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-      parameters:
-        RepoName: azureml-examples
-        RepoOwner: Azure
-        PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-        PROwner: Azure
-        BaseBranchName: main
-        CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
-        PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
-        WorkingDirectory: $(mlrepo)
-        PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
+    # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+    #   parameters:
+    #     RepoName: azureml-examples
+    #     RepoOwner: Azure
+    #     PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+    #     PROwner: Azure
+    #     BaseBranchName: main
+    #     CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
+    #     PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
+    #     WorkingDirectory: $(mlrepo)
+    #     PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
