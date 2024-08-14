@@ -78,7 +78,7 @@ class MapsWeatherClient(WeatherOperations):  # pylint: disable=client-accepts-ap
             serializer=self._serialize,
             deserializer=self._deserialize
         )
-        
+
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:

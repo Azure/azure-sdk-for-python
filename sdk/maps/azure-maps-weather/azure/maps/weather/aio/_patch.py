@@ -23,7 +23,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
@@ -55,4 +55,3 @@ class MapsWeatherClient(MapsWeatherClientGenerated):
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
-
