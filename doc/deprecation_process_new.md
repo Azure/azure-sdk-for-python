@@ -57,7 +57,7 @@ More information on specifics of versioning can be found at [the bottom of the g
 
 ## pyproject.toml
 
-- Add `ci_enabled = false` if not already present.
+- Ensure `ci_enabled = false` is NOT present in pyproject.toml. If it is, remove the line, as this will prevent you from releasing the package.
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -97,7 +97,7 @@ More instruction can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: Check to make sure that the new version of the package has been released on PyPI, even if the `Publish package to feed` step fails in the CI.**
 
-# Step 5: Create a new PR to remove package from ci.yml
+# Step 5: Create a new PR to remove package from CI
 
 - Remove the package artifact from `azure-mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
@@ -109,6 +109,7 @@ extends:
       safeName: azuremypackage
 ```
 
+- Add the line `ci_enabled = false` to `azure-mypackage/pyproject.toml`.
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 - Once the PR has been approved, merge.
@@ -120,14 +121,14 @@ extends:
 
 - Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If the reference exists, move to the next step.
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo.
-- Remove the line entry for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)
-- Create a PR and leave it in the Python reviews channel.
-- Leave the PR in the Python reviews channel.
+- Remove the line entry for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)[TODO: link]
+- Create a PR and leave it in the (TODO: add where the PR should be left for review) for review.
+- Once approved, merge. The updated index without reference to `azure-mypackage` should be updated within (TODO: insert time frame for updates to populate).
 
 ## Update docs.microsoft.com
 
 - Instructions on deprecating packages: [Azure SDK deprecation guidelines (eng.ms)](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-deprecation-guidelines)
-- For ref docs: mark the package as deprecated in the [appropriate metadata file](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv). This will put packages under the Legacy moniker. Text analytics and anomaly detector are already there.
+- For ref docs: mark the package as deprecated in the [appropriate metadata file](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv). This will put packages under the Legacy moniker.
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
