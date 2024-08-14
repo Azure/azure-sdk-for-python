@@ -18,6 +18,20 @@ The following are required, release-blocking checks: `MyPy`, `Pylint`, `Sphinx`,
 
 ## Explained
 
+The health report is broken down into the following sections:
+
+- [Status](#status)
+- [MyPy](#mypy-required-check)
+- [Pylint](#pylint-required-check)
+- [Sphinx](#sphinx-required-check)
+- [Tests - CI](#tests---ci-required-check)
+- [Tests - Live](#tests---live)
+- [Pyright](#pyright)
+- [Type check samples](#type-check-samples)
+- [SLA - Bugs](#sla---bugs)
+- [SLA - Questions](#sla---questions)
+- [Total customer-reported issues](#total-customer-reported-issues)
+
 ### Status:
 
 This is the overall status of your library and indicates whether you can release your library today.
@@ -36,7 +50,7 @@ This is the overall status of your library and indicates whether you can release
 
 - $${\color{red}FAILED}$$ - The library is failing the MyPy check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
 - $${\color{yellow}DISABLED}$$ - MyPy is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
-- $${\color{yellow}WARNING}$$ - The library passes the currently pinned version of MyPy in the repo, but is failing the next-mypy check (the next version of MyPy the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of MyPy or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- $${\color{yellow}WARNING}$$ - The library passes the currently pinned version of MyPy in the repo, but is failing the next-mypy check (the next version of MyPy the repo will be bumped to in the near future). Please fix these errors before the merge date of the next version of MyPy or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
 - $${\color{green}GOOD}$$ - The library passes both current MyPy and next-MyPy.
 - $${\color{black}UNKNOWN}$$ - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
@@ -46,7 +60,7 @@ This is the overall status of your library and indicates whether you can release
 
 - $${\color{red}FAILED}$$ - The library is failing the Pylint check. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
 - $${\color{yellow}DISABLED}$$ - Pylint is not enabled for your library in the pyproject.toml file. This is a required check and must be enabled. If not enabled, your library will be blocked from release in the near future.
-- $${\color{yellow}WARNING}$$ - The library passes the currently pinned version of Pylint in the repo, but is failing the next-pylint check (the next version of Pylint the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pylint or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- $${\color{yellow}WARNING}$$ - The library passes the currently pinned version of Pylint in the repo, but is failing the next-pylint check (the next version of Pylint the repo will be bumped to in the near future). Please fix these errors before the merge date of the next version of Pylint or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
 - $${\color{green}GOOD}$$ - The library passes both current Pylint and next-Pylint.
 - $${\color{black}UNKNOWN}$$ - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
@@ -83,7 +97,7 @@ This is the overall status of your library and indicates whether you can release
 
 - $${\color{red}FAILED}$$ - Pyright is enabled for the library and the library is failing the check. This will block the release of your library and should be fixed immediately.
 - $${\color{yellow}DISABLED}$$ - Pyright is not enabled for your library in the pyproject.toml file.
-- $${\color{yellow}WARNING}$$ -  Pyright is enabled for the library and the library passes the currently pinned version of Pyright in the repo, but is failing the next-pyright check (the next version of Pyright the repo will be bumped in the near future). Please fix these errors before the merge date of the next version of Pyright or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
+- $${\color{yellow}WARNING}$$ -  Pyright is enabled for the library and the library passes the currently pinned version of Pyright in the repo, but is failing the next-pyright check (the next version of Pyright the repo will be bumped to in the near future). Please fix these errors before the merge date of the next version of Pyright or the errors will begin to fail the build (See [analyze_check_versions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md)) to understand target dates for version bumps.
 - $${\color{green}GOOD}$$ - The library passes both current Pyright and next-pyright.
 - $${\color{black}UNKNOWN}$$ - A result was not available for the most recent scheduled build. This could be due to an upstream pipeline failure preventing this particular check from running or a missing pipeline. Please ensure your pipeline builds are free of errors so that a Status for your library can be determined.
 
