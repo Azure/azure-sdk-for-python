@@ -15,7 +15,7 @@
 - Published enum `LabelFields` and model `ConfigurationSettingLabel`.
 - Published enum `SnapshotFields`, and accepted the type for `fields` parameter in `get_snapshot()` and `list_snapshots()`.
 - Published enum `ConfigurationSettingFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
-- Published enum `SnapshotComposition`, and accepted the type for `Snapshot` property `composition_type`.
+- Published enum `SnapshotComposition`, and accepted the type for `ConfigurationSnapshot` property `composition_type` and `begion_create_snapshot()` kwarg `composition_type`.
 
 ## 1.6.0 (2024-04-09)
 
