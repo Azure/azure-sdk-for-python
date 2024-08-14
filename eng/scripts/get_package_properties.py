@@ -19,7 +19,9 @@ additional_pr_triggers: Dict[str, List[str]] = {
         os.path.join("sdk", "core", "azure-core-experimental"),
         os.path.join("sdk", "core", "azure-core-tracing-opentelemetry"),
         os.path.join("sdk", "core", "azure-core-tracing-opencensus"),
-        os.path.join("sdk", "cosmos", "azure-cosmos"),
+        # todo: this currently won't be included, as azure-cosmos needs some special construction
+        # related to windows only + emulator
+        # os.path.join("sdk", "cosmos", "azure-cosmos"),
         os.path.join("sdk", "ml", "azure-ai-ml"),
         os.path.join("sdk", "ai", "azure-ai-documentintelligence"),
         os.path.join("sdk", "ai", "azure-ai-inference"),

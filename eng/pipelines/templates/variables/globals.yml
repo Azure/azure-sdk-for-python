@@ -11,4 +11,3 @@ variables:
   REPOROOT: $(Build.SourcesDirectory)
   WINDOWS_OUTPUTROOT: $(REPOROOT)\out
   WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
-  TargetingString: ''
