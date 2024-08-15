@@ -5,7 +5,8 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get text embeddings for a list of sentences
-    using a synchronous client.
+    using a synchronous client. Here we use the service default of returning
+    embeddings as a list of floating point values.
 
 USAGE:
     python sample_embeddings.py

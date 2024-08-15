@@ -641,7 +641,7 @@ class EmbeddingItem(_model_base.Model):
     :vartype index: int
     """
 
-    embedding: Union[List[float], str] = rest_field()
+    embedding: Union["str", List[float]] = rest_field()
     """List of embedding values for the input prompt. These represent a measurement of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
      vector. Required. Is either a [float] type or a str type."""
@@ -652,7 +652,7 @@ class EmbeddingItem(_model_base.Model):
     def __init__(
         self,
         *,
-        embedding: Union[List[float], str],
+        embedding: Union[str, List[float]],
         index: int,
     ): ...
 
