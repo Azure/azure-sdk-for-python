@@ -20,7 +20,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._data_lake_file_client import DataLakeFileClient
 from ._deserialize import deserialize_dir_properties
-from ._generated import AzureDataLakeStorageRESTAPI
 from ._list_paths_helper import PathPropertiesPaged
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
@@ -692,10 +691,7 @@ class DataLakeDirectoryClient(PathClient):
         timeout = kwargs.pop('timeout', None)
         hostname = self._hosts[self._location_mode]
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
-        client = AzureDataLakeStorageRESTAPI(
-            url=url, base_url=url, file_system=self.file_system_name,
-            path=self.path_name, pipeline=self._pipeline)
-        client._config.version = self._client._config.version  # pylint: disable=protected-access
+        client = self._build_generated_client(url)
         command = functools.partial(
             client.file_system.list_paths,
             path=self.path_name,

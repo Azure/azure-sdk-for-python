@@ -6,9 +6,10 @@
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 import functools
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Dict, Optional, Union,
-    TYPE_CHECKING)
+    TYPE_CHECKING
+)
 
 try:
     from urllib.parse import quote, unquote
@@ -21,7 +22,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._deserialize import deserialize_dir_properties
-from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import DirectoryProperties, FileProperties
 from .._shared.base_client_async import AsyncTransportWrapper
 from ._data_lake_file_client_async import DataLakeFileClient
@@ -653,10 +653,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         timeout = kwargs.pop('timeout', None)
         hostname = self._hosts[self._location_mode]
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
-        client = AzureDataLakeStorageRESTAPI(
-            url=url, base_url=url, file_system=self.file_system_name,
-            path=self.path_name, pipeline=self._pipeline)
-        client._config.version = self._client._config.version  # pylint: disable=protected-access
+        client = self._build_generated_client(url)
         command = functools.partial(
             client.file_system.list_paths,
             path=self.path_name,
