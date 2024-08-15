@@ -430,7 +430,7 @@ class ServiceBusReceiver(
                 else 0
             )
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
-            
+
             # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if (
                 max_message_count
