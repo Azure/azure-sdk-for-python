@@ -67,7 +67,7 @@ If there is a Track 2, provide a link to the new package or an existing migratio
 
 Create a PR targeting the `main` branch. Follow steps listed below.
 
-An example PR to deprecate azure-cognitiveservices-language-luis can be found [here.](https://github.com/Azure/azure-sdk-for-python/pull/36893/files)
+Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://github.com/Azure/azure-sdk-for-python/pull/36893/files)
 
 ## Fix any CI issues
 
@@ -124,6 +124,8 @@ extends:
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 - Once the PR has been approved by codeowner, merge.
 - You're responsible for fixing any CI issues related to this PR.
+
+Example post-deprecation PR for azure-cognitiveservices-language-luis [here](https://github.com/Azure/azure-sdk-for-python/pull/36908).
 
 # Step 6: Update API Documentation
 
