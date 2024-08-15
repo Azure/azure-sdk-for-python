@@ -51,7 +51,7 @@ Update the version in the `azure/mypackage/_version.py` file. This file may be c
 
 More information on specifics of versioning can be found at [the bottom of the guide under "More details - Versioning"](TODO: add link).
 
-## sdk_package.toml
+## sdk_packaging.toml
 
 - Add `auto_update = false` if not already present to avoid the bot overriding your changes.
 
@@ -67,7 +67,7 @@ If there is a Track 2, provide a link to the new package or an existing migratio
 
 Create a PR targeting the `main` branch. Follow steps listed below.
 
-An example PR to deprecate application insights can be found [here.](https://github.com/Azure/azure-sdk-for-python/pull/23024/files)
+An example PR to deprecate azure-cognitiveservices-language-luis can be found [here.](https://github.com/Azure/azure-sdk-for-python/pull/36893/files)
 
 ## Fix any CI issues
 
@@ -77,29 +77,39 @@ Wait for the CI to run. Fix any issues related to the PR.
 
 Update `setup.py` to change the `Development Status` classifier to `Development Status :: 7 - Inactive`.
 
-**Note: This needs to be your LAST commit on the PR. More information can be found at [the bottom of the guide under "More details - Order of Development Status commit in PR"].**
+**Note: This needs to be your LAST commit on the PR.**
 
 `Inactive` packages are disabled from most CI verification, therefore the CI should be faster and have fewer requirements.
 
 ## Post your PR in the Python review channel
 
-Post your PR in the [review channel for Python.](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)
+Post your PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) and request a review from the codeowner, as the PR will be blocked from merging until approved by the codeowner.
 
 ## Merge PR
 
-Once the PR is approved by the codeowner and merged, move to the next step.
+Once the PR is approved, merge and move to the next step.
 
 # Step 4: Trigger a release 
 
-A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time.
+A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time. Note that you will need to pass in BUILD_INACTIVE=true to variables when triggering the pipeline. To do this:
 
-More instruction can be found at: https://aka.ms/azsdk/release-checklist
+- As per usual, under the build pipeline for your package, click 'Run pipeline'.
+- Click on 'Variables' under 'Advanced options'.
+- Then 'Add variable'.
+- Pass `BUILD_INACTIVE` to 'Name' and `true` to 'Value', and 'Create'.
+- Then, 'Run' the pipeline.
 
-**Note: Check to make sure that the new version of the package has been released on PyPI, even if the `Publish package to feed` step fails in the CI.**
+More information on why this is done is in the [More details - Why set BUILD_INACTIVE?](TODO) section at the bottom of the page.
+
+More instructions on general release can be found at: https://aka.ms/azsdk/release-checklist
+
+## Post-Release
+
+Check to make sure that the new version of the package has been released on PyPI.
 
 # Step 5: Create a new PR to remove package from CI
 
-- Remove the package artifact from `azure-mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
+- Remove the package artifact from `mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
 ```
 extends:
@@ -112,23 +122,27 @@ extends:
 - Add the line `ci_enabled = false` to `azure-mypackage/pyproject.toml`.
 - Create a new PR targeting the `main` branch of the repository.
 - Post the PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
-- Once the PR has been approved, merge.
-- You're responsible for fixing any CI issue related to this PR.
+- Once the PR has been approved by codeowner, merge.
+- You're responsible for fixing any CI issues related to this PR.
 
 # Step 6: Update API Documentation
 
 ## Remove the entry in the github.io docs
 
-- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If the reference exists, it needs to be removed. Otherwise, continue to the `Update docs.microsoft.com` step.
+- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If an entry for your package does not exist, skip to the `Update docs.microsoft.com` section.
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo.
-- Remove the line entry for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)[TODO: link]
+- Remove the entry line for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)[TODO: link]
 - Create a PR and leave it in the (TODO: add where the PR should be left for review) for review.
 - Once approved, merge. The updated index without reference to `azure-mypackage` should be updated within (TODO: insert time frame for updates to populate).
 
 ## Update docs.microsoft.com
 
-- Instructions on deprecating packages: [Azure SDK deprecation guidelines (eng.ms)](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-deprecation-guidelines)
-- For ref docs: mark the package as deprecated in the [appropriate metadata file](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv). This will put packages under the Legacy moniker.
+TODO: WIP section
+
+- If the docs have not been updated to say deprecated, which you can check by going to docs.microsoft.com, clicking on the overview section of your service, click on the Legacy in the dropdown, and check that your package says (Deprecated) next to the name. For example, text analytics here: (TODO).
+- If the docs have not been updated within 2 days, this needs to be done manually.
+- Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo, if you haven't already.
+- Mark the package as deprecated in the [appropriate metadata file](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv). This will put packages under the Legacy moniker.
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
@@ -140,6 +154,7 @@ extends:
 
 The best versioning approach would be to do a [post release](https://peps.python.org/pep-0440/#post-releases). However, due to some tooling issues at the moment, the version should be the next beta or the next patch version ([example](https://github.com/Azure/azure-sdk-for-python/commit/cf3bfed65a65fcbb4b5c93db89a221c2959c5bb4)). Follow these issues for more details https://github.com/Azure/azure-sdk/issues/7479 and https://github.com/Azure/azure-sdk-tools/issues/5916.
 
-## Order of Development Status commit in PR
+## Why set BUILD_INACTIVE?
 
-As CI don't build Inactive projects right now, you can't build and release. This is a classical chicken and egg problem: we don't want to lose time on testing Inactive projects, but you need at least have one run of build to release the Inactive project. It's important then to pass the variable `"BUILD_INACTIVE=true"` while triggering the release pipeline. But doing this may uncover issues that were not seen in your initial PR as the CI was disabled. To avoid most of those problems, it's highly recommended that you put the commit with "Inactive" LAST in your PR. In other words, push all changes to Readme and ChangeLog, wait to confirm the CI is green, and when everything is clean, push finally "Inactive" in the `setup.py`
+TODO: double check the following
+Passing in BUILD_INACTIVE=true to variables when triggering the pipeline will ensure the package API documentation under docs.microsoft.com is labeled as (Deprecated).**
