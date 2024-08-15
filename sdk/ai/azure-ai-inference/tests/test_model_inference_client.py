@@ -198,9 +198,18 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
-        response = client.embed(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(response)
-        self._validate_embeddings_result(response)
+        input = ["first phrase", "second phrase", "third phrase"]
+
+        # Request embeddings with default service format (list of floats)
+        response1 = client.embed(input=input)
+        self._print_embeddings_result(response1)
+        self._validate_embeddings_result(response1)
+
+        # Request embeddings as base64 encoded strings
+        response2 = client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+
         client.close()
 
     # **********************************************************************************

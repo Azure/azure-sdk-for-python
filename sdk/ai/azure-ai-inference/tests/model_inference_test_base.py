@@ -90,6 +90,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # For example: "chatcmpl-9jscXwejvOMnGrxRfACmNrCCdiwWb" or "Sanitized" (when runing tests from recordings) # cspell:disable-line
     REGEX_AOAI_RESULT_ID = re.compile(r"^chatcmpl-[0-9a-zA-Z]{29}$|^Sanitized$")  # cspell:disable-line
 
+    # Regular expression describing the pattern of a base64 string
+    REGEX_BASE64_STRING = re.compile(r'^[A-Za-z0-9+/]+={0,3}$')
+
     # A couple of tool definitions to use in the tests
     TOOL1 = sdk.models.ChatCompletionsToolDefinition(
         function=sdk.models.FunctionDefinition(
@@ -422,29 +425,53 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print("\tusage.total_tokens: {}".format(response.usage.total_tokens))
 
     @staticmethod
-    def _validate_embeddings_result(response: sdk.models.EmbeddingsResult):
+    def _validate_embeddings_result(
+        response: sdk.models.EmbeddingsResult,
+        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT
+    ):
         assert response is not None
         assert response.data is not None
         assert len(response.data) == 3
         for i in [0, 1, 2]:
             assert response.data[i] is not None
             assert response.data[i].index == i
-            assert len(response.data[i].embedding) == 1024
-            assert response.data[i].embedding[0] != 0.0
-            assert response.data[i].embedding[1023] != 0.0
+            if encoding_format == sdk.models.EmbeddingEncodingFormat.FLOAT:
+                assert isinstance(response.data[i].embedding, List)
+                assert len(response.data[i].embedding) > 0
+                assert response.data[i].embedding[0] != 0.0
+                assert response.data[i].embedding[-1] != 0.0
+            elif encoding_format == sdk.models.EmbeddingEncodingFormat.BASE64:
+                assert isinstance(response.data[i].embedding, str)
+                assert len(response.data[i].embedding) > 0
+                assert bool(ModelClientTestBase.REGEX_BASE64_STRING.match(response.data[i].embedding))  # type: ignore[arg-type]
+            else:
+                raise ValueError(f"Unsupported encoding format: {encoding_format}")
         # assert len(response.model) > 0  # At the time of writing this test, this JSON field existed but was empty
         assert response.usage.prompt_tokens > 0
         assert response.usage.total_tokens == response.usage.prompt_tokens
 
     @staticmethod
-    def _print_embeddings_result(response: sdk.models.EmbeddingsResult):
+    def _print_embeddings_result(
+        response: sdk.models.EmbeddingsResult,
+        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT
+    ):
         if ModelClientTestBase.PRINT_RESULT:
             print("Embeddings response:")
             for item in response.data:
-                length = len(item.embedding)
-                print(
-                    f"\tdata[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
-                )
+                if encoding_format == sdk.models.EmbeddingEncodingFormat.FLOAT:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}] (vector length={length}): "
+                        f"[{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
+                elif encoding_format == sdk.models.EmbeddingEncodingFormat.BASE64:
+                    print(
+                        f"data[{item.index}] encoded (string length={len(item.embedding)}): "
+                        f"\"{item.embedding[:32]}...{item.embedding[-32:]}\""
+                    )
+                else:
+                    raise ValueError(f"Unsupported encoding format: {encoding_format}")
             print(f"\tmodel: {response.model}")
             print(f"\tusage.prompt_tokens: {response.usage.prompt_tokens}")
             print(f"\tusage.total_tokens: {response.usage.total_tokens}")

@@ -188,10 +188,17 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_embeddings(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(response)
-        self._validate_embeddings_result(response)
-        await client.close()
+        input = ["first phrase", "second phrase", "third phrase"]
+
+        # Request embeddings with default service format (list of floats)
+        response1 = await client.embed(input=input)
+        self._print_embeddings_result(response1)
+        self._validate_embeddings_result(response1)
+
+        # Request embeddings as base64 encoded strings
+        response2 = await client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
 
     # **********************************************************************************
     #
