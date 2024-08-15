@@ -71,7 +71,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
         )
-        self._custom_metrics_kusto_enabled = kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, True)
+        self._custom_metrics_kusto_enabled = bool(kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, True))
         print("custom_metrics_kusto_enabled = %s" % self._custom_metrics_kusto_enabled)
 
     # pylint: disable=R1702
