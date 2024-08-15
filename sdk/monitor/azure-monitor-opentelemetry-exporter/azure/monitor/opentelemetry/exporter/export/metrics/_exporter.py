@@ -31,7 +31,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
     _CUSTOM_METRICS_KUSTO_ENABLED_ARG,
     _METRIC_ENVELOPE_NAME,
-    _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -144,7 +143,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     ) -> Optional[TelemetryItem]:
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
-            envelope = _handle_std_metric_envelope(envelope, name, point.attributes, self._custom_metrics_kusto_enabled) # type: ignore
+            envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
         elif not self._custom_metrics_kusto_enabled:
             # Don't send manual custom metrics to Breeze and Kusto
             envelope = None
@@ -220,7 +219,6 @@ def _convert_point_to_envelope(
 
     envelope.data = MonitorBase(base_data=data, base_type="MetricData")
 
-    # TODO: Could be manual metrics, auto, or auto duration
     return envelope
 
 
@@ -229,7 +227,6 @@ def _handle_std_metric_envelope(
     envelope: TelemetryItem,
     name: str,
     attributes: Attributes,
-    custom_metrics_kusto_enabled: bool = True
 ) -> Optional[TelemetryItem]:
     properties: Dict[str, str] = {}
     tags = envelope.tags
