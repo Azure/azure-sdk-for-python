@@ -150,7 +150,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
             headers = {"api-key": key}
             credential = AzureKeyCredential("")
-            credential_scopes: list[str]=[]
+            credential_scopes: list[str] = []
         else:
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
             credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
@@ -194,9 +194,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
             endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs
         )
 
-    def _create_aoai_chat_client(self, *, key_auth: bool = True, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+    def _create_aoai_chat_client(
+        self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
+    ) -> sdk.ChatCompletionsClient:
         endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
-            key_auth=key_auth, bad_key=bad_key, **kwargs)
+            key_auth=key_auth, bad_key=bad_key, **kwargs
+        )
         return sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
@@ -206,9 +209,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
             logging_enable=LOGGING_ENABLED,
         )
 
-    def _create_async_aoai_chat_client(self, *, key_auth: bool = True, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
+    def _create_async_aoai_chat_client(
+        self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
+    ) -> async_sdk.ChatCompletionsClient:
         endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
-            key_auth=True, bad_key=bad_key, **kwargs)
+            key_auth=True, bad_key=bad_key, **kwargs
+        )
         return async_sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
@@ -426,7 +432,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             assert len(response.data[i].embedding) == 1024
             assert response.data[i].embedding[0] != 0.0
             assert response.data[i].embedding[1023] != 0.0
-        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
         # assert len(response.model) > 0  # At the time of writing this test, this JSON field existed but was empty
         assert response.usage.prompt_tokens > 0
         assert response.usage.total_tokens == response.usage.prompt_tokens
@@ -440,7 +445,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
                 print(
                     f"\tdata[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
                 )
-            print(f"\tid: {response.id}")
             print(f"\tmodel: {response.model}")
             print(f"\tusage.prompt_tokens: {response.usage.prompt_tokens}")
             print(f"\tusage.total_tokens: {response.usage.total_tokens}")

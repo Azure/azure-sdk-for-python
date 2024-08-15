@@ -668,7 +668,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                             "index": 0
                         }
                     ],
-                    "id": "str",
                     "model": "str",
                     "usage": {
                         "prompt_tokens": 0,
@@ -927,7 +926,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                             "index": 0
                         }
                     ],
-                    "id": "str",
                     "model": "str",
                     "usage": {
                         "prompt_tokens": 0,

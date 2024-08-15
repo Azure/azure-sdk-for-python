@@ -224,13 +224,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     ),
-                                    id="some-id"
+                                    id="some-id",
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     ),
-                                    id="some-other-id"
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -321,13 +321,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     ),
-                                    id="some-id"
+                                    id="some-id",
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     ),
-                                    id="some-other-id"
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -399,13 +399,13 @@ class TestModelAsyncClient(ModelClientTestBase):
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
                                     ),
-                                    id="some-id"
+                                    id="some-id",
                                 ),
                                 sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
                                     ),
-                                    id="some-other-id"
+                                    id="some-other-id",
                                 ),
                             ]
                         ),

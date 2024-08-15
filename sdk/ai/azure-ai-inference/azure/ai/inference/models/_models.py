@@ -341,15 +341,20 @@ class ChatCompletionsResponseFormatJSON(ChatCompletionsResponseFormat, discrimin
      \"json_object\"."""
 
     @overload
-    def __init__(self): ...
+    def __init__(
+        self,
+    ): ...
+
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="json_object", **kwargs)
+
 
 class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discriminator="text"):
     """A response format for Chat Completions that emits text responses. This is the default response
@@ -366,15 +371,20 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
     """Response format type: always 'text' for this object. Required. Default value is \"text\"."""
 
     @overload
-    def __init__(self): ...
+    def __init__(
+        self,
+    ): ...
+
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="text", **kwargs)
+
 
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
@@ -622,17 +632,19 @@ class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
 
-    :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
+    :ivar embedding: List of embedding values for the input prompt. These represent a measurement
      of the
-     vector-based relatedness of the provided input. Required.
-    :vartype embedding: list[float]
+     vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
+     vector. Required. Is either a [float] type or a str type.
+    :vartype embedding: list[float] or str
     :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
     :vartype index: int
     """
 
-    embedding: List[float] = rest_field()
-    """List of embeddings value for the input prompt. These represent a measurement of the
-     vector-based relatedness of the provided input. Required."""
+    embedding: Union[List[float], str] = rest_field()
+    """List of embedding values for the input prompt. These represent a measurement of the
+     vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
+     vector. Required. Is either a [float] type or a str type."""
     index: int = rest_field()
     """Index of the prompt to which the EmbeddingItem corresponds. Required."""
 
@@ -640,7 +652,7 @@ class EmbeddingItem(_model_base.Model):
     def __init__(
         self,
         *,
-        embedding: List[float],
+        embedding: Union[List[float], str],
         index: int,
     ): ...
 
@@ -662,8 +674,6 @@ class EmbeddingsResult(_model_base.Model):
     recommendations, and other similar scenarios.
 
 
-    :ivar id: Unique identifier for the embeddings result. Required.
-    :vartype id: str
     :ivar data: Embedding values for the prompts submitted in the request. Required.
     :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
     :ivar usage: Usage counts for tokens input using the embeddings API. Required.
@@ -672,8 +682,6 @@ class EmbeddingsResult(_model_base.Model):
     :vartype model: str
     """
 
-    id: str = rest_field()
-    """Unique identifier for the embeddings result. Required."""
     data: List["_models.EmbeddingItem"] = rest_field()
     """Embedding values for the prompts submitted in the request. Required."""
     usage: "_models.EmbeddingsUsage" = rest_field()
@@ -685,7 +693,6 @@ class EmbeddingsResult(_model_base.Model):
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
         data: List["_models.EmbeddingItem"],
         usage: "_models.EmbeddingsUsage",
         model: str,

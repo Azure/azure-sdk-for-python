@@ -126,7 +126,7 @@ class BaseStreamingChatCompletions:
 
                 # We update all empty content strings to None
                 # (this is what OpenAI Python SDK does)
-                #for choice in update.choices:
+                # for choice in update.choices:
                 #    if not choice.delta.content:
                 #        choice.delta.content = None
 
