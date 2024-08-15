@@ -387,7 +387,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class ConfigurationSettingsFilter(Model):
+class ConfigurationSettingsFilter:
     """Enables filtering of configuration settings."""
 
     key: str
@@ -425,7 +425,7 @@ class ConfigurationSettingsFilter(Model):
         self.tags = tags
 
 
-class ConfigurationSnapshot(Model):  # pylint: disable=too-many-instance-attributes
+class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
     """A point-in-time snapshot of configuration settings."""
 
     name: Optional[str]
