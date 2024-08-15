@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-ai-ml-1.16.1
+- azure-ai-ml-1.19.0
 
 ## 2024.06.01
 

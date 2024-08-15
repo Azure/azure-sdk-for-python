@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-ai-translation-text-1.0.0
+- azure-ai-translation-text-1.0.1
 
 ## 2024.06.01
 

@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-eventgrid-4.19.0
+- azure-eventgrid-4.20.0
 
 ## 2024.06.01
 

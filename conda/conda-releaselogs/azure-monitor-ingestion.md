@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-monitor-ingestion-1.0.3
+- azure-monitor-ingestion-1.0.4
 
 ## 2024.06.01
 

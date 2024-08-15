@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-messaging-webpubsubservice-1.1.0
+- azure-messaging-webpubsubservice-1.2.1
 
 ## 2024.06.01
 

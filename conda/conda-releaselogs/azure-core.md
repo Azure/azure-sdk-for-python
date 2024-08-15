@@ -5,7 +5,7 @@
 ### Packages included
 
 - azure-common-1.1.28
-- azure-core-1.30.1
+- azure-core-1.30.2
 - azure-mgmt-core-1.4.0
 
 ## 2024.06.01
