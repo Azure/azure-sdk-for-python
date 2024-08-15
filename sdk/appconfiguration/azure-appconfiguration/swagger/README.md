@@ -33,11 +33,3 @@ directive:
   transform: >
     $.composition_type["x-ms-enum"].name = "SnapshotComposition"
 ```
-
-### Rename the model "Label" to "ConfigurationSettingLabel"
-```yaml
-directive:
-  rename-model:
-    from: Label
-    to: ConfigurationSettingLabel
-```

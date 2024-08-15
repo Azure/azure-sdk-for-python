@@ -2339,7 +2339,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.LabelFields]]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ConfigurationSettingLabel"]:
+    ) -> Iterable["_models.Label"]:
         """Gets a list of labels.
 
         Gets a list of labels.
@@ -2355,9 +2355,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.LabelFields]
-        :return: An iterator like instance of either ConfigurationSettingLabel or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.ConfigurationSettingLabel]
+        :return: An iterator like instance of either Label or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Label]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
