@@ -139,6 +139,67 @@ class TestAzureMetricExporter(unittest.TestCase):
             True,
         )
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED": "False",
+        }
+    )
+    def test_constructor_kusto_env_var_disabled(self):
+        """Test the constructor."""
+        exporter = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._custom_metrics_kusto_enabled,
+            False,
+        )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED": "F",
+        }
+    )
+    def test_constructor_kusto_env_var_misformatted(self):
+        """Test the constructor."""
+        exporter = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._custom_metrics_kusto_enabled,
+            True,
+        )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED": "False",
+        }
+    )
+    def test_constructor_kusto_env_var_and_param(self):
+        """Test the constructor."""
+        exporter = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            custom_metrics_kusto_enabled=True
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._custom_metrics_kusto_enabled,
+            True,
+        )
+
     def test_from_connection_string(self):
         exporter = AzureMonitorMetricExporter.from_connection_string(
             "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab"

@@ -27,6 +27,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
     _CUSTOM_METRICS_KUSTO_ENABLED_ARG,
@@ -69,7 +70,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
         )
-        self._custom_metrics_kusto_enabled = bool(kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, True))
+        default = os.getenv(_APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED, "").lower() != "false"
+        self._custom_metrics_kusto_enabled = bool(kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, default))
 
     # pylint: disable=R1702
     def export(
