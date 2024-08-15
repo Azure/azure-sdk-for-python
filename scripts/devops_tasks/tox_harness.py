@@ -330,6 +330,8 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
 
             tox_execution_array.extend(["-e", filtered_tox_environment_set])
 
+        if parsed_args.tox_env == "sphinx":
+            tox_execution_array.extend(["--no-recreate-provision"])
 
         if parsed_args.tox_env == "apistub":
             local_options_array = []
