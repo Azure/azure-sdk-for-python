@@ -340,8 +340,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
     def test_point_to_envelope_histogram_kusto_disabled(self):
-        exporter = self._exporter
-        exporter._custom_metrics_kusto_enabled = False
+        exporter = self._exporter_kusto_disabled
         resource = Resource.create(attributes={"asd":"test_resource"})
         point=HistogramDataPoint(
             attributes={
@@ -358,7 +357,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertIsNone(envelope)
-        exporter._custom_metrics_kusto_enabled = True
 
     @mock.patch.dict(
         "os.environ",
@@ -452,8 +450,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
 
     def test_point_to_envelope_std_metric_client_duration_kusto_disabled(self):
-        exporter = self._exporter
-        exporter._custom_metrics_kusto_enabled = False
+        exporter = self._exporter_kusto_disabled
         resource = Resource(
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
@@ -511,7 +508,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
         self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
-        exporter._custom_metrics_kusto_enabled = True
 
 
     def test_point_to_envelope_std_metric_server_duration(self):
@@ -563,8 +559,7 @@ class TestAzureMetricExporter(unittest.TestCase):
 
 
     def test_point_to_envelope_std_metric_server_duration_kusto_disabled(self):
-        exporter = self._exporter
-        exporter._custom_metrics_kusto_enabled = False
+        exporter = self._exporter_kusto_disabled
         resource = Resource(
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
@@ -629,8 +624,7 @@ class TestAzureMetricExporter(unittest.TestCase):
 
 
     def test_point_to_envelope_auto_collected_kusto_disabled(self):
-        exporter = self._exporter
-        exporter._custom_metrics_kusto_enabled = False
+        exporter = self._exporter_kusto_disabled
         resource = Resource({})
         point=NumberDataPoint(
             attributes={
@@ -644,7 +638,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
-        exporter._custom_metrics_kusto_enabled = True
 
 
     def test_point_to_envelope_std_metric_unsupported(self):
