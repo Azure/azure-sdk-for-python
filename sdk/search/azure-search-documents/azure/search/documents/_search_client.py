@@ -9,7 +9,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DEFAULT_VERSION
-from ._generated import SearchIndexClient
+from ._generated import SearchClient as SearchIndexClient
 from ._generated.models import (
     AutocompleteMode,
     AutocompleteRequest,
@@ -109,7 +109,7 @@ class SearchClient(HeadersMixin):
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return int(self._client.documents.count(**kwargs))
+        return int(self._client.documents_operations.count(**kwargs))
 
     @distributed_trace
     def get_document(self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any) -> Dict:
@@ -132,7 +132,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
+        result = self._client.documents_operations.get(key=key, selected_fields=selected_fields, **kwargs)
         return cast(dict, result)
 
     @distributed_trace
@@ -435,7 +435,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = self._client.documents.suggest_post(suggest_request=request, **kwargs)
+        response = self._client.documents_operations.suggest_post(suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -514,7 +514,7 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(AutocompleteRequest, query.request)
-        response = self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
+        response = self._client.documents_operations.autocomplete_post(autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -652,7 +652,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = self._client.documents_operations.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:

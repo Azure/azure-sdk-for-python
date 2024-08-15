@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from .._api_versions import DEFAULT_VERSION
-from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated import SearchClient as _SearchServiceClient
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -115,7 +115,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         if select:
             kwargs["select"] = ",".join(select)
         # pylint:disable=protected-access
-        indexes = self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs)
+        indexes = self._client.indexes_operations.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs)
         return cast(ItemPaged[SearchIndex], indexes)
 
     @distributed_trace
@@ -129,7 +129,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        names = self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._client.indexes_operations.list(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(ItemPaged[str], names)
 
     @distributed_trace
@@ -152,7 +152,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexes.get(name, **kwargs)
+        result = self._client.indexes_operations.get(name, **kwargs)
         return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -168,7 +168,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexes.get_statistics(index_name, **kwargs)
+        result = self._client.indexes_operations.get_statistics(index_name, **kwargs)
         return result.as_dict()
 
     @distributed_trace
@@ -204,7 +204,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             index_name = index.name  # type: ignore
         except AttributeError:
             index_name = index
-        self._client.indexes.delete(index_name=index_name, error_map=error_map, **kwargs)
+        self._client.indexes_operations.delete(index_name=index_name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -227,7 +227,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
-        result = self._client.indexes.create(patched_index, **kwargs)
+        result = self._client.indexes_operations.create(patched_index, **kwargs)
         return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -272,7 +272,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         error_map, access_condition = get_access_conditions(index, match_condition)
         kwargs.update(access_condition)
         patched_index = index._to_generated()  # pylint:disable=protected-access
-        result = self._client.indexes.create_or_update(
+        result = self._client.indexes_operations.create_or_update(
             index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
@@ -304,7 +304,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Analyze text
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexes.analyze(
+        result = self._client.indexes_operations.analyze(
             index_name=index_name,
             request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
             **kwargs
@@ -336,7 +336,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
             kwargs["select"] = ",".join(select)
-        result = self._client.synonym_maps.list(**kwargs)
+        result = self._client.synonym_maps_operations.list(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
         # pylint:disable=protected-access
         return [SynonymMap._from_generated(x) for x in result.synonym_maps]
@@ -351,7 +351,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.synonym_maps.list(**kwargs)
+        result = self._client.synonym_maps_operations.list(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
         return [x.name for x in result.synonym_maps]
 
@@ -376,7 +376,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.synonym_maps.get(name, **kwargs)
+        result = self._client.synonym_maps_operations.get(name, **kwargs)
         return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -413,7 +413,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             name = synonym_map.name  # type: ignore
         except AttributeError:
             name = synonym_map
-        self._client.synonym_maps.delete(synonym_map_name=name, error_map=error_map, **kwargs)
+        self._client.synonym_maps_operations.delete(synonym_map_name=name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -436,7 +436,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
-        result = self._client.synonym_maps.create(patched_synonym_map, **kwargs)
+        result = self._client.synonym_maps_operations.create(patched_synonym_map, **kwargs)
         return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -462,7 +462,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         error_map, access_condition = get_access_conditions(synonym_map, match_condition)
         kwargs.update(access_condition)
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
-        result = self._client.synonym_maps.create_or_update(
+        result = self._client.synonym_maps_operations.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             prefer="return=representation",

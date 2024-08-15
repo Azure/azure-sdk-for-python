@@ -144,8 +144,6 @@ class RawDeserializer:
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise DeserializationError("XML is invalid") from err
-        elif content_type.startswith("text/"):
-            return data_as_str
         raise DeserializationError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod

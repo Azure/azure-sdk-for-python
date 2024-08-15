@@ -655,24 +655,13 @@ class PatternAnalyzer(LexicalAnalyzer):
     :vartype stopwords: list[str]
     """
 
-    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "lower_case_terms": {"key": "lowercase", "type": "bool"},
-        "pattern": {"key": "pattern", "type": "str"},
-        "flags": {"key": "flags", "type": "[str]"},
-        "stopwords": {"key": "stopwords", "type": "[str]"},
-    }
-
     def __init__(self, **kwargs):
-        super(PatternAnalyzer, self).__init__(**kwargs)
         self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"
-        self.lower_case_terms = kwargs.get("lower_case_terms", True)
-        self.pattern = kwargs.get("pattern", r"\W+")
-        self.flags = kwargs.get("flags", None)
-        self.stopwords = kwargs.get("stopwords", None)
+        self.lower_case_terms = kwargs.pop("lower_case_terms", True)
+        self.pattern = kwargs.pop("pattern", r"\W+")
+        self.flags = kwargs.pop("flags", None)
+        self.stopwords = kwargs.pop("stopwords", None)
+        super(PatternAnalyzer, self).__init__(**kwargs)
 
     def _to_generated(self):
         if not self.flags:
@@ -726,22 +715,12 @@ class PatternTokenizer(LexicalTokenizer):
     :vartype group: int
     """
 
-    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "pattern": {"key": "pattern", "type": "str"},
-        "flags": {"key": "flags", "type": "[str]"},
-        "group": {"key": "group", "type": "int"},
-    }
-
     def __init__(self, **kwargs):
-        super(PatternTokenizer, self).__init__(**kwargs)
         self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"
-        self.pattern = kwargs.get("pattern", r"\W+")
-        self.flags = kwargs.get("flags", None)
-        self.group = kwargs.get("group", -1)
+        self.pattern = kwargs.pop("pattern", r"\W+")
+        self.flags = kwargs.pop("flags", None)
+        self.group = kwargs.pop("group", -1)
+        super(PatternTokenizer, self).__init__(**kwargs)
 
     def _to_generated(self):
         if not self.flags:

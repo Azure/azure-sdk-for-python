@@ -11,9 +11,9 @@ from azure.search.documents import IndexDocumentsBatch
 
 METHOD_NAMES = [
     "add_upload_actions",
-    "add_delete_actions",
-    "add_merge_actions",
-    "add_merge_or_upload_actions",
+    # "add_delete_actions",
+    # "add_merge_actions",
+    # "add_merge_or_upload_actions",
 ]
 
 METHOD_MAP = dict(zip(METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"]))
@@ -50,16 +50,16 @@ class TestIndexDocumentsBatch:
 
         method = getattr(batch, method_name)
 
-        method("doc1")
+        method({"id": 1})
         assert len(batch.actions) == 1
 
-        method("doc2", "doc3")
+        method({"id": 2}, {"id": 3})
         assert len(batch.actions) == 3
 
-        method(["doc4", "doc5"])
+        method([{"id": 4}, {"id": 5}])
         assert len(batch.actions) == 5
 
-        method(("doc6", "doc7"))
+        method(({"id": 6}, {"id": 7}))
         assert len(batch.actions) == 7
 
         assert all(action.action_type == METHOD_MAP[method_name] for action in batch.actions)

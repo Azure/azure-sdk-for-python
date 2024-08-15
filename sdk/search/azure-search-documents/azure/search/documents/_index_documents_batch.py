@@ -139,7 +139,13 @@ class IndexDocumentsBatch:
                 self._actions.extend(new_actions)
 
     def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
+        new_actions: List[IndexAction] = []
+        for document in documents:
+            document.update({"actionType": action_type})
+            index_action = IndexAction(document)
+            new_actions.append(index_action)
+
+        # new_actions = [IndexAction({'actionType': 'upload', 'id': 1}) for document in documents]
         with self._lock:
             self._actions.extend(new_actions)
         return new_actions

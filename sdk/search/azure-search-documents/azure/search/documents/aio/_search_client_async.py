@@ -11,7 +11,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._utils import get_authentication_policy, get_answer_query
-from .._generated.aio import SearchIndexClient
+from .._generated.aio import SearchClient as SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
     AutocompleteRequest,
@@ -111,7 +111,7 @@ class SearchClient(HeadersMixin):
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return int(await self._client.documents.count(**kwargs))
+        return int(await self._client.documents_operations.count(**kwargs))
 
     @distributed_trace_async
     async def get_document(self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any) -> Dict:
@@ -134,7 +134,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
+        result = await self._client.documents_operations.get(key=key, selected_fields=selected_fields, **kwargs)
         return cast(dict, result)
 
     @distributed_trace_async
@@ -433,7 +433,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = await self._client.documents.suggest_post(suggest_request=request, **kwargs)
+        response = await self._client.documents_operations.suggest_post(suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -512,7 +512,7 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(AutocompleteRequest, query.request)
-        response = await self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
+        response = await self._client.documents_operations.autocomplete_post(autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -650,7 +650,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents_operations.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:

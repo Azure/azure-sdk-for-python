@@ -13,7 +13,7 @@ from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code, get_authentication_policy
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
-from .._generated.aio import SearchIndexClient
+from .._generated.aio import SearchClient as SearchIndexClient
 from .._generated.models import IndexingResult, IndexBatch, IndexAction
 from .._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch_async import IndexDocumentsBatch
@@ -275,7 +275,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents_operations.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
