@@ -23,7 +23,7 @@ from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 from ._discovery import find_auto_failover_endpoints
 
-FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL = 3600  # 1 hour in seconds
+FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
 
@@ -338,7 +338,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
 
         if failover_endpoints is None:
-            self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTEVAL
+            self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
             return
 
         if len(failover_endpoints) == 0:
