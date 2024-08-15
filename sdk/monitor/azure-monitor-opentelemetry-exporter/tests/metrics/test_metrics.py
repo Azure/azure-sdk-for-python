@@ -52,7 +52,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorMetricExporter()
-        # cls._exporter_kusto_disabled = AzureMonitorMetricExporter(custom_metrics_kusto_enabled=False)
+        cls._exporter_kusto_disabled = AzureMonitorMetricExporter(custom_metrics_kusto_enabled=False)
         cls._metrics_data = MetricsData(
             resource_metrics=[
                 ResourceMetrics(
@@ -104,10 +104,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            True,
-        )
+        self.assertTrue(exporter._custom_metrics_kusto_enabled)
 
     def test_constructor_kusto_disabled(self):
         """Test the constructor."""
@@ -119,10 +116,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            False,
-        )
+        self.assertFalse(exporter._custom_metrics_kusto_enabled)
 
     def test_constructor_kusto_misformatted(self):
         """Test the constructor."""
@@ -134,10 +128,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            True,
-        )
+        self.assertTrue(exporter._custom_metrics_kusto_enabled)
 
     @mock.patch.dict(
         os.environ,
@@ -154,10 +145,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            False,
-        )
+        self.assertFalse(exporter._custom_metrics_kusto_enabled)
 
     @mock.patch.dict(
         os.environ,
@@ -174,10 +162,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            True,
-        )
+        self.assertTrue(exporter._custom_metrics_kusto_enabled)
 
     @mock.patch.dict(
         os.environ,
@@ -195,10 +180,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            exporter._custom_metrics_kusto_enabled,
-            True,
-        )
+        self.assertTrue(exporter._custom_metrics_kusto_enabled)
 
     def test_from_connection_string(self):
         exporter = AzureMonitorMetricExporter.from_connection_string(
