@@ -8,7 +8,6 @@ import json
 import random
 import time
 import datetime
-from math import Math
 from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
@@ -330,8 +329,8 @@ def _buildprovider(
     if interval < 1:
         raise ValueError("Refresh interval must be greater than or equal to 1 second.")
 
-    min_backoff: int = Math.min(kwargs.pop("min_backoff", 30), interval)
-    max_backoff: int = Math.min(kwargs.pop("max_backoff", 600), interval)
+    min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
+    max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
     replica_client_manager = ConfigurationClientManager(
         connection_string,
