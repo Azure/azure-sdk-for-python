@@ -397,29 +397,15 @@ class ConfigurationSettingsFilter:
     tags: Optional[List[str]]
     """Filters key-values by their tags field."""
 
-    _validation = {
-        "key": {"required": True},
-        "tags": {"unique": True},
-    }
-
-    _attribute_map = {
-        "key": {"key": "key", "type": "str"},
-        "label": {"key": "label", "type": "str"},
-        "tags": {"key": "tags", "type": "[str]"},
-    }
-
-    def __init__(
-        self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None) -> None:
         """
         :keyword key: Filters configuration settings by their key field. Required.
         :paramtype key: str
         :keyword label: Filters configuration settings by their label field.
         :paramtype label: str or None
         :keyword tags: Filters key-values by their tags field.
-        :paramtype tags: list[str]
+        :paramtype tags: list[str] or None
         """
-        super().__init__(**kwargs)
         self.key = key
         self.label = label
         self.tags = tags
@@ -457,32 +443,6 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
     etag: Optional[str]
     """A value representing the current state of the configuration snapshot."""
 
-    _validation = {
-        "name": {"readonly": True},
-        "status": {"readonly": True},
-        "filters": {"required": True, "max_items": 3, "min_items": 1},
-        "created": {"readonly": True},
-        "expires": {"readonly": True},
-        "retention_period": {"maximum": 7776000, "minimum": 3600},
-        "size": {"readonly": True},
-        "items_count": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "filters": {"key": "filters", "type": "[KeyValueFilter]"},
-        "composition_type": {"key": "composition_type", "type": "str"},
-        "created": {"key": "created", "type": "iso-8601"},
-        "expires": {"key": "expires", "type": "iso-8601"},
-        "retention_period": {"key": "retention_period", "type": "int"},
-        "size": {"key": "size", "type": "int"},
-        "items_count": {"key": "items_count", "type": "int"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
     def __init__(
         self,
         filters: List[ConfigurationSettingsFilter],
@@ -490,7 +450,6 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Any,
     ) -> None:
         """
         :param filters: A list of filters used to filter the key-values included in the configuration snapshot.
@@ -508,7 +467,6 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         :keyword tags: The tags of the configuration snapshot.
         :paramtype tags: dict[str, str] or None
         """
-        super().__init__(**kwargs)
         self.name = None
         self.status = None
         self.filters = filters
@@ -589,6 +547,20 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
             retention_period=self.retention_period,
             tags=self.tags,
         )
+
+
+class ConfigurationSettingLabel:
+    """The label info of a configuration setting."""
+
+    name: Optional[str]
+    """The name of the ConfigurationSetting label."""
+
+    def __init__(self, *, name: Optional[str]=None) -> None:
+        """
+        :keyword name: The configuration setting label name.
+        :paramtype composition_type: str or None
+        """
+        self.name = name
 
 
 def _return_deserialized_and_headers(_, deserialized, response_headers):

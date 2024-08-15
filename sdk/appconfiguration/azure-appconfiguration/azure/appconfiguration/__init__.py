@@ -17,10 +17,10 @@ from ._models import (
     SecretReferenceConfigurationSetting,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
+    ConfigurationSettingLabel,
 )
 from ._generated.models import (
     SnapshotStatus,
-    ConfigurationSettingLabel,
     LabelFields,
     SnapshotFields,
     ConfigurationSettingFields,

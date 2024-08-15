@@ -32,13 +32,13 @@ from .._generated.models import (
     SnapshotComposition,
     LabelFields,
     ConfigurationSettingFields,
-    ConfigurationSettingLabel,
 )
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPagedAsync,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
+    ConfigurationSettingLabel,
 )
 from .._utils import (
     prep_if_match,
@@ -651,6 +651,7 @@ class AzureAppConfigurationClient:
             after=after,
             accept_datetime=accept_datetime,
             select=fields,
+            cls=lambda objs: [ConfigurationSettingLabel(x.name) for x in objs],
             **kwargs,
         )
 

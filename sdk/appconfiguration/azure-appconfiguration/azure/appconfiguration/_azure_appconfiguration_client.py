@@ -636,6 +636,7 @@ class AzureAppConfigurationClient:
             after=after,
             accept_datetime=accept_datetime,
             select=fields,
+            cls=lambda objs: [ConfigurationSettingLabel(x.name) for x in objs],
             **kwargs,
         )
 
