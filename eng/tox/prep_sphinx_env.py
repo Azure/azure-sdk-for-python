@@ -140,7 +140,7 @@ if __name__ == "__main__":
     if should_build_docs(pkg_details.name):
         if os.path.exists(args.dist_dir):
             cleanup_directory(args.dist_dir)
-            os.path.mkdir(args.dist_dir)
+            os.mkdir(args.dist_dir)
 
         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
         doc_folder = os.path.join(source_location, "docgen")
