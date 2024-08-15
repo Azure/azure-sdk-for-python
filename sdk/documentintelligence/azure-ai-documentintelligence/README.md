@@ -544,12 +544,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -737,12 +738,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -754,11 +756,6 @@ account_details = document_intelligence_admin_client.get_resource_info()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
-)
-neural_models = account_details.custom_neural_document_model_builds
-print(
-    f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
-    f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
 )
 ```
 
