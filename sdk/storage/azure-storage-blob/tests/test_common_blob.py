@@ -3438,17 +3438,17 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        uncompressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
         decompressed_data = b"hello from gzip"
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        blob.upload_blob(data=uncompressed_data, content_settings=content_settings)
+        blob.upload_blob(data=compressed_data, content_settings=content_settings)
 
         result = blob.download_blob(decompress=True).readall()
         assert result == decompressed_data
 
         result = blob.download_blob(decompress=False).readall()
-        assert result == uncompressed_data
+        assert result == compressed_data
 
     # ------------------------------------------------------------------------------
