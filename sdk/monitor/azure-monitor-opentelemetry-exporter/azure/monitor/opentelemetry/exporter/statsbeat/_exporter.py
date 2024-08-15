@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from typing import Optional
+from typing import Optional, Any
 from opentelemetry.sdk.metrics.export import DataPointT
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -12,6 +12,11 @@ from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NA
 
 class _StatsBeatExporter(AzureMonitorMetricExporter):
 
+    def __init__(self, **kwargs: Any) -> None:
+        AzureMonitorMetricExporter.__init__(self, **kwargs)
+        self._custom_metrics_kusto_enabled = True
+        print("Statsbeat custom_metrics_kusto_enabled = %s" % self._custom_metrics_kusto_enabled)
+
     # pylint: disable=protected-access
     def _point_to_envelope(
         self,
@@ -20,6 +25,7 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None
     ) -> Optional[TelemetryItem]:
+        print("_StatsBeatExporter._point_to_envelope: name = %s" % name)
         # map statsbeat name from OpenTelemetry name
         name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
         return super()._point_to_envelope(

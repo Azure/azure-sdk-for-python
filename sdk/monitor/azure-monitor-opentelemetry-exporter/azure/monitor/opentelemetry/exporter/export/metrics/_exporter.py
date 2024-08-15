@@ -29,7 +29,9 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _CUSTOM_METRICS_KUSTO_ENABLED_ARG,
     _METRIC_ENVELOPE_NAME,
+    _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -63,11 +65,14 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
     def __init__(self, **kwargs: Any) -> None:
         BaseExporter.__init__(self, **kwargs)
+        print(kwargs)
         MetricExporter.__init__(
             self,
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
         )
+        self._custom_metrics_kusto_enabled = kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, True)
+        print("custom_metrics_kusto_enabled = %s" % self._custom_metrics_kusto_enabled)
 
     # pylint: disable=R1702
     def export(
@@ -139,9 +144,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
+        # TODO: This includes statsbeat???
+        print("_point_to_envelope: name = %s" % name)
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
-            envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
+            envelope = _handle_std_metric_envelope(envelope, name, point.attributes, self._custom_metrics_kusto_enabled) # type: ignore
+        # TODO: Don't send manual custom metrics to Breeze and Kusto
+        elif not self._custom_metrics_kusto_enabled:
+            print("_point_to_envelope: dropping non-auto %s" % name)
+            envelope = None
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
@@ -175,6 +186,10 @@ def _convert_point_to_envelope(
     resource: Optional[Resource] = None,
     scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
+    print("AzureMonitorMetricExporter._convert_point_to_envelope: name = %s" % name)
+    if name in _STATSBEAT_METRIC_NAME_MAPPINGS.values():
+        print("AzureMonitorMetricExporter._convert_point_to_envelope: IS STATSBEAT")
+    # TODO: Seems wasteful if we don't export any OTel autocollected metrics...
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource)) # type: ignore
@@ -214,6 +229,7 @@ def _convert_point_to_envelope(
 
     envelope.data = MonitorBase(base_data=data, base_type="MetricData")
 
+    # TODO: Could be manual metrics, auto, or auto duration
     return envelope
 
 
@@ -222,7 +238,9 @@ def _handle_std_metric_envelope(
     envelope: TelemetryItem,
     name: str,
     attributes: Attributes,
+    custom_metrics_kusto_enabled: bool = True
 ) -> Optional[TelemetryItem]:
+    print("_handle_std_metric_envelope: name = %s" % name)
     properties: Dict[str, str] = {}
     tags = envelope.tags
     if not attributes:
@@ -269,6 +287,12 @@ def _handle_std_metric_envelope(
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
         properties["Request.Success"] = str(_is_status_code_success(status_code)) # type: ignore
     else:
+        print("_handle_std_metric_envelope: dropping w/ name = %s" % name)
+        # TODO: Replace with field?
+        # Don't send autocollected OTel metrics as custom metrics to Breeze and Kusto
+        if not custom_metrics_kusto_enabled:
+            print("_point_to_envelope: dropping auto %s" % name)
+            return None
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
         return None
