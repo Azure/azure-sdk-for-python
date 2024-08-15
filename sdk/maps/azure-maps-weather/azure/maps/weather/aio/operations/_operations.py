@@ -1237,6 +1237,7 @@ class WeatherOperations:
         The ``Get Weather Along Route`` API is an HTTP ``GET`` request that returns hyper local (one
         kilometer or less), up-to-the-minute weather nowcasts, weather hazard assessments, and
         notifications along a route described as a sequence of waypoints.
+
          This includes a list of weather hazards affecting the waypoint or route, and the aggregated
         hazard index for each waypoint might be used to paint each portion of a route according to how
         safe it is for the driver. When submitting the waypoints, it is recommended to stay within, or
@@ -1252,6 +1253,7 @@ class WeatherOperations:
         expected to begin experiencing heavy rain as it reaches a waypoint, a weather notification for
         heavy rain will be generated for that waypoint allowing the end product to display a heavy rain
         notification before the driver reaches that waypoint.
+
          The trigger for when to display the notification for a waypoint could be based, for example,
         on a `geofence <https://docs.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`_\\ , or
         selectable distance to the waypoint.
