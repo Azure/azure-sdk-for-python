@@ -88,7 +88,7 @@ class WeatherOperations:
         the given the given coordinate location.  The API returns details such as temperature,
         humidity, wind, precipitation, and ultraviolet (UV) index. For more information, see `Request
         hourly weather forecast data
-        </azure/azure-maps/how-to-request-weather-data#request-hourly-weather-forecast-data>`_.
+        </azure/azure-maps/how-to-request-weather-data#request-hourly-weather-forecast-data>`__.
 
         If you are using the Gen1 S0 pricing tier, you can request hourly forecast for the next 1, 12,
         24 hours (1 day), and 72 hours (3 days). If you are using Gen1 S1 or Gen2 pricing tier, you can
@@ -124,7 +124,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -293,7 +293,7 @@ class WeatherOperations:
         precipitation (including rain, snow, or a mixture of both), start time, and precipitation
         intensity value (dBZ). For more information, see `Request minute-by-minute weather forecast
         data
-        </azure/azure-maps/how-to-request-weather-data#request-minute-by-minute-weather-forecast-data>`_.
+        </azure/azure-maps/how-to-request-weather-data#request-minute-by-minute-weather-forecast-data>`__.
 
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
@@ -318,7 +318,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -465,7 +465,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -640,7 +640,7 @@ class WeatherOperations:
         time, brief description of the weather conditions, weather icon, precipitation indicator flags,
         and temperature. Additional details such as RealFeel™ Temperature and UV index are also
         returned. For more information, see `Request real-time weather data
-        </azure/azure-maps/how-to-request-weather-data#request-real-time-weather-data>`_.
+        </azure/azure-maps/how-to-request-weather-data#request-real-time-weather-data>`__.
 
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
@@ -676,7 +676,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -926,7 +926,7 @@ class WeatherOperations:
         given coordinate location.  The response includes details such as temperature, wind,
         precipitation, air quality, and UV index. For more information, see `Request daily weather
         forecast data
-        </azure/azure-maps/how-to-request-weather-data#request-daily-weather-forecast-data>`_.
+        </azure/azure-maps/how-to-request-weather-data#request-daily-weather-forecast-data>`__.
 
          If you are using the Gen1 S0 pricing tier, you can request daily forecast for the next 1, 5,
         10, and 15 days. If you are using Gen1 S1 or Gen2 pricing tier, you can also request daily
@@ -961,7 +961,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1245,7 +1245,7 @@ class WeatherOperations:
         every five minutes.
 
          The service supplements Azure Maps `Route Service
-        <https://docs.microsoft.com/rest/api/maps/route>`_ that allows you to first request a route
+        <https://docs.microsoft.com/rest/api/maps/route>`__ that allows you to first request a route
         between an origin and a destination and use that as an input for Weather Along Route endpoint.
 
          In addition, the service supports scenarios to generate weather notifications for waypoints
@@ -1255,7 +1255,7 @@ class WeatherOperations:
         notification before the driver reaches that waypoint.
 
          The trigger for when to display the notification for a waypoint could be based, for example,
-        on a `geofence <https://docs.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`_\\ , or
+        on a `geofence <https://docs.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`__\\ , or
         selectable distance to the waypoint.
 
          The API covers all regions of the planet except latitudes above Greenland and Antarctica.
@@ -1292,7 +1292,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1450,7 +1450,7 @@ class WeatherOperations:
         such as alert type, category, level and detailed description about the active severe alerts for
         the requested location, like hurricanes, thunderstorms, lightning, heat waves or forest fires.
         For more information, see `Request severe weather alerts
-        </azure-maps/how-to-request-weather-data#request-severe-weather-alerts>`_.
+        </azure-maps/how-to-request-weather-data#request-severe-weather-alerts>`__.
 
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
@@ -1467,7 +1467,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword details: Return full details for the severe weather alerts. Available values are
@@ -1603,7 +1603,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many days the daily indices are returned. By default, the
@@ -1620,13 +1620,13 @@ class WeatherOperations:
         :keyword index_id: Numeric index identifier that can be used for restricting returned results
          to the corresponding index type. Cannot be paired with ``indexGroupId``. Please refer to
          `Weather services in Azure Maps
-         </azure/azure-maps/weather-services-concepts#index-ids-and-index-groups-ids>`_ for details and
+         </azure/azure-maps/weather-services-concepts#index-ids-and-index-groups-ids>`__ for details and
          to see the supported indices. Default value is None.
         :paramtype index_id: int
         :keyword index_group_id: Numeric index group identifier that can be used for restricting
          returned results to the corresponding subset of indices (index group). Cannot be paired with
          ``indexId``. Please refer to `Weather services in Azure Maps
-         </azure/azure-maps/weather-services-concepts#index-ids-and-index-groups-ids>`_ for details and
+         </azure/azure-maps/weather-services-concepts#index-ids-and-index-groups-ids>`__ for details and
          to see the supported index groups. Default value is None.
         :paramtype index_group_id: int
         :return: JSON object
@@ -2225,7 +2225,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword include_pollutant_details: Boolean value that returns detailed information about each
@@ -2347,7 +2347,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many days from now we would like to know about the air
@@ -2459,7 +2459,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many hours from now we would like to know about the air
