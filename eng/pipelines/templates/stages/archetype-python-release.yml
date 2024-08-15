@@ -52,12 +52,11 @@ stages:
                         ServiceDirectory: "template"
                         TestPipeline: ${{ parameters.TestPipeline }}
 
-                    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-                        parameters:
-                          PackageName: ${{artifact.name}}
-                          ServiceName: ${{parameters.ServiceDirectory}}
-                          ForRelease: true
+                    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceName: ${{parameters.ServiceDirectory}}
+                        ForRelease: true
 
                     - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
                       parameters:
@@ -265,9 +264,15 @@ stages:
                       - script: |
                           python -m pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
+
                       - pwsh: |
                           sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
+                          if (Test-Path component-detection-pip-report.json) {
+                            Write-Host "Deleting component-detection-pip-report.json"
+                            rm component-detection-pip-report.json
+                          }
                         displayName: Increment package version
+
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python

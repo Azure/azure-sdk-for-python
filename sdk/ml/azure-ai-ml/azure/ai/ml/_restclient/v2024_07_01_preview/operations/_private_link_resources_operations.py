@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -22,7 +23,7 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar
+    from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -96,55 +97,94 @@ class PrivateLinkResourcesOperations(object):
         workspace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.PrivateLinkResourceListResult"
-        """Gets the private link resources that need to be created for a workspace.
+        # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
+        """Called by Client (Portal, CLI, etc) to get available "private link resources" for the
+        workspace.
+        Each "private link resource" is a connection endpoint (IP address) to the resource.
+        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
+        resolution.
+        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
+        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
+
+        Called by Client (Portal, CLI, etc) to get available "private link resources" for the
+        workspace.
+        Each "private link resource" is a connection endpoint (IP address) to the resource.
+        Pre single connection endpoint per workspace: the Data Plane IP address, returned by DNS
+        resolution.
+        Other RPs, such as Azure Storage, have multiple - one for Blobs, other for Queues, etc.
+        Defined in the "[NRP] Private Endpoint Design" doc, topic "GET API for GroupIds".
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult
+        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    api_version=api_version,
+                    template_url=self.list.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+            else:
+                
+                request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    api_version=api_version,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
 
-        
-        request = build_list_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            api_version=api_version,
-            template_url=self.list.metadata['url'],
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("PrivateLinkResourceListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources"}  # type: ignore
-

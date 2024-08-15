@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call
+from subprocess import check_output, CalledProcessError, check_call, STDOUT
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -27,9 +27,9 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
-# input example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
-def del_outdated_generated_files(readme: str):
-    tspconfig = Path(readme) / "tspconfig.yaml"
+# tsp example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
+def del_outdated_generated_files(tsp: str):
+    tspconfig = Path(tsp) / "tspconfig.yaml"
     if not tspconfig.exists():
         _LOGGER.info(f"do not find tspconfig.yaml: {tspconfig}")
         return
@@ -195,8 +195,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-def judge_tag_preview(path: str) -> bool:
-    files = [i for i in Path(path).glob("**/*.py")]
+@return_origin_path
+def judge_tag_preview(path: str, package_name: str) -> bool:
+    os.chdir(path)
+    first_level = package_name.split("-")[0]
+    files = [i for i in Path(".").glob(f"{first_level}/**/*.py")]
     default_api_version = ""  # for multi-api
     api_version = ""  # for single-api
     for file in files:
@@ -427,13 +430,21 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        check_output(
-            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug",
-            shell=True,
-        )
+        cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
+        _LOGGER.info(f"generation cmd: {cmd}")
+        output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
+
+    decode_output = output.decode("utf-8")
+    # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
+    if " - error " in decode_output:
+        _LOGGER.error(f"Failed to generate sdk from typespec:")
+        for item in decode_output.split("\n"):
+            if " - error " in item:
+                _LOGGER.error(item)
+        raise Exception(f"Failed to generate sdk from typespec: {decode_output}")
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
