@@ -399,10 +399,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(
             client.enable_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleContent(
-                    auto_scale_formula="$TargetDedicatedNodes=2",
-                    auto_scale_evaluation_interval=interval,
-                ),
+                auto_scale_formula="$TargetDedicatedNodes=2",
+                auto_scale_evaluation_interval=interval,
             )
         )
 
@@ -612,7 +610,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result.virtual_directory_name is not None
 
         # Test Disable Scheduling
-        response = await async_wrapper(client.disable_node_scheduling(batch_pool.name, nodes[0].id))
+        response = await async_wrapper(
+            client.disable_node_scheduling(
+                batch_pool.name, 
+                nodes[0].id, 
+                models.BatchNodeDisableSchedulingOption.terminate,
+            )
+        )
         assert response is None
 
         # Test Enable Scheduling
