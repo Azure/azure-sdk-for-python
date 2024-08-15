@@ -19,6 +19,7 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from ._lease import ShareLeaseClient
+    from .aio._lease_async import ShareLeaseClient as ShareLeaseClientAsync
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -86,32 +87,40 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
     )
 
 
-def get_access_conditions(lease: Optional[Union["ShareLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
-    try:
-        lease_id = lease.id  # type: ignore
-    except AttributeError:
-        lease_id = lease  # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+def get_access_conditions(
+    lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]
+) -> Optional[LeaseAccessConditions]:
+    if lease is None:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id
+    else:
+        lease_id = lease
+    return LeaseAccessConditions(lease_id=lease_id)
 
 
 def get_source_access_conditions(
-    lease: Optional[Union["ShareLeaseClient", str]]
+    lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]
 ) -> Optional[SourceLeaseAccessConditions]:
-    try:
-        lease_id = lease.id  # type: ignore
-    except AttributeError:
-        lease_id = lease  # type: ignore
-    return SourceLeaseAccessConditions(source_lease_id=lease_id) if lease_id else None
+    if lease is None:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id
+    else:
+        lease_id = lease
+    return SourceLeaseAccessConditions(source_lease_id=lease_id)
 
 
 def get_dest_access_conditions(
-    lease: Optional[Union["ShareLeaseClient", str]]
+    lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]
 ) -> Optional[DestinationLeaseAccessConditions]:
-    try:
-        lease_id = lease.id  # type: ignore
-    except AttributeError:
-        lease_id = lease  # type: ignore
-    return DestinationLeaseAccessConditions(destination_lease_id=lease_id) if lease_id else None
+    if lease is None:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id
+    else:
+        lease_id = lease
+    return DestinationLeaseAccessConditions(destination_lease_id=lease_id)
 
 
 def get_smb_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
