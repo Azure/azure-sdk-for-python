@@ -87,15 +87,13 @@ def _get_default_cloud_name() -> str:
     current_cloud_env = os.getenv(AZUREML_CLOUD_ENV_NAME)
     if current_cloud_env is not None:
         return current_cloud_env
-
     arm_metadata_url = os.getenv(ArmConstants.METADATA_URL_ENV_NAME)
     if arm_metadata_url is not None:
         clouds = _get_clouds_by_metadata_url(arm_metadata_url)  # prefer ARM metadata url when set
-        for cloud_name in clouds:
-            if clouds[cloud_name][EndpointURLS.CLOUD_TLD] in arm_metadata_url:
+        for cloud_name in clouds:  # pylint: disable=consider-using-dict-items
+            if clouds[cloud_name][EndpointURLS.RESOURCE_MANAGER_ENDPOINT] in arm_metadata_url:
                 _set_cloud(cloud_name)
                 return cloud_name
-
     return AzureEnvironments.ENV_DEFAULT
 
 
@@ -116,7 +114,7 @@ def _get_cloud_details(cloud_name: Optional[str] = None) -> Dict[str, str]:
     return _get_cloud(cloud_name)
 
 
-def _set_cloud(cloud_name: str = None):
+def _set_cloud(cloud_name: Optional[str] = None):
     """Sets the current cloud.
 
     :param cloud_name: cloud name
@@ -263,16 +261,13 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     cloud_name = cloud["name"]
     if cloud_name in _environments:
         return _environments[cloud_name][EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT]
-
     registry_discovery_from_env = os.getenv(ArmConstants.REGISTRY_ENV_URL)
     if registry_discovery_from_env is not None:
         return registry_discovery_from_env
-
     registry_discovery_region = os.environ.get(
         ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
         ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION,
     )
-
     return f"https://{cloud_name.lower()}{registry_discovery_region}.api.ml.azure.{cloud_suffix}/"
 
 
