@@ -126,7 +126,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         while retries_remaining:
             try:
                 response = await self.next.send(request)
-                if is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response):
+                if is_retry(response, retry_settings['mode']) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,

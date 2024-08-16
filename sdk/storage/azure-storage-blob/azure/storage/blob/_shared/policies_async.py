@@ -79,12 +79,6 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-
-        if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
-            try:
-                await response.http_response.read()  # Load the body in memory and close the socket
-            except (StreamClosedError, StreamConsumedError):
-                pass
         will_retry = is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response)
         
         # Auth error could come from Bearer challenge, in which case this request will be made again
@@ -132,13 +126,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         while retries_remaining:
             try:
                 response = await self.next.send(request)
-                
-                if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
-                    try:
-                        await response.http_response.read()  # Load the body in memory and close the socket
-                    except (StreamClosedError, StreamConsumedError):
-                        pass
-                if is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response):
+                if is_retry(response, retry_settings['mode']) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,

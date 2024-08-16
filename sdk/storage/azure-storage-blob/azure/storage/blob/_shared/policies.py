@@ -525,7 +525,7 @@ class StorageRetryPolicy(HTTPPolicy):
         while retries_remaining:
             try:
                 response = self.next.send(request)
-                if is_retry(response, request.context.options.get('mode')) or is_checksum_retry(response):
+                if is_retry(response, retry_settings['mode']) or is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
