@@ -120,7 +120,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
         continuation_token = poller.continuation_token()
         di_client2 = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
-        poller2 = di_client2.begin_analyze_document(None, None, None, continuation_token=continuation_token)
+        poller2 = di_client2.begin_analyze_document(None, None, continuation_token=continuation_token)
         document = poller2.result()
         assert document.model_id == model.model_id
         assert len(document.pages) == 1

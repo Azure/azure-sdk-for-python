@@ -221,7 +221,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 content_type="application/octet-stream",
             )
             continuation_token = poller.continuation_token()
-            layout = await client.begin_analyze_document(None, None, None, continuation_token=continuation_token).result()
+            layout = await (await client.begin_analyze_document(None, None, continuation_token=continuation_token)).result()
         assert len(layout.tables) == 3
         assert layout.tables[0].row_count == 30
         assert layout.tables[0].column_count == 5

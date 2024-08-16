@@ -145,7 +145,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
 
         di_client2 = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         async with di_client2: 
-            document = await di_client2.begin_analyze_document(None, None, None, continuation_token=continuation_token).result()
+            document = await (await di_client2.begin_analyze_document(None, None, continuation_token=continuation_token)).result()
             assert document.model_id == model.model_id
             assert len(document.pages) == 1
             assert len(document.tables) == 2
