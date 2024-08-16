@@ -18,6 +18,7 @@ from .common import get_function_and_class_name
 
 _inference_traces_enabled: bool = False
 _trace_inference_content: bool = False
+INFERENCE_GEN_AI_SYSTEM_NAME = "azure.ai.inference"
 
 class TraceType(str, Enum):
     """An enumeration class to represent different types of traces."""
@@ -44,7 +45,7 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
             span.span_instance.add_event(
                 name=name,
                 attributes={
-                    "get_ai.system": "openai",
+                    "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                     "gen_ai.event.content": json.dumps(message)
                 }
             )
@@ -53,7 +54,7 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
 def _add_request_chat_attributes(span: AbstractSpan, **kwargs: Any) -> None:
     _set_attributes(
         span,
-        ("gen_ai.system", "openai"),
+        ("gen_ai.system", INFERENCE_GEN_AI_SYSTEM_NAME),
         ("gen_ai.request.model", kwargs.get("model")),
         ("gen_ai.request.max_tokens", kwargs.get("max_tokens")),
         ("gen_ai.request.temperature", kwargs.get("temperature")),
@@ -71,7 +72,7 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
                 "index": choice.index,
             }
             attributes={
-                "get_ai.system": "openai",
+                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                 "gen_ai.event.content": json.dumps(response)
             }
         else:
@@ -80,7 +81,7 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
                 "index": choice.index,
             }
             attributes={
-                "get_ai.system": "openai",
+                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
             }
         if choice.message.tool_calls:
             response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
@@ -155,7 +156,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                     span.span_instance.add_event(
                         name="gen_ai.choice",
                         attributes={
-                            "get_ai.system": "openai",
+                            "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                             "gen_ai.event.content": json.dumps(accumulate)
                         }
                     )
@@ -173,7 +174,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                         span.span_instance.add_event(
                             name="gen_ai.choice",
                             attributes={
-                                "get_ai.system": "openai",
+                                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                                 "gen_ai.event.content": json.dumps(accumulate)
                             }
                         )
