@@ -183,7 +183,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
 
 
 def _trace_sync_function(
-    func: Callable = None,
+    function: Callable = None,
     *,
     args_to_ignore: Optional[List[str]] = None,
     trace_type=TraceType.INFERENCE,
@@ -193,7 +193,7 @@ def _trace_sync_function(
     Decorator that adds tracing to a synchronous function.
 
     Args:
-        func (Callable): The function to be traced.
+        function (Callable): The function to be traced.
         args_to_ignore (Optional[List[str]], optional): A list of argument names to be ignored in the trace.
                                                         Defaults to None.
         trace_type (TraceType, optional): The type of the trace. Defaults to TraceType.INFERENCE.
@@ -204,21 +204,21 @@ def _trace_sync_function(
         Callable: The traced function.
     """
 
-    @functools.wraps(func)
+    @functools.wraps(function)
     def inner(*args, **kwargs):
 
         span_impl_type = settings.tracing_implementation()
         if span_impl_type is None:
-            return func(*args, **kwargs)
+            return function(*args, **kwargs)
 
-        span_name = get_function_and_class_name(func, *args)
+        span_name = get_function_and_class_name(function, *args)
         span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
         try:
             # tracing events not supported in azure-core-tracing-opentelemetry
             # so need to access the span instance directly
             with span_impl_type.change_context(span.span_instance):
                 _add_request_span_attributes(span, span_name, kwargs)
-                result = func(*args, **kwargs)
+                result = function(*args, **kwargs)
                 if kwargs.get("stream") is True:
                     return _wrapped_stream(result, span)
                 _add_response_span_attributes(span, result)
@@ -235,7 +235,7 @@ def _trace_sync_function(
 
 
 def _trace_async_function(
-    func: Callable = None,
+    function: Callable = None,
     *,
     args_to_ignore: Optional[List[str]] = None,
     trace_type=TraceType.INFERENCE,
@@ -245,7 +245,7 @@ def _trace_async_function(
     Decorator that adds tracing to an asynchronous function.
 
     Args:
-        func (Callable): The function to be traced.
+        function (Callable): The function to be traced.
         args_to_ignore (Optional[List[str]], optional): A list of argument names to be ignored in the trace.
                                                         Defaults to None.
         trace_type (TraceType, optional): The type of the trace. Defaults to TraceType.INFERENCE.
@@ -256,21 +256,21 @@ def _trace_async_function(
         Callable: The traced function.
     """
 
-    @functools.wraps(func)
+    @functools.wraps(function)
     async def inner(*args, **kwargs):
 
         span_impl_type = settings.tracing_implementation()
         if span_impl_type is None:
-            return func(*args, **kwargs)
+            return function(*args, **kwargs)
 
-        span_name = get_function_and_class_name(func, *args)
+        span_name = get_function_and_class_name(function, *args)
         span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
         try:
             # tracing events not supported in azure-core-tracing-opentelemetry
             # so need to access the span instance directly
             with span_impl_type.change_context(span.span_instance):
                 _add_request_span_attributes(span, span_name, kwargs)
-                result = await func(*args, **kwargs)
+                result = await function(*args, **kwargs)
                 if kwargs.get("stream") is True:
                     return _wrapped_stream(result, span)
                 _add_response_span_attributes(span, result)
@@ -368,3 +368,11 @@ def _restore_inference_api():
         if hasattr(getattr(api, method), "_original"):
             setattr(api, method, getattr(getattr(api, method), "_original"))
     _inference_traces_enabled = False
+
+
+def _is_instrumented():
+    """This function returns True if Inference API has already been instrumented
+    for tracing and False if the API has not been instrumented.
+    """
+    global _inference_traces_enabled
+    return _inference_traces_enabled
