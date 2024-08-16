@@ -8,16 +8,16 @@ from __future__ import annotations
 import os
 import csv
 import typing
-import base64
 import json
 import glob
 import pathlib
 import argparse
 import datetime
 
-import requests
+import httpx
 import markdown
 from github import Github, Auth
+from azure.identity import DefaultAzureCredential
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
@@ -27,13 +27,18 @@ from ci_tools.environment_exclusions import (
     FILTER_EXCLUSIONS,
 )
 
+IGNORE_PACKAGES.append("azure-openai")
+
 # Github
 GIT_TOKEN = os.environ["GH_TOKEN"]
+auth = Auth.Token(GIT_TOKEN)
+github = Github(auth=auth)
+# repo = github.get_repo("Azure/azure-sdk-for-python")
 
 # Azure DevOps
-PAT = f":{os.environ["HEALTH_SCRIPT_PAT"]}"
-ADO_TOKEN = base64.b64encode(PAT.encode()).decode()
-AUTH_HEADERS = {"Authorization": f"Basic {ADO_TOKEN}"}
+DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
+token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 DEVOPS_TASK_STATUS = typing.Literal[
     "abandoned",
     "canceled",
@@ -45,27 +50,6 @@ DEVOPS_TASK_STATUS = typing.Literal[
 ]
 DEVOPS_BUILD_STATUS = typing.Literal["succeeded", "failed", "canceled", "none", "partiallySucceeded", "UNKNOWN"]
 LIST_BUILDS = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines?api-version=7.0"
-
-
-def get_build_url(pipeline_id: str) -> str:
-    return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds?definitions={pipeline_id}&$top=1&queryOrder=finishTimeDescending&reasonFilter=schedule&api-version=7.0"
-
-
-def get_build_timeline_url(build_id: str) -> str:
-    return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/Timeline?api-version=7.0"
-
-
-def get_github_issue_link(label: str, kind: typing.Literal["bug", "question"], created: datetime.datetime) -> str:
-    label = label.replace(" ", "+")
-    if kind == "question":
-        minus = "bug"
-    else:
-        minus = "question"
-    return f"https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+-label%3Aissue-addressed+-label%3A{minus}+-label%3Aneeds-author-feedback+-label%3Afeature-request+label%3A%22{label}%22+created%3A%22%3C{created}%22"
-
-def get_github_total_issue_link(label: str) -> str:
-    label = label.replace(" ", "+")
-    return f"https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+label%3A%22{label}%22"
 
 # Statuses for table
 LIBRARY_STATUS = typing.Literal["NEEDS_ACTION", "BLOCKED", "GOOD"]
@@ -88,6 +72,7 @@ MANDATORY_CHECKS = (
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
+# Script types
 ServiceDirectory = str
 LibraryName = str
 CheckTypes = typing.Literal["mypy", "pyright", "pylint", "sphinx", "ci", "tests"]
@@ -104,9 +89,8 @@ class CheckStatus(typing.TypedDict, total=False):
 
 
 class TestsWeeklyPipelineResult(typing.TypedDict, total=False):
-    id: str
+    id: int
     link: str
-    multi_library: bool
     result: DEVOPS_BUILD_STATUS
     next_mypy: CheckStatus
     next_pyright: CheckStatus
@@ -115,17 +99,15 @@ class TestsWeeklyPipelineResult(typing.TypedDict, total=False):
 
 
 class TestsPipelineResult(typing.TypedDict, total=False):
-    id: str
+    id: int
     link: str
-    multi_library: bool
     result: DEVOPS_BUILD_STATUS
     tests: CheckStatus
 
 
 class CIPipelineResult(typing.TypedDict, total=False):
-    id: str
+    id: int
     link: str
-    multi_library: bool
     result: DEVOPS_BUILD_STATUS
     mypy: CheckStatus
     pyright: CheckStatus
@@ -170,7 +152,6 @@ class LibraryStatus(typing.TypedDict, total=False):
 
 PipelineResultsUnion = typing.Union[CIPipelineResult, TestsPipelineResult, TestsWeeklyPipelineResult]
 
-IGNORE_PACKAGES.append("azure-openai")
 SDK_TEAM_OWNED = [
     "azure-ai-documentintelligence",
     "azure-ai-formrecognizer",
@@ -202,30 +183,27 @@ SDK_TEAM_OWNED = [
     "corehttp",
 ]
 
-"""
-todos
-new interpretation:
 
-Add DISABLED everywhere a check is disabled
-
-Status:
- 
-Good: All CI are passing
-Needs_action: You have mandatory checks disabled or may soon fail from next-mypy, etc
-Blocked: You can't ship since you fail mandatory check or it was so bad that we disabled CI
- 
-Individual CI checks:
- 
-For any check that needs action or warning (including non-zero SLA), make yellow.
-For any check that is blocking release, make red.
-An unknown mandatory check makes status == need_action
+def get_build_url(pipeline_id: int) -> str:
+    return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds?definitions={str(pipeline_id)}&$top=1&queryOrder=finishTimeDescending&reasonFilter=schedule&api-version=7.0"
 
 
-- provide more granular results for muliple libaries under same service directory
-- report legend and actions needed
-- put in a powerbi with auto-refresh, script outputs csv which is committed to protected branch on sdk for python repo
-- fix markdown/html report to include new interpretation + SLA for disabled libraries
-"""
+def get_build_timeline_url(build_id: str) -> str:
+    return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/Timeline?api-version=7.0"
+
+
+def get_github_issue_link(label: str, kind: typing.Literal["bug", "question"], created: str) -> str:
+    label = label.replace(" ", "+")
+    if kind == "question":
+        minus = "bug"
+    else:
+        minus = "question"
+    return f"https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+-label%3Aissue-addressed+-label%3A{minus}+-label%3Aneeds-author-feedback+-label%3Afeature-request+label%3A%22{label}%22+created%3A%22%3C{created}%22"
+
+
+def get_github_total_issue_link(label: str) -> str:
+    label = label.replace(" ", "+")
+    return f"https://github.com/Azure/azure-sdk-for-python/issues?q=is%3Aopen+is%3Aissue+label%3Acustomer-reported+label%3AClient+label%3A%22{label}%22"
 
 
 def is_package_inactive(package_path: str) -> bool:
@@ -271,10 +249,10 @@ def get_pipelines(
     dataplane: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
 ) -> dict[ServiceDirectory, PipelineResults]:
 
-    pipelines = requests.get(LIST_BUILDS, headers=AUTH_HEADERS)
-    if pipelines.status_code != 200:
-        raise Exception(f"Failed to get pipelines - {pipelines.reason}")
-    pipelines_json = json.loads(pipelines.text)
+    response = httpx.get(LIST_BUILDS, headers=AUTH_HEADERS)
+    if response.status_code != 200:
+        raise Exception(f"Failed to get pipelines - {response.status_code}")
+    pipelines_json = json.loads(response.text)
     python_pipelines = [
         pipeline
         for pipeline in pipelines_json["value"]
@@ -283,61 +261,28 @@ def get_pipelines(
         and "update_pr" not in pipeline["name"]
         and "azure-sdk-for-python" not in pipeline["name"]
     ]
-    pipelines = {}
+    pipelines: dict[ServiceDirectory, PipelineResults] = {}
     for p in python_pipelines:
         pipeline_name = p["name"]
-        for service_directory, libraries in dataplane.items():
+        for service_directory, _ in dataplane.items():
             pipelines.setdefault(service_directory, {})
             if service_directory == pipeline_name.split("python - ")[1]:
-                pipelines[service_directory].update(
-                    PipelineResults(
-                        ci=CIPipelineResult({
-                            "id": p["id"],
-                            "multi_library": len(libraries) > 1,
-                            "link": "",
-                            "result": "UNKNOWN",
-                            "ci": CheckStatus(status="UNKNOWN"),
-                            "mypy": CheckStatus(status="UNKNOWN"),
-                            "pyright": CheckStatus(status="UNKNOWN"),
-                            "pylint": CheckStatus(status="UNKNOWN"),
-                            "sphinx": CheckStatus(status="UNKNOWN"),
-                        })
-                    )
-                )
+                pipelines[service_directory].update(PipelineResults(ci=CIPipelineResult(id=p["id"], link="")))
+                record_all_pipeline("ci", pipelines[service_directory], "UNKNOWN")
             if f"{service_directory} - tests" == pipeline_name.split("python - ")[1]:
-                pipelines[service_directory].update(
-                    PipelineResults(
-                        tests=TestsPipelineResult({
-                            "id": p["id"],
-                            "multi_library": len(libraries) > 1,
-                            "link": "",
-                            "result": "UNKNOWN",
-                            "tests": CheckStatus(status="UNKNOWN"),
-                        })
-                    )
-                )
+                pipelines[service_directory].update(PipelineResults(tests=TestsPipelineResult(id=p["id"], link="")))
+                record_all_pipeline("tests", pipelines[service_directory], "UNKNOWN")
             if f"{service_directory} - tests-weekly" == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
-                    PipelineResults(
-                        tests_weekly=TestsWeeklyPipelineResult({
-                            "id": p["id"],
-                            "multi_library": len(libraries) > 1,
-                            "link": "",
-                            "result": "UNKNOWN",
-                            "next_mypy": CheckStatus(status="UNKNOWN"),
-                            "next_pyright": CheckStatus(status="UNKNOWN"),
-                            "next_pylint": CheckStatus(status="UNKNOWN"),
-                            "tests_weekly": CheckStatus(status="UNKNOWN"),
-                        })
-                    )
+                    PipelineResults(tests_weekly=TestsWeeklyPipelineResult(id=p["id"], link=""))
                 )
+                record_all_pipeline("tests_weekly", pipelines[service_directory], "UNKNOWN")
     return pipelines
 
 
 def record_check_result(task: dict[str, str], type: str, pipeline: PipelineResultsUnion):
     pipeline.update({type: CheckStatus(status=task["result"])})
-    if pipeline["multi_library"]:
-        pipeline[type]["log"] = task["log"]["url"]
+    pipeline[type]["log"] = task["log"]["url"]
 
 
 def record_test_result(
@@ -351,12 +296,10 @@ def record_test_result(
             pipeline.update({type: CheckStatus(status="succeeded")})
     elif task["result"] == "failed":
         pipeline.update({type: CheckStatus(status="failed")})
-        if pipeline["multi_library"]:
-            pipeline[type]["log"] = task["log"]["url"]
+        pipeline[type]["log"] = task["log"]["url"]
     elif pipeline.get(type, {}).get("status") != "failed":
         pipeline.update({type: CheckStatus(status=task["result"])})
-        if pipeline["multi_library"]:
-            pipeline[type]["log"] = task["log"]["url"]
+        pipeline[type]["log"] = task["log"]["url"]
 
 
 def record_all_pipeline(
@@ -367,40 +310,50 @@ def record_all_pipeline(
     if task == "ci":
         pipeline.setdefault("ci", {})
         pipeline["ci"].update(
-            {
-                "result": status,
-                "mypy": CheckStatus(status=status),
-                "pyright": CheckStatus(status=status),
-                "pylint": CheckStatus(status=status),
-                "sphinx": CheckStatus(status=status),
-                "ci": CheckStatus(status=status),
-            }
+            CIPipelineResult(
+                {
+                    "result": status,
+                    "mypy": CheckStatus(status=status),
+                    "pyright": CheckStatus(status=status),
+                    "pylint": CheckStatus(status=status),
+                    "sphinx": CheckStatus(status=status),
+                    "ci": CheckStatus(status=status),
+                }
+            )
         )
     elif task == "tests":
         pipeline.setdefault("tests", {})
         pipeline["tests"].update(
-            {
-                "result": status,
-                "tests": CheckStatus(status=status),
-            }
+            TestsPipelineResult(
+                {
+                    "result": status,
+                    "tests": CheckStatus(status=status),
+                }
+            )
         )
     elif task == "tests_weekly":
         pipeline.setdefault("tests_weekly", {})
         pipeline["tests_weekly"].update(
-            {
-                "result": status,
-                "next_mypy": CheckStatus(status=status),
-                "next_pyright": CheckStatus(status=status),
-                "next_pylint": CheckStatus(status=status),
-                "tests_weekly": CheckStatus(status=status),
-            }
+            TestsWeeklyPipelineResult(
+                {
+                    "result": status,
+                    "next_mypy": CheckStatus(status=status),
+                    "next_pyright": CheckStatus(status=status),
+                    "next_pylint": CheckStatus(status=status),
+                    "tests_weekly": CheckStatus(status=status),
+                }
+            )
         )
 
 
 def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["mypy"] = Status(status=status, link=None)
     details["pyright"] = Status(status=status, link=None)
-    details["type_check_samples"] = "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") and details["status"] != "BLOCKED" else "DISABLED"
+    details["type_check_samples"] = (
+        "ENABLED"
+        if is_check_enabled(str(details["path"]), "type_check_samples") and details["status"] != "BLOCKED"
+        else "DISABLED"
+    )
     details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
     details["pylint"] = Status(status=status, link=None)
     details["sphinx"] = Status(status=status, link=None)
@@ -408,13 +361,13 @@ def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["tests"] = Status(status=status, link=None)
 
 
-def get_ci_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No CI result for {service}")
         record_all_pipeline("ci", pipelines[service], "UNKNOWN")
         return
 
-    build_response = requests.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No CI result for {service}")
@@ -431,7 +384,7 @@ def get_ci_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirecto
     # get timeline
     pipelines[service]["ci"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = requests.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -447,13 +400,13 @@ def get_ci_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirecto
             record_check_result(task, "pylint", pipelines[service]["ci"])
 
 
-def get_tests_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No live tests result for {service}")
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
         return
 
-    build_response = requests.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No live tests result for {service}")
@@ -470,23 +423,21 @@ def get_tests_result(service: str, pipeline_id: str, pipelines: dict[ServiceDire
     # get timeline
     pipelines[service]["tests"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = requests.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
         if "Run Tests" in task["name"]:
             record_test_result(task, "tests", pipelines[service]["tests"])
-        elif "Test Samples" in task["name"]:
-            record_check_result(task, "samples", pipelines[service]["tests"])
 
 
-def get_tests_weekly_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No tests_weekly result for {service}")
         record_all_pipeline("tests_weekly", pipelines[service], "UNKNOWN")
         return
 
-    build_response = requests.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No tests_weekly result for {service}")
@@ -499,7 +450,7 @@ def get_tests_weekly_result(service: str, pipeline_id: str, pipelines: dict[Serv
     # get timeline
     pipelines[service]["tests_weekly"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = requests.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -596,7 +547,9 @@ def report_status(
             report_check_result("pylint", pipelines[service_directory], details)
             report_check_result("pyright", pipelines[service_directory], details)
             report_check_result("sphinx", pipelines[service_directory], details)
-            details["type_check_samples"] = "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
+            details["type_check_samples"] = (
+                "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
+            )
             details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
             report_test_result("tests", pipelines[service_directory], details)
             report_test_result("ci", pipelines[service_directory], details)
@@ -607,7 +560,7 @@ def map_codeowners_to_label(
     dataplane: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
 ) -> dict[str, ServiceDirectory]:
     codeowners_url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/.github/CODEOWNERS"
-    codeowners_response = requests.get(codeowners_url)
+    codeowners_response = httpx.get(codeowners_url)
     if codeowners_response.status_code != 200:
         raise Exception("Failed to get CODEOWNERS file")
     codeowners = codeowners_response.text.splitlines()
@@ -652,8 +605,8 @@ def map_codeowners_to_label(
 def record_total_customer_reported_issues(
     libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]],
     tracked_labels: dict[str, ServiceDirectory],
-    issues: list[object]
- ) -> None:
+    issues: list[object],
+) -> None:
     for issue in issues:
         for lbl in issue.labels:
             if lbl.name in tracked_labels:
@@ -667,6 +620,7 @@ def record_total_customer_reported_issues(
                         details["customer_issues"].setdefault("num", 0)
                         details["customer_issues"]["num"] += 1
                         details["customer_issues"]["link"] = get_github_total_issue_link(lbl.name)
+
 
 def record_sla_status(
     libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]],
@@ -691,16 +645,13 @@ def record_sla_status(
                     details["sla"][kind]["num"] += 1
 
 
-def report_sla(
+def report_sla_and_total_issues(
     libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]],
 ) -> None:
 
     tracked_labels = map_codeowners_to_label(libraries)
-    auth = Auth.Token(GIT_TOKEN)
-    g = Github(auth=auth)
-
     today = datetime.datetime.now(datetime.UTC)
-    repo = g.get_repo("Azure/azure-sdk-for-python")
+    repo = github.get_repo("Azure/azure-sdk-for-python")
     filter_labels = ["issue-addressed", "needs-author-feedback", "feature-request"]
     issues = list(repo.get_issues(state="open", labels=["customer-reported", "Client"]))
     record_total_customer_reported_issues(libraries, tracked_labels, issues)
@@ -753,36 +704,34 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                     [
                         library,
                         details["status"],
-                        details['mypy']['status'],
-                        details['pyright']['status'],
+                        details["mypy"]["status"],
+                        details["pyright"]["status"],
                         details["type_check_samples"],
-                        details['pylint']['status'],
-                        details['sphinx']['status'],
-                        details['ci']['status'],
-                        details['tests']['status'],
-                        details.get("sla", {}).get('question', {}).get('num', 0),
-                        details.get("sla", {}).get('bug', {}).get('num', 0),
-                        details.get("customer_issues", {}).get('num', 0),
-                        details['mypy'].get("link", ""),
-                        details['pyright'].get("link", ""),
-                        details['pylint'].get("link", ""),
-                        details['sphinx'].get("link", ""),
-                        details['ci'].get("link", ""),
-                        details['tests'].get("link", ""),
-                        details.get("sla", {}).get('question', {}).get('link', ""),
-                        details.get("sla", {}).get('bug', {}).get('link', ""),
-                        details.get("customer_issues", {}).get('link', ""),
-                        datetime.datetime.today().strftime('%m-%d-%Y %H:%M:%S'),
-                        details["sdk_owned"]
+                        details["pylint"]["status"],
+                        details["sphinx"]["status"],
+                        details["ci"]["status"],
+                        details["tests"]["status"],
+                        details.get("sla", {}).get("question", {}).get("num", 0),
+                        details.get("sla", {}).get("bug", {}).get("num", 0),
+                        details.get("customer_issues", {}).get("num", 0),
+                        details["mypy"].get("link", ""),
+                        details["pyright"].get("link", ""),
+                        details["pylint"].get("link", ""),
+                        details["sphinx"].get("link", ""),
+                        details["ci"].get("link", ""),
+                        details["tests"].get("link", ""),
+                        details.get("sla", {}).get("question", {}).get("link", ""),
+                        details.get("sla", {}).get("bug", {}).get("link", ""),
+                        details.get("customer_issues", {}).get("link", ""),
+                        datetime.datetime.today().strftime("%m-%d-%Y %H:%M:%S"),
+                        details["sdk_owned"],
                     ]
                 )
         sorted_rows = sorted(rows)
         writer.writerows(sorted_rows)
 
 
-def write_to_markdown(
-    libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
-) -> None:
+def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]) -> None:
 
     rows = []
     column_names = [
@@ -796,53 +745,57 @@ def write_to_markdown(
         "Tests - CI",
         "Tests - Live",
         "SLA - Questions / Bugs",
+        "Total customer-reported issues",
     ]
     for _, libs in libraries.items():
         for library, details in libs.items():
-            if details["status"] == "DISABLED":
+            if details["status"] == "BLOCKED":
                 status_colored = f'<span style="color: red;">{details["status"]}</span>'
             elif details["status"] == "NEEDS_ACTION":
                 status_colored = f'<span style="color: orange;">{details["status"]}</span>'
             elif details["status"] == "GOOD":
                 status_colored = f'<span style="color: green;">{details["status"]}</span>'
 
-            if details["status"] == "DISABLED":
-                row = [library, status_colored] + [""] * (len(column_names) - 2)
+            sla = details.get("sla")
+            if sla:
+                question_link = (
+                    f"([link]({sla.get("question", {}).get("link", None)}))"
+                    if sla.get("question", {}).get("link", None) is not None
+                    else ""
+                )
+                bug_link = (
+                    f"([link]({sla.get("bug", {}).get("link", None)}))"
+                    if sla.get("bug", {}).get("link", None) is not None
+                    else ""
+                )
+                sla_str = f"{sla.get('question', {}).get('num', 0)} {question_link} / {sla.get('bug', {}).get('num', 0)} {bug_link}"
             else:
-                sla = details.get("sla")
-                if sla:
-                    question_link = (
-                        f"([link]({sla.get("question", {}).get("link", None)}))"
-                        if sla.get("question", {}).get("link", None) is not None
-                        else ""
-                    )
-                    bug_link = (
-                        f"([link]({sla.get("bug", {}).get("link", None)}))"
-                        if sla.get("bug", {}).get("link", None) is not None
-                        else ""
-                    )
-                    sla_str = f"{sla.get('question', {}).get('num', 0)} {question_link} / {sla.get('bug', {}).get('num', 0)} {bug_link}"
-                else:
-                    sla_str = "0 / 0"
+                sla_str = "0 / 0"
 
-                row = [
-                    library,
-                    status_colored,
-                    details["mypy"]["status"]
-                    + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
-                    details["pyright"]["status"]
-                    + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
-                    details["type_check_samples"],
-                    details["pylint"]["status"]
-                    + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
-                    details["sphinx"]["status"]
-                    + (f" ([link]({details["sphinx"]["link"]}))" if details["sphinx"]["link"] is not None else ""),
-                    details["ci"]["status"]
-                    + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
-                    details["tests"]["status"]
-                    + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
-                    sla_str,
-                ]
+            row = [
+                library,
+                status_colored,
+                details["mypy"]["status"]
+                + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
+                details["pyright"]["status"]
+                + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
+                details["type_check_samples"],
+                details["pylint"]["status"]
+                + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
+                details["sphinx"]["status"]
+                + (f" ([link]({details["sphinx"]["link"]}))" if details["sphinx"]["link"] is not None else ""),
+                details["ci"]["status"]
+                + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
+                details["tests"]["status"]
+                + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
+                sla_str,
+                str(details.get("customer_issues", {}).get("num", 0))
+                + (
+                    f" ([link]({details.get("customer_issues", {}).get("link", "")}))"
+                    if details.get("customer_issues", {}).get("link", None) is not None
+                    else ""
+                ),
+            ]
             rows.append(row)
 
     with open("./health_report.md", mode="w", newline="", encoding="utf-8") as file:
@@ -905,15 +858,23 @@ if __name__ == "__main__":
     libraries = get_dataplane(include_sdk_owned=args.include_sdk_owned)
     pipelines = get_pipelines(libraries)
     for service, pipeline_ids in pipelines.items():
-        get_ci_result(service, pipeline_ids.get("ci", {}).get("id", ""), pipelines)
-        get_tests_result(service, pipeline_ids.get("tests", {}).get("id", ""), pipelines)
-        get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id", ""), pipelines)
+        get_ci_result(service, pipeline_ids.get("ci", {}).get("id"), pipelines)
+        get_tests_result(service, pipeline_ids.get("tests", {}).get("id"), pipelines)
+        get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id"), pipelines)
 
     report_status(libraries, pipelines)
-    report_sla(libraries)
+    report_sla_and_total_issues(libraries)
     if args.format == "csv":
         write_to_csv(libraries)
     elif args.format == "md":
         write_to_markdown(libraries)
     elif args.format == "html":
         write_to_html(libraries)
+
+    # repo = github.get_repo("kristapratico/azure-sdk-for-python")
+    # repo.create_file(
+    #     path="scripts/library_health_status/health_report.csv",
+    #     message="Update health report",
+    #     content=open("health_report.csv", "rb").read(),
+    #     branch="health-status-script",
+    # )
