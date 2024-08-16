@@ -555,7 +555,7 @@ class ConfigurationSettingLabel:
     name: Optional[str]
     """The name of the ConfigurationSetting label."""
 
-    def __init__(self, *, name: Optional[str]=None) -> None:
+    def __init__(self, *, name: Optional[str] = None) -> None:
         """
         :keyword name: The configuration setting label name.
         :paramtype composition_type: str or None
