@@ -423,7 +423,6 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         file_out.writelines(content)
 
 
-
 def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
