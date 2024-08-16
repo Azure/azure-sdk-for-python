@@ -4,7 +4,7 @@ parameters:
     default: 'ml'
   - name: Artifacts
     type: object
-    default: 
+    default:
     - name: azure-ai-ml
       safeName: azureaiml
       skipVerifyChangeLog: true
@@ -17,7 +17,9 @@ jobs:
     displayName: "Build, Upload, and PR Azure ML Changeset"
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      - name: StorageAccountName
+        value: 'docsupport'
+      - template: /eng/pipelines/templates/variables/globals.yml
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -39,9 +41,9 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        python -m pip install setuptools==58.3.0
-        python -m pip install -r eng/ci_tools.txt
-        python -m pip install -r eng/ml_sample_tools.txt
+        python -m pip install tools/azure-sdk-tools[build]
+        python -m pip install azure-identity
+        python -m pip install azure-storage-blob
       displayName: 'Prep Environment'
 
     - pwsh: |
@@ -61,20 +63,24 @@ jobs:
         Get-ChildItem "$(mlrepo)" -R
       displayName: Output Staging Directory
 
-    - task: PythonScript@0
-      displayName: 'Generate Samples Repo Changes'
-      env:
-        BLOB_CONNECTION_STRING: $(azure-sdk-docsupport-cs)
+    - pwsh: |
+        cat "$(mlrepo)/sdk/python/setup.sh"
+      displayName: Display setup.sh pre-update
+
+    - task: AzurePowerShell@5
+      displayName: Generate Samples Repo Changes
       inputs:
-        scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
-        arguments: >-
-          --ml-repo="$(mlrepo)"
-          --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
-          --build-id="$(Build.BuildId)"
+        azureSubscription: 'Azure SDK Artifacts'
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: |
+          python scripts/devops_tasks/generate_ml_sample_update.py --ml-repo "$(mlrepo)" --ml-wheel-folder "$(Build.ArtifactStagingDirectory)/azure-ai-ml" --build-id "$(Build.BuildId)" --storage-account-name "$(StorageAccountName)";
+          exit $LASTEXITCODE;
 
     - pwsh: |
         cat "$(mlrepo)/sdk/python/setup.sh"
-      displayName: Display Updated setup.sh
+      displayName: Display setup.sh post-update
 
     - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
       parameters:
