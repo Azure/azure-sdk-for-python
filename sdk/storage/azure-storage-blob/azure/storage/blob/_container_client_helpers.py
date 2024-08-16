@@ -120,7 +120,7 @@ def _generate_delete_blobs_options(
     if_modified_since = kwargs.pop('if_modified_since', None)
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)
     if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
-    azurite_name = kwargs.pop('azurite_name', None)
+    url_prepend = kwargs.pop('url_prepend', None)
     kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                     'sas': query_str.replace('?', '&'),
                     'timeout': '&timeout=' + str(timeout) if timeout else "",
@@ -156,18 +156,12 @@ def _generate_delete_blobs_options(
 
         query_parameters, header_parameters = _generate_delete_blobs_subrequest_options(client, **options)
 
-        if azurite_name:
-            req = HttpRequest(
+        req = HttpRequest(
             "DELETE",
-            f"/{quote(azurite_name)}/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
+            f"{'/' + quote(url_prepend) if url_prepend else ''}/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
             headers=header_parameters
         )
-        else:
-            req = HttpRequest(
-            "DELETE",
-            f"/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
-            headers=header_parameters
-        )
+
         req.format_parameters(query_parameters)
         reqs.append(req)
 
@@ -231,6 +225,7 @@ def _generate_set_tiers_options(
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)
     if_tags = kwargs.pop('if_tags_match_condition', None)
+    url_prepend = kwargs.pop('url_prepend', None)
     kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                     'sas': query_str.replace('?', '&'),
                     'timeout': '&timeout=' + str(timeout) if timeout else "",
@@ -260,7 +255,7 @@ def _generate_set_tiers_options(
 
         req = HttpRequest(
             "PUT",
-            f"/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
+            f"{'/' + quote(url_prepend) if url_prepend else ''}/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
             headers=header_parameters
         )
         req.format_parameters(query_parameters)
