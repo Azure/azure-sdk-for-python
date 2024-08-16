@@ -26,6 +26,7 @@ requirements:
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
+    - websocket-client >=1.6.0
   run:
     - cryptography
     - pyjwt
@@ -38,6 +39,7 @@ requirements:
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
+    - websocket-client >=1.6.0
 
 test:
   imports:
