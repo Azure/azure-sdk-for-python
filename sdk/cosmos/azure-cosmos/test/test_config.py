@@ -4,7 +4,6 @@
 import collections
 import os
 import uuid
-from typing import Union
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -15,7 +14,6 @@ from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
-from azure.identity import DefaultAzureCredential
 
 try:
     import urllib3
