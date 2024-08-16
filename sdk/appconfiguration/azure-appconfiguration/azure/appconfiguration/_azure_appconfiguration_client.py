@@ -29,13 +29,13 @@ from ._generated.models import (
     SnapshotComposition,
     LabelFields,
     ConfigurationSettingFields,
-    ConfigurationSettingLabel,
 )
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPaged,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
+    ConfigurationSettingLabel,
 )
 from ._utils import (
     prep_if_match,
