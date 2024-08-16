@@ -128,7 +128,7 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
 
 **Note: If you are deprecating multiple packages, please wait until all deprecated packages have been released and send one message including all the packages' info.**
 
-## Update docs.microsoft.com
+## Update MS Learn docs
 
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo, if you haven't already.
 - Create a branch in your local copy of the repo: `> git checkout -b python/azure-mypackage_deprecation`
@@ -151,7 +151,8 @@ More detailed instructions on updating the CSV file can be found [here](https://
 ## Update overview/conceptual documentation that points to deprecated packages
 
 TODO: The process for this section is still a WIP. Guidance will be updated here once we have concrete steps.
-- These will be on the docs.microsoft.com page. You can search in the search bar for mentions of the deprecated packages.
+
+- These will be on the MS Learn page. You can search in the search bar for mentions of the deprecated packages.
 
 # More details
 
