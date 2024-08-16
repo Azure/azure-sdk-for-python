@@ -19,6 +19,7 @@ import markdown
 from github import Github, Auth
 from azure.identity import DefaultAzureCredential
 
+from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     is_check_enabled,
@@ -871,10 +872,11 @@ if __name__ == "__main__":
     elif args.format == "html":
         write_to_html(libraries)
 
-    # repo = github.get_repo("kristapratico/azure-sdk-for-python")
-    # repo.create_file(
-    #     path="scripts/library_health_status/health_report.csv",
-    #     message="Update health report",
-    #     content=open("health_report.csv", "rb").read(),
-    #     branch="health-status-script",
-    # )
+    # if in_ci():
+    #     repo = github.get_repo("Azure/azure-sdk-for-python")
+    #     repo.create_file(
+    #         path="scripts/library_health_status/health_report.csv",
+    #         message="Update health report",
+    #         content=open("health_report.csv", "rb").read(),
+    #         branch="health-status-script",
+    #     )
