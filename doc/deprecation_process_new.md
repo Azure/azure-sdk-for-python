@@ -49,7 +49,7 @@ If the last released version was 1.2.3, the version should be 1.2.4.
 
 Update the version in the `azure/mypackage/_version.py` file. This file may be called `version.py` if your package is very old.
 
-More information on specifics of versioning can be found at [the bottom of the guide under "More details - Versioning"](TODO: add link).
+More information on specifics of versioning can be found at [the bottom of the guide under "More details - Versioning"](#versioning).
 
 ## sdk_packaging.toml
 
@@ -91,17 +91,7 @@ Once the PR is approved, merge and move to the next step.
 
 # Step 4: Trigger a release 
 
-A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time. Note that you will need to pass in BUILD_INACTIVE=true to variables when triggering the pipeline. To do this:
-
-- As per usual, under the build pipeline for your package, click 'Run pipeline'.
-- Click on 'Variables' under 'Advanced options'.
-- Then 'Add variable'.
-- Pass `BUILD_INACTIVE` to 'Name' and `true` to 'Value', and 'Create'.
-- Then, 'Run' the pipeline.
-
-More information on why this is done is in the [More details - Why set BUILD_INACTIVE?](TODO) section at the bottom of the page.
-
-More instructions on general release can be found at: https://aka.ms/azsdk/release-checklist
+A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
 
 ## Post-Release
 
@@ -131,23 +121,31 @@ Example post-deprecation PR for azure-cognitiveservices-language-luis [here](htt
 
 ## Remove the entry in the github.io docs
 
-- Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If an entry for your package does not exist, skip to the `Update docs.microsoft.com` section.
-- Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo.
-- Remove the entry line for the Python `azure-mypackage` in the releases [inventory.csv](https://github.com/Azure/azure-sdk/blob/main/_data/releases/inventory/inventory.csv). (Example)[TODO: link]
-- Create a PR and leave it in the (TODO: add where the PR should be left for review) for review.
-- Once approved, merge. The updated index without reference to `azure-mypackage` should be updated within (TODO: insert time frame for updates to populate).
+Check for your package in the [azure.github.io docs](https://azure.github.io/azure-sdk-for-python/). If an entry for your package exists, reach out to Scott Beddall (scbedd) to delete the entry with the following information:
+ - Mention that you have deprecated your package (`azure-mypackage`) and you want the entry removed from the azure.github.io docs.
+ - Include a link to the package entry in the azure.github.io docs.
 
 ## Update docs.microsoft.com
 
-TODO: WIP section
-
-- If the docs have not been updated to say deprecated, which you can check by going to docs.microsoft.com, clicking on the overview section of your service, click on the Legacy in the dropdown, and check that your package says (Deprecated) next to the name. For example, text analytics here: (TODO).
-- If the docs have not been updated within 2 days, this needs to be done manually.
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo, if you haven't already.
-- Mark the package as deprecated in the [appropriate metadata file](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv). This will put packages under the Legacy moniker.
+- Create a branch in your local copy of the repo: `> git checkout -b azure-mypackage_deprecation`
+- Open the `_data/releases/latest/python-packages.csv` file.
+  - If using Visual Studio Code, the `Edit CSV` extension may be helpful for editing the file.
+- Find the entry for your package and update the following fields.
+  - `EOLDate`: Date your package will officially be deprecated in mm/dd/yyyy format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date.
+  - `Support`: Change the value to deprecated.
+  - `Replace`: If it exists, Name of the package meant to replace the package being deprecated.
+  - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`.
+- Create a PR to push these changes. Checks will run to notify the repo owners to review your commit.
+- Once the PR has been approved, merge.
+
+The API reference docs for your package under `docs.microsoft.com` will be updated to Legacy within a day.
+
+More detailed instructions on updating the CSV file can be found [here](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-deprecation).
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
+TODO: how should these be updated?
 - These will be on the docs.microsoft.com page. You can search in the search bar for mentions of the deprecated packages.
 
 # More details
@@ -155,8 +153,3 @@ TODO: WIP section
 ## Versioning
 
 The best versioning approach would be to do a [post release](https://peps.python.org/pep-0440/#post-releases). However, due to some tooling issues at the moment, the version should be the next beta or the next patch version ([example](https://github.com/Azure/azure-sdk-for-python/commit/cf3bfed65a65fcbb4b5c93db89a221c2959c5bb4)). Follow these issues for more details https://github.com/Azure/azure-sdk/issues/7479 and https://github.com/Azure/azure-sdk-tools/issues/5916.
-
-## Why set BUILD_INACTIVE?
-
-TODO: double check the following
-Passing in BUILD_INACTIVE=true to variables when triggering the pipeline will ensure the package API documentation under docs.microsoft.com is labeled as (Deprecated).**
