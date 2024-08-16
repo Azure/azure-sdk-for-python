@@ -28,7 +28,7 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     try:
         output = check_output(cmd, cwd=package_folder, shell=True)
     except CalledProcessError as e:
-        _LOGGER.warning(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
     result = [l for l in output.decode("utf-8").split(os.linesep)]
     begin = result.index("===== changelog start =====")

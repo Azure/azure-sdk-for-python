@@ -1,4 +1,3 @@
-from contextlib import suppress
 import json
 import logging
 import os
@@ -434,7 +433,11 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
-        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.error("Error occurred when call tsp-client:")
+        for item in e.output.decode("utf-8").split("\n"):
+            if "Error: " in item:
+                _LOGGER.error(item)
+        _LOGGER.info(f"whole output when fail to call tsp-client: {e.output.decode('utf-8')}")
         raise e
 
     decode_output = output.decode("utf-8")
@@ -444,7 +447,7 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         for item in decode_output.split("\n"):
             if " - error " in item:
                 _LOGGER.error(item)
-        raise Exception(f"Failed to generate sdk from typespec: {decode_output}")
+        raise Exception(f"Complete output when fail to generate sdk from typespec: {decode_output}")
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
