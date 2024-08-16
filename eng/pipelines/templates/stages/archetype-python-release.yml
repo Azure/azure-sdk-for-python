@@ -176,7 +176,7 @@ stages:
                           ArtifactName: ${{parameters.ArtifactName}}
                           PackageName: ${{artifact.name}}
 
-          - ${{if ne(artifact.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -243,8 +243,8 @@ stages:
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
                               DocValidationImageId: ${{parameters.DocValidationImageId}}
-          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
-            - deployment: UpdatePackageVersion
+
+          - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
               environment: github
