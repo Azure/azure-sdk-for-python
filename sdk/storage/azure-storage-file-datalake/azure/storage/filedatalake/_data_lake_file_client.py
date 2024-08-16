@@ -737,8 +737,13 @@ class DataLakeFileClient(PathClient):
             process_storage_error(error)
 
     @distributed_trace
-    def download_file(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    def download_file(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        decompress: bool = True,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -783,6 +788,8 @@ class DataLakeFileClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Type header, will be
+            decompressed automatically before being returned. Default value is True.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.filedatalake.StorageStreamDownloader
 
@@ -795,7 +802,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Return the downloaded data.
         """
-        downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
+        downloader = self._blob_client.download_blob(offset=offset, length=length, decompress=decompress, **kwargs)
         return StorageStreamDownloader(downloader)
 
     @distributed_trace
