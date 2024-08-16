@@ -761,12 +761,12 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
             sla = details.get("sla")
             if sla:
                 question_link = (
-                    f"([link]({sla.get("question", {}).get("link", None)}))"
+                    f"([link]({sla.get('question', {}).get('link', None)}))"
                     if sla.get("question", {}).get("link", None) is not None
                     else ""
                 )
                 bug_link = (
-                    f"([link]({sla.get("bug", {}).get("link", None)}))"
+                    f"([link]({sla.get('bug', {}).get('link', None)}))"
                     if sla.get("bug", {}).get("link", None) is not None
                     else ""
                 )
@@ -778,23 +778,23 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
                 library,
                 status_colored,
                 details["mypy"]["status"]
-                + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
+                + (f" ([link]({details['mypy']['link']}))" if details["mypy"]["link"] is not None else ""),
                 details["pyright"]["status"]
-                + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
+                + (f" ([link]({details['pyright']['link']}))" if details["pyright"]["link"] is not None else ""),
                 details["type_check_samples"],
                 details["pylint"]["status"]
-                + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
+                + (f" ([link]({details['pylint']['link']}))" if details["pylint"]["link"] is not None else ""),
                 details["sphinx"]["status"]
-                + (f" ([link]({details["sphinx"]["link"]}))" if details["sphinx"]["link"] is not None else ""),
+                + (f" ([link]({details['sphinx']['link']}))" if details["sphinx"]["link"] is not None else ""),
                 details["ci"]["status"]
-                + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
+                + (f" ([link]({details['ci']['link']}))" if details["ci"]["link"] is not None else ""),
                 details["tests"]["status"]
-                + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
+                + (f" ([link]({details['tests']['link']}))" if details["tests"]["link"] is not None else ""),
                 sla_str,
                 str(details.get("customer_issues", {}).get("num", 0))
                 + (
-                    f" ([link]({details.get("customer_issues", {}).get("link", "")}))"
-                    if details.get("customer_issues", {}).get("link", None) is not None
+                    f" ([link]({details.get('customer_issues', {}).get('link', '')}))"
+                    if details.get('customer_issues', {}).get('link', None) is not None
                     else ""
                 ),
             ]
