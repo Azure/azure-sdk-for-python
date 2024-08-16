@@ -1,5 +1,5 @@
 jobs:
-    job: 'Generate_Health_Status_Report'
+  - job: 'Generate_Health_Status_Report'
     displayName: 'Generate Health Status Report'
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
