@@ -104,6 +104,15 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     return False
 
 
+def is_checksum_retry(response):
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
+    return False
+
+
 def urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
     parsed = parsed._replace(path=parsed.path + '/' + stub_url)
@@ -301,7 +310,7 @@ class StorageResponseHook(HTTPPolicy):
 
         response = self.next.send(request)
 
-        will_retry = is_retry(response, request.context.options.get('mode'))
+        will_retry = is_retry(response, request.context.options.get('mode')) or is_checksum_retry(response)
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)
@@ -527,7 +536,7 @@ class StorageRetryPolicy(HTTPPolicy):
         while retries_remaining:
             try:
                 response = self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
+                if is_retry(response, request.context.options.get('mode')) or is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
