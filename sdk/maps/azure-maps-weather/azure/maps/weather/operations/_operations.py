@@ -832,7 +832,7 @@ class WeatherOperations:
          * ``72`` - Return hourly forecast for next 72 hours (3 days).
          * ``120`` - Return hourly forecast for next 120 hours (5 days). Only available in S1 SKU.
          * ``240`` - Return hourly forecast for next 240 hours (10 days). Only available in S1 SKU.
-         Default value is None.
+           Default value is None.
         :paramtype duration: int
         :keyword language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
@@ -1375,8 +1375,8 @@ class WeatherOperations:
 
          * ``true`` - Returns full details. By default all details are returned.
          * ``false`` - Returns a truncated version of the current condition data, which includes
-         observation date time, weather phrase, icon code, precipitation indicator flag, and
-         temperature. Default value is None.
+           observation date time, weather phrase, icon code, precipitation indicator flag, and
+           temperature. Default value is None.
         :paramtype details: str
         :keyword duration: Time frame of the returned weather conditions. By default, the most current
          weather conditions will be returned. Default value is 0. Supported values are:
@@ -1643,7 +1643,7 @@ class WeatherOperations:
         forecast data
         </azure/azure-maps/how-to-request-weather-data#request-daily-weather-forecast-data>`__.
 
-         If you are using the Gen1 S0 pricing tier, you can request daily forecast for the next 1, 5,
+        If you are using the Gen1 S0 pricing tier, you can request daily forecast for the next 1, 5,
         10, and 15 days. If you are using Gen1 S1 or Gen2 pricing tier, you can also request daily
         forecast for the next 25 days, and 45 days.
 
@@ -1669,7 +1669,7 @@ class WeatherOperations:
          * ``10`` - Return forecast data for the next 10 days.
          * ``25`` - Return forecast data for the next 25 days. Only available in S1 SKU.
          * ``45`` - Return forecast data for the next 45 days. Only available in S1 SKU. Default value
-         is None.
+           is None.
         :paramtype duration: int
         :keyword language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
@@ -1953,27 +1953,27 @@ class WeatherOperations:
         kilometer or less), up-to-the-minute weather nowcasts, weather hazard assessments, and
         notifications along a route described as a sequence of waypoints.
 
-         This includes a list of weather hazards affecting the waypoint or route, and the aggregated
+        This includes a list of weather hazards affecting the waypoint or route, and the aggregated
         hazard index for each waypoint might be used to paint each portion of a route according to how
         safe it is for the driver. When submitting the waypoints, it is recommended to stay within, or
         close to, the distance that can be traveled within 120-mins or shortly after. Data is updated
         every five minutes.
 
-         The service supplements Azure Maps `Route Service
+        The service supplements Azure Maps `Route Service
         <https://docs.microsoft.com/rest/api/maps/route>`__ that allows you to first request a route
         between an origin and a destination and use that as an input for Weather Along Route endpoint.
 
-         In addition, the service supports scenarios to generate weather notifications for waypoints
+        In addition, the service supports scenarios to generate weather notifications for waypoints
         that experience an increase in intensity of a weather hazard. For example, if the vehicle is
         expected to begin experiencing heavy rain as it reaches a waypoint, a weather notification for
         heavy rain will be generated for that waypoint allowing the end product to display a heavy rain
         notification before the driver reaches that waypoint.
 
-         The trigger for when to display the notification for a waypoint could be based, for example,
+        The trigger for when to display the notification for a waypoint could be based, for example,
         on a `geofence <https://docs.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`__\\ , or
         selectable distance to the waypoint.
 
-         The API covers all regions of the planet except latitudes above Greenland and Antarctica.
+        The API covers all regions of the planet except latitudes above Greenland and Antarctica.
 
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
@@ -1988,11 +1988,11 @@ class WeatherOperations:
          * ``Latitude`` - Latitude coordinate in decimal degrees.
          * ``Longitude`` - Longitude coordinate in decimal degrees.
          * ``ETA (estimated time of arrival)`` - The number of minutes from the present time that it
-         will take for the vehicle to reach the waypoint. Allowed range is from 0.0 to 120.0 minutes.
+           will take for the vehicle to reach the waypoint. Allowed range is from 0.0 to 120.0 minutes.
          * ``Heading`` - An optional value indicating the vehicle heading as it passes the waypoint.
-         Expressed in clockwise degrees relative to true north. This is issued to calculate sun glare as
-         a driving hazard. Allowed range is from 0.0 to 360.0 degrees. If not provided, a heading will
-         automatically be derived based on the position of neighboring waypoints.
+           Expressed in clockwise degrees relative to true north. This is issued to calculate sun glare as
+           a driving hazard. Allowed range is from 0.0 to 360.0 degrees. If not provided, a heading will
+           automatically be derived based on the position of neighboring waypoints.
 
          It is recommended to stay within, or close to, the distance that can be traveled within
          120-mins or shortly after. This way a more accurate assessment can be provided for the trip and
@@ -2159,7 +2159,7 @@ class WeatherOperations:
         close roads and force logistics companies to reroute their fleet causing delays in reaching
         destinations and breaking the cold chain of refrigerated food products.
 
-         The ``Get Severe Weather Alerts`` API is an HTTP ``GET`` request that returns the severe
+        The ``Get Severe Weather Alerts`` API is an HTTP ``GET`` request that returns the severe
         weather alerts that are available worldwide from both official Government Meteorological
         Agencies and leading global to regional weather alert providers. The service can return details
         such as alert type, category, level and detailed description about the active severe alerts for
@@ -2190,7 +2190,7 @@ class WeatherOperations:
 
          * ``true`` - Returns full details. By default all details are returned.
          * ``false`` - Returns a truncated version of the alerts data, which excludes the area-specific
-         full description of alert details (\\ ``alertDetails``\\ ). Default value is None.
+           full description of alert details (\\ ``alertDetails``\\ ). Default value is None.
         :paramtype details: str
         :return: JSON object
         :rtype: JSON
@@ -2330,7 +2330,7 @@ class WeatherOperations:
          * ``5`` - Return 5 days of daily index data starting from the current day.
          * ``10`` - Return 10 days of daily index data starting from the current day.
          * ``15`` - Return 15 days of daily index data starting from the current day. Default value is
-         None.
+           None.
         :paramtype duration: int
         :keyword index_id: Numeric index identifier that can be used for restricting returned results
          to the corresponding index type. Cannot be paired with ``indexGroupId``. Please refer to
