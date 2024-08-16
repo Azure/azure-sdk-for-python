@@ -35,11 +35,6 @@ from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
-
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
@@ -52,7 +47,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, str):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
@@ -101,7 +96,7 @@ def is_checksum_retry(response):
     # retry if invalid content md5
     if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
         computed_md5 = response.http_request.headers.get('content-md5', None) or \
-                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+                            encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
         if response.http_response.headers['content-md5'] != computed_md5:
             return True
     return False
