@@ -29,6 +29,7 @@ from ci_tools.environment_exclusions import (
 )
 
 IGNORE_PACKAGES.append("azure-openai")
+health_report_path = pathlib.Path(__file__).parent
 
 # Github
 GIT_TOKEN = os.environ["GH_TOKEN"]
@@ -668,7 +669,7 @@ def report_sla_and_total_issues(
 
 
 def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]) -> None:
-    with open("./health_report.csv", mode="w", newline="", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
 
         column_names = [
@@ -799,7 +800,7 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
             ]
             rows.append(row)
 
-    with open("./health_report.md", mode="w", newline="", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.md", mode="w", newline="", encoding="utf-8") as file:
 
         file.write("|" + "|".join(column_names) + "|\n")
         file.write("|" + "---|" * len(column_names) + "\n")
@@ -811,7 +812,7 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
 
 def write_to_html(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]) -> None:
     write_to_markdown(libraries)
-    with open("./health_report.md", "r") as f:
+    with open(health_report_path / "health_report.md", "r", encoding="utf-8") as f:
         markd = f.read()
 
     html = markdown.markdown(markd, extensions=["tables"])
@@ -830,7 +831,7 @@ def write_to_html(libraries: dict[ServiceDirectory, dict[LibraryName, LibrarySta
 
     html_with_css = css_styles + html
 
-    with open("./health_report.html", "w", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.html", "w", encoding="utf-8") as file:
         file.write(html_with_css)
 
 
@@ -875,8 +876,8 @@ if __name__ == "__main__":
     # if in_ci():
     #     repo = github.get_repo("Azure/azure-sdk-for-python")
     #     repo.create_file(
-    #         path="scripts/library_health_status/health_report.csv",
+    #         path="scripts/repo_health_status_report/health_report.csv",
     #         message="Update health report",
     #         content=open("health_report.csv", "rb").read(),
-    #         branch="health-status-script",
+    #         branch="python-sdk-health-report-data-source",
     #     )
