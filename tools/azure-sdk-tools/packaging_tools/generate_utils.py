@@ -1,4 +1,3 @@
-from contextlib import suppress
 import json
 import logging
 import os
@@ -424,6 +423,10 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         file_out.writelines(content)
 
 
+def has_error_info(output: str) -> bool:
+    return " - error " in output or "Error: " in output
+
+
 def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
@@ -434,17 +437,17 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
-        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.error(f"Error occurred when call tsp-client: {e.output.decode('utf-8')}")
         raise e
 
     decode_output = output.decode("utf-8")
     # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
-    if " - error " in decode_output:
+    if has_error_info(decode_output):
         _LOGGER.error(f"Failed to generate sdk from typespec:")
         for item in decode_output.split("\n"):
-            if " - error " in item:
+            if has_error_info(item):
                 _LOGGER.error(item)
-        raise Exception(f"Failed to generate sdk from typespec: {decode_output}")
+        raise Exception(f"Complete output when fail to generate sdk from typespec: {decode_output}")
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
