@@ -8,6 +8,7 @@ The overall idea is that PyPI does not support an official deprecation logic. We
 - Change the classifier as `Inactive`, to showcase in metadata that this package is longer worked on.
 - Add a disclaimer on the main Readme file to explain deprecation, and provide a migration guide as necessary.
 - Push a new release to PyPI.
+- Update the API reference docs to show the deprecated status of the package.
 
 # Step 1: Updates to the package files
 
