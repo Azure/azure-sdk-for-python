@@ -19,11 +19,6 @@ from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 from .policies import StorageRetryPolicy, StorageContentValidation
 
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
-
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
@@ -33,13 +28,6 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def encode_base64(data):
-    if isinstance(data, _unicode_type):
-        data = data.encode('utf-8')
-    encoded = base64.b64encode(data)
-    return encoded.decode('utf-8')
 
 
 # Is this method/status code retryable? (Based on allowlists and control
