@@ -674,12 +674,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def download_file(
-        self,
-        offset=None,  # type: Optional[int]
-        length=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> StorageStreamDownloader
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        decompress: bool = True,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -719,6 +719,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Type header, will be
+            decompressed automatically before being returned. Default value is True.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.fileshare.aio.StorageStreamDownloader
 
@@ -749,6 +751,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             path='/'.join(self.file_path),
             share=self.share_name,
             lease_access_conditions=access_conditions,
+            decompress=decompress,
             cls=deserialize_file_stream,
             **kwargs
         )
