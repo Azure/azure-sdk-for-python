@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.1 (Unreleased)
+## 1.7.0 (2024-08-15)
 
 ### Features Added
 - Added operation `list_labels()` for listing configuration setting labels.
