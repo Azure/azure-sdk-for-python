@@ -50,5 +50,3 @@ extends:
     Artifacts:
     - name: azure-template
       safeName: azuretemplate
-      # JRS - This will be removed prior to merge
-      skipPublishDocGithubIo: true
