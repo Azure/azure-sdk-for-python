@@ -202,11 +202,8 @@ stages:
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                          BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
-                          # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-                          ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
           - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
                 - deployment: PublishDocs
