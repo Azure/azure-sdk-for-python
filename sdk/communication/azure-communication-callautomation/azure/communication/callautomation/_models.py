@@ -368,7 +368,7 @@ class MediaStreamingConfiguration:
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
-        start_media_streaming: Optional[bool] = False
+        start_media_streaming: Optional[bool] = None
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
