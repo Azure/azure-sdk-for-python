@@ -176,7 +176,7 @@ stages:
                           ArtifactName: ${{parameters.ArtifactName}}
                           PackageName: ${{artifact.name}}
 
-          - ${{if ne(artifact.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -243,43 +243,44 @@ stages:
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
                               DocValidationImageId: ${{parameters.DocValidationImageId}}
-          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
-            - deployment: UpdatePackageVersion
-              displayName: "Update Package Version"
-              condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
-              environment: github
-              dependsOn: PublishPackage
 
-              pool:
-                image: azsdk-pool-mms-ubuntu-2004-1espt
-                name: azsdk-pool-mms-ubuntu-2004-general
-                os: linux
+          - deployment: UpdatePackageVersion
+            displayName: "Update Package Version"
+            condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
+            environment: github
+            dependsOn: PublishPackage
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
-                      - task: UsePythonVersion@0
-                      - script: |
-                          python -m pip install "./tools/azure-sdk-tools[build]"
-                        displayName: Install versioning tool dependencies
+            pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
+              name: azsdk-pool-mms-ubuntu-2004-general
+              os: linux
 
-                      - pwsh: |
-                          sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
-                          if (Test-Path component-detection-pip-report.json) {
-                            Write-Host "Deleting component-detection-pip-report.json"
-                            rm component-detection-pip-report.json
-                          }
-                        displayName: Increment package version
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - task: UsePythonVersion@0
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools[build]"
+                      displayName: Install versioning tool dependencies
 
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoName: azure-sdk-for-python
-                          PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-                          CommitMsg: "Increment package version after release of ${{ artifact.name }}"
-                          PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                    - pwsh: |
+                        sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
+                        if (Test-Path component-detection-pip-report.json) {
+                          Write-Host "Deleting component-detection-pip-report.json"
+                          rm component-detection-pip-report.json
+                        }
+                      displayName: Increment package version
+
+                    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                      parameters:
+                        RepoName: azure-sdk-for-python
+                        PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+                        CommitMsg: "Increment package version after release of ${{ artifact.name }}"
+                        PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
+                        CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
               parameters:
