@@ -217,14 +217,10 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
     def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential()
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         assert client._config.polling_interval == 1
 
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential(), polling_interval=7
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(), polling_interval=7)
         assert client._config.polling_interval == 7
         poller = client.begin_analyze_document(
             "prebuilt-receipt", AnalyzeDocumentRequest(url_source=self.receipt_url_jpg), polling_interval=6
