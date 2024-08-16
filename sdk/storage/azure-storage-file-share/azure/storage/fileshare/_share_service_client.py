@@ -20,6 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import StorageServiceProperties
 from ._models import (
+    CorsRule,
     ShareProperties,
     SharePropertiesPaged,
     service_properties_deserialize,
@@ -37,7 +38,6 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._generated.models import CorsRule
     from ._models import Metrics, ShareProtocolSettings
 
 
@@ -213,7 +213,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
     def set_service_properties(
         self, hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         protocol: Optional["ShareProtocolSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -254,11 +254,14 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Sets file share service properties.
         """
+        if all(parameter is None for parameter in [hour_metrics, minute_metrics, cors, protocol]):
+            raise ValueError("set_service_properties should be called with at least one parameter")
+
         timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             protocol=protocol
         )
         try:
