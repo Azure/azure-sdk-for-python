@@ -253,7 +253,7 @@ def get_pipelines(
 
     response = httpx.get(LIST_BUILDS, headers=AUTH_HEADERS)
     if response.status_code != 200:
-        raise Exception(f"Failed to get pipelines - {response.status_code}")
+        raise Exception(f"Failed to get pipelines - {response.status_code} {response.text}")
     pipelines_json = json.loads(response.text)
     python_pipelines = [
         pipeline
