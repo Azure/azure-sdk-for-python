@@ -126,27 +126,31 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
  - Mention that you have deprecated your package (`azure-mypackage`) and you want the entry removed from the azure.github.io docs.
  - Include a link to the package entry in the azure.github.io docs.
 
+**Note: If you are deprecating multiple packages, please wait until all deprecated packages have been released and send one message including all the packages' info.**
+
 ## Update docs.microsoft.com
 
 - Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo, if you haven't already.
-- Create a branch in your local copy of the repo: `> git checkout -b azure-mypackage_deprecation`
+- Create a branch in your local copy of the repo: `> git checkout -b python/azure-mypackage_deprecation`
 - Open the `_data/releases/latest/python-packages.csv` file.
   - If using Visual Studio Code, the `Edit CSV` extension may be helpful for editing the file.
 - Find the entry for your package and update the following fields.
   - `EOLDate`: Date your package will officially be deprecated in mm/dd/yyyy format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date.
-  - `Support`: Change the value to deprecated.
-  - `Replace`: If it exists, Name of the package meant to replace the package being deprecated.
-  - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`.
+  - `Support`: Change the value to `deprecated`.
+  - `Replace`: If it exists, set the value to the name of the package meant to replace the package being deprecated. If not, set the value to `NA`.
+  - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`. If not, set the value to `NA`.
 - Create a PR to push these changes. Checks will run to notify the repo owners to review your commit.
 - Once the PR has been approved, merge.
 
-The API reference docs for your package under `docs.microsoft.com` will be updated to Legacy within a day.
+The Microsoft Learn API reference docs for your package will be updated to Legacy on the following Wednesday.
+
+Example of deprecated MS Learn API reference docs for Text Analytics [here](https://learn.microsoft.com/python/api/overview/azure/cognitiveservices-language-textanalytics-readme?view=azure-python-previous).
 
 More detailed instructions on updating the CSV file can be found [here](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-deprecation).
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
-TODO: how should these be updated?
+TODO: The process for this section is still a WIP. Guidance will be updated here once we have concrete steps.
 - These will be on the docs.microsoft.com page. You can search in the search bar for mentions of the deprecated packages.
 
 # More details
