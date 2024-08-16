@@ -43,7 +43,7 @@ DEVOPS_TASK_STATUS = typing.Literal[
     "succeededWithIssues",
     "UNKNOWN",
 ]
-DEVOPS_BUILD_STATUS = typing.Literal["succeeded", "failed", "canceled", "none", "partiallySucceeded"]
+DEVOPS_BUILD_STATUS = typing.Literal["succeeded", "failed", "canceled", "none", "partiallySucceeded", "UNKNOWN"]
 LIST_BUILDS = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines?api-version=7.0"
 
 
@@ -55,7 +55,7 @@ def get_build_timeline_url(build_id: str) -> str:
     return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/Timeline?api-version=7.0"
 
 
-def get_github_issue_link(label: str, kind: typing.Literal["bug", "question"], created: datetime.datetime.date) -> str:
+def get_github_issue_link(label: str, kind: typing.Literal["bug", "question"], created: datetime.datetime) -> str:
     label = label.replace(" ", "+")
     if kind == "question":
         minus = "bug"
@@ -93,17 +93,17 @@ LibraryName = str
 CheckTypes = typing.Literal["mypy", "pyright", "pylint", "sphinx", "ci", "tests"]
 
 
-class Status(typing.TypedDict):
-    status: LIBRARY_STATUS
+class Status(typing.TypedDict, total=False):
+    status: CHECK_STATUS
     link: str | None
 
 
-class CheckStatus(typing.TypedDict):
+class CheckStatus(typing.TypedDict, total=False):
     status: DEVOPS_TASK_STATUS
     log: str | None
 
 
-class TestsWeeklyPipelineResult(typing.TypedDict):
+class TestsWeeklyPipelineResult(typing.TypedDict, total=False):
     id: str
     link: str
     multi_library: bool
@@ -114,7 +114,7 @@ class TestsWeeklyPipelineResult(typing.TypedDict):
     tests_weekly: CheckStatus
 
 
-class TestsPipelineResult(typing.TypedDict):
+class TestsPipelineResult(typing.TypedDict, total=False):
     id: str
     link: str
     multi_library: bool
@@ -122,7 +122,7 @@ class TestsPipelineResult(typing.TypedDict):
     tests: CheckStatus
 
 
-class CIPipelineResult(typing.TypedDict):
+class CIPipelineResult(typing.TypedDict, total=False):
     id: str
     link: str
     multi_library: bool
@@ -134,19 +134,25 @@ class CIPipelineResult(typing.TypedDict):
     ci: CheckStatus
 
 
-class SLAStatus(typing.TypedDict):
+class PipelineResults(typing.TypedDict, total=False):
+    ci: CIPipelineResult
+    tests: TestsPipelineResult
+    tests_weekly: TestsWeeklyPipelineResult
+
+
+class SLAStatus(typing.TypedDict, total=False):
     question: IssueDetails
     """open > 30 days"""
     bug: IssueDetails
     """open > 90 days"""
 
 
-class IssueDetails(typing.TypedDict):
+class IssueDetails(typing.TypedDict, total=False):
     num: int
     link: str
 
 
-class LibraryStatus(typing.TypedDict):
+class LibraryStatus(typing.TypedDict, total=False):
     status: LIBRARY_STATUS
     path: pathlib.Path
     label: str | None
@@ -162,7 +168,7 @@ class LibraryStatus(typing.TypedDict):
     ci: Status
 
 
-PipelineResults = typing.Union[CIPipelineResult, TestsPipelineResult, TestsWeeklyPipelineResult]
+PipelineResultsUnion = typing.Union[CIPipelineResult, TestsPipelineResult, TestsWeeklyPipelineResult]
 
 IGNORE_PACKAGES.append("azure-openai")
 SDK_TEAM_OWNED = [
@@ -284,8 +290,8 @@ def get_pipelines(
             pipelines.setdefault(service_directory, {})
             if service_directory == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
-                    CIPipelineResult(
-                        ci={
+                    PipelineResults(
+                        ci=CIPipelineResult({
                             "id": p["id"],
                             "multi_library": len(libraries) > 1,
                             "link": "",
@@ -295,25 +301,25 @@ def get_pipelines(
                             "pyright": CheckStatus(status="UNKNOWN"),
                             "pylint": CheckStatus(status="UNKNOWN"),
                             "sphinx": CheckStatus(status="UNKNOWN"),
-                        }
+                        })
                     )
                 )
             if f"{service_directory} - tests" == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
-                    TestsPipelineResult(
-                        tests={
+                    PipelineResults(
+                        tests=TestsPipelineResult({
                             "id": p["id"],
                             "multi_library": len(libraries) > 1,
                             "link": "",
                             "result": "UNKNOWN",
                             "tests": CheckStatus(status="UNKNOWN"),
-                        }
+                        })
                     )
                 )
             if f"{service_directory} - tests-weekly" == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
-                    TestsWeeklyPipelineResult(
-                        tests_weekly={
+                    PipelineResults(
+                        tests_weekly=TestsWeeklyPipelineResult({
                             "id": p["id"],
                             "multi_library": len(libraries) > 1,
                             "link": "",
@@ -322,13 +328,13 @@ def get_pipelines(
                             "next_pyright": CheckStatus(status="UNKNOWN"),
                             "next_pylint": CheckStatus(status="UNKNOWN"),
                             "tests_weekly": CheckStatus(status="UNKNOWN"),
-                        }
+                        })
                     )
                 )
     return pipelines
 
 
-def record_check_result(task: dict, type: CheckTypes, pipeline: PipelineResults):
+def record_check_result(task: dict[str, str], type: str, pipeline: PipelineResultsUnion):
     pipeline.update({type: CheckStatus(status=task["result"])})
     if pipeline["multi_library"]:
         pipeline[type]["log"] = task["log"]["url"]
@@ -336,8 +342,8 @@ def record_check_result(task: dict, type: CheckTypes, pipeline: PipelineResults)
 
 def record_test_result(
     task: dict,
-    type: typing.Literal["ci", "tests"],
-    pipeline: CIPipelineResult | TestsPipelineResult,
+    type: typing.Literal["ci", "tests", "tests_weekly"],
+    pipeline: CIPipelineResult | TestsPipelineResult | TestsWeeklyPipelineResult,
 ) -> None:
     unsuccessful = ["failed", "canceled", "abandoned", "skipped", "succeededWithIssues"]
     if task["result"] == "succeeded":
@@ -355,7 +361,7 @@ def record_test_result(
 
 def record_all_pipeline(
     task: typing.Literal["ci", "tests", "tests_weekly"],
-    pipeline: CIPipelineResult | TestsPipelineResult | TestsWeeklyPipelineResult,
+    pipeline: PipelineResults,
     status: typing.Literal["succeeded", "UNKNOWN"],
 ) -> None:
     if task == "ci":
@@ -394,9 +400,7 @@ def record_all_pipeline(
 def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["mypy"] = Status(status=status, link=None)
     details["pyright"] = Status(status=status, link=None)
-    details["type_check_samples"] = Status(
-        status=("ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") and details["status"] != "BLOCKED" else "DISABLED")
-    )
+    details["type_check_samples"] = "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") and details["status"] != "BLOCKED" else "DISABLED"
     details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
     details["pylint"] = Status(status=status, link=None)
     details["sphinx"] = Status(status=status, link=None)
@@ -404,7 +408,7 @@ def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["tests"] = Status(status=status, link=None)
 
 
-def get_ci_result(service: str, pipeline_id: int, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_ci_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No CI result for {service}")
         record_all_pipeline("ci", pipelines[service], "UNKNOWN")
@@ -443,7 +447,7 @@ def get_ci_result(service: str, pipeline_id: int, pipelines: dict[ServiceDirecto
             record_check_result(task, "pylint", pipelines[service]["ci"])
 
 
-def get_tests_result(service: str, pipeline_id: int, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_tests_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No live tests result for {service}")
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
@@ -476,7 +480,7 @@ def get_tests_result(service: str, pipeline_id: int, pipelines: dict[ServiceDire
             record_check_result(task, "samples", pipelines[service]["tests"])
 
 
-def get_tests_weekly_result(service: str, pipeline_id: int, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
+def get_tests_weekly_result(service: str, pipeline_id: str, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
         print(f"No tests_weekly result for {service}")
         record_all_pipeline("tests_weekly", pipelines[service], "UNKNOWN")
@@ -531,7 +535,7 @@ def report_overall_status(library_details: LibraryStatus) -> None:
 
 def report_test_result(
     test_type: typing.Literal["ci", "tests"],
-    pipeline: CIPipelineResult | TestsPipelineResult,
+    pipeline: PipelineResults,
     library_details: LibraryStatus,
 ) -> None:
     test_status = pipeline[test_type][test_type]["status"]
@@ -545,7 +549,7 @@ def report_test_result(
 
 def report_check_result(
     check: CheckTypes,
-    pipeline: CIPipelineResult | TestsWeeklyPipelineResult,
+    pipeline: PipelineResults,
     library_details: LibraryStatus,
 ) -> None:
     enabled = is_check_enabled(str(library_details["path"]), check)
@@ -592,9 +596,7 @@ def report_status(
             report_check_result("pylint", pipelines[service_directory], details)
             report_check_result("pyright", pipelines[service_directory], details)
             report_check_result("sphinx", pipelines[service_directory], details)
-            details["type_check_samples"] = Status(
-                status=("ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED")
-            )
+            details["type_check_samples"] = "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
             details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
             report_test_result("tests", pipelines[service_directory], details)
             report_test_result("ci", pipelines[service_directory], details)
@@ -753,7 +755,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                         details["status"],
                         details['mypy']['status'],
                         details['pyright']['status'],
-                        details["type_check_samples"]["status"],
+                        details["type_check_samples"],
                         details['pylint']['status'],
                         details['sphinx']['status'],
                         details['ci']['status'],
@@ -830,7 +832,7 @@ def write_to_markdown(
                     + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
                     details["pyright"]["status"]
                     + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
-                    details["type_check_samples"]["status"],
+                    details["type_check_samples"],
                     details["pylint"]["status"]
                     + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
                     details["sphinx"]["status"]
