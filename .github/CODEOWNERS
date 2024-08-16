@@ -831,16 +831,15 @@
 ###########
 # Eng Sys
 ###########
-# TEMPORARY COMMENTING FOR PROOF-OF-CONCEPT.
-#/eng/                                                                @scbedd @weshaggard @benbp
-#/eng/common/                                                         @Azure/azure-sdk-eng
-#/.github/workflows/                                                  @Azure/azure-sdk-eng
+/eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
+/.github/workflows/                                                  @Azure/azure-sdk-eng
 
-#/tools/                                                              @scbedd @mccoyp
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
-#/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-#/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
-#/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 /pylintrc                                                            @l0lawrence
