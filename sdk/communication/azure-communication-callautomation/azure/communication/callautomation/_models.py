@@ -357,7 +357,7 @@ class MediaStreamingConfiguration:
     """Content type to stream, eg. audio, audio/video."""
     audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-    start_media_streaming: bool
+    start_media_streaming: Optional[bool]
     """Determines if the media streaming should be started immediately
      after call is answered or not"""
 
@@ -368,7 +368,7 @@ class MediaStreamingConfiguration:
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
-        start_media_streaming: bool
+        start_media_streaming: Optional[bool] = False
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
