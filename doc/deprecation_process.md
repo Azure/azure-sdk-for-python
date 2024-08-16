@@ -66,7 +66,7 @@ If there is a Track 2, provide a link to the new package or an existing migratio
 
 # Step 3: Create a PR
 
-Create a PR targeting the `main` branch. Follow steps listed below.
+Create a PR targeting the `main` branch.
 
 Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://github.com/Azure/azure-sdk-for-python/pull/36893/files)
 
@@ -88,7 +88,7 @@ Post your PR in the [review channel for Python](https://teams.microsoft.com/l/ch
 
 ## Merge PR
 
-Once the PR is approved, merge and move to the next step.
+Once the PR is approved, merge.
 
 # Step 4: Trigger a release 
 
