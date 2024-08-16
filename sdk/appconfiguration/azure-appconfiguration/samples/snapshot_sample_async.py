@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: snapshot_samples_async.py
+FILE: snapshot_sample_async.py
 
 DESCRIPTION:
-    This sample demos CRUD operations for app configuration setting snapshot.
+    This sample demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration settings of a snapshot asynchronously.
 
-USAGE: python snapshot_samples_async.py
+USAGE: python snapshot_sample_async.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
@@ -21,7 +21,6 @@ import asyncio
 import os
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting, print_snapshot
 from uuid import uuid4
 
 
@@ -34,43 +33,34 @@ async def main():
         await client.add_configuration_setting(config_setting1)
         await client.add_configuration_setting(config_setting2)
 
-        # [START create_snapshot]
         from azure.appconfiguration import ConfigurationSettingsFilter
 
         filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
         response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
-        print_snapshot(created_snapshot)
-        # [END create_snapshot]
+        print(created_snapshot)
         print("")
 
-        # [START get_snapshot]
         received_snapshot = await client.get_snapshot(name=snapshot_name)
-        # [END get_snapshot]
+        print(received_snapshot)
         print("")
 
-        # [START archive_snapshot]
         archived_snapshot = await client.archive_snapshot(name=snapshot_name)
-        print_snapshot(archived_snapshot)
-        # [END archive_snapshot]
+        print(archived_snapshot)
         print("")
 
-        # [START recover_snapshot]
         recovered_snapshot = await client.recover_snapshot(name=snapshot_name)
-        print_snapshot(recovered_snapshot)
-        # [END recover_snapshot]
+        print(recovered_snapshot)
         print("")
 
-        # [START list_snapshots]
-        async for snapshot in client.list_snapshots():
-            print_snapshot(snapshot)
-        # [END list_snapshots]
+        snapshots = client.list_snapshots()
+        async for snapshot in snapshots:
+            print(snapshot)
         print("")
 
-        # [START list_configuration_settings_for_snapshot]
-        async for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
-            print_configuration_setting(config_setting)
-        # [END list_configuration_settings_for_snapshot]
+        config_settings = client.list_configuration_settings(snapshot_name=snapshot_name)
+        async for config_setting in config_settings:
+            print(config_setting)
 
         await client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label)
         await client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label)
