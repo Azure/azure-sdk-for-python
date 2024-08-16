@@ -205,6 +205,30 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         assert layout.tables[1].column_count == 5
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
+    
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @DocumentIntelligencePreparer()
+    @DocumentIntelligenceClientPreparer()
+    @recorded_by_proxy_async
+    async def test_layout_multipage_table_span_pdf_continuation_token(self, client):
+        with open(self.multipage_table_pdf, "rb") as fd:
+            document = fd.read()
+        async with client:
+            poller = await client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                content_type="application/octet-stream",
+            )
+            continuation_token = poller.continuation_token()
+            layout = await client.begin_analyze_document(None, None, None, continuation_token=continuation_token).result()
+        assert len(layout.tables) == 3
+        assert layout.tables[0].row_count == 30
+        assert layout.tables[0].column_count == 5
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[2].row_count == 24
+        assert layout.tables[2].column_count == 5
 
     @pytest.mark.live_test_only
     @skip_flaky_test
