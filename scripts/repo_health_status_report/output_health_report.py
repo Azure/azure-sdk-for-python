@@ -17,8 +17,8 @@ import datetime
 import httpx
 import markdown
 from github import Github, Auth
-from azure.identity import DefaultAzureCredential
 
+from devtools_testutils import get_credential
 from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
@@ -39,7 +39,7 @@ github = Github(auth=auth)
 
 # Azure DevOps
 DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
-token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+token = get_credential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
 AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 DEVOPS_TASK_STATUS = typing.Literal[
     "abandoned",
