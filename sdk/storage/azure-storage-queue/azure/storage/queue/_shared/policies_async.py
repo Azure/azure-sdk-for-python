@@ -6,7 +6,6 @@
 # pylint: disable=invalid-overridden-method
 
 import asyncio
-import base64
 import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING

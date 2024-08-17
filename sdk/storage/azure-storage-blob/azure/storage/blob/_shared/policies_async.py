@@ -6,7 +6,6 @@
 # pylint: disable=invalid-overridden-method
 
 import asyncio
-import base64
 import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING
@@ -80,7 +79,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
         response = await self.next.send(request)
         will_retry = is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response)
-        
+
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)

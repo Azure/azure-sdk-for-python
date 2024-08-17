@@ -90,7 +90,7 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
         if status in [501, 505]:
             return False
         return True
-    
+    return False
 
 def is_checksum_retry(response):
     # retry if invalid content md5
