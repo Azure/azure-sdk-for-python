@@ -1,7 +1,3 @@
-parameters:
-  - EnvVars: {}
-  - ServiceConnection: ''
-
 jobs:
   - job: 'Generate_Health_Status_Report'
     displayName: 'Generate Health Status Report'
@@ -24,9 +20,8 @@ jobs:
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         GH_TOKEN: $(azuresdk-github-pat)
-        ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
-        azureSubscription: ${{ parameters.ServiceConnection }}
+        azureSubscription: azure-sdk-tests
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
