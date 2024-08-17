@@ -1,6 +1,6 @@
 parameters:
-  EnvVars: {}
-  ServiceConnection: ''
+  - EnvVars: {}
+  - ServiceConnection: ''
 
 jobs:
   - job: 'Generate_Health_Status_Report'
