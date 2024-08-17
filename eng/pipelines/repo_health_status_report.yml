@@ -1,3 +1,7 @@
+parameters:
+  EnvVars: {}
+  ServiceConnection: ''
+
 jobs:
   - job: 'Generate_Health_Status_Report'
     displayName: 'Generate Health Status Report'
@@ -15,9 +19,38 @@ jobs:
         python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
       displayName: 'Prep Environment'
 
-    - task: PythonScript@0
-      displayName: 'Generate Health Status Report'
-      inputs:
-        scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
+    - task: AzurePowerShell@5
+      displayName: Generate Health Status Report
       env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         GH_TOKEN: $(azuresdk-github-pat)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: |
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
+          if ($IsWindows) {
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
+          }
+          Write-Host (Get-Command python).Source
+
+          python scripts/repo_health_status_report/output_health_report.py
+
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+
+    # - task: PythonScript@0
+    #   displayName: 'Generate Health Status Report'
+    #   inputs:
+    #     scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
+    #   env:
+    #     GH_TOKEN: $(azuresdk-github-pat)
