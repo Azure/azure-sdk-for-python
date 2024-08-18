@@ -29,11 +29,12 @@ import json
 from abc import ABC, abstractmethod
 from typing import Optional, Union, List, Any
 
-from azure.cosmos import http_constants
+from azure.cosmos import http_constants, PartitionKey
 from azure.cosmos._change_feed.aio.change_feed_start_from import ChangeFeedStartFromETagAndFeedRange, \
     ChangeFeedStartFromInternal
 from azure.cosmos._change_feed.aio.composite_continuation_token import CompositeContinuationToken
 from azure.cosmos._change_feed.aio.feed_range_composite_continuation_token import FeedRangeCompositeContinuation
+from azure.cosmos._change_feed.feed_range import FeedRangeEpk, FeedRangePartitionKey, FeedRange
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._utils import is_key_exists_and_not_none
@@ -49,7 +50,10 @@ class ChangeFeedState(ABC):
         pass
 
     @abstractmethod
-    async def populate_request_headers(self, routing_provider: SmartRoutingMapProvider, request_headers: dict[str, any]) -> None:
+    async def populate_request_headers(
+            self,
+            routing_provider: SmartRoutingMapProvider,
+            request_headers: dict[str, any]) -> None:
         pass
 
     @abstractmethod
@@ -57,7 +61,11 @@ class ChangeFeedState(ABC):
         pass
 
     @staticmethod
-    def from_json(container_link: str, container_rid: str, data: dict[str, Any]):
+    def from_json(
+            container_link: str,
+            container_rid: str,
+            partition_key_definition: PartitionKey,
+            data: dict[str, Any]):
         if is_key_exists_and_not_none(data, "partitionKeyRangeId") or is_key_exists_and_not_none(data, "continuationPkRangeId"):
             return ChangeFeedStateV1.from_json(container_link, container_rid, data)
         else:
@@ -69,11 +77,11 @@ class ChangeFeedState(ABC):
                 if version is None:
                     raise ValueError("Invalid base64 encoded continuation string [Missing version]")
                 elif version == "V2":
-                    return ChangeFeedStateV2.from_continuation(container_link, container_rid, continuation_json)
+                    return ChangeFeedStateV2.from_continuation(container_link, container_rid, partition_key_definition, continuation_json)
                 else:
                     raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
             # when there is no continuation token, by default construct ChangeFeedStateV2
-            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, data)
+            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, partition_key_definition, data)
 
 class ChangeFeedStateV1(ChangeFeedState):
     """Change feed state v1 implementation. This is used when partition key range id is used or the continuation is just simple _etag
@@ -110,7 +118,10 @@ class ChangeFeedStateV1(ChangeFeedState):
             data.get("continuationPkRangeId")
         )
 
-    async def populate_request_headers(self, routing_provider: SmartRoutingMapProvider, headers: dict[str, Any]) -> None:
+    async def populate_request_headers(
+            self,
+            routing_provider: SmartRoutingMapProvider,
+            headers: dict[str, Any]) -> None:
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
@@ -140,7 +151,8 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             container_link: str,
             container_rid: str,
-            feed_range: Range,
+            partition_key_definition: PartitionKey,
+            feed_range: FeedRange,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation] = None):
 
@@ -151,7 +163,9 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._continuation = continuation
         if self._continuation is None:
             composite_continuation_token_queue = collections.deque()
-            composite_continuation_token_queue.append(CompositeContinuationToken(self._feed_range, None))
+            composite_continuation_token_queue.append(CompositeContinuationToken(
+                self._feed_range.get_normalized_range(partition_key_definition),
+                None))
             self._continuation =\
                 FeedRangeCompositeContinuation(self._container_rid, self._feed_range, composite_continuation_token_queue)
 
@@ -168,7 +182,10 @@ class ChangeFeedStateV2(ChangeFeedState):
             self.continuation_property_name: self._continuation.to_dict()
         }
 
-    async def populate_request_headers(self, routing_provider: SmartRoutingMapProvider, headers: dict[str, any]) -> None:
+    async def populate_request_headers(
+            self,
+            routing_provider: SmartRoutingMapProvider,
+            headers: dict[str, any]) -> None:
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
@@ -224,6 +241,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             container_rid: str,
+            partition_key_definition: PartitionKey,
             continuation_json: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         container_rid_from_continuation = continuation_json.get(ChangeFeedStateV2.container_rid_property_name)
@@ -244,6 +262,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         return ChangeFeedStateV2(
             container_link=container_link,
             container_rid=container_rid,
+            partition_key_definition=partition_key_definition,
             feed_range=continuation.feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=continuation)
@@ -253,26 +272,29 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             collection_rid: str,
+            partition_key_definition: PartitionKey,
             data: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         if is_key_exists_and_not_none(data, "feedRange"):
             feed_range_str = base64.b64decode(data["feedRange"]).decode('utf-8')
             feed_range_json = json.loads(feed_range_str)
-            feed_range = Range.ParseFromDict(feed_range_json)
-        elif is_key_exists_and_not_none(data, "partitionKeyFeedRange"):
-            feed_range = data["partitionKeyFeedRange"]
+            feed_range = FeedRangeEpk(Range.ParseFromDict(feed_range_json))
+        elif is_key_exists_and_not_none(data, "partitionKey"):
+            feed_range = FeedRangePartitionKey(data["partitionKey"])
         else:
             # default to full range
-            feed_range = Range(
-                "",
-                "FF",
-                True,
-                False)
+            feed_range = FeedRangeEpk(
+                Range(
+                    "",
+                    "FF",
+                    True,
+                    False))
 
         change_feed_start_from = ChangeFeedStartFromInternal.from_start_time(data.get("startTime"))
         return cls(
             container_link=container_link,
             container_rid=collection_rid,
+            partition_key_definition=partition_key_definition,
             feed_range=feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=None)

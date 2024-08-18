@@ -27,20 +27,21 @@ from collections import deque
 from typing import Any
 
 from azure.cosmos._change_feed.aio.composite_continuation_token import CompositeContinuationToken
+from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRangePartitionKey
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
+from azure.cosmos._utils import is_key_exists_and_not_none
 
 
 class FeedRangeCompositeContinuation(object):
-    _version_property_name = "V"
-    _container_rid_property_name = "Rid"
-    _continuation_property_name = "Continuation"
-    _feed_range_property_name = "Range"
+    _version_property_name = "v"
+    _container_rid_property_name = "rid"
+    _continuation_property_name = "continuation"
 
     def __init__(
             self,
             container_rid: str,
-            feed_range: Range,
+            feed_range: FeedRange,
             continuation: collections.deque[CompositeContinuationToken]):
         if container_rid is None:
             raise ValueError("container_rid is missing")
@@ -55,30 +56,33 @@ class FeedRangeCompositeContinuation(object):
     def current_token(self):
         return self._current_token
 
+    def get_feed_range(self) -> FeedRange:
+        if isinstance(self._feed_range, FeedRangeEpk):
+            return FeedRangeEpk(self.current_token.feed_range)
+        else:
+            return self._feed_range
+
     def to_dict(self) -> dict[str, Any]:
-        return {
-            self._version_property_name: "v1", #TODO: should this start from v2
+        json_data = {
+            self._version_property_name: "v2",
             self._container_rid_property_name: self._container_rid,
             self._continuation_property_name: [childToken.to_dict() for childToken in self._continuation],
-            self._feed_range_property_name: self._feed_range.to_dict()
         }
+
+        json_data.update(self._feed_range.to_dict())
+        return json_data
 
     @classmethod
     def from_json(cls, data) -> 'FeedRangeCompositeContinuation':
         version = data.get(cls._version_property_name)
         if version is None:
             raise ValueError(f"Invalid feed range composite continuation token [Missing {cls._version_property_name}]")
-        if version != "v1":
+        if version != "v2":
             raise ValueError("Invalid feed range composite continuation token [Invalid version]")
 
         container_rid = data.get(cls._container_rid_property_name)
         if container_rid is None:
             raise ValueError(f"Invalid feed range composite continuation token [Missing {cls._container_rid_property_name}]")
-
-        feed_range_data = data.get(cls._feed_range_property_name)
-        if feed_range_data is None:
-            raise ValueError(f"Invalid feed range composite continuation token [Missing {cls._feed_range_property_name}]")
-        feed_range = Range.ParseFromDict(feed_range_data)
 
         continuation_data = data.get(cls._continuation_property_name)
         if continuation_data is None:
@@ -86,6 +90,14 @@ class FeedRangeCompositeContinuation(object):
         if not isinstance(continuation_data, list) or len(continuation_data) == 0:
             raise ValueError(f"Invalid feed range composite continuation token [The {cls._continuation_property_name} must be non-empty array]")
         continuation = [CompositeContinuationToken.from_json(child_range_continuation_token) for child_range_continuation_token in continuation_data]
+
+        # parsing feed range
+        if is_key_exists_and_not_none(data, FeedRangeEpk.type_property_name):
+            feed_range = FeedRangeEpk.from_json({ FeedRangeEpk.type_property_name: data[FeedRangeEpk.type_property_name] })
+        elif is_key_exists_and_not_none(data, FeedRangePartitionKey.type_property_name):
+            feed_range = FeedRangePartitionKey.from_json({ FeedRangePartitionKey.type_property_name: data[FeedRangePartitionKey.type_property_name] })
+        else:
+            raise ValueError("Invalid feed range composite continuation token [Missing feed range scope]")
 
         return cls(container_rid=container_rid, feed_range=feed_range, continuation=deque(continuation))
 
@@ -130,5 +142,5 @@ class FeedRangeCompositeContinuation(object):
             self._initial_no_result_range = self._current_token.feed_range
 
     @property
-    def feed_range(self) -> Range:
+    def feed_range(self) -> FeedRange:
         return self._feed_range

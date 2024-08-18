@@ -327,7 +327,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: Optional[PartitionKeyType] = None,
-            # -> would RU usage be more efficient, bug to backend team? deprecate it or using FeedRange to convert?
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:

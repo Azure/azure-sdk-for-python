@@ -175,17 +175,14 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
-            is_prefix_pk_value: bool = False
+            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> _Range:
-        if is_prefix_pk_value:
+        if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(pk_value)
 
         # else return point range
         effective_partition_key_string = self._get_effective_partition_key_string(pk_value)
-        partition_key_range = _Range(effective_partition_key_string, effective_partition_key_string, True, True)
-
-        return partition_key_range.to_normalized_range()
+        return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
         # We shouldn't be supporting V1
@@ -278,6 +275,15 @@ class PartitionKey(dict):
             sb.append(_to_hex(bytearray(hash_v), 0, len(hash_v)))
 
         return ''.join(sb).upper()
+
+    def _is_prefix_partition_key(
+            self,
+            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:
+        if self.kind!= "MultiHash":
+            return False
+        if isinstance(partition_key, list) and len(self.path) == len(partition_key):
+            return False
+        return True
 
 
 def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
