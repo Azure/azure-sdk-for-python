@@ -24,12 +24,12 @@
 import warnings
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
-from typing_extensions import Literal
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
@@ -49,13 +49,14 @@ from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined, PartitionKey
+    _Undefined
 )
 
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=too-many-public-methods
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
@@ -135,13 +136,6 @@ class ContainerProxy:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
-
-    async def __is_prefix_partition_key(self, partition_key: PartitionKeyType) -> bool:
-
-        properties = await self._get_properties()
-        pk_properties = properties.get("partitionKey")
-        partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-        return partition_key_definition._is_prefix_partition_key(partition_key)
 
     @distributed_trace_async
     async def read(
@@ -500,17 +494,17 @@ class ContainerProxy:
             partition_key: Optional[PartitionKeyType] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
+    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current (NOW)
-        :param PartitionKeyType partition_key: The partition key that is used to define the scope (logical partition or a subset of a container)
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword PartitionKeyType partition_key: The partition key that is used to define the scope (logical partition or a subset of a container)
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
@@ -519,7 +513,7 @@ class ContainerProxy:
         ...
 
     @overload
-    async def query_items_change_feed(
+    def query_items_change_feed(
             self,
             *,
             feed_range: Optional[str] = None,
@@ -527,17 +521,17 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
+    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+        :keyword str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current (NOW)
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
@@ -553,12 +547,12 @@ class ContainerProxy:
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
+    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param str continuation: The continuation token retrieved from previous response.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
@@ -571,7 +565,7 @@ class ContainerProxy:
             self,
             *args: Any,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
+    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=too-many-statements
 
         if is_key_exists_and_not_none(kwargs, "priority"):
             kwargs['priority'] = kwargs['priority']
@@ -1216,7 +1210,7 @@ class ContainerProxy:
     async def read_feed_ranges(
             self,
             **kwargs: Any
-    ) -> List[str]:
+    ) -> List[str]: # pylint: disable=unused-argument
         partition_key_ranges =\
             await self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,

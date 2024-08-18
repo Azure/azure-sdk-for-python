@@ -26,11 +26,14 @@ import base64
 import copy
 import json
 from abc import ABC, abstractmethod
+from typing import Dict, Any, List
 
 from azure.cosmos import _retry_utility, http_constants, exceptions
+from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromPointInTime
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV1, ChangeFeedStateV2
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
+# pylint: disable=protected-access
 
 class ChangeFeedFetcher(ABC):
 
@@ -48,16 +51,16 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             self,
             client,
             resource_link: str,
-            feed_options: dict[str, any],
+            feed_options: Dict[str, Any],
             fetch_function):
 
         self._client = client
         self._feed_options = feed_options
 
-        self._change_feed_state = self._feed_options.pop("changeFeedState")
+        self._change_feed_state: ChangeFeedStateV1 = self._feed_options.pop("changeFeedState")
         if not isinstance(self._change_feed_state, ChangeFeedStateV1):
-            raise ValueError(f"ChangeFeedFetcherV1 can not handle change feed state version {type(self._change_feed_state)}")
-        self._change_feed_state.__class__ = ChangeFeedStateV1
+            raise ValueError(f"ChangeFeedFetcherV1 can not handle change feed state version"
+                             f" {type(self._change_feed_state)}")
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
@@ -73,28 +76,30 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
         return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
 
-    def fetch_change_feed_items(self, fetch_function) -> list[dict[str, any]]:
+    def fetch_change_feed_items(self, fetch_function) -> List[Dict[str, Any]]:
         new_options = copy.deepcopy(self._feed_options)
         new_options["changeFeedState"] = self._change_feed_state
 
         self._change_feed_state.populate_feed_options(new_options)
-        is_s_time_first_fetch = True
+        is_s_time_first_fetch = self._change_feed_state._continuation is None
         while True:
             (fetched_items, response_headers) = fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
-            # For start time however we get no initial results, so we need to pass continuation token? Is this true?
             self._change_feed_state.apply_server_response_continuation(
                 response_headers.get(continuation_key))
 
             if fetched_items:
                 break
-            elif is_s_time_first_fetch:
+
+            # When processing from point in time, there will be no initial results being returned,
+            # so we will retry with the new continuation token again
+            if (isinstance(self._change_feed_state._change_feed_start_from, ChangeFeedStartFromPointInTime)
+                    and is_s_time_first_fetch):
                 is_s_time_first_fetch = False
             else:
                 break
-
         return fetched_items
 
 
@@ -106,15 +111,16 @@ class ChangeFeedFetcherV2(object):
             self,
             client,
             resource_link: str,
-            feed_options: dict[str, any],
+            feed_options: Dict[str, Any],
             fetch_function):
 
         self._client = client
         self._feed_options = feed_options
 
-        self._change_feed_state = self._feed_options.pop("changeFeedState")
+        self._change_feed_state: ChangeFeedStateV2 = self._feed_options.pop("changeFeedState")
         if not isinstance(self._change_feed_state, ChangeFeedStateV2):
-            raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version {type(self._change_feed_state)}")
+            raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version "
+                             f"{type(self._change_feed_state)}")
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
@@ -140,34 +146,47 @@ class ChangeFeedFetcherV2(object):
 
         return self.fetch_next_block()
 
-    def fetch_change_feed_items(self, fetch_function) -> list[dict[str, any]]:
+    def fetch_change_feed_items(self, fetch_function) -> List[Dict[str, Any]]:
         new_options = copy.deepcopy(self._feed_options)
         new_options["changeFeedState"] = self._change_feed_state
 
         self._change_feed_state.populate_feed_options(new_options)
 
-        is_s_time_first_fetch = True
+        is_s_time_first_fetch = self._change_feed_state._continuation.current_token.token is None
         while True:
             (fetched_items, response_headers) = fetch_function(new_options)
 
             continuation_key = http_constants.HttpHeaders.ETag
-            # In change feed queries, the continuation token is always populated. The hasNext() test is whether
-            # there is any items in the response or not.
-            # For start time however we get no initial results, so we need to pass continuation token? Is this true?
+            # In change feed queries, the continuation token is always populated.
             if fetched_items:
                 self._change_feed_state.apply_server_response_continuation(
                     response_headers.get(continuation_key))
+                self._change_feed_state._continuation._move_to_next_token()
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 break
-            else:
-                self._change_feed_state.apply_not_modified_response()
-                self._change_feed_state.apply_server_response_continuation(
-                    response_headers.get(continuation_key))
+
+            # when there is no items being returned, we will decide to retry based on:
+            # 1. When processing from point in time, there will be no initial results being returned,
+            # so we will retry with the new continuation token
+            # 2. if the feed range of the changeFeedState span multiple physical partitions
+            # then we will read from the next feed range until we have looped through all physical partitions
+            self._change_feed_state.apply_not_modified_response()
+            self._change_feed_state.apply_server_response_continuation(
+                response_headers.get(continuation_key))
+
+            if (isinstance(self._change_feed_state._change_feed_start_from, ChangeFeedStartFromPointInTime)
+                    and is_s_time_first_fetch):
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
-                should_retry = self._change_feed_state.should_retry_on_not_modified_response() or is_s_time_first_fetch
                 is_s_time_first_fetch = False
-                if not should_retry:
-                    break
+                should_retry = True
+            else:
+                self._change_feed_state._continuation._move_to_next_token()
+                response_headers[continuation_key] = self._get_base64_encoded_continuation()
+                should_retry = self._change_feed_state.should_retry_on_not_modified_response()
+                is_s_time_first_fetch = False
+
+            if not should_retry:
+                break
 
         return fetched_items
 
@@ -178,3 +197,4 @@ class ChangeFeedFetcherV2(object):
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
         return base64_bytes.decode('utf-8')
+

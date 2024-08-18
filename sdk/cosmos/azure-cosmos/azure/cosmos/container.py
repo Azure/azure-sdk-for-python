@@ -24,11 +24,11 @@
 import warnings
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from typing_extensions import Literal
 
 from ._base import (
     build_options,
@@ -328,17 +328,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key: Optional[PartitionKeyType] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
-            Beginning: Processing the change feed items from the beginning of the change feed.
-            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current (NOW)
-        :param PartitionKeyType partition_key: The partition key that is used to define the scope (logical partition or a subset of a container)
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time:
+            The start time to start processing chang feed items.
+                Beginning: Processing the change feed items from the beginning of the change feed.
+                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+                By default, it is start from current (NOW)
+        :keyword PartitionKeyType partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An Iterable of items (dicts).
@@ -355,17 +357,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
-            Beginning: Processing the change feed items from the beginning of the change feed.
-            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current (NOW)
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword str feed_range: The feed range that is used to define the scope.
+            By default, the scope will be the entire container.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]]
+            start_time: The start time to start processing chang feed items.
+                Beginning: Processing the change feed items from the beginning of the change feed.
+                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+                By default, it is start from current (NOW)
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An Iterable of items (dicts).
@@ -381,12 +385,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param str continuation: The continuation token retrieved from previous response.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An Iterable of items (dicts).
@@ -399,7 +403,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *args: Any,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=too-many-statements
 
         if is_key_exists_and_not_none(kwargs, "priority"):
             kwargs['priority'] = kwargs['priority']
@@ -1273,7 +1277,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_feed_ranges(
             self,
             **kwargs: Any
-    ) -> List[str]:
+    ) -> List[str]:  # pylint: disable=unused-argument
         partition_key_ranges =\
             self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,

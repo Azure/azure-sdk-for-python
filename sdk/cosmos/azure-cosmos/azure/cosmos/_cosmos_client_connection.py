@@ -26,6 +26,8 @@
 import os
 import urllib.parse
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
+from typing_extensions import TypedDict
+from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.credentials import TokenCredential
@@ -42,8 +44,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
-from typing_extensions import TypedDict
-from urllib3.util.retry import Retry
 
 from . import _base as base
 from . import _global_endpoint_manager as global_endpoint_manager
@@ -3025,7 +3025,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 partition_key_range_id
             )
 
-            change_feed_state = options.pop("changeFeedState", None)
+            change_feed_state = options.get("changeFeedState", None)
             if change_feed_state and isinstance(change_feed_state, ChangeFeedState):
                 change_feed_state.populate_request_headers(self._routing_map_provider, headers)
 

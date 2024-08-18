@@ -22,9 +22,8 @@
 """Internal class for feed range implementation in the Azure Cosmos
 database service.
 """
-import json
 from abc import ABC, abstractmethod
-from typing import Union, List
+from typing import Union, List, Dict, Any
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._utils import is_key_exists_and_not_none
@@ -38,7 +37,7 @@ class FeedRange(ABC):
         pass
 
     @abstractmethod
-    def to_dict(self) -> dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         pass
 
 class FeedRangePartitionKey(FeedRange):
@@ -47,7 +46,7 @@ class FeedRangePartitionKey(FeedRange):
     def __init__(
             self,
             pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range):
+            feed_range: Range):  # pylint: disable=line-too-long
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
@@ -60,26 +59,31 @@ class FeedRangePartitionKey(FeedRange):
     def get_normalized_range(self) -> Range:
         return self._feed_range.to_normalized_range()
 
-    def to_dict(self) -> dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         if isinstance(self._pk_value, _Undefined):
             return { self.type_property_name: [{}] }
-        elif isinstance(self._pk_value, _Empty):
+        if isinstance(self._pk_value, _Empty):
             return { self.type_property_name: [] }
-        else:
-            return { self.type_property_name: json.dumps(self._pk_value) }
+        if isinstance(self._pk_value, list):
+            return { self.type_property_name: [item for item in self._pk_value] }
+
+        return { self.type_property_name: self._pk_value }
 
     @classmethod
-    def from_json(cls, data: dict[str, any], feed_range: Range) -> 'FeedRangePartitionKey':
+    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangePartitionKey':
         if is_key_exists_and_not_none(data, cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
-            if isinstance(pk_value, list):
-                if not pk_value:
-                    return cls(_Empty(), feed_range)
-            if pk_value == [{}]:
+            if not pk_value:
+                return cls(_Empty(), feed_range)
+            if pk_value is [{}]:
                 return cls(_Undefined(), feed_range)
+            if isinstance(pk_value, list):
+                return cls([item for item in pk_value], feed_range)
+            return cls(data[cls.type_property_name], feed_range)
 
-            return cls(json.loads(data.get(cls.type_property_name)), feed_range)
-        raise ValueError(f"Can not parse FeedRangePartitionKey from the json, there is no property {cls.type_property_name}")
+        raise ValueError(f"Can not parse FeedRangePartitionKey from the json,"
+                         f" there is no property {cls.type_property_name}")
+
 
 class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
@@ -93,13 +97,13 @@ class FeedRangeEpk(FeedRange):
     def get_normalized_range(self) -> Range:
         return self._range.to_normalized_range()
 
-    def to_dict(self) -> dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             self.type_property_name: self._range.to_dict()
         }
 
     @classmethod
-    def from_json(cls, data: dict[str, any]) -> 'FeedRangeEpk':
+    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeEpk':
         if is_key_exists_and_not_none(data, cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)

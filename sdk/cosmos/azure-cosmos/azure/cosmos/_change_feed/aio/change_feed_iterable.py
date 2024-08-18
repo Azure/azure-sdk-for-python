@@ -21,14 +21,16 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
+from typing import Dict, Any
 
 from azure.core.async_paging import AsyncPageIterator
 
 from azure.cosmos import PartitionKey
 from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
-from azure.cosmos._change_feed.aio.change_feed_state import ChangeFeedStateV1, ChangeFeedState
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateV1
 from azure.cosmos._utils import is_base64_encoded, is_key_exists_and_not_none
 
+# pylint: disable=protected-access
 
 class ChangeFeedIterable(AsyncPageIterator):
     """Represents an iterable object of the change feed results.
@@ -66,14 +68,16 @@ class ChangeFeedIterable(AsyncPageIterator):
 
         change_feed_state_context = self._options.pop("changeFeedStateContext")
 
-        continuation =  continuation_token if continuation_token is not None else change_feed_state_context.pop("continuation", None)
+        continuation =  continuation_token if continuation_token is not None\
+            else change_feed_state_context.pop("continuation", None)
 
         # analysis and validate continuation token
         # there are two types of continuation token we support currently:
         # v1 version: the continuation token would just be the _etag,
         # which is being returned when customer is using partition_key_range_id,
         # which is under deprecation and does not support split/merge
-        # v2 version: the continuation token will be base64 encoded composition token which includes full change feed state
+        # v2 version: the continuation token will be base64 encoded composition token
+        # which includes full change feed state
         if continuation is not None:
             if is_base64_encoded(continuation):
                 change_feed_state_context["continuationFeedRange"] = continuation
@@ -141,7 +145,7 @@ class ChangeFeedIterable(AsyncPageIterator):
                 self._fetch_function
             )
 
-    def _validate_change_feed_state_context(self, change_feed_state_context: dict[str, any]) -> None:
+    def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
 
         if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
             # if continuation token is in v1 format, throw exception if feed_range is set
@@ -158,4 +162,5 @@ class ChangeFeedIterable(AsyncPageIterator):
                         key in change_feed_state_context and change_feed_state_context[key] is not None)
             if count > 1:
                 raise ValueError(
-                    "partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
+                    "partition_key_range_id, partition_key, feed_range are exclusive parameters,"
+                    " please only set one of them")

@@ -108,7 +108,7 @@ class Range(object):
         return Range(normalized_min, normalized_max, True, False)
 
     def add_to_effective_partition_key(self, effective_partition_key: str, value: int):
-        if value != 1 and value != -1:
+        if value not in (-1, 1):
             raise ValueError("Invalid value - only 1 or -1 is allowed")
 
         byte_array = self.hex_binary_to_byte_array(effective_partition_key)
@@ -117,15 +117,13 @@ class Range(object):
                 if byte_array[i] < 255:
                     byte_array[i] += 1
                     break
-                else:
-                    byte_array[i] = 0
+                byte_array[i] = 0
         else:
             for i in range(len(byte_array) - 1, -1, -1):
                 if byte_array[i] != 0:
                     byte_array[i] -= 1
                     break
-                else:
-                    byte_array[i] = 255
+                byte_array[i] = 255
 
         return binascii.hexlify(byte_array).decode()
 
@@ -143,8 +141,8 @@ class Range(object):
             feed_range_json_string = base64.b64decode(data, validate=True).decode('utf-8')
             feed_range_json = json.loads(feed_range_json_string)
             return cls.ParseFromDict(feed_range_json)
-        except Exception:
-            raise ValueError(f"Invalid feed_range json string {data}")
+        except Exception as exc:
+            raise ValueError(f"Invalid feed_range json string {data}") from exc
 
     def to_base64_encoded_string(self):
         data_json = json.dumps(self.to_dict())
