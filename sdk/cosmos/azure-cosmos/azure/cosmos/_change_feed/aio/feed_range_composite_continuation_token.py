@@ -56,12 +56,6 @@ class FeedRangeCompositeContinuation(object):
     def current_token(self):
         return self._current_token
 
-    def get_feed_range(self) -> FeedRange:
-        if isinstance(self._feed_range, FeedRangeEpk):
-            return FeedRangeEpk(self.current_token.feed_range)
-        else:
-            return self._feed_range
-
     def to_dict(self) -> dict[str, Any]:
         json_data = {
             self._version_property_name: "v2",
@@ -93,16 +87,17 @@ class FeedRangeCompositeContinuation(object):
 
         # parsing feed range
         if is_key_exists_and_not_none(data, FeedRangeEpk.type_property_name):
-            feed_range = FeedRangeEpk.from_json({ FeedRangeEpk.type_property_name: data[FeedRangeEpk.type_property_name] })
+            feed_range = FeedRangeEpk.from_json(data)
         elif is_key_exists_and_not_none(data, FeedRangePartitionKey.type_property_name):
-            feed_range = FeedRangePartitionKey.from_json({ FeedRangePartitionKey.type_property_name: data[FeedRangePartitionKey.type_property_name] })
+            feed_range =\
+                FeedRangePartitionKey.from_json(data, continuation[0].feed_range)
         else:
             raise ValueError("Invalid feed range composite continuation token [Missing feed range scope]")
 
         return cls(container_rid=container_rid, feed_range=feed_range, continuation=deque(continuation))
 
     async def handle_feed_range_gone(self, routing_provider: SmartRoutingMapProvider, collection_link: str) -> None:
-        overlapping_ranges = await routing_provider.get_overlapping_ranges(collection_link, self._current_token.feed_range)
+        overlapping_ranges = await routing_provider.get_overlapping_ranges(collection_link, [self._current_token.feed_range])
 
         if len(overlapping_ranges) == 1:
             # merge,reusing the existing the feedRange and continuationToken

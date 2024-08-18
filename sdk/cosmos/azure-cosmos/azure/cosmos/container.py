@@ -38,11 +38,10 @@ from ._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from ._change_feed.change_feed_state import ChangeFeedState
 from ._cosmos_client_connection import CosmosClientConnection
 from ._routing import routing_range
 from ._routing.routing_range import Range
-from ._utils import is_key_exists_and_not_none, is_base64_encoded
+from ._utils import is_key_exists_and_not_none
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -133,15 +132,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
-        return self.client_connection._container_properties_cache
-
     def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
         container_properties = self._get_properties()
         partition_key_definition = container_properties.get("partitionKey")
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
 
-        return partition_key._get_epk_range_for_partition_key(partition_key_value, self.__is_prefix_partitionkey(partition_key_value))
+        return partition_key._get_epk_range_for_partition_key(partition_key_value)
+
+    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+        return self.client_connection._container_properties_cache
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
@@ -451,16 +450,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 continuation = feed_options.pop('continuation')
             except KeyError:
                 continuation = args[2]
-
-            # there are two types of continuation token we support currently:
-            # v1 version: the continuation token would just be the _etag,
-            # which is being returned when customer is using partition_key_range_id,
-            # which is under deprecation and does not support split/merge
-            # v2 version: the continuation token will be base64 encoded composition token which includes full change feed state
-            if is_base64_encoded(continuation):
-                change_feed_state_context["continuationFeedRange"] = continuation
-            else:
-                change_feed_state_context["continuationPkRangeId"] = continuation
+            change_feed_state_context["continuation"] = continuation
 
         if len(args) >= 4 and args[3] is not None or is_key_exists_and_not_none(kwargs, "max_item_count"):
             try:
@@ -469,40 +459,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = args[3]
 
         if is_key_exists_and_not_none(kwargs, "partition_key"):
-            partition_key = kwargs.pop("partition_key")
+            partition_key = kwargs.pop('partition_key')
             change_feed_state_context["partitionKey"] = self._set_partition_key(partition_key)
             change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
 
         if is_key_exists_and_not_none(kwargs, "feed_range"):
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
-        # validate exclusive or in-compatible parameters
-        if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
-            # if continuation token is in v1 format, throw exception if feed_range is set
-            if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
-                raise ValueError("feed_range and continuation are incompatible")
-        elif is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
-            # if continuation token is in v2 format, since the token itself contains the full change feed state
-            # so we will ignore other parameters if they passed in
-            if is_key_exists_and_not_none(change_feed_state_context, "partitionKeyRangeId"):
-                raise ValueError("partition_key_range_id and continuation are incompatible")
-        else:
-            # validation when no continuation is passed
-            exclusive_keys = ["partitionKeyRangeId", "partitionKey", "feedRange"]
-            count = sum(1 for key in exclusive_keys if key in change_feed_state_context and change_feed_state_context[key] is not None)
-            if count > 1:
-                raise ValueError("partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
-
         container_properties = self._get_properties()
-        container_rid = container_properties.get("_rid")
-        change_feed_state = ChangeFeedState.from_json(self.container_link, container_rid, change_feed_state_context)
-        feed_options["changeFeedState"] = change_feed_state
+        feed_options["changeFeedStateContext"] = change_feed_state_context
+        feed_options["containerRID"] = container_properties["_rid"]
 
         response_hook = kwargs.pop('response_hook', None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
@@ -639,11 +610,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-        if partition_key_definition.kind != "MultiHash":
-            return False
-        if isinstance(partition_key, list) and len(partition_key_definition['paths']) == len(partition_key):
-            return False
-        return True
+        return partition_key_definition._is_prefix_partition_key(partition_key)
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param

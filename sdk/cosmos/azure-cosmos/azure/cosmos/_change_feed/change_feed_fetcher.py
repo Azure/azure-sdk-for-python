@@ -115,7 +115,6 @@ class ChangeFeedFetcherV2(object):
         self._change_feed_state = self._feed_options.pop("changeFeedState")
         if not isinstance(self._change_feed_state, ChangeFeedStateV2):
             raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version {type(self._change_feed_state)}")
-        self._change_feed_state.__class__ = ChangeFeedStateV2
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function

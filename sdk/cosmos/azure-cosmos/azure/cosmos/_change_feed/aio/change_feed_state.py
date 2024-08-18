@@ -29,7 +29,7 @@ import json
 from abc import ABC, abstractmethod
 from typing import Optional, Union, List, Any
 
-from azure.cosmos import http_constants, PartitionKey
+from azure.cosmos import http_constants
 from azure.cosmos._change_feed.aio.change_feed_start_from import ChangeFeedStartFromETagAndFeedRange, \
     ChangeFeedStartFromInternal
 from azure.cosmos._change_feed.aio.composite_continuation_token import CompositeContinuationToken
@@ -64,7 +64,6 @@ class ChangeFeedState(ABC):
     def from_json(
             container_link: str,
             container_rid: str,
-            partition_key_definition: PartitionKey,
             data: dict[str, Any]):
         if is_key_exists_and_not_none(data, "partitionKeyRangeId") or is_key_exists_and_not_none(data, "continuationPkRangeId"):
             return ChangeFeedStateV1.from_json(container_link, container_rid, data)
@@ -77,11 +76,11 @@ class ChangeFeedState(ABC):
                 if version is None:
                     raise ValueError("Invalid base64 encoded continuation string [Missing version]")
                 elif version == "V2":
-                    return ChangeFeedStateV2.from_continuation(container_link, container_rid, partition_key_definition, continuation_json)
+                    return ChangeFeedStateV2.from_continuation(container_link, container_rid, continuation_json)
                 else:
                     raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
             # when there is no continuation token, by default construct ChangeFeedStateV2
-            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, partition_key_definition, data)
+            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, data)
 
 class ChangeFeedStateV1(ChangeFeedState):
     """Change feed state v1 implementation. This is used when partition key range id is used or the continuation is just simple _etag
@@ -151,7 +150,6 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             container_link: str,
             container_rid: str,
-            partition_key_definition: PartitionKey,
             feed_range: FeedRange,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation] = None):
@@ -163,9 +161,10 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._continuation = continuation
         if self._continuation is None:
             composite_continuation_token_queue = collections.deque()
-            composite_continuation_token_queue.append(CompositeContinuationToken(
-                self._feed_range.get_normalized_range(partition_key_definition),
-                None))
+            composite_continuation_token_queue.append(
+                CompositeContinuationToken(
+                    self._feed_range.get_normalized_range(),
+                    None))
             self._continuation =\
                 FeedRangeCompositeContinuation(self._container_rid, self._feed_range, composite_continuation_token_queue)
 
@@ -241,7 +240,6 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             container_rid: str,
-            partition_key_definition: PartitionKey,
             continuation_json: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         container_rid_from_continuation = continuation_json.get(ChangeFeedStateV2.container_rid_property_name)
@@ -262,8 +260,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         return ChangeFeedStateV2(
             container_link=container_link,
             container_rid=container_rid,
-            partition_key_definition=partition_key_definition,
-            feed_range=continuation.feed_range,
+            feed_range=continuation._feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=continuation)
 
@@ -272,7 +269,6 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             collection_rid: str,
-            partition_key_definition: PartitionKey,
             data: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         if is_key_exists_and_not_none(data, "feedRange"):
@@ -280,7 +276,10 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range_json = json.loads(feed_range_str)
             feed_range = FeedRangeEpk(Range.ParseFromDict(feed_range_json))
         elif is_key_exists_and_not_none(data, "partitionKey"):
-            feed_range = FeedRangePartitionKey(data["partitionKey"])
+            if is_key_exists_and_not_none(data, "partitionKeyFeedRange"):
+                feed_range = FeedRangePartitionKey(data["partitionKey"], data["partitionKeyFeedRange"])
+            else:
+                raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
             feed_range = FeedRangeEpk(
@@ -294,7 +293,6 @@ class ChangeFeedStateV2(ChangeFeedState):
         return cls(
             container_link=container_link,
             container_rid=collection_rid,
-            partition_key_definition=partition_key_definition,
             feed_range=feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=None)

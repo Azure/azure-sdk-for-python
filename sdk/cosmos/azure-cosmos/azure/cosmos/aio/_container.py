@@ -636,7 +636,7 @@ class ContainerProxy:
         if is_key_exists_and_not_none(kwargs, "feed_range"):
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
-        change_feed_state_context["containerProperties"] = self._get_properties()
+        feed_options["containerProperties"] = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
 
         response_hook = kwargs.pop('response_hook', None)

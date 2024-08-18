@@ -33,6 +33,7 @@ from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
+from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRangePartitionKey
 from azure.cosmos._change_feed.feed_range_composite_continuation_token import FeedRangeCompositeContinuation
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
@@ -57,13 +58,18 @@ class ChangeFeedState(ABC):
         pass
 
     @staticmethod
-    def from_json(container_link: str, container_rid: str, data: dict[str, Any]):
-        if is_key_exists_and_not_none(data, "partitionKeyRangeId") or is_key_exists_and_not_none(data, "continuationPkRangeId"):
-            return ChangeFeedStateV1.from_json(container_link, container_rid, data)
+    def from_json(
+            container_link: str,
+            container_rid: str,
+            change_feed_state_context: dict[str, Any]):
+
+        if (is_key_exists_and_not_none(change_feed_state_context, "partitionKeyRangeId")
+                or is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId")):
+            return ChangeFeedStateV1.from_json(container_link, container_rid, change_feed_state_context)
         else:
-            if is_key_exists_and_not_none(data, "continuationFeedRange"):
+            if is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
                 # get changeFeedState from continuation
-                continuation_json_str = base64.b64decode(data["continuationFeedRange"]).decode('utf-8')
+                continuation_json_str = base64.b64decode(change_feed_state_context["continuationFeedRange"]).decode('utf-8')
                 continuation_json = json.loads(continuation_json_str)
                 version = continuation_json.get(ChangeFeedState.version_property_name)
                 if version is None:
@@ -73,7 +79,7 @@ class ChangeFeedState(ABC):
                 else:
                     raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
             # when there is no continuation token, by default construct ChangeFeedStateV2
-            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, data)
+            return ChangeFeedStateV2.from_initial_state(container_link, container_rid, change_feed_state_context)
 
 class ChangeFeedStateV1(ChangeFeedState):
     """Change feed state v1 implementation. This is used when partition key range id is used or the continuation is just simple _etag
@@ -140,7 +146,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             container_link: str,
             container_rid: str,
-            feed_range: Range,
+            feed_range: FeedRange,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation] = None):
 
@@ -151,7 +157,10 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._continuation = continuation
         if self._continuation is None:
             composite_continuation_token_queue = collections.deque()
-            composite_continuation_token_queue.append(CompositeContinuationToken(self._feed_range, None))
+            composite_continuation_token_queue.append(
+                CompositeContinuationToken(
+                    self._feed_range.get_normalized_range(),
+                    None))
             self._continuation =\
                 FeedRangeCompositeContinuation(self._container_rid, self._feed_range, composite_continuation_token_queue)
 
@@ -253,23 +262,28 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             collection_rid: str,
-            data: dict[str, Any]) -> 'ChangeFeedStateV2':
+            change_feed_state_context: dict[str, Any]) -> 'ChangeFeedStateV2':
 
-        if is_key_exists_and_not_none(data, "feedRange"):
-            feed_range_str = base64.b64decode(data["feedRange"]).decode('utf-8')
+        if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+            feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
             feed_range_json = json.loads(feed_range_str)
-            feed_range = Range.ParseFromDict(feed_range_json)
-        elif is_key_exists_and_not_none(data, "partitionKeyFeedRange"):
-            feed_range = data["partitionKeyFeedRange"]
+            feed_range = FeedRangeEpk(Range.ParseFromDict(feed_range_json))
+        elif is_key_exists_and_not_none(change_feed_state_context, "partitionKey"):
+            if is_key_exists_and_not_none(change_feed_state_context, "partitionKeyFeedRange"):
+                feed_range = FeedRangePartitionKey(change_feed_state_context["partitionKey"], change_feed_state_context["partitionKeyFeedRange"])
+            else:
+                raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
-            feed_range = Range(
+            feed_range = FeedRangeEpk(
+                Range(
                 "",
                 "FF",
                 True,
                 False)
+            )
 
-        change_feed_start_from = ChangeFeedStartFromInternal.from_start_time(data.get("startTime"))
+        change_feed_start_from = ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime"))
         return cls(
             container_link=container_link,
             container_rid=collection_rid,

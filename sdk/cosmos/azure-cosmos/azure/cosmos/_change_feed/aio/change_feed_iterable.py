@@ -114,15 +114,16 @@ class ChangeFeedIterable(AsyncPageIterator):
 
     async def _initialize_change_feed_fetcher(self):
         change_feed_state_context = self._options.pop("changeFeedStateContext")
-        conn_properties = await change_feed_state_context.pop("containerProperties")
+        conn_properties = await self._options.pop("containerProperties")
         if is_key_exists_and_not_none(change_feed_state_context, "partitionKey"):
             change_feed_state_context["partitionKey"] = await change_feed_state_context.pop("partitionKey")
-
-        pk_properties = conn_properties.get("partitionKey")
-        partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            pk_properties = conn_properties.get("partitionKey")
+            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            change_feed_state_context["partitionKeyFeedRange"] =\
+                partition_key_definition._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
 
         change_feed_state =\
-            ChangeFeedState.from_json(self._collection_link, conn_properties["_rid"], partition_key_definition, change_feed_state_context)
+            ChangeFeedState.from_json(self._collection_link, conn_properties["_rid"], change_feed_state_context)
         self._options["changeFeedState"] = change_feed_state
 
         if isinstance(change_feed_state, ChangeFeedStateV1):
@@ -158,5 +159,3 @@ class ChangeFeedIterable(AsyncPageIterator):
             if count > 1:
                 raise ValueError(
                     "partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
-
-
