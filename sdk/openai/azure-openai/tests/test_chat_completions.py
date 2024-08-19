@@ -1129,7 +1129,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_logprobs(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

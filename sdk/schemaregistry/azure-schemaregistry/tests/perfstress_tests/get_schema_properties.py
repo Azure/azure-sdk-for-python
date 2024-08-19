@@ -5,6 +5,7 @@
 
 from ._test_base import _GetSchemaTest
 
+
 class GetSchemaPropertiesTest(_GetSchemaTest):
     def run_sync(self):
         for _ in range(self.args.num_schemas):

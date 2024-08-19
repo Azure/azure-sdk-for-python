@@ -30,19 +30,20 @@ Use the Image Analysis client library to:
 ```bash
 pip install azure-ai-vision-imageanalysis
 ```
-### Set environment variables
 
-To authenticate the `ImageAnalysisClient`, you will need the endpoint and key from your Azure Computer Vision resource in the [Azure Portal](https://portal.azure.com). The code snippet below assumes these values are stored in environment variables:
+### Create and authenticate the client
+
+#### Using API key
+
+To authenticate the `ImageAnalysisClient` using api key, you will need the endpoint and api key from your Azure Computer Vision resource in the [Azure Portal](https://portal.azure.com). The code snippet below assumes these values are stored in environment variables:
 
 * Set the environment variable `VISION_ENDPOINT` to the endpoint URL. It has the form `https://your-resource-name.cognitiveservices.azure.com`, where `your-resource-name` is your unique Azure Computer Vision resource name.
 
 * Set the environment variable `VISION_KEY` to the key. The key is a 32-character Hexadecimal number.
 
-Note that the client library does not directly read these environment variable at run time. The endpoint and key must be provided to the constructor of `ImageAnalysisClient` in your code. The code snippet below reads environment variables to promote the practice of not hard-coding secrets in your source code.
+>Note: The client library does not directly read these environment variable at run time. The endpoint and key must be provided to the constructor of `ImageAnalysisClient` in your code. The code snippet below reads environment variables to promote the practice of not hard-coding secrets in your source code.
 
-### Create and authenticate the client
-
-Once you define the environment variables, this Python code will create and authenticate a synchronous `ImageAnalysisClient`:
+Once you define the environment variables, this Python code will create and authenticate a synchronous `ImageAnalysisClient` using key:
 
 <!-- SNIPPET:sample_caption_image_file.create_client -->
 
@@ -62,7 +63,8 @@ except KeyError:
     print("Set them before running this sample.")
     exit()
 
-# Create an Image Analysis client for synchronous operations
+# Create an Image Analysis client for synchronous operations,
+# using API key authentication
 client = ImageAnalysisClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key)
@@ -71,15 +73,57 @@ client = ImageAnalysisClient(
 
 <!-- END SNIPPET -->
 
+#### Using Entra ID
+
+You can also authenticate `ImageAnalysisClient` with [Entra ID](https://learn.microsoft.com/entra/fundamentals/whatis) using the [Azure Identity library](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python). To use the [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) provider shown below, or other credential providers in this library, install the `azure-identity` package:
+
+```bash
+pip install azure.identity
+```
+
+Assuming you defined the environment variable `VISION_ENDPOINT` mentioned above, this Python code will create and authenticate a synchronous `ImageAnalysisClient` using Entra ID:
+
+<!-- SNIPPET:sample_caption_image_file_entra_id_auth.create_client -->
+
+```python
+import os
+from azure.ai.vision.imageanalysis import ImageAnalysisClient
+from azure.ai.vision.imageanalysis.models import VisualFeatures
+from azure.identity import DefaultAzureCredential
+
+# Set the value of your computer vision endpoint as environment variable:
+try:
+    endpoint = os.environ["VISION_ENDPOINT"]
+except KeyError:
+    print("Missing environment variable 'VISION_ENDPOINT'.")
+    print("Set it before running this sample.")
+    exit()
+
+# Create an Image Analysis client for synchronous operations,
+# using Entra ID authentication
+client = ImageAnalysisClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
+)
+```
+
+<!-- END SNIPPET -->
+
+### Creating an asynchronous client
+
 A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
-    ```python
-    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-    ```
 * Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
     ```bash
     pip install aiohttp
+    ```
+* Update the above code to import `ImageAnalysisClient` from the `azure.ai.vision.imageanalysis.aio`:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* If you are using Entra ID authentication with `DefaultAzureCredential`, update the above code to import `DefaultAzureCredential` from `azure.identity.aio`:
+    ```python
+    from azure.identity.aio import DefaultAzureCredential
     ```
 
 ## Key concepts

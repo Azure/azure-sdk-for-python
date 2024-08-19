@@ -1,6 +1,6 @@
 # Release History
 
-## 1.17.2 (Unreleased)
+## 1.18.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,21 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.18.0b2 (2024-08-09)
+
+### Features Added
+
+- Added support of `send_certificate_chain` keyword argument when using certs with the synchronous `OnBehalfOfCredential`. ([#36810](https://github.com/Azure/azure-sdk-for-python/pull/36810))
+- `AzurePowerShellCredential` now supports using secure strings when authenticating with PowerShell. ([#36653](https://github.com/Azure/azure-sdk-for-python/pull/36653))
+
+## 1.18.0b1 (2024-07-16)
+
+- Fixed the issue that `SharedTokenCacheCredential` was not picklable.
+
+### Other Changes
+
+- The synchronous `ManagedIdentityCredential` was updated to use MSAL (Microsoft Authentication Library) for handling most of the underlying managed identity implementations.
 
 ## 1.17.1 (2024-06-21)
 

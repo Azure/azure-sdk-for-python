@@ -31,10 +31,11 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
         if (
             self._token_expiry_on + 60 <= time.time()
         ):  # Update token if it's expiring in 60 seconds
-            access_token, self._token_expiry_on = await self._credential.get_token(
+            access_token = await self._credential.get_token(
                 self._endpoint
             )
-            self._token = access_token
+            self._token_expiry_on = access_token.expires_on
+            self._token = access_token.token
 
     async def on_request(
         self, request: PipelineRequest

@@ -428,7 +428,7 @@ class Common:
             idx,
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
-            item.issue_package.issue.user.login,
+            item.owner,
             item.package_name,
             item.assignee,
             ' '.join(item.bot_advice),

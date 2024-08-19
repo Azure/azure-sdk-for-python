@@ -41,7 +41,7 @@ BLOB_STORAGE_CLIENT_NAME = "BlobStorageClient"
 GEN2_STORAGE_CLIENT_NAME = "Gen2StorageClient"
 DEFAULT_CONNECTION_TIMEOUT = 14400
 STORAGE_URI_REGEX = (
-    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
+    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/?(.*)"
 )
 
 WORKSPACE_MANAGED_DATASTORE_WITH_SLASH = "azureml://datastores/workspacemanageddatastore/"
@@ -50,3 +50,11 @@ AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA = (
     "Auto delete setting cannot be specified in JobOutput now. Please remove it and try again."
 )
 INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA = f'Cannot specify a sub-path for workspace managed datastore. Please set "{WORKSPACE_MANAGED_DATASTORE}" as the path.'
+SAS_KEY_AUTHENTICATION_ERROR_MSG = (
+    "{0}\n{1}\n"
+    "This SAS token is derived from an account key, but key-based authentication is not permitted "
+    "for this storage account. To update workspace properties, please see the documentation: "
+    "https://review.learn.microsoft.com/en-us/azure/machine-learning/how-to-disable-local-auth-storage?view="
+    "azureml-api-2&branch=pr-en-us-278974&tabs=cli#update-an-existing-workspace"
+)
+KEY_AUTHENTICATION_ERROR_CODE = "KeyBasedAuthenticationNotPermitted"

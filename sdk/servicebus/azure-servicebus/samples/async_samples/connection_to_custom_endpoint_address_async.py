@@ -13,9 +13,10 @@ import os
 import asyncio
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
+from azure.identity.aio import DefaultAzureCredential
 
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 # The custom endpoint address to use for establishing a connection to the Service Bus service,
 # allowing network requests to be routed through any application gateways
@@ -31,8 +32,10 @@ async def send_single_message(sender):
     await sender.send_messages(message)
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(
-    conn_str=CONNECTION_STR, 
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(
+    FULLY_QUALIFIED_NAMESPACE,
+    credential,
     custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS, 
     connection_verify=CUSTOM_CA_BUNDLE_PATH
     )

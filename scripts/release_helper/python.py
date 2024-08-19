@@ -85,6 +85,7 @@ class IssueProcessPython(IssueProcess):
                                            python_tag=self.python_tag,
                                            rest_repo_hash=self.rest_repo_hash,
                                            target_date=self.target_date,
+                                           issue_owner=self.owner,
                                            )
                     if res_run:
                         self.log(f'{issue_number} run pipeline successfully')

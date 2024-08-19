@@ -42,8 +42,8 @@ class AzureFileSchema(AzureStorageSchema):
         [
             NestedField(AccountKeySchema),
             NestedField(SasTokenSchema),
-        ],
-        required=True,
+            NestedField(NoneCredentialsSchema),
+        ]
     )
 
     @post_load

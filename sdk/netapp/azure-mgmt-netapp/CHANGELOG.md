@@ -1,5 +1,17 @@
 # Release History
 
+## 13.2.0 (2024-08-19)
+
+### Features Added
+
+  - Model Replication has a new parameter replication_id
+
+## 13.1.0 (2024-07-22)
+
+### Features Added
+
+  - Model VolumePatch has a new parameter protocol_types
+
 ## 13.0.0 (2024-05-20)
 
 ### Features Added

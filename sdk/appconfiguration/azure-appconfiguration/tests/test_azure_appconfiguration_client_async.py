@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     AzureError,
+    HttpResponseError,
 )
 from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
@@ -281,6 +282,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
+    async def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        await self.set_up(appconfiguration_connection_string)
+        items = await self.convert_to_list(self.client.list_configuration_settings(tags_filter=["tag1=value1"]))
+        assert len(items) == 1
+        assert items[0].key == KEY
+        assert items[0].label == LABEL
+        self.tear_down()
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
@@ -441,6 +454,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
+        await self.tear_down()
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_revisions_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        await self.set_up(appconfiguration_connection_string)
+        items = await self.convert_to_list(self.client.list_revisions(tags_filter=["tag1=value1"]))
+        assert len(items) >= 1
+        assert all(x.key == KEY for x in items)
+        assert all(x.label == LABEL for x in items)
         await self.tear_down()
 
     @app_config_decorator_async
@@ -1068,14 +1093,23 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+        snapshot_name1 = self.get_resource_name("snapshot1")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
-        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name))
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name1))
         assert len(items) == 1
+
+        snapshot_name2 = self.get_resource_name("snapshot2")
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
+        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        created_snapshot = await response.result()
+        assert created_snapshot.status == "ready"
+
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name2))
+        assert len(items) == 0
 
         await self.tear_down()
 
@@ -1194,6 +1228,34 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             config_settings = client.list_configuration_settings()
             async for config_setting in config_settings:
                 await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_labels(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+
+        rep = await self.convert_to_list(self.client.list_labels())
+        assert len(list(rep)) >= 2
+
+        rep = await self.convert_to_list(self.client.list_labels(name="test*"))
+        assert len(list(rep)) == 1
+
+        with pytest.raises(HttpResponseError) as error:
+            await self.convert_to_list(self.client.list_labels(name="test'@*$!%"))
+        assert error.value.status_code == 400
+        assert error.value.message == "Operation returned an invalid status 'Bad Request'"
+        assert (
+            '"title":"Invalid request parameter \'label\'","name":"label","detail":"label(6): Invalid character"'
+            in str(error.value)
+        )
+
+        config_settings = self.client.list_configuration_settings()
+        async for config_setting in config_settings:
+            await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+        rep = await self.convert_to_list(self.client.list_labels())
+        assert len(list(rep)) == 0
+
+        self.client.close()
 
 
 class TestAppConfigurationClientUnitTest:
