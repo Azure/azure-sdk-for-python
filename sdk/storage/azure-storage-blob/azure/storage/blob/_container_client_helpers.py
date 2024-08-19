@@ -158,7 +158,8 @@ def _generate_delete_blobs_options(
 
         req = HttpRequest(
             "DELETE",
-            f"{'/' + quote(url_prepend) if url_prepend else ''}/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
+            (f"{'/' + quote(url_prepend) if url_prepend else ''}/"
+             f"{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}"),
             headers=header_parameters
         )
 
@@ -255,7 +256,8 @@ def _generate_set_tiers_options(
 
         req = HttpRequest(
             "PUT",
-            f"{'/' + quote(url_prepend) if url_prepend else ''}/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
+            (f"{'/' + quote(url_prepend) if url_prepend else ''}/"
+             f"{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}"),
             headers=header_parameters
         )
         req.format_parameters(query_parameters)
