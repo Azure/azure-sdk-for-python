@@ -345,10 +345,13 @@ def get_overloads(cls: Type, cls_methods: Dict):
         get_overload_data(cls_node, cls_methods)
 
 
-def get_overload_data(node: ast.ClassDef, cls_method: Dict) -> None:
+def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
     func_nodes = [node for node in node.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
     # Check for method overloads on a class
-    for func in func_nodes:
+    for func in public_func_nodes:
+        if "overloads" not in cls_methods[func.name]:
+            cls_methods[func.name]["overloads"] = []
         is_async = False
         if isinstance(func, ast.AsyncFunctionDef):
             is_async = True
@@ -360,9 +363,7 @@ def get_overload_data(node: ast.ClassDef, cls_method: Dict) -> None:
                     "is_async": is_async,
                     "return_type": None
                 }
-                if isinstance(cls_method[func.name], dict):
-                    cls_method[func.name] = [cls_method[func.name]]
-                cls_method[func.name].append(overload_report)
+                cls_methods[func.name]["overloads"].append(overload_report)
 
 
 def create_class_report(cls: Type) -> Dict:
