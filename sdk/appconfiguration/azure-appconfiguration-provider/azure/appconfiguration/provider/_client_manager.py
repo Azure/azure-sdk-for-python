@@ -28,7 +28,7 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
 
 @dataclass
-class ConfigurationClientWrapper:
+class _ConfigurationClientWrapper:
     endpoint: str
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
@@ -46,7 +46,7 @@ class ConfigurationClientWrapper:
         **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ConfigurationClientWrapper class, using the provided credential to authenticate
+        Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
         requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -54,8 +54,8 @@ class ConfigurationClientWrapper:
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ConfigurationClientWrapper class
-        :rtype: ConfigurationClientWrapper
+        :return: A new instance of the _ConfigurationClientWrapper class
+        :rtype: _ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -74,7 +74,7 @@ class ConfigurationClientWrapper:
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ConfigurationClientWrapper class, using the provided connection string to
+        Creates a new instance of the _ConfigurationClientWrapper class, using the provided connection string to
         authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -82,8 +82,8 @@ class ConfigurationClientWrapper:
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ConfigurationClientWrapper class
-        :rtype: ConfigurationClientWrapper
+        :return: A new instance of the _ConfigurationClientWrapper class
+        :rtype: _ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -298,14 +298,14 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
         if connection_string and endpoint:
             self._replica_clients.append(
-                ConfigurationClientWrapper.from_connection_string(
+                _ConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
             for failover_endpoint in failover_endpoints:
                 failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
                 self._replica_clients.append(
-                    ConfigurationClientWrapper.from_connection_string(
+                    _ConfigurationClientWrapper.from_connection_string(
                         failover_endpoint,
                         failover_connection_string,
                         user_agent,
@@ -317,13 +317,13 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             return
         if endpoint and credential:
             self._replica_clients.append(
-                ConfigurationClientWrapper.from_credential(
+                _ConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
             for failover_endpoint in failover_endpoints:
                 self._replica_clients.append(
-                    ConfigurationClientWrapper.from_credential(
+                    _ConfigurationClientWrapper.from_credential(
                         failover_endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                     )
                 )
@@ -338,10 +338,12 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
 
         if failover_endpoints is None:
+            # SRV record not found, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
             return
 
         if len(failover_endpoints) == 0:
+            # No failover endpoints in SRV record.
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             return
 
@@ -359,7 +361,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                         self._original_endpoint, failover_endpoint
                     )
                     new_clients.append(
-                        ConfigurationClientWrapper.from_connection_string(
+                        _ConfigurationClientWrapper.from_connection_string(
                             failover_endpoint,
                             failover_connection_string,
                             self._user_agent,
@@ -370,7 +372,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     )
                 else:
                     new_clients.append(
-                        ConfigurationClientWrapper.from_credential(
+                        _ConfigurationClientWrapper.from_credential(
                             failover_endpoint,
                             self._credential,
                             self._user_agent,
@@ -389,7 +391,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                 active_clients.append(client)
         return active_clients
 
-    def backoff(self, client: ConfigurationClientWrapper):
+    def backoff(self, client: _ConfigurationClientWrapper):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
