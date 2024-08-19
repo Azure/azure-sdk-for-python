@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import json
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
 
@@ -194,6 +195,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response1 = await client.embed(input=input)
         self._print_embeddings_result(response1)
         self._validate_embeddings_result(response1)
+        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
 
         # Request embeddings as base64 encoded strings
         response2 = await client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
@@ -511,6 +513,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response = await client.complete(messages=messages)
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
         messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
         messages.append(sdk.models.UserMessage(content="and how many yards?"))
         response = await client.complete(messages=messages)
