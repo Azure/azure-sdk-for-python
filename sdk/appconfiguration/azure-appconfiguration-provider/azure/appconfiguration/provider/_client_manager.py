@@ -31,6 +31,7 @@ from ._constants import (
     FEATURE_FLAG_ID_KEY,
 )
 
+
 @dataclass
 class ConfigurationClientWrapper:
     endpoint: str
@@ -47,7 +48,7 @@ class ConfigurationClientWrapper:
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the ConfigurationClientWrapper class, using the provided credential to authenticate
@@ -69,7 +70,7 @@ class ConfigurationClientWrapper:
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -96,7 +97,7 @@ class ConfigurationClientWrapper:
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -168,7 +169,6 @@ class ConfigurationClientWrapper:
         encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
         return encoded_flag[: encoded_flag.find(b"=")]
 
-
     @distributed_trace
     def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
@@ -177,6 +177,7 @@ class ConfigurationClientWrapper:
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
@@ -240,7 +241,7 @@ class ConfigurationClientWrapper:
         refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
-        **kwargs
+        **kwargs,
     ) -> Tuple[bool, Optional[Dict[Tuple[str, str], str]], Optional[List[Any]]]:
         """
         Gets the refreshed feature flags if they have changed.
