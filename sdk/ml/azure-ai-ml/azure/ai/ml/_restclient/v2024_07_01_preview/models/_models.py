@@ -26588,8 +26588,6 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
 class ServiceTagDestination(msrest.serialization.Model):
     """Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar action: The action enum for networking rule. Possible values include: "Allow", "Deny".
     :vartype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
     :ivar address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
@@ -26601,10 +26599,6 @@ class ServiceTagDestination(msrest.serialization.Model):
     :ivar service_tag:
     :vartype service_tag: str
     """
-
-    _validation = {
-        'address_prefixes': {'readonly': True},
-    }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
@@ -26621,6 +26615,8 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         :keyword action: The action enum for networking rule. Possible values include: "Allow", "Deny".
         :paramtype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
+        :keyword address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
+        :paramtype address_prefixes: list[str]
         :keyword port_ranges:
         :paramtype port_ranges: str
         :keyword protocol:
@@ -26630,7 +26626,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         super(ServiceTagDestination, self).__init__(**kwargs)
         self.action = kwargs.get('action', None)
-        self.address_prefixes = None
+        self.address_prefixes = kwargs.get('address_prefixes', None)
         self.port_ranges = kwargs.get('port_ranges', None)
         self.protocol = kwargs.get('protocol', None)
         self.service_tag = kwargs.get('service_tag', None)
