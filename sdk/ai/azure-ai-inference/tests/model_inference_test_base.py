@@ -39,7 +39,7 @@ if LOGGING_ENABLED:
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_chat",
-    azure_ai_chat_endpoint="https://your-deployment-name.your-azure-region.models.ai.azure.com",
+    azure_ai_chat_endpoint="https://your-deployment-name.eastus2.inference.ai.azure.com",
     azure_ai_chat_key="00000000000000000000000000000000",
 )
 
@@ -68,7 +68,7 @@ ServicePreparerAOAIChatCompletions = functools.partial(
 ServicePreparerEmbeddings = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_embeddings",
-    azure_ai_embeddings_endpoint="https://your-deployment-name.your-azure-region.models.ai.azure.com",
+    azure_ai_embeddings_endpoint="https://your-deployment-name.eastus2.inference.ai.azure.com",
     azure_ai_embeddings_key="00000000000000000000000000000000",
 )
 
