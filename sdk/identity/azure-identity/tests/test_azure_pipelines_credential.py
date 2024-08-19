@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore teamprojectid, planid, jobid, oidctoken
+# cspell:ignore oidcrequesturi
 import os
 from unittest.mock import MagicMock, patch
 
@@ -14,29 +14,43 @@ from azure.identity import (
     ClientAssertionCredential,
     CredentialUnavailableError,
 )
-from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.azure_pipelines import build_oidc_request, OIDC_API_VERSION
+from azure.identity._credentials.azure_pipelines import SYSTEM_OIDCREQUESTURI, OIDC_API_VERSION, build_oidc_request
 
 
 def test_azure_pipelines_credential_initialize():
+    system_access_token = "token"
     service_connection_id = "connection-id"
     tenant_id = "tenant-id"
     client_id = "client-id"
 
     credential = AzurePipelinesCredential(
+        system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,
     )
 
     assert credential._service_connection_id == service_connection_id
+    assert credential._system_access_token == system_access_token
     assert isinstance(credential._client_assertion_credential, ClientAssertionCredential)
+
+
+def test_azure_pipelines_credential_initialize_empty_kwarg():
+    with patch.dict("os.environ", {}, clear=True):
+        with pytest.raises(ValueError):
+            AzurePipelinesCredential(
+                system_access_token="token", client_id="client-id", tenant_id="tenant-id", service_connection_id=""
+            )
 
 
 def test_azure_pipelines_credential_context_manager():
     transport = MagicMock()
     credential = AzurePipelinesCredential(
-        client_id="client-id", tenant_id="tenant-id", service_connection_id="connection-id", transport=transport
+        system_access_token="token",
+        client_id="client-id",
+        tenant_id="tenant-id",
+        service_connection_id="connection-id",
+        transport=transport,
     )
 
     with credential:
@@ -48,52 +62,32 @@ def test_azure_pipelines_credential_context_manager():
 def test_build_oidc_request():
     service_connection_id = "connection-id"
     collection_uri = "https://example.com"
-    project_id = "team-project-id"
-    plan_id = "plan-id"
-    job_id = "job-id"
     access_token = "access-token"
-    host_type = "build"
 
-    environment = {
-        EnvironmentVariables.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI: collection_uri,
-        EnvironmentVariables.SYSTEM_TEAMPROJECTID: project_id,
-        EnvironmentVariables.SYSTEM_PLANID: plan_id,
-        EnvironmentVariables.SYSTEM_JOBID: job_id,
-        EnvironmentVariables.SYSTEM_ACCESSTOKEN: access_token,
-        EnvironmentVariables.SYSTEM_HOSTTYPE: host_type,
-    }
+    environment = {SYSTEM_OIDCREQUESTURI: collection_uri}
 
     with patch.dict("os.environ", environment, clear=True):
-        request: HttpRequest = build_oidc_request(service_connection_id)
+        request: HttpRequest = build_oidc_request(service_connection_id, access_token)
         assert request.method == "POST"
-        assert request.url.startswith(
-            f"{collection_uri}/{project_id}/_apis/distributedtask/hubs/{host_type}/plans/{plan_id}/"
-            f"jobs/{job_id}/oidctoken"
-        )
+        assert request.url.startswith(collection_uri)
         assert f"api-version={OIDC_API_VERSION}" in request.url
         assert f"serviceConnectionId={service_connection_id}" in request.url
         assert request.headers["Content-Type"] == "application/json"
         assert request.headers["Authorization"] == f"Bearer {access_token}"
 
 
-def test_azure_pipelines_credential_missing_env_var():
+def test_azure_pipelines_credential_missing_system_env_var():
     credential = AzurePipelinesCredential(
+        system_access_token="token",
         client_id="client-id",
         tenant_id="tenant-id",
         service_connection_id="connection-id",
     )
-    environment = {
-        EnvironmentVariables.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI: "foo",
-        EnvironmentVariables.SYSTEM_TEAMPROJECTID: "foo",
-        EnvironmentVariables.SYSTEM_PLANID: "foo",
-        EnvironmentVariables.SYSTEM_JOBID: "foo",
-        EnvironmentVariables.SYSTEM_HOSTTYPE: "foo",
-    }
 
-    with patch.dict("os.environ", environment, clear=True):
+    with patch.dict("os.environ", {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
             credential.get_token("scope")
-        assert f"Missing values for environment variables: {EnvironmentVariables.SYSTEM_ACCESSTOKEN}" in str(ex.value)
+        assert f"Missing value for the {SYSTEM_OIDCREQUESTURI} environment variable" in str(ex.value)
 
 
 def test_azure_pipelines_credential_in_chain():
@@ -102,7 +96,10 @@ def test_azure_pipelines_credential_in_chain():
     with patch.dict("os.environ", {}, clear=True):
         chain_credential = ChainedTokenCredential(
             AzurePipelinesCredential(
-                tenant_id="tenant-id", client_id="client-id", service_connection_id="connection-id"
+                system_access_token="token",
+                tenant_id="tenant-id",
+                client_id="client-id",
+                service_connection_id="connection-id",
             ),
             mock_credential,
         )
@@ -112,6 +109,7 @@ def test_azure_pipelines_credential_in_chain():
 
 @pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
 def test_azure_pipelines_credential_authentication():
+    system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN", "")
     service_connection_id = os.environ.get("AZURE_SERVICE_CONNECTION_ID", "")
     tenant_id = os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", "")
     client_id = os.environ.get("AZURE_SERVICE_CONNECTION_CLIENT_ID", "")
@@ -122,6 +120,7 @@ def test_azure_pipelines_credential_authentication():
         pytest.skip("This test requires environment variables to be set")
 
     credential = AzurePipelinesCredential(
+        system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,

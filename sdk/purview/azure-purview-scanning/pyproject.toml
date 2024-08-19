@@ -3,6 +3,4 @@ pylint = false
 pyright = false
 mypy = false
 type_check_samples = false
-verifytypes = false
-strict_sphinx = true
 ci_enabled = false

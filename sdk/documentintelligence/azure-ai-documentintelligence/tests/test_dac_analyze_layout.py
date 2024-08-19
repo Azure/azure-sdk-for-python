@@ -6,8 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
@@ -195,6 +194,29 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.tables[1].column_count == 5
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
+    
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @DocumentIntelligencePreparer()
+    @DocumentIntelligenceClientPreparer()
+    @recorded_by_proxy
+    def test_layout_multipage_table_span_pdf_with_continuation_token(self, client):
+        with open(self.multipage_table_pdf, "rb") as fd:
+            document = fd.read()
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            content_type="application/octet-stream",
+        )
+        continuation_token = poller.continuation_token()
+        layout = client.begin_analyze_document(None, None, continuation_token=continuation_token).result()
+        assert len(layout.tables) == 3
+        assert layout.tables[0].row_count == 30
+        assert layout.tables[0].column_count == 5
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[2].row_count == 24
+        assert layout.tables[2].column_count == 5
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -217,15 +239,11 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
-    def test_polling_interval(self, documentintelligence_endpoint, documentintelligence_api_key, **kwargs):
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
-        )
+    def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         assert client._config.polling_interval == 1
 
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
-        )
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(), polling_interval=7)
         assert client._config.polling_interval == 7
         poller = client.begin_analyze_document(
             "prebuilt-receipt", AnalyzeDocumentRequest(url_source=self.receipt_url_jpg), polling_interval=6

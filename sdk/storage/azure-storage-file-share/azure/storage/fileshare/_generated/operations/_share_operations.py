@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,13 +48,18 @@ def build_create_request(
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     enabled_protocols: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+    enable_snapshot_virtual_directory_access: Optional[bool] = None,
+    paid_bursting_enabled: Optional[bool] = None,
+    paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+    paid_bursting_max_iops: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -77,6 +87,24 @@ def build_create_request(
         _headers["x-ms-enabled-protocols"] = _SERIALIZER.header("enabled_protocols", enabled_protocols, "str")
     if root_squash is not None:
         _headers["x-ms-root-squash"] = _SERIALIZER.header("root_squash", root_squash, "str")
+    if enable_snapshot_virtual_directory_access is not None:
+        _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
+            "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
+        )
+    if paid_bursting_enabled is not None:
+        _headers["x-ms-share-paid-bursting-enabled"] = _SERIALIZER.header(
+            "paid_bursting_enabled", paid_bursting_enabled, "bool"
+        )
+    if paid_bursting_max_bandwidth_mibps is not None:
+        _headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = _SERIALIZER.header(
+            "paid_bursting_max_bandwidth_mibps", paid_bursting_max_bandwidth_mibps, "int"
+        )
+    if paid_bursting_max_iops is not None:
+        _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
+            "paid_bursting_max_iops", paid_bursting_max_iops, "int"
+        )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -88,13 +116,14 @@ def build_get_properties_request(
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -116,6 +145,8 @@ def build_get_properties_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -128,13 +159,14 @@ def build_delete_request(
     timeout: Optional[int] = None,
     delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -158,6 +190,8 @@ def build_delete_request(
         _headers["x-ms-delete-snapshots"] = _SERIALIZER.header("delete_snapshots", delete_snapshots, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -171,6 +205,7 @@ def build_acquire_lease_request(
     proposed_lease_id: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -179,7 +214,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -207,6 +242,8 @@ def build_acquire_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -219,6 +256,7 @@ def build_release_lease_request(
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -227,7 +265,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -252,6 +290,8 @@ def build_release_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -265,6 +305,7 @@ def build_change_lease_request(
     proposed_lease_id: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -273,7 +314,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -300,6 +341,8 @@ def build_change_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -312,6 +355,7 @@ def build_renew_lease_request(
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -320,7 +364,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -345,6 +389,8 @@ def build_renew_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -358,6 +404,7 @@ def build_break_lease_request(
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -366,7 +413,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -394,20 +441,27 @@ def build_break_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_create_snapshot_request(
-    url: str, *, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    metadata: Optional[Dict[str, str]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -428,6 +482,8 @@ def build_create_snapshot_request(
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -446,7 +502,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -478,6 +534,7 @@ def build_get_permission_request(
     url: str,
     *,
     file_permission_key: str,
+    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     timeout: Optional[int] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -487,7 +544,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -506,6 +563,10 @@ def build_get_permission_request(
 
     # Construct headers
     _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
+    if file_permission_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_format", file_permission_format, "str"
+        )
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
@@ -522,6 +583,11 @@ def build_set_properties_request(
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     lease_id: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+    enable_snapshot_virtual_directory_access: Optional[bool] = None,
+    paid_bursting_enabled: Optional[bool] = None,
+    paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+    paid_bursting_max_iops: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -529,7 +595,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -556,6 +622,24 @@ def build_set_properties_request(
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if root_squash is not None:
         _headers["x-ms-root-squash"] = _SERIALIZER.header("root_squash", root_squash, "str")
+    if enable_snapshot_virtual_directory_access is not None:
+        _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
+            "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
+        )
+    if paid_bursting_enabled is not None:
+        _headers["x-ms-share-paid-bursting-enabled"] = _SERIALIZER.header(
+            "paid_bursting_enabled", paid_bursting_enabled, "bool"
+        )
+    if paid_bursting_max_bandwidth_mibps is not None:
+        _headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = _SERIALIZER.header(
+            "paid_bursting_max_bandwidth_mibps", paid_bursting_max_bandwidth_mibps, "int"
+        )
+    if paid_bursting_max_iops is not None:
+        _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
+            "paid_bursting_max_iops", paid_bursting_max_iops, "int"
+        )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -567,6 +651,7 @@ def build_set_metadata_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -574,7 +659,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -597,20 +682,27 @@ def build_set_metadata_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_access_policy_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -631,13 +723,21 @@ def build_get_access_policy_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_set_access_policy_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, content: Any = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    content: Any = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -645,7 +745,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -666,6 +766,8 @@ def build_set_access_policy_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -674,14 +776,19 @@ def build_set_access_policy_request(
 
 
 def build_get_statistics_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -702,6 +809,8 @@ def build_get_statistics_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -714,6 +823,7 @@ def build_restore_request(
     request_id_parameter: Optional[str] = None,
     deleted_share_name: Optional[str] = None,
     deleted_share_version: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -721,7 +831,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -748,6 +858,8 @@ def build_restore_request(
         _headers["x-ms-deleted-share-version"] = _SERIALIZER.header(
             "deleted_share_version", deleted_share_version, "str"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -781,6 +893,10 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -804,11 +920,24 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mibps: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -830,6 +959,11 @@ class ShareOperations:
             access_tier=access_tier,
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
+            paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -885,7 +1019,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -908,6 +1042,7 @@ class ShareOperations:
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -965,6 +1100,18 @@ class ShareOperations:
             "str", response.headers.get("x-ms-enabled-protocols")
         )
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
+        response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
+        )
+        response_headers["x-ms-share-paid-bursting-enabled"] = self._deserialize(
+            "bool", response.headers.get("x-ms-share-paid-bursting-enabled")
+        )
+        response_headers["x-ms-share-paid-bursting-max-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-iops")
+        )
+        response_headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-bandwidth-mibps")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -998,7 +1145,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1022,6 +1169,7 @@ class ShareOperations:
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -1087,7 +1235,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1110,6 +1258,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1176,7 +1325,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1198,6 +1347,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1268,7 +1418,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1291,6 +1441,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1357,7 +1508,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1379,6 +1530,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1454,7 +1606,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1481,6 +1633,7 @@ class ShareOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             sharesnapshot=sharesnapshot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1536,7 +1689,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1555,6 +1708,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1657,7 +1811,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1722,12 +1876,23 @@ class ShareOperations:
 
     @distributed_trace
     def get_permission(
-        self, file_permission_key: str, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        file_permission_key: str,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.SharePermission:
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
         :type file_permission_key: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1737,7 +1902,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1755,6 +1920,7 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -1797,6 +1963,10 @@ class ShareOperations:
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1815,13 +1985,26 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mibps: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1847,6 +2030,11 @@ class ShareOperations:
             access_tier=access_tier,
             lease_id=_lease_id,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
+            paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1902,7 +2090,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1926,6 +2114,7 @@ class ShareOperations:
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1977,7 +2166,7 @@ class ShareOperations:
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2000,6 +2189,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2058,7 +2248,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2089,6 +2279,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -2142,7 +2333,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2165,6 +2356,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2230,7 +2422,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2251,6 +2443,7 @@ class ShareOperations:
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
             deleted_share_version=deleted_share_version,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,

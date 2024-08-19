@@ -12,7 +12,7 @@ import signal
 import platform
 import shutil
 import tarfile
-from typing import Optional
+from typing import Optional, Generator, Any
 import zipfile
 
 import certifi
@@ -146,7 +146,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
     raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
 
 
-def check_availability() -> None:
+def check_availability() -> int:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         http_client = get_http_client(raise_on_status=False)
@@ -407,7 +407,7 @@ def stop_test_proxy() -> None:
 
 
 @pytest.fixture(scope="session")
-def test_proxy(request) -> None:
+def test_proxy(request) -> Generator[None, None, None]:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield

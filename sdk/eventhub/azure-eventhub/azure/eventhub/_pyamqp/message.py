@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List
+from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List, Iterable
 from typing_extensions import TypedDict
 
 from .types import AMQPTypes, FieldDefinition
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
         message_annotations: Optional[Dict[Union[str, bytes], Any]]
         properties: Optional["Properties"]
         application_properties: Optional[Dict[Union[str, bytes], Any]]
-        data: Optional[bytes]
+        data: Optional[Union[bytes, Iterable[bytes]]]
         sequence: Optional[List[Any]]
         value: Optional[Any]
         footer: Optional[Dict[Any, Any]]
@@ -185,7 +185,7 @@ class Message(NamedTuple):
     message_annotations: Optional[Dict[Union[str, bytes], Any]] = None
     properties: Optional[Properties] = None
     application_properties: Optional[Dict[Union[str, bytes], Any]] = None
-    data: Optional[bytes] = None
+    data: Optional[Union[bytes, Iterable[bytes]]] = None
     sequence: Optional[List[Any]] = None
     value: Optional[Any] = None
     footer: Optional[Dict[Any, Any]] = None

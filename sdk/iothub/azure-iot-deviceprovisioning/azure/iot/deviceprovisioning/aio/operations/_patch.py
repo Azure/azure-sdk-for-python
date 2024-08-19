@@ -88,7 +88,7 @@ class EnrollmentOperations(EnrollmentOperationsGenerated):
         :paramtype top: Optional[int]
         :return: list of JSON object
         :rtype: ~azure.core.paging_async.AsyncItemPaged[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -760,7 +760,7 @@ class DeviceRegistrationStateOperations(DeviceRegistrationStateOperationsGenerat
         :paramtype top: Optional[int]
         :return: list of JSON object
         :rtype: ~azure.core.paging_async.AsyncItemPaged[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python

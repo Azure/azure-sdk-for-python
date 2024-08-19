@@ -143,7 +143,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -585,7 +585,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, max_page_size=4 * 1024)
         self._setup(bsc)
-        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)

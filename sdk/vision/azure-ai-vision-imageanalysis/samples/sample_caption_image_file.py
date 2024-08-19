@@ -44,7 +44,8 @@ def sample_caption_image_file():
         print("Set them before running this sample.")
         exit()
 
-    # Create an Image Analysis client for synchronous operations
+    # Create an Image Analysis client for synchronous operations,
+    # using API key authentication
     client = ImageAnalysisClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key)

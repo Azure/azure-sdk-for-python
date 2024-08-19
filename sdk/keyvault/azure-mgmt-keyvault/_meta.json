@@ -1,12 +1,12 @@
 {
-  "commit": "fe6e5b6e46f03c2c23f16029f25431bc90e07de2",
+  "commit": "2608e811fafd18657b224a0d59e1c3924a534adb",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.15.0",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/keyvault/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/keyvault/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/keyvault/resource-manager/readme.md",
   "package-2019-09": "2021-07-15 01:23:27 -0700 4fe5435a25386ee460ba89817465c7deba818284 Microsoft.KeyVault/stable/2019-09-01/keyvault.json",
   "package-2018-02": "2020-11-03 15:27:00 -0500 111dab2fbec96b208a78b36bb8dcefd958036476 Microsoft.KeyVault/preview/2018-02-14-preview/keyvault.json",

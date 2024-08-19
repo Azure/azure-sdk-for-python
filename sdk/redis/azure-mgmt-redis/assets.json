@@ -1,6 +1,6 @@
 {
-  "AssetsRepo": "Azure/azure-sdk-assets",
-  "AssetsRepoPrefixPath": "python",
-  "TagPrefix": "python/redis/azure-mgmt-redis",
-  "Tag": "python/redis/azure-mgmt-redis_b608d511f0"
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/redis/azure-mgmt-redis",
+    "Tag": "python/redis/azure-mgmt-redis_8817a1572c"
 }

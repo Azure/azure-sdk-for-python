@@ -50,7 +50,7 @@ from azure.storage.blob import (
     upload_blob_to_url)
 from azure.storage.blob._generated.models import RehydratePriority
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
@@ -1367,7 +1367,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         source_blob_client = self._create_source_blob(data=source_blob_data)
         # Create destination blob
         destination_blob_client = self._create_blob()
-        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
 
         with pytest.raises(HttpResponseError):
             destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)
@@ -1418,7 +1418,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -1883,72 +1883,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_no_sas_private_blob(self, **kwargs):
-        # Test Proxy playback does not currently work with requests outside SDK clients
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-
-        # Act
-        response = requests.get(blob.url)
-
-        # Assert
-        assert not response.ok
-        assert -1 != response.text.find('ResourceNotFound')
-
-    @pytest.mark.live_test_only
-    @BlobPreparer()
-    def test_no_sas_public_blob(self, **kwargs):
-        # Test Proxy playback does not currently work with requests outside SDK clients
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        data = b'a public blob can be read without a shared access signature'
-        blob_name = 'blob1.txt'
-        container_name = self._get_container_reference()
-        try:
-            container = self.bsc.create_container(container_name, public_access='blob')
-        except ResourceExistsError:
-            container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data, overwrite=True)
-
-        # Act
-        response = requests.get(blob.url)
-
-        # Assert
-        assert response.ok
-        assert data == response.content
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_public_access_blob(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        data = b'public access blob'
-        blob_name = 'blob1.txt'
-        container_name = self._get_container_reference()
-        try:
-            container = self.bsc.create_container(container_name, public_access='blob')
-        except ResourceExistsError:
-            container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data, overwrite=True)
-
-        # Act
-        service = BlobClient.from_blob_url(blob.url)
-        #self._set_test_proxy(service, self.settings)
-        content = service.download_blob().readall()
-
-        # Assert
-        assert data == content
-
-    @pytest.mark.live_test_only
-    @BlobPreparer()
     def test_sas_access_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2171,7 +2105,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -2314,7 +2248,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         self._setup(storage_account_name, storage_account_key)
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
 
         # Action 1: make sure token works
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
@@ -2351,7 +2285,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         variables = kwargs.pop("variables", {})
         byte_data = self.get_random_bytes(1024)
         # Arrange
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         service_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
 
         start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
@@ -2390,7 +2324,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
 
         # Action 1: make sure token works
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
@@ -2398,7 +2332,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert result is not None
 
         # Action 2: change token value to make request fail
-        fake_credential = self.generate_fake_token()
+        fake_credential = FakeTokenCredential()
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=fake_credential)
         with pytest.raises(ClientAuthenticationError):
             service.get_service_properties()
@@ -2417,7 +2351,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
         blob_data = b'Helloworld'
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
 
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
         container = service.get_container_client(container_name)
@@ -2442,7 +2376,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Setup
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
         container = service.get_container_client(container_name)
         try:
@@ -2601,11 +2535,85 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         self._setup(storage_account_name, storage_account_key)
-        info = self.bsc.get_account_information()
+        bsc_info = self.bsc.get_account_information()
+        container_client = self.bsc.get_container_client(self.container_name)
+        cc_info = container_client.get_account_information()
+        blob_client = self._create_blob()
+        bc_info = blob_client.get_account_information()
 
         # Assert
-        assert info.get('sku_name') is not None
-        assert info.get('account_kind') is not None
+        assert bsc_info.get('sku_name') is not None
+        assert bsc_info.get('account_kind') is not None
+        assert not bsc_info.get('is_hns_enabled')
+        assert cc_info.get('sku_name') is not None
+        assert cc_info.get('account_kind') is not None
+        assert not cc_info.get('is_hns_enabled')
+        assert bc_info.get('sku_name') is not None
+        assert bc_info.get('account_kind') is not None
+        assert not bc_info.get('is_hns_enabled')
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_account_information_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+
+        account_token = self.generate_sas(
+            generate_account_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        container_token = self.generate_sas(
+            generate_container_sas,
+            account_name=storage_account_name,
+            container_name=self.container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            container_name=self.container_name,
+            blob_name=self._get_blob_reference(),
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=account_token)
+        bsc_info = bsc.get_account_information()
+        container_client = ContainerClient(
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            credential=container_token)
+        cc_info = container_client.get_account_information()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            self._get_blob_reference(),
+            credential=blob_token)
+        bc_info = blob_client.get_account_information()
+
+        # Assert
+        assert bsc_info.get('sku_name') is not None
+        assert bsc_info.get('account_kind') is not None
+        assert not bsc_info.get('is_hns_enabled')
+        assert cc_info.get('sku_name') is not None
+        assert cc_info.get('account_kind') is not None
+        assert not cc_info.get('is_hns_enabled')
+        assert bc_info.get('sku_name') is not None
+        assert bc_info.get('account_kind') is not None
+        assert not bc_info.get('is_hns_enabled')
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -3023,7 +3031,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         def fail_response(response):
             response.http_response.status_code = 408
-        token_credential = self.generate_fake_token()
+        token_credential = FakeTokenCredential()
         retry = LinearRetry(backoff=2, random_jitter_range=1, retry_total=4)
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential, retry_policy=retry)
@@ -3046,7 +3054,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3097,7 +3105,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3140,7 +3148,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3189,7 +3197,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3322,7 +3330,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self.bsc.list_containers()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"), credential=token_credential,
             audience=f'https://{storage_account_name}.blob.core.windows.net'
@@ -3345,7 +3353,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobClient)
         blob = BlobClient(
             self.bsc.url, container_name=self.container_name, blob_name=blob_name,
             credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
@@ -3365,9 +3373,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Generate an invalid credential
         creds = ClientSecretCredential(
-            self.get_settings_value("TENANT_ID"),
-            self.get_settings_value("CLIENT_ID"),
-            self.get_settings_value("CLIENT_SECRET") + 'a'
+            "00000000-0000-0000-0000-000000000000",
+            "00000000-0000-0000-0000-000000000000",
+            "00000000-0000-0000-0000-000000000000" + 'a'
         )
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)

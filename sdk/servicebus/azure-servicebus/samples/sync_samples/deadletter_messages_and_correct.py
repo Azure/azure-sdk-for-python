@@ -15,9 +15,10 @@ to the sample `receive_deadlettered_messages.py`.
 
 import os
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue, ServiceBusClient
+from azure.identity import DefaultAzureCredential
 
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 def send_messages(servicebus_client, num_messages):
@@ -91,7 +92,8 @@ def fix_deadletters(servicebus_client):
                 receiver.complete_message(msg)
 
 if __name__=="__main__":
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
                                                         sub_queue=ServiceBusSubQueue.DEAD_LETTER)

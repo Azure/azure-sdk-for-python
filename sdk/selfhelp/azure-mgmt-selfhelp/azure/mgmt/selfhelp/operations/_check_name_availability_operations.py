@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -35,7 +40,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_post_request(scope: str, **kwargs: Any) -> HttpRequest:
+def build_check_availability_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -82,7 +87,7 @@ class CheckNameAvailabilityOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def post(
+    def check_availability(
         self,
         scope: str,
         check_name_availability_request: Optional[_models.CheckNameAvailabilityRequest] = None,
@@ -109,7 +114,7 @@ class CheckNameAvailabilityOperations:
         """
 
     @overload
-    def post(
+    def check_availability(
         self,
         scope: str,
         check_name_availability_request: Optional[IO[bytes]] = None,
@@ -136,7 +141,7 @@ class CheckNameAvailabilityOperations:
         """
 
     @distributed_trace
-    def post(
+    def check_availability(
         self,
         scope: str,
         check_name_availability_request: Optional[Union[_models.CheckNameAvailabilityRequest, IO[bytes]]] = None,
@@ -157,7 +162,7 @@ class CheckNameAvailabilityOperations:
         :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -183,7 +188,7 @@ class CheckNameAvailabilityOperations:
             else:
                 _json = None
 
-        _request = build_post_request(
+        _request = build_check_availability_request(
             scope=scope,
             api_version=api_version,
             content_type=content_type,

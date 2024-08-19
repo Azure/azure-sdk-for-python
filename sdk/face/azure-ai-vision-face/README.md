@@ -1,4 +1,4 @@
-# Azure Ai Vision Face client library for Python
+# Azure AI Face client library for Python
 
 The Azure AI Face service provides AI algorithms that detect, recognize, and analyze human faces in images. It includes the following main features:
 
@@ -24,13 +24,13 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 - Your Azure account must have a `Cognitive Services Contributor` role assigned in order for you to agree to the responsible AI terms and create a resource. To get this role assigned to your account, follow the steps in the [Assign roles][azure_role_assignment] documentation, or contact your administrator.
 - Once you have sufficient permissions to control your Azure subscription, you need either
   * an [Azure Face account][azure_portal_list_face_account] or
-  * an [Azure Cognitive Service account][azure_portal_list_cognitive_service_account]
+  * an [Azure AI services multi-service account][azure_portal_list_cognitive_service_account]
 
-### Create a Face or a Cognitive Services resource
+### Create a Face or an Azure AI services multi-service account
 
-Azure AI Face supports both [multi-service][azure_cognitive_service_account] and single-service access. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Face access only, create a Face resource. Please note that you will need a single-service resource if you intend to use [Microsoft Entra ID authentication](#create-the-client-with-an-azure-active-directory-credential).
+Azure AI Face supports both [multi-service][azure_cognitive_service_account] and single-service access. Create an Azure AI services multi-service account if you plan to access multiple Azure AI services under a single endpoint/key. For Face access only, create a Face resource.
 
-* To create a new Face or Cognitive Services account, you can use [Azure Portal][azure_portal_create_face_account], [Azure PowerShell][quick_start_create_account_via_azure_powershell], or [Azure CLI][quick_start_create_account_via_azure_cli].
+* To create a new Face or Azure AI services multi-service account, you can use [Azure Portal][azure_portal_create_face_account], [Azure PowerShell][quick_start_create_account_via_azure_powershell], or [Azure CLI][quick_start_create_account_via_azure_cli].
 
 ### Install the package
 
@@ -62,31 +62,12 @@ Regional endpoint: https://<region>.api.cognitive.microsoft.com/
 Custom subdomain: https://<resource-name>.cognitiveservices.azure.com/
 ```
 
-A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support Microsoft Entra ID authentication.
+A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support Microsoft Entra ID authentication. If you'd like migrate your resource to use custom subdomain, follow the instructions [here][how_to_migrate_resource_to_custom_subdomain].
 
-A custom subdomain, on the other hand, is a name that is unique to the Face resource. They can only be used by [single-service resources][azure_portal_create_face_account].
+A custom subdomain, on the other hand, is a name that is unique to the resource. Once created and linked to a resource, it cannot be modified.
 
 
-#### Create the client with AzureKeyCredential
-
-To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
-You can get the API key for your Face resource using the [Azure Portal][get_key_via_azure_portal] or [Azure CLI][get_key_via_azure_cli]:
-
-```bash
-# Get the API keys for the Face resource
-az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
-```
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.face import FaceClient
-
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-face_client = FaceClient(endpoint, credential)
-```
-
-#### Create the client with an Microsoft Entra ID credential
+#### Create the client with a Microsoft Entra ID credential
 
 `AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also authenticate with Microsoft Entra ID using the [azure-identity][azure_sdk_python_identity] library.
 Note that regional endpoints do not support Microsoft Entra ID authentication. Create a [custom subdomain][custom_subdomain] name for your resource in order to use this type of authentication.
@@ -115,6 +96,26 @@ credential = DefaultAzureCredential()
 face_client = FaceClient(endpoint, credential)
 ```
 
+#### Create the client with AzureKeyCredential
+
+To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
+You can get the API key for your Face resource using the [Azure Portal][get_key_via_azure_portal] or [Azure CLI][get_key_via_azure_cli]:
+
+```bash
+# Get the API keys for the Face resource
+az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
+```
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.vision.face import FaceClient
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+face_client = FaceClient(endpoint, credential)
+```
+
+
 ## Key concepts
 
 ### FaceClient
@@ -125,7 +126,7 @@ face_client = FaceClient(endpoint, credential)
    and optionally with landmarks, and face-related attributes. This operation is required as a first step in all the
    other face recognition scenarios.
  - Face recognition: Confirm that a user is who they claim to be based on how closely their face data matches the target face.
-   It includes Face verification ("one-to-one" matching) and Face identification ("one-to-many" matching).
+   It includes Face verification ("one-to-one" matching).
  - Finding similar faces from a smaller set of faces that look similar to the target face.
  - Grouping faces into several smaller groups based on similarity.
 
@@ -196,8 +197,8 @@ Face Liveness detection can be used to determine if a face in an input video str
 The goal of liveness detection is to ensure that the system is interacting with a physically present live person at
 the time of authentication. The whole process of authentication is called a session.
 
-There are two different components in the authentication: a mobile application and an app server/orchestrator.
-Before uploading the video stream, the app server has to create a session, and then the mobile client could upload
+There are two different components in the authentication: a frontend application and an app server/orchestrator.
+Before uploading the video stream, the app server has to create a session, and then the frontend client could upload
 the payload with a `session authorization token` to call the liveness detection. The app server can query for the
 liveness detection result and audit logs anytime until the session is deleted.
 
@@ -205,8 +206,8 @@ The Liveness detection operation can not only confirm if the input is live or sp
 belongs to the expected person's face, which is called **liveness detection with face verification**. For the detail
 information, please refer to the [tutorial][liveness_tutorial].
 
-This package is only responsible for creating, quering, deleting a session and getting audit logs. For how to perform a
-liveness detection, please see the sample of [mobile applications][integrate_liveness_into_mobile_application].
+This package is only responsible for app server to create, query, delete a session and get audit logs. For how to
+integrate the UI and the code into your native frontend application, please follow instructions in the [tutorial][liveness_tutorial].
 
 Here is an example to create and get the liveness detection result of a session.
 ```python
@@ -361,6 +362,7 @@ additional questions or comments.
 [get_key_via_azure_portal]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#get-the-keys-for-your-resource
 [get_key_via_azure_cli]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli#get-the-keys-for-your-resource
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
+[how_to_migrate_resource_to_custom_subdomain]: https://learn.microsoft.com/azure/ai-services/cognitive-services-custom-subdomains#how-does-this-impact-existing-resources
 [azure_sdk_python_azure_key_credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [azure_sdk_python_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
@@ -375,7 +377,6 @@ additional questions or comments.
 [evaluate_different_detection_models]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model#evaluate-different-models
 [recommended_recognition_model]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model#recommended-model
 [liveness_tutorial]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness
-[integrate_liveness_into_mobile_application]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application
 
 [python_azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [face_errors]: https://aka.ms/face-error-codes-and-messages

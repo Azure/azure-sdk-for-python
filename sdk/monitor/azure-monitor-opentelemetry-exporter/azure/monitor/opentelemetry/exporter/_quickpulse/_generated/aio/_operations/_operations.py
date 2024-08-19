@@ -150,7 +150,7 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
+    # @distributed_trace_async
     async def is_subscribed(
         self,
         endpoint: str = "https://global.livediagnostics.monitor.azure.com",
@@ -360,7 +360,7 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
+    # @distributed_trace_async
     async def publish(
         self,
         endpoint: str = "https://global.livediagnostics.monitor.azure.com",

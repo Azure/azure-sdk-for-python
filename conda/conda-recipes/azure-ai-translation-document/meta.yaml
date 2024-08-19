@@ -51,7 +51,7 @@ about:
     Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice. 
     Check the translation status and progress of each document in the translation operation. 
     Apply a custom translation model or glossaries to tailor translation to your specific case.
-    Please see https://aka.ms/azsdk/conda/releases/translation for version details.
+    Please see https://aka.ms/azsdk/conda/releases/document-translation for version details.
   doc_url: 
   dev_url: 
 

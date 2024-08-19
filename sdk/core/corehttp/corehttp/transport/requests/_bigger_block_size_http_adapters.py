@@ -27,7 +27,7 @@
 import sys
 from typing import MutableMapping, Optional
 
-from requests.adapters import HTTPAdapter  # pylint: disable=all
+from requests.adapters import HTTPAdapter  # pylint: disable=networking-import-outside-azure-core-transport
 from urllib3.connectionpool import ConnectionPool
 
 

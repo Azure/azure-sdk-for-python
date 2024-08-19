@@ -8,3 +8,4 @@ azure-identity
 opencensus-ext-azure
 python-dotenv
 websocket-client
+azure-identity

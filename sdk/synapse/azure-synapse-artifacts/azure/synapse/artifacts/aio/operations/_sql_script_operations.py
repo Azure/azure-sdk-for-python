@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -64,7 +64,6 @@ class SqlScriptOperations:
     def get_sql_scripts_by_workspace(self, **kwargs: Any) -> AsyncIterable["_models.SqlScriptResource"]:
         """Lists sql scripts.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SqlScriptResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -139,7 +138,7 @@ class SqlScriptOperations:
     async def _create_or_update_sql_script_initial(
         self,
         sql_script_name: str,
-        sql_script: Union[_models.SqlScriptResource, IO],
+        sql_script: Union[_models.SqlScriptResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.SqlScriptResource]:
@@ -224,14 +223,6 @@ class SqlScriptOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -242,7 +233,7 @@ class SqlScriptOperations:
     async def begin_create_or_update_sql_script(
         self,
         sql_script_name: str,
-        sql_script: IO,
+        sql_script: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -253,21 +244,13 @@ class SqlScriptOperations:
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
         :param sql_script: Sql Script resource definition. Required.
-        :type sql_script: IO
+        :type sql_script: IO[bytes]
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -278,7 +261,7 @@ class SqlScriptOperations:
     async def begin_create_or_update_sql_script(
         self,
         sql_script_name: str,
-        sql_script: Union[_models.SqlScriptResource, IO],
+        sql_script: Union[_models.SqlScriptResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlScriptResource]:
@@ -286,23 +269,12 @@ class SqlScriptOperations:
 
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
-        :param sql_script: Sql Script resource definition. Is either a SqlScriptResource type or a IO
-         type. Required.
-        :type sql_script: ~azure.synapse.artifacts.models.SqlScriptResource or IO
+        :param sql_script: Sql Script resource definition. Is either a SqlScriptResource type or a
+         IO[bytes] type. Required.
+        :type sql_script: ~azure.synapse.artifacts.models.SqlScriptResource or IO[bytes]
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -351,13 +323,15 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.SqlScriptResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.SqlScriptResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_sql_script(
@@ -371,7 +345,6 @@ class SqlScriptOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlScriptResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlScriptResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -472,14 +445,6 @@ class SqlScriptOperations:
 
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -521,13 +486,13 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _rename_sql_script_initial(  # pylint: disable=inconsistent-return-statements
         self, sql_script_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -588,14 +553,6 @@ class SqlScriptOperations:
         :type sql_script_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -640,10 +597,10 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

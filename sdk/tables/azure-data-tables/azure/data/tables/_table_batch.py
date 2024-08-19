@@ -246,7 +246,7 @@ class TableBatchOperations(object):
             table=self.table_name,
             partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
             row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
-            etag=etag,  # type: ignore[arg-type] # Set None to skip checking etag.
+            etag=etag or "*",
             match_condition=_get_match_condition(
                 etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
             ),

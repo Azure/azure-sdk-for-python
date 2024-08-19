@@ -13,6 +13,7 @@ from ._mobile_networks_operations import MobileNetworksOperations
 from ._operations import Operations
 from ._packet_captures_operations import PacketCapturesOperations
 from ._packet_core_control_planes_operations import PacketCoreControlPlanesOperations
+from ._routing_info_operations import RoutingInfoOperations
 from ._packet_core_control_plane_versions_operations import PacketCoreControlPlaneVersionsOperations
 from ._packet_core_data_planes_operations import PacketCoreDataPlanesOperations
 from ._services_operations import ServicesOperations
@@ -36,6 +37,7 @@ __all__ = [
     "Operations",
     "PacketCapturesOperations",
     "PacketCoreControlPlanesOperations",
+    "RoutingInfoOperations",
     "PacketCoreControlPlaneVersionsOperations",
     "PacketCoreDataPlanesOperations",
     "ServicesOperations",

@@ -1,5 +1,13 @@
 # Release History
 
+## 2.0.1 (2024-06-26)
+
+### Other Changes
+
+- This package is no longer being maintained. Please refer to the samples in the [Bing Search for Python repo](https://github.com/microsoft/bing-search-sdk-for-python/tree/main) instead.
+
+For additional support, please open a new issue in the [Issues](https://github.com/microsoft/bing-search-sdk-for-python/issues) section of the Microsoft Bing Search SDK for Python repo.
+
 ## 2.0.0 (2020-01-12)
 
 **Breaking changes**

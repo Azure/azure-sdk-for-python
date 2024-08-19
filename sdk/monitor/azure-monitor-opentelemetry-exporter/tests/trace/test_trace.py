@@ -13,7 +13,12 @@ from unittest import mock
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.semconv.attributes.exception_attributes import (
+    EXCEPTION_ESCAPED,
+    EXCEPTION_MESSAGE,
+    EXCEPTION_STACKTRACE,
+    EXCEPTION_TYPE,
+)
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -345,6 +350,34 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.data, "https://192.168.0.1:8080/path/12314/?q=ddds#123")
+
+        # result_code
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.url": "https://www.example.com",
+            "http.status_code": None
+        }
+        envelope = exporter._span_to_envelope(span)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.url": "https://www.example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.url": "https://www.example.com",
+            "http.status_code": "",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
     def test_span_to_envelope_client_db(self):
         exporter = self._exporter
@@ -857,7 +890,24 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "400")
 
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "0")
+
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": "",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "0")
 
         # location
         span._attributes = {
@@ -1135,10 +1185,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             kind=SpanKind.CLIENT,
         )
         attributes = {
-            SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
-            SpanAttributes.EXCEPTION_MESSAGE: "zero division error",
-            SpanAttributes.EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
-            SpanAttributes.EXCEPTION_ESCAPED: "True",
+            EXCEPTION_TYPE: "ZeroDivisionError",
+            EXCEPTION_MESSAGE: "zero division error",
+            EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
+            EXCEPTION_ESCAPED: "True",
         }
         span.add_event("exception", attributes, time)
         span.start()

@@ -67,7 +67,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
 class CustomDomain(_serialization.Model):
     """The custom domain assigned to this storage account. This can be set via Update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The custom domain name. Name is the CNAME source. Required.
     :vartype name: str
@@ -339,10 +339,10 @@ class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
         self.secondary_endpoints = secondary_endpoints
 
 
-class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
+class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
     """The parameters used to check the availability of the storage account name.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -374,7 +374,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 class StorageAccountCreateParameters(_serialization.Model):
     """The parameters to provide for the account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location of the resource. This will be one of the supported and registered
      Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a resource
@@ -481,7 +481,7 @@ class StorageAccountListResult(_serialization.Model):
 class StorageAccountRegenerateKeyParameters(_serialization.Model):
     """The parameters used to regenerate the storage account key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Required.
     :vartype key_name: str
@@ -556,7 +556,7 @@ class StorageAccountUpdateParameters(_serialization.Model):
 class Usage(_serialization.Model):
     """Describes Storage Resource Usage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar unit: The unit of measurement. Required. Known values are: "Count", "Bytes", "Seconds",
      "Percent", "CountsPerSecond", and "BytesPerSecond".
