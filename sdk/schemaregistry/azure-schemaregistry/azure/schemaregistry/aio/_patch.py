@@ -17,8 +17,8 @@ from typing import (
     IO,
     Dict,
 )
-from typing_extensions import Self
 from functools import partial
+from typing_extensions import Self
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
