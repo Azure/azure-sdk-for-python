@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import RadiologyInsightsClientConfiguration
-from ._operations import RadiologyInsightsClientOperationsMixin
+from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class RadiologyInsightsClient(
-    RadiologyInsightsClientOperationsMixin
+    GeneratedRadiologyInsightsClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """RadiologyInsightsClient.
 
