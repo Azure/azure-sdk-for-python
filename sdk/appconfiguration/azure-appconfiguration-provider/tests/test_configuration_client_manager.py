@@ -23,7 +23,7 @@ class MockClient:
 class TestConfigurationClientManager(unittest.TestCase):
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_connection_string")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_connection_string")
     def test_create_client_manager_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
@@ -64,7 +64,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_credential")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
     def test_create_client_manager_endpoint(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
@@ -102,7 +102,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_credential")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
     def test_refresh_clients_credential(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
@@ -185,7 +185,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_connection_string")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_connection_string")
     def test_refresh_clients_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
@@ -282,7 +282,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.ConfigurationClientWrapper.from_credential")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
     def test_calculate_backoff(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_find_auto_failover_endpoints.return_value = []
