@@ -390,7 +390,7 @@ class SchemaProperties:
         self.name: str = kwargs.pop("name")
         self.version: int = kwargs.pop("version")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
             f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
@@ -411,7 +411,7 @@ class Schema:
         self.definition: str = kwargs.pop("definition")
         self.properties: SchemaProperties = kwargs.pop("properties")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
 
 
