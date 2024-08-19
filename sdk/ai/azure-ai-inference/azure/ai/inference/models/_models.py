@@ -800,7 +800,7 @@ class FunctionDefinition(_model_base.Model):
      interpreting its parameters.
     :vartype description: str
     :ivar parameters: The parameters the function accepts, described as a JSON Schema object.
-    :vartype parameters: dict[str, any]
+    :vartype parameters: any
     """
 
     name: str = rest_field()
@@ -809,7 +809,7 @@ class FunctionDefinition(_model_base.Model):
     """A description of what the function does. The model will use this description when selecting the
      function and
      interpreting its parameters."""
-    parameters: Optional[Dict[str, Any]] = rest_field()
+    parameters: Optional[Any] = rest_field()
     """The parameters the function accepts, described as a JSON Schema object."""
 
     @overload
@@ -818,7 +818,7 @@ class FunctionDefinition(_model_base.Model):
         *,
         name: str,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, Any]] = None,
+        parameters: Optional[Any] = None,
     ): ...
 
     @overload

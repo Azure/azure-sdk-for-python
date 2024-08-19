@@ -46,11 +46,6 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 _LOGGER = logging.getLogger(__name__)
@@ -909,7 +904,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 
@@ -1187,7 +1182,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 

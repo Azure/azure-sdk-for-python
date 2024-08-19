@@ -53,11 +53,6 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
@@ -924,7 +919,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 
@@ -1202,7 +1197,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 
