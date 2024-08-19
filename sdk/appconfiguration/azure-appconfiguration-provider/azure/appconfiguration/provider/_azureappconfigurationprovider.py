@@ -8,8 +8,6 @@ import json
 import random
 import time
 import datetime
-import hashlib
-import base64
 from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
@@ -47,14 +45,6 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
-    TELEMETRY_KEY,
-    METADATA_KEY,
-    ETAG_KEY,
-    FEATURE_FLAG_REFERENCE_KEY,
-    FEATURE_FLAG_ID_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     CUSTOM_FILTER_KEY,
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
@@ -614,31 +604,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._on_refresh_success()
         finally:
             self._refresh_lock.release()
-
-    @staticmethod
-    def _calculate_feature_id(key, label):
-        basic_value = f"{key}\n"
-        if label and not label.isspace():
-            basic_value += f"{label}"
-        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
-        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
-        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
-        return encoded_flag[: encoded_flag.find(b"=")]
- 
-                if TELEMETRY_KEY in feature_flag_value:
-                    if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
-                        feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
-
-                    if not endpoint.endswith("/"):
-                        endpoint += "/"
-                    feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-                    if feature_flag.label and not feature_flag.label.isspace():
-                        feature_flag_reference += f"?label={feature_flag.label}"
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
-                        feature_flag.key, feature_flag.label
-                    )
 
     def _load_all(self, **kwargs):
         active_clients = self._replica_client_manager.get_active_clients()

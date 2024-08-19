@@ -7,6 +7,8 @@ from logging import getLogger
 import json
 import time
 import random
+import hashlib
+import base64
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
 from typing_extensions import Self
@@ -20,8 +22,14 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
 )
 from ._models import SettingSelector
-from ._constants import FEATURE_FLAG_PREFIX
-
+from ._constants import (
+    FEATURE_FLAG_PREFIX,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
+)
 
 @dataclass
 class ConfigurationClientWrapper:
@@ -150,6 +158,17 @@ class ConfigurationClientWrapper:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label and not label.isspace():
+            basic_value += f"{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
+
     @distributed_trace
     def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
@@ -163,7 +182,22 @@ class ConfigurationClientWrapper:
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
+                feature_flag_value = json.loads(feature_flag.value)
+                if TELEMETRY_KEY in feature_flag_value:
+                    if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                        feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+                    if not endpoint.endswith("/"):
+                        endpoint += "/"
+                    feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+                    if feature_flag.label and not feature_flag.label.isspace():
+                        feature_flag_reference += f"?label={feature_flag.label}"
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                        feature_flag.key, feature_flag.label
+                    )
+                loaded_feature_flags.append(feature_flag_value)
 
                 if feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
