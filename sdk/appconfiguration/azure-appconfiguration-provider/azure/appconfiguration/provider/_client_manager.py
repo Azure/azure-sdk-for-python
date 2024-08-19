@@ -20,7 +20,16 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
 )
 from ._models import SettingSelector
-from ._constants import FEATURE_FLAG_PREFIX
+from ._constants import (
+    FEATURE_FLAG_PREFIX,
+    PERCENTAGE_FILTER_NAMES,
+    TIME_WINDOW_FILTER_NAMES,
+    TARGETING_FILTER_NAMES,
+    CUSTOM_FILTER_KEY,
+    PERCENTAGE_FILTER_KEY,
+    TIME_WINDOW_FILTER_KEY,
+    TARGETING_FILTER_KEY,
+)
 from ._discovery import find_auto_failover_endpoints
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
@@ -162,6 +171,7 @@ class _ConfigurationClientWrapper:
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        filters_used = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
@@ -171,7 +181,17 @@ class _ConfigurationClientWrapper:
 
                 if feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-        return loaded_feature_flags, feature_flag_sentinel_keys
+                if feature_flag.filters:
+                    for filter in feature_flag.filters:
+                        if filter.get("name") in PERCENTAGE_FILTER_NAMES:
+                            filters_used[PERCENTAGE_FILTER_KEY] = True
+                        elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
+                            filters_used[TIME_WINDOW_FILTER_KEY] = True
+                        elif filter.get("name") in TARGETING_FILTER_NAMES:
+                            filters_used[TARGETING_FILTER_KEY] = True
+                        else:
+                            filters_used[CUSTOM_FILTER_KEY] = True
+        return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
 
     @distributed_trace
     def refresh_configuration_settings(
@@ -227,11 +247,11 @@ class _ConfigurationClientWrapper:
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
-                feature_flags, feature_flag_sentinel_keys = self.load_feature_flags(
+                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
                     feature_flag_selectors, True, **kwargs
                 )
-                return True, feature_flag_sentinel_keys, feature_flags
-        return False, None, None
+                return True, feature_flag_sentinel_keys, feature_flags, filters_used
+        return False, None, None, []
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:

@@ -564,9 +564,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             self._feature_filter_usage,
                             self._uses_key_vault,
                         )
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags = client.refresh_feature_flags(
+                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = client.refresh_feature_flags(
                             self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
                         )
+                        self._feature_filter_usage = filters_used
 
                         if need_refresh or need_ff_refresh:
                             self._dict[FEATURE_MANAGEMENT_KEY] = {}
@@ -604,9 +605,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(
+                    feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
                     )
+                    self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys
