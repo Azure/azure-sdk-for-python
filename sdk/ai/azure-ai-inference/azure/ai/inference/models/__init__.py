@@ -8,7 +8,7 @@
 
 from ._models import AssistantMessage
 from ._models import ChatChoice
-from ._models import ChatCompletions
+from ._patch import ChatCompletions
 from ._models import ChatCompletionsFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsResponseFormat
@@ -22,7 +22,7 @@ from ._models import CompletionsUsage
 from ._models import ContentItem
 from ._models import EmbeddingInput
 from ._models import EmbeddingItem
-from ._models import EmbeddingsResult
+from ._patch import EmbeddingsResult
 from ._models import EmbeddingsUsage
 from ._models import FunctionCall
 from ._models import FunctionDefinition

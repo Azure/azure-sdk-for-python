@@ -33,13 +33,13 @@ if LOGGING_ENABLED:
 #
 # Define these environment variables. They should point to a Mistral Large model
 # hosted on MaaS, or any other MaaS model that suppots chat completions with tools.
-# AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+# AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
 # AZURE_AI_CHAT_KEY=<32-char-api-key>
 #
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_chat",
-    azure_ai_chat_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    azure_ai_chat_endpoint="https://your-deployment-name.your-azure-region.models.ai.azure.com",
     azure_ai_chat_key="00000000000000000000000000000000",
 )
 
@@ -62,13 +62,13 @@ ServicePreparerAOAIChatCompletions = functools.partial(
 #
 # Define these environment variables. They should point to a Cohere model
 # hosted on MaaS, or any other MaaS model that text embeddings.
-# AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+# AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
 # AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
 #
 ServicePreparerEmbeddings = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_embeddings",
-    azure_ai_embeddings_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    azure_ai_embeddings_endpoint="https://your-deployment-name.your-azure-region.models.ai.azure.com",
     azure_ai_embeddings_key="00000000000000000000000000000000",
 )
 

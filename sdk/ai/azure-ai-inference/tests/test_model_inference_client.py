@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import json
 import azure.ai.inference as sdk
 
 from model_inference_test_base import (
@@ -26,6 +27,56 @@ class TestModelClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
+    # Test custom code in ChatCompletions class to print its content in a nice multi-line JSON format
+    def test_print_method_of_chat_completions_class(self, **kwargs):
+        response = sdk.models.ChatCompletions(
+            {
+                "choices": [
+                    {
+                        "message": {
+                            "content": "some content",
+                            "role": "assistant",
+                        }
+                    }
+                ]
+            }
+        )
+        print(response) # This will invoke the customized __str__ method
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    # Test custom code in EmbeddingsResult class to print its content in a nice multi-line JSON format
+    def test_print_method_of_embeddings_result_class(self, **kwargs):
+        response = sdk.models.ChatCompletions(
+            {
+                "id": "f060ce24-0bbf-4aef-8341-62659b6e19be",
+                "data": [
+                    {
+                        "index": 0,
+                        "embedding": [
+                            0.0013399124,
+                            -0.01576233,
+                        ]
+                    },
+                    {
+                        "index": 1,
+                        "embedding": [
+                            0.036590576,
+                            -0.0059547424,
+                        ]
+                    },
+                ],
+                "model": "model-name",
+                "usage": {
+                    "prompt_tokens": 6,
+                    "completion_tokens": 0,
+                    "total_tokens": 6
+                }
+            }
+        )
+        print(response) # This will invoke the customized __str__ method
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    # Test custom code in ImageUrl class to load an image file
     def test_image_url_load(self, **kwargs):
         local_folder = os.path.dirname(os.path.abspath(__file__))
         image_file = os.path.join(local_folder, "test_image1.png")

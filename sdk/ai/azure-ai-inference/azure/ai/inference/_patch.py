@@ -13,10 +13,7 @@ Why do we patch auto-generated code?
 3. Add support for setting sticky chat completions/embeddings input arguments in the client constructor
 4. Add support for get_model_info, while caching the result (all clients)
 5. Add support for chat completion streaming (ChatCompletionsClient client only)
-6. __enter__ (and __aenter__) method had to be overridden due to
-   https://github.com/Azure/autorest.python/issues/2619 (all clients).
-   Otherwise intellisense did not show the patched public methods on the client object,
-   when the client is defined using context manager ("with" statement).
+6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py).
 
 """
@@ -651,7 +648,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         if _stream:
             return _models.StreamingChatCompletions(response)
 
-        return _deserialize(_models._models.ChatCompletions, response.json())  # pylint: disable=protected-access
+        return _deserialize(_models._patch.ChatCompletions, response.json())  # pylint: disable=protected-access
 
     @distributed_trace
     def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
@@ -669,12 +666,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    def __enter__(self) -> Self:
-        self._client.__enter__()
-        return self
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -933,7 +924,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
 
         return deserialized  # type: ignore
 
@@ -953,12 +944,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    def __enter__(self) -> Self:
-        self._client.__enter__()
-        return self
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -1217,7 +1202,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
 
         return deserialized  # type: ignore
 
@@ -1237,12 +1222,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    def __enter__(self) -> Self:
-        self._client.__enter__()
-        return self
 
 
 __all__: List[str] = [

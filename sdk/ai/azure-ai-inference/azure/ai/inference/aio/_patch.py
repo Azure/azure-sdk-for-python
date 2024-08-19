@@ -633,7 +633,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         if _stream:
             return _models.AsyncStreamingChatCompletions(response)
 
-        return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
+        return _deserialize(_models._patch.ChatCompletions, response.json())  # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
@@ -651,12 +651,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -915,7 +909,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
 
         return deserialized  # type: ignore
 
@@ -935,12 +929,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -1199,7 +1187,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json())
 
         return deserialized  # type: ignore
 
@@ -1219,12 +1207,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 __all__: List[str] = [
