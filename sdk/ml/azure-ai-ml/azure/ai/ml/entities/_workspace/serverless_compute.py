@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._schema._utils.utils import ArmId

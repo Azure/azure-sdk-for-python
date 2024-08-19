@@ -10,7 +10,7 @@ from azure.ai.ml.entities import (
     Hub,
 )
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     Workspace as RestWorkspace,
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
@@ -26,7 +26,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     # this one only for workspace hubs
     WorkspaceHubConfig as RestWorkspaceHubConfig,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.operations import (
+from azure.ai.ml._restclient.v2024_07_01_preview.operations import (
     WorkspacesOperations as RestClientWorkspacesOperations,
     ManagedNetworkSettingsRuleOperations as RestClientManagedNetworkSettingsRuleOperations,
 )

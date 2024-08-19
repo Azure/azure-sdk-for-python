@@ -33852,6 +33852,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
      ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
     :ivar soft_delete_retention_in_days: Retention time in days after workspace get soft deleted.
     :vartype soft_delete_retention_in_days: int
+    :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+     the workspace.
+    :vartype system_datastores_auth_mode: str
     :ivar v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided by
      the v2 API.
     :vartype v1_legacy_mode: bool
@@ -33878,6 +33881,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
     }
 
@@ -33904,6 +33908,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         serverless_compute_settings: Optional["ServerlessComputeSettings"] = None,
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
         soft_delete_retention_in_days: Optional[int] = None,
+        system_datastores_auth_mode: Optional[str] = None,
         v1_legacy_mode: Optional[bool] = None,
         **kwargs
     ):
@@ -33958,6 +33963,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :keyword soft_delete_retention_in_days: Retention time in days after workspace get soft
          deleted.
         :paramtype soft_delete_retention_in_days: int
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
@@ -33983,4 +33991,5 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.serverless_compute_settings = serverless_compute_settings
         self.service_managed_resources_settings = service_managed_resources_settings
         self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.system_datastores_auth_mode = system_datastores_auth_mode
         self.v1_legacy_mode = v1_legacy_mode

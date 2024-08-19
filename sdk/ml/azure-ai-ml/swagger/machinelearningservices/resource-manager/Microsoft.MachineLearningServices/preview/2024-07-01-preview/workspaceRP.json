@@ -7111,6 +7111,10 @@
           "description": "Retention time in days after workspace get soft deleted.",
           "type": "integer"
         },
+        "systemDatastoresAuthMode": {
+          "description": "The auth mode used for accessing the system datastores of the workspace.",
+          "type": "string"
+        },
         "v1LegacyMode": {
           "description": "Enabling v1_legacy_mode may prevent you from using features provided by the v2 API.",
           "type": "boolean"

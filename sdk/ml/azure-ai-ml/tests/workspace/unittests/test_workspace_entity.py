@@ -4,30 +4,9 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ServerlessComputeSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml.constants._workspace import IsolationMode
+from azure.ai.ml._restclient.v2024_07_01_preview.models import Workspace
 from azure.ai.ml.entities import (
-    FqdnDestination,
-    PrivateEndpointDestination,
     ServerlessComputeSettings,
-    ServiceTagDestination,
     Workspace,
 )
 
