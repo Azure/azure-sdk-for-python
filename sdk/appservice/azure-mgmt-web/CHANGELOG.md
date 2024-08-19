@@ -2,7 +2,7 @@
 
 ## 7.3.1 (2024-08-07)
 
-### Other Changes
+### Bugs Fixed
 
   - Fix type of property instance_count in model FunctionsAlwaysReadyConfig from float to int
   - Fix type of property maximum_instance_count in model FunctionsScaleAndConcurrency from float to int
