@@ -9,8 +9,6 @@ extends:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-cosmos-azure-cloud-test-resources)
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
       MaxParallel: 6
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
