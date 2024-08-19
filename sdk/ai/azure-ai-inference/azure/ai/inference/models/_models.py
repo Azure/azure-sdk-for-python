@@ -213,7 +213,47 @@ class ChatCompletions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsFunctionToolSelection(_model_base.Model):
+class ChatCompletionsNamedToolChoice(_model_base.Model):
+    """A tool selection of a specific, named function tool that will limit chat completions to using
+    the named function.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
+     value is "function".
+    :vartype type: str
+    :ivar function: The function that should be called. Required.
+    :vartype function: ~azure.ai.inference.models.ChatCompletionsNamedToolChoiceFunction
+    """
+
+    type: Literal["function"] = rest_field()
+    """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
+     \"function\"."""
+    function: "_models.ChatCompletionsNamedToolChoiceFunction" = rest_field()
+    """The function that should be called. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.ChatCompletionsNamedToolChoiceFunction",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
+
+
+class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
     """A tool selection of a specific, named function tool that will limit chat completions to using
     the named function.
 
@@ -242,46 +282,6 @@ class ChatCompletionsFunctionToolSelection(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsNamedToolSelection(_model_base.Model):
-    """A tool selection of a specific, named function tool that will limit chat completions to using
-    the named function.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
-     value is "function".
-    :vartype type: str
-    :ivar function: The function that should be called. Required.
-    :vartype function: ~azure.ai.inference.models.ChatCompletionsFunctionToolSelection
-    """
-
-    type: Literal["function"] = rest_field()
-    """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
-     \"function\"."""
-    function: "_models.ChatCompletionsFunctionToolSelection" = rest_field()
-    """The function that should be called. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        function: "_models.ChatCompletionsFunctionToolSelection",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["function"] = "function"
 
 
 class ChatCompletionsResponseFormat(_model_base.Model):
@@ -635,8 +635,8 @@ class EmbeddingItem(_model_base.Model):
     :ivar embedding: List of embedding values for the input prompt. These represent a measurement
      of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
-     vector. Required. Is either a [float] type or a str type.
-    :vartype embedding: list[float] or str
+     vector. Required. Is either a str type or a [float] type.
+    :vartype embedding: str or list[float]
     :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
     :vartype index: int
     """
@@ -644,7 +644,7 @@ class EmbeddingItem(_model_base.Model):
     embedding: Union["str", List[float]] = rest_field()
     """List of embedding values for the input prompt. These represent a measurement of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
-     vector. Required. Is either a [float] type or a str type."""
+     vector. Required. Is either a str type or a [float] type."""
     index: int = rest_field()
     """Index of the prompt to which the EmbeddingItem corresponds. Required."""
 

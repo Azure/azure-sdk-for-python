@@ -167,10 +167,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
     :keyword tool_choice: If specified, the model will configure which of the provided tools it can
         use for the chat completions response. Is either a Union[str,
-        "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+        "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
         Default value is None.
-    :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-        ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+    :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+        ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
     :keyword seed: If specified, the system will make a best effort to sample deterministically
         such that repeated requests with the
         same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -204,7 +204,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -246,7 +246,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -269,7 +269,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -292,7 +292,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -368,10 +368,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
         :keyword tool_choice: If specified, the model will configure which of the provided tools it can
          use for the chat completions response. Is either a Union[str,
-         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
          Default value is None.
-        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
          same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -453,7 +453,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -530,10 +530,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
         :keyword tool_choice: If specified, the model will configure which of the provided tools it can
          use for the chat completions response. Is either a Union[str,
-         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
          Default value is None.
-        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
          same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -904,7 +904,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
+            deserialized = _deserialize(
+                _models._patch.EmbeddingsResult, response.json()
+            )  # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 
@@ -1182,7 +1184,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models._patch.EmbeddingsResult, response.json()) # pylint: disable=protected-access
+            deserialized = _deserialize(
+                _models._patch.EmbeddingsResult, response.json()
+            )  # pylint: disable=protected-access
 
         return deserialized  # type: ignore
 

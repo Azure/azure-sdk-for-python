@@ -28,6 +28,7 @@ else:
 
 logger = logging.getLogger(__name__)
 
+
 class ChatCompletions(ChatCompletionsGenerated):
     """Representation of the response data from a chat completions request.
     Completions support a wide variety of tasks and generate text that continues from or
@@ -56,6 +57,7 @@ class ChatCompletions(ChatCompletionsGenerated):
         # pylint: disable=client-method-name-no-double-underscore
         return json.dumps(self.as_dict(), indent=2)
 
+
 class EmbeddingsResult(EmbeddingsResultGenerated):
     """Representation of the response data from an embeddings request.
     Embeddings measure the relatedness of text strings and are commonly used for search,
@@ -74,6 +76,7 @@ class EmbeddingsResult(EmbeddingsResultGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return json.dumps(self.as_dict(), indent=2)
+
 
 class ImageUrl(ImageUrlGenerated):
 

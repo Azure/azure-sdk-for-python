@@ -9,8 +9,8 @@
 from ._models import AssistantMessage
 from ._models import ChatChoice
 from ._patch import ChatCompletions
-from ._models import ChatCompletionsFunctionToolSelection
-from ._models import ChatCompletionsNamedToolSelection
+from ._models import ChatCompletionsNamedToolChoice
+from ._models import ChatCompletionsNamedToolChoiceFunction
 from ._models import ChatCompletionsResponseFormat
 from ._models import ChatCompletionsResponseFormatJSON
 from ._models import ChatCompletionsResponseFormatText
@@ -38,7 +38,7 @@ from ._models import TextContentItem
 from ._models import ToolMessage
 from ._models import UserMessage
 
-from ._enums import ChatCompletionsToolSelectionPreset
+from ._enums import ChatCompletionsToolChoicePreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
 from ._enums import EmbeddingEncodingFormat
@@ -56,8 +56,8 @@ __all__ = [
     "AssistantMessage",
     "ChatChoice",
     "ChatCompletions",
-    "ChatCompletionsFunctionToolSelection",
-    "ChatCompletionsNamedToolSelection",
+    "ChatCompletionsNamedToolChoice",
+    "ChatCompletionsNamedToolChoiceFunction",
     "ChatCompletionsResponseFormat",
     "ChatCompletionsResponseFormatJSON",
     "ChatCompletionsResponseFormatText",
@@ -84,7 +84,7 @@ __all__ = [
     "TextContentItem",
     "ToolMessage",
     "UserMessage",
-    "ChatCompletionsToolSelectionPreset",
+    "ChatCompletionsToolChoicePreset",
     "ChatRole",
     "CompletionsFinishReason",
     "EmbeddingEncodingFormat",

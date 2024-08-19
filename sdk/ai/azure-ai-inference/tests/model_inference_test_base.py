@@ -91,7 +91,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     REGEX_AOAI_RESULT_ID = re.compile(r"^chatcmpl-[0-9a-zA-Z]{29}$|^Sanitized$")  # cspell:disable-line
 
     # Regular expression describing the pattern of a base64 string
-    REGEX_BASE64_STRING = re.compile(r'^[A-Za-z0-9+/]+={0,3}$')
+    REGEX_BASE64_STRING = re.compile(r"^[A-Za-z0-9+/]+={0,3}$")
 
     # A couple of tool definitions to use in the tests
     TOOL1 = sdk.models.ChatCompletionsToolDefinition(
@@ -427,7 +427,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _validate_embeddings_result(
         response: sdk.models.EmbeddingsResult,
-        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT
+        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT,
     ):
         assert response is not None
         assert response.data is not None
@@ -453,7 +453,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _print_embeddings_result(
         response: sdk.models.EmbeddingsResult,
-        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT
+        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT,
     ):
         if ModelClientTestBase.PRINT_RESULT:
             print("Embeddings response:")
@@ -468,7 +468,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
                 elif encoding_format == sdk.models.EmbeddingEncodingFormat.BASE64:
                     print(
                         f"data[{item.index}] encoded (string length={len(item.embedding)}): "
-                        f"\"{item.embedding[:32]}...{item.embedding[-32:]}\""
+                        f'"{item.embedding[:32]}...{item.embedding[-32:]}"'
                     )
                 else:
                     raise ValueError(f"Unsupported encoding format: {encoding_format}")
