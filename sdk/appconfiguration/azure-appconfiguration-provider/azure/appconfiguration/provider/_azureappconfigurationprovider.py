@@ -564,8 +564,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             self._feature_filter_usage,
                             self._uses_key_vault,
                         )
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = client.refresh_feature_flags(
-                            self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
+                            client.refresh_feature_flags(
+                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                            )
                         )
                         self._feature_filter_usage = filters_used
 
