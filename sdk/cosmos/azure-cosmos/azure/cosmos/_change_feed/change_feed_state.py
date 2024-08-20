@@ -106,8 +106,8 @@ class ChangeFeedStateV1(ChangeFeedState):
             container_rid: str,
             change_feed_start_from: ChangeFeedStartFromInternal,
             partition_key_range_id: Optional[str] = None,
-            partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]] = None,
-            continuation: Optional[str] = None): # pylint: disable=line-too-long
+            partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]] = None, # pylint: disable=line-too-long
+            continuation: Optional[str] = None):
 
         self._container_link = container_link
         self._container_rid = container_rid
@@ -142,22 +142,26 @@ class ChangeFeedStateV1(ChangeFeedState):
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
-        # of the documents may not be sequential. So when reading the changeFeed by LSN, it is possible to encounter documents with lower _ts.
-        # In order to guarantee we always get the documents after customer's point start time, we will need to always pass the start time in the header.
+        # of the documents may not be sequential. So when reading the changeFeed by LSN,
+        # it is possible to encounter documents with lower _ts.
+        # In order to guarantee we always get the documents after customer's point start time,
+        # we will need to always pass the start time in the header.
         self._change_feed_start_from.populate_request_headers(request_headers)
         if self._continuation:
             request_headers[http_constants.HttpHeaders.IfNoneMatch] = self._continuation
 
     async def populate_request_headers_async(
             self,
-            routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            async_routing_provider: AsyncSmartRoutingMapProvider,
+            request_headers: Dict[str, Any]) -> None: # pylint: disable=unused-argument
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
-        # of the documents may not be sequential. So when reading the changeFeed by LSN, it is possible to encounter documents with lower _ts.
-        # In order to guarantee we always get the documents after customer's point start time, we will need to always pass the start time in the header.
+        # of the documents may not be sequential.
+        # So when reading the changeFeed by LSN, it is possible to encounter documents with lower _ts.
+        # In order to guarantee we always get the documents after customer's point start time,
+        # we will need to always pass the start time in the header.
         self._change_feed_start_from.populate_request_headers(request_headers)
         if self._continuation:
             request_headers[http_constants.HttpHeaders.IfNoneMatch] = self._continuation
@@ -190,7 +194,6 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._container_rid = container_rid
         self._feed_range = feed_range
         self._change_feed_start_from = change_feed_start_from
-        self._continuation = continuation
         if self._continuation is None:
             composite_continuation_token_queue: Deque = collections.deque()
             composite_continuation_token_queue.append(
@@ -202,6 +205,8 @@ class ChangeFeedStateV2(ChangeFeedState):
                     self._container_rid,
                     self._feed_range,
                     composite_continuation_token_queue)
+        else:
+            self._continuation = continuation
 
     @property
     def container_rid(self) -> str :
@@ -368,7 +373,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             collection_rid: str,
-            change_feed_state_context: dict[str, Any]) -> 'ChangeFeedStateV2':
+            change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
         if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
             feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
@@ -400,6 +405,3 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range=feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=None)
-
-
-

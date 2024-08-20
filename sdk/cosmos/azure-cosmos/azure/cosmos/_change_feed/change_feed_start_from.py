@@ -186,6 +186,3 @@ class ChangeFeedStartFromPointInTime(ChangeFeedStartFromInternal):
 
         point_in_time = datetime.fromtimestamp(point_in_time_ms).astimezone(timezone.utc)
         return ChangeFeedStartFromPointInTime(point_in_time)
-
-
-

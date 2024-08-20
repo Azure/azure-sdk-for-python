@@ -120,7 +120,8 @@ class ChangeFeedFetcherV2(object):
 
         self._change_feed_state: ChangeFeedStateV2 = self._feed_options.pop("changeFeedState")
         if not isinstance(self._change_feed_state, ChangeFeedStateV2):
-            raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version {type(self._change_feed_state)}")
+            raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version "
+                             f"{type(self._change_feed_state)}")
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
@@ -170,29 +171,29 @@ class ChangeFeedFetcherV2(object):
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 break
 
-                # when there is no items being returned, we will decide to retry based on:
-                # 1. When processing from point in time, there will be no initial results being returned,
-                # so we will retry with the new continuation token
-                # 2. if the feed range of the changeFeedState span multiple physical partitions
-                # then we will read from the next feed range until we have looped through all physical partitions
-                self._change_feed_state.apply_not_modified_response()
-                self._change_feed_state.apply_server_response_continuation(
-                    response_headers.get(continuation_key))
+            # when there is no items being returned, we will decide to retry based on:
+            # 1. When processing from point in time, there will be no initial results being returned,
+            # so we will retry with the new continuation token
+            # 2. if the feed range of the changeFeedState span multiple physical partitions
+            # then we will read from the next feed range until we have looped through all physical partitions
+            self._change_feed_state.apply_not_modified_response()
+            self._change_feed_state.apply_server_response_continuation(
+                response_headers.get(continuation_key))
 
-                #TODO: can this part logic be simplified
-                if (isinstance(self._change_feed_state._change_feed_start_from, ChangeFeedStartFromPointInTime)
-                        and is_s_time_first_fetch):
-                    response_headers[continuation_key] = self._get_base64_encoded_continuation()
-                    is_s_time_first_fetch = False
-                    should_retry = True
-                else:
-                    self._change_feed_state._continuation._move_to_next_token()
-                    response_headers[continuation_key] = self._get_base64_encoded_continuation()
-                    should_retry = self._change_feed_state.should_retry_on_not_modified_response()
-                    is_s_time_first_fetch = False
+            #TODO: can this part logic be simplified
+            if (isinstance(self._change_feed_state._change_feed_start_from, ChangeFeedStartFromPointInTime)
+                    and is_s_time_first_fetch):
+                response_headers[continuation_key] = self._get_base64_encoded_continuation()
+                is_s_time_first_fetch = False
+                should_retry = True
+            else:
+                self._change_feed_state._continuation._move_to_next_token()
+                response_headers[continuation_key] = self._get_base64_encoded_continuation()
+                should_retry = self._change_feed_state.should_retry_on_not_modified_response()
+                is_s_time_first_fetch = False
 
-                if not should_retry:
-                    break
+            if not should_retry:
+                break
 
         return fetched_items
 
@@ -203,4 +204,3 @@ class ChangeFeedFetcherV2(object):
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
         return base64_bytes.decode('utf-8')
-

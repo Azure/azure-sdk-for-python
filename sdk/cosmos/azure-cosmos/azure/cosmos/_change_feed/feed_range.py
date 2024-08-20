@@ -65,7 +65,7 @@ class FeedRangePartitionKey(FeedRange):
         if isinstance(self._pk_value, _Empty):
             return { self.type_property_name: [] }
         if isinstance(self._pk_value, list):
-            return { self.type_property_name: [item for item in self._pk_value] }
+            return { self.type_property_name: list(self._pk_value) }
 
         return { self.type_property_name: self._pk_value }
 
@@ -75,10 +75,10 @@ class FeedRangePartitionKey(FeedRange):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
                 return cls(_Empty(), feed_range)
-            if pk_value is [{}]:
+            if pk_value == [{}]:
                 return cls(_Undefined(), feed_range)
             if isinstance(pk_value, list):
-                return cls([item for item in pk_value], feed_range)
+                return cls(list(pk_value), feed_range)
             return cls(data[cls.type_property_name], feed_range)
 
         raise ValueError(f"Can not parse FeedRangePartitionKey from the json,"

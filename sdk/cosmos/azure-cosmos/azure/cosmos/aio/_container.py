@@ -494,7 +494,8 @@ class ContainerProxy:
             partition_key: Optional[PartitionKeyType] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -510,6 +511,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @overload
@@ -521,7 +523,8 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
@@ -537,6 +540,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @overload
@@ -547,7 +551,8 @@ class ContainerProxy:
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
@@ -558,6 +563,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @distributed_trace
@@ -565,8 +571,8 @@ class ContainerProxy:
             self,
             *args: Any,
             **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]: # pylint: disable=too-many-statements
-
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        # pylint: disable=too-many-statements
         if is_key_exists_and_not_none(kwargs, "priority"):
             kwargs['priority'] = kwargs['priority']
         feed_options = _build_options(kwargs)

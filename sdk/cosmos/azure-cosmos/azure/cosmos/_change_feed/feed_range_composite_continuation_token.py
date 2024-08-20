@@ -170,4 +170,3 @@ class FeedRangeCompositeContinuation(object):
     @property
     def feed_range(self) -> FeedRange:
         return self._feed_range
-

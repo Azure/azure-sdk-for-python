@@ -197,4 +197,3 @@ class ChangeFeedFetcherV2(object):
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
         return base64_bytes.decode('utf-8')
-

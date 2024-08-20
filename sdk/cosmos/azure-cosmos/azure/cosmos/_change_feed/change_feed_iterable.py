@@ -157,4 +157,3 @@ class ChangeFeedIterable(PageIterator):
                 raise ValueError(
                     "partition_key_range_id, partition_key, feed_range are exclusive parameters,"
                     " please only set one of them")
-

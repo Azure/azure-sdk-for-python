@@ -134,7 +134,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
         container_properties = self._get_properties()
-        partition_key_definition = container_properties.get("partitionKey")
+        partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
@@ -328,7 +328,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key: Optional[PartitionKeyType] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -346,6 +347,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @overload
@@ -357,7 +359,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
+
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str feed_range: The feed range that is used to define the scope.
@@ -375,6 +379,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @overload
@@ -385,7 +390,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=line-too-long
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
@@ -396,6 +402,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
+        # pylint: enable=line-too-long
         ...
 
     @distributed_trace
@@ -403,8 +410,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *args: Any,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]: # pylint: disable=too-many-statements
-
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=too-many-statements
         if is_key_exists_and_not_none(kwargs, "priority"):
             kwargs['priority'] = kwargs['priority']
         feed_options = build_options(kwargs)
@@ -1274,14 +1281,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
 
-    def read_feed_ranges(
+    def read_feed_ranges(  # pylint: disable=unused-argument
             self,
             **kwargs: Any
-    ) -> List[str]:  # pylint: disable=unused-argument
+    ) -> List[str]:
         partition_key_ranges =\
             self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,
-                # default to full range
-                [Range("", "FF", True, False)])
+                [Range("", "FF", True, False)]) # default to full range
 
-        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string() for partitionKeyRange in partition_key_ranges]
+        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
+                for partitionKeyRange in partition_key_ranges]
