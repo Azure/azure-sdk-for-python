@@ -17,7 +17,7 @@ class AiInferenceApiInstrumentor(AzureTelemetryInstrumentor):
         if self.is_instrumented():
             raise RuntimeError("Already instrumented")
         
-        var_value = os.environ.get("AZURE_INFERENCE_API_ENABLE_CONTENT_TRACING")
+        var_value = os.environ.get("AZUREAI_INFERENCE_API_ENABLE_CONTENT_TRACING")
         enable_content_tracing = self.str_to_bool(var_value)
         from ._inference_api_instrumentor_impl import _inject_inference_api
         _inject_inference_api(enable_content_tracing)
