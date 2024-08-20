@@ -27,16 +27,6 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     This client provides lease operations on a ShareClient or ShareFileClient.
 
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
-
     :param client:
         The client of the file or share to lease.
     :type client: ~azure.storage.fileshare.ShareFileClient or
@@ -45,6 +35,17 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+        This will be `None` if no lease has yet been acquired or modified."""
+
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
