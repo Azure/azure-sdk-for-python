@@ -1,5 +1,675 @@
 # Release History
 
+## 1.0.0 (2024-09-23)
+
+### Features Added
+
+  - The 'MongoClustersOperations' method 'begin_promote' was added in the current version
+  - The model or publicly exposed class 'ReplicasOperations' was added in the current version
+  - The 'MongoClustersOperations' method 'begin_promote' was added in the current version
+  - The model or publicly exposed class 'ReplicasOperations' was added in the current version
+  - The model or publicly exposed class 'CheckNameAvailabilityRequest' had property 'kwargs' added in the as_dict method in the current version
+  - The 'CheckNameAvailabilityRequest' method 'deserialize' was added in the current version
+  - The 'CheckNameAvailabilityRequest' method 'enable_additional_properties_sending' was added in the current version
+  - The 'CheckNameAvailabilityRequest' method 'from_dict' was added in the current version
+  - The 'CheckNameAvailabilityRequest' method 'is_xml_model' was added in the current version
+  - The 'CheckNameAvailabilityRequest' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'CheckNameAvailabilityResponse' had property 'kwargs' added in the as_dict method in the current version
+  - The 'CheckNameAvailabilityResponse' method 'deserialize' was added in the current version
+  - The 'CheckNameAvailabilityResponse' method 'enable_additional_properties_sending' was added in the current version
+  - The 'CheckNameAvailabilityResponse' method 'from_dict' was added in the current version
+  - The 'CheckNameAvailabilityResponse' method 'is_xml_model' was added in the current version
+  - The 'CheckNameAvailabilityResponse' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ConnectionString' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ConnectionString' method 'deserialize' was added in the current version
+  - The 'ConnectionString' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ConnectionString' method 'from_dict' was added in the current version
+  - The 'ConnectionString' method 'is_xml_model' was added in the current version
+  - The 'ConnectionString' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ConnectionString' had property 'name' added in the current version
+  - The model or publicly exposed class 'CreateMode' had property 'GEO_REPLICA' added in the current version
+  - The model or publicly exposed class 'CreateMode' had property 'REPLICA' added in the current version
+  - The model or publicly exposed class 'ErrorAdditionalInfo' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ErrorAdditionalInfo' method 'deserialize' was added in the current version
+  - The 'ErrorAdditionalInfo' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ErrorAdditionalInfo' method 'from_dict' was added in the current version
+  - The 'ErrorAdditionalInfo' method 'is_xml_model' was added in the current version
+  - The 'ErrorAdditionalInfo' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ErrorDetail' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ErrorDetail' method 'deserialize' was added in the current version
+  - The 'ErrorDetail' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ErrorDetail' method 'from_dict' was added in the current version
+  - The 'ErrorDetail' method 'is_xml_model' was added in the current version
+  - The 'ErrorDetail' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ErrorResponse' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ErrorResponse' method 'deserialize' was added in the current version
+  - The 'ErrorResponse' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ErrorResponse' method 'from_dict' was added in the current version
+  - The 'ErrorResponse' method 'is_xml_model' was added in the current version
+  - The 'ErrorResponse' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'FirewallRule' had property 'kwargs' added in the as_dict method in the current version
+  - The 'FirewallRule' method 'deserialize' was added in the current version
+  - The 'FirewallRule' method 'enable_additional_properties_sending' was added in the current version
+  - The 'FirewallRule' method 'from_dict' was added in the current version
+  - The 'FirewallRule' method 'is_xml_model' was added in the current version
+  - The 'FirewallRule' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'FirewallRuleProperties' had property 'kwargs' added in the as_dict method in the current version
+  - The 'FirewallRuleProperties' method 'deserialize' was added in the current version
+  - The 'FirewallRuleProperties' method 'enable_additional_properties_sending' was added in the current version
+  - The 'FirewallRuleProperties' method 'from_dict' was added in the current version
+  - The 'FirewallRuleProperties' method 'is_xml_model' was added in the current version
+  - The 'FirewallRuleProperties' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ListConnectionStringsResult' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ListConnectionStringsResult' method 'deserialize' was added in the current version
+  - The 'ListConnectionStringsResult' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ListConnectionStringsResult' method 'from_dict' was added in the current version
+  - The 'ListConnectionStringsResult' method 'is_xml_model' was added in the current version
+  - The 'ListConnectionStringsResult' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoCluster' had property 'location' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MongoCluster' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MongoCluster' had property 'kwargs' added in the as_dict method in the current version
+  - The 'MongoCluster' method 'deserialize' was added in the current version
+  - The 'MongoCluster' method 'enable_additional_properties_sending' was added in the current version
+  - The 'MongoCluster' method 'from_dict' was added in the current version
+  - The 'MongoCluster' method 'is_xml_model' was added in the current version
+  - The 'MongoCluster' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'kwargs' added in the as_dict method in the current version
+  - The 'MongoClusterProperties' method 'deserialize' was added in the current version
+  - The 'MongoClusterProperties' method 'enable_additional_properties_sending' was added in the current version
+  - The 'MongoClusterProperties' method 'from_dict' was added in the current version
+  - The 'MongoClusterProperties' method 'is_xml_model' was added in the current version
+  - The 'MongoClusterProperties' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'replica_parameters' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'administrator' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'high_availability' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'storage' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'sharding' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'compute' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'backup' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'preview_features' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'replica' added in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had property 'infrastructure_version' added in the current version
+  - The model or publicly exposed class 'MongoClusterRestoreParameters' had property 'kwargs' added in the as_dict method in the current version
+  - The 'MongoClusterRestoreParameters' method 'deserialize' was added in the current version
+  - The 'MongoClusterRestoreParameters' method 'enable_additional_properties_sending' was added in the current version
+  - The 'MongoClusterRestoreParameters' method 'from_dict' was added in the current version
+  - The 'MongoClusterRestoreParameters' method 'is_xml_model' was added in the current version
+  - The 'MongoClusterRestoreParameters' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoClusterRestoreParameters' had property 'point_in_time_utc' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdate' had property 'kwargs' added in the as_dict method in the current version
+  - The 'MongoClusterUpdate' method 'deserialize' was added in the current version
+  - The 'MongoClusterUpdate' method 'enable_additional_properties_sending' was added in the current version
+  - The 'MongoClusterUpdate' method 'from_dict' was added in the current version
+  - The 'MongoClusterUpdate' method 'is_xml_model' was added in the current version
+  - The 'MongoClusterUpdate' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'kwargs' added in the as_dict method in the current version
+  - The 'MongoClusterUpdateProperties' method 'deserialize' was added in the current version
+  - The 'MongoClusterUpdateProperties' method 'enable_additional_properties_sending' was added in the current version
+  - The 'MongoClusterUpdateProperties' method 'from_dict' was added in the current version
+  - The 'MongoClusterUpdateProperties' method 'is_xml_model' was added in the current version
+  - The 'MongoClusterUpdateProperties' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'administrator' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'high_availability' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'storage' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'sharding' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'compute' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'backup' added in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had property 'preview_features' added in the current version
+  - The model or publicly exposed class 'Operation' had property 'kwargs' added in the as_dict method in the current version
+  - The 'Operation' method 'deserialize' was added in the current version
+  - The 'Operation' method 'enable_additional_properties_sending' was added in the current version
+  - The 'Operation' method 'from_dict' was added in the current version
+  - The 'Operation' method 'is_xml_model' was added in the current version
+  - The 'Operation' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'OperationDisplay' had property 'kwargs' added in the as_dict method in the current version
+  - The 'OperationDisplay' method 'deserialize' was added in the current version
+  - The 'OperationDisplay' method 'enable_additional_properties_sending' was added in the current version
+  - The 'OperationDisplay' method 'from_dict' was added in the current version
+  - The 'OperationDisplay' method 'is_xml_model' was added in the current version
+  - The 'OperationDisplay' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateEndpoint' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateEndpoint' method 'deserialize' was added in the current version
+  - The 'PrivateEndpoint' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateEndpoint' method 'from_dict' was added in the current version
+  - The 'PrivateEndpoint' method 'is_xml_model' was added in the current version
+  - The 'PrivateEndpoint' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnection' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateEndpointConnection' method 'deserialize' was added in the current version
+  - The 'PrivateEndpointConnection' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateEndpointConnection' method 'from_dict' was added in the current version
+  - The 'PrivateEndpointConnection' method 'is_xml_model' was added in the current version
+  - The 'PrivateEndpointConnection' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionProperties' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'deserialize' was added in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'from_dict' was added in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'is_xml_model' was added in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionResource' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateEndpointConnectionResource' method 'deserialize' was added in the current version
+  - The 'PrivateEndpointConnectionResource' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateEndpointConnectionResource' method 'from_dict' was added in the current version
+  - The 'PrivateEndpointConnectionResource' method 'is_xml_model' was added in the current version
+  - The 'PrivateEndpointConnectionResource' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateLinkResource' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateLinkResource' method 'deserialize' was added in the current version
+  - The 'PrivateLinkResource' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateLinkResource' method 'from_dict' was added in the current version
+  - The 'PrivateLinkResource' method 'is_xml_model' was added in the current version
+  - The 'PrivateLinkResource' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateLinkResourceProperties' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateLinkResourceProperties' method 'deserialize' was added in the current version
+  - The 'PrivateLinkResourceProperties' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateLinkResourceProperties' method 'from_dict' was added in the current version
+  - The 'PrivateLinkResourceProperties' method 'is_xml_model' was added in the current version
+  - The 'PrivateLinkResourceProperties' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'PrivateLinkServiceConnectionState' had property 'kwargs' added in the as_dict method in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'deserialize' was added in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'enable_additional_properties_sending' was added in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'from_dict' was added in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'is_xml_model' was added in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ProxyResource' had property 'kwargs' added in the as_dict method in the current version
+  - The 'ProxyResource' method 'deserialize' was added in the current version
+  - The 'ProxyResource' method 'enable_additional_properties_sending' was added in the current version
+  - The 'ProxyResource' method 'from_dict' was added in the current version
+  - The 'ProxyResource' method 'is_xml_model' was added in the current version
+  - The 'ProxyResource' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'ProxyResource' had property 'additional_properties' added in the current version
+  - The model or publicly exposed class 'Resource' had property 'kwargs' added in the as_dict method in the current version
+  - The 'Resource' method 'deserialize' was added in the current version
+  - The 'Resource' method 'enable_additional_properties_sending' was added in the current version
+  - The 'Resource' method 'from_dict' was added in the current version
+  - The 'Resource' method 'is_xml_model' was added in the current version
+  - The 'Resource' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'SystemData' had property 'kwargs' added in the as_dict method in the current version
+  - The 'SystemData' method 'deserialize' was added in the current version
+  - The 'SystemData' method 'enable_additional_properties_sending' was added in the current version
+  - The 'SystemData' method 'from_dict' was added in the current version
+  - The 'SystemData' method 'is_xml_model' was added in the current version
+  - The 'SystemData' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'TrackedResource' had property 'kwargs' added in the as_dict method in the current version
+  - The 'TrackedResource' method 'deserialize' was added in the current version
+  - The 'TrackedResource' method 'enable_additional_properties_sending' was added in the current version
+  - The 'TrackedResource' method 'from_dict' was added in the current version
+  - The 'TrackedResource' method 'is_xml_model' was added in the current version
+  - The 'TrackedResource' method 'serialize' was added in the current version
+  - The model or publicly exposed class 'AdministratorProperties' was added in the current version
+  - The model or publicly exposed class 'BackupProperties' was added in the current version
+  - The model or publicly exposed class 'ComputeProperties' was added in the current version
+  - The model or publicly exposed class 'FirewallRuleListResult' was added in the current version
+  - The model or publicly exposed class 'HighAvailabilityMode' was added in the current version
+  - The model or publicly exposed class 'HighAvailabilityProperties' was added in the current version
+  - The model or publicly exposed class 'MongoClusterListResult' was added in the current version
+  - The model or publicly exposed class 'MongoClusterReplicaParameters' was added in the current version
+  - The model or publicly exposed class 'OperationListResult' was added in the current version
+  - The model or publicly exposed class 'PreviewFeature' was added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionResourceListResult' was added in the current version
+  - The model or publicly exposed class 'PrivateLinkResourceListResult' was added in the current version
+  - The model or publicly exposed class 'PromoteMode' was added in the current version
+  - The model or publicly exposed class 'PromoteOption' was added in the current version
+  - The model or publicly exposed class 'PromoteReplicaRequest' was added in the current version
+  - The model or publicly exposed class 'Replica' was added in the current version
+  - The model or publicly exposed class 'ReplicaListResult' was added in the current version
+  - The model or publicly exposed class 'ReplicationProperties' was added in the current version
+  - The model or publicly exposed class 'ReplicationRole' was added in the current version
+  - The model or publicly exposed class 'ReplicationState' was added in the current version
+  - The model or publicly exposed class 'ShardingProperties' was added in the current version
+  - The model or publicly exposed class 'StorageProperties' was added in the current version
+
+### Breaking Changes
+
+  - The client 'MongoClusterMgmtClient' was deleted or renamed in the current version
+  - The client 'MongoClusterMgmtClient' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'CheckNameAvailabilityRequest' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'CheckNameAvailabilityRequest' method 'clear' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'copy' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'get' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'items' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'keys' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'name' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'pop' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'popitem' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'setdefault' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'type' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'update' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityRequest' method 'values' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'CheckNameAvailabilityResponse' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'CheckNameAvailabilityResponse' method 'clear' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'copy' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'get' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'items' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'keys' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'message' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'name_available' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'pop' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'popitem' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'reason' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'setdefault' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'update' was deleted or renamed in the current version
+  - The 'CheckNameAvailabilityResponse' method 'values' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ConnectionString' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ConnectionString' method 'clear' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'connection_string' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'copy' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'description' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'get' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'items' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'keys' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'pop' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'popitem' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'setdefault' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'update' was deleted or renamed in the current version
+  - The 'ConnectionString' method 'values' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ErrorAdditionalInfo' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ErrorAdditionalInfo' method 'clear' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'copy' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'get' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'info' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'items' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'keys' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'pop' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'popitem' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'setdefault' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'type' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'update' was deleted or renamed in the current version
+  - The 'ErrorAdditionalInfo' method 'values' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ErrorDetail' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ErrorDetail' method 'additional_info' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'clear' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'code' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'copy' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'details' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'get' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'items' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'keys' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'message' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'pop' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'popitem' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'setdefault' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'target' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'update' was deleted or renamed in the current version
+  - The 'ErrorDetail' method 'values' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ErrorResponse' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ErrorResponse' method 'clear' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'copy' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'error' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'get' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'items' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'keys' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'pop' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'popitem' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'setdefault' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'update' was deleted or renamed in the current version
+  - The 'ErrorResponse' method 'values' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'FirewallRule' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'FirewallRule' method 'clear' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'copy' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'get' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'id' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'items' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'keys' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'name' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'pop' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'popitem' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'properties' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'setdefault' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'system_data' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'type' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'update' was deleted or renamed in the current version
+  - The 'FirewallRule' method 'values' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'FirewallRuleProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'FirewallRuleProperties' method 'clear' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'copy' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'end_ip_address' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'get' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'items' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'keys' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'pop' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'popitem' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'provisioning_state' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'setdefault' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'start_ip_address' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'update' was deleted or renamed in the current version
+  - The 'FirewallRuleProperties' method 'values' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ListConnectionStringsResult' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ListConnectionStringsResult' method 'clear' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'connection_strings' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'copy' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'get' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'items' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'keys' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'pop' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'popitem' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'setdefault' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'update' was deleted or renamed in the current version
+  - The 'ListConnectionStringsResult' method 'values' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'MongoCluster' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'MongoCluster' method 'clear' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'copy' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'get' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'id' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'items' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'keys' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'location' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'name' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'pop' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'popitem' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'properties' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'setdefault' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'system_data' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'tags' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'type' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'update' was deleted or renamed in the current version
+  - The 'MongoCluster' method 'values' was deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had its instance variable 'administrator_login' deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had its instance variable 'administrator_login_password' deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had its instance variable 'earliest_restore_time' deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterProperties' had its instance variable 'node_group_specs' deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'MongoClusterProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'MongoClusterProperties' method 'administrator_login' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'administrator_login_password' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'clear' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'cluster_status' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'connection_string' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'copy' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'create_mode' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'earliest_restore_time' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'get' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'items' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'keys' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'node_group_specs' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'pop' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'popitem' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'private_endpoint_connections' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'provisioning_state' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'public_network_access' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'restore_parameters' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'server_version' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'setdefault' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'update' was deleted or renamed in the current version
+  - The 'MongoClusterProperties' method 'values' was deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterRestoreParameters' had its instance variable 'point_in_time_u_t_c' deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'MongoClusterRestoreParameters' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'MongoClusterRestoreParameters' method 'clear' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'copy' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'get' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'items' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'keys' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'point_in_time_u_t_c' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'pop' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'popitem' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'setdefault' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'source_resource_id' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'update' was deleted or renamed in the current version
+  - The 'MongoClusterRestoreParameters' method 'values' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'MongoClusterUpdate' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'MongoClusterUpdate' method 'clear' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'copy' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'get' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'items' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'keys' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'pop' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'popitem' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'properties' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'setdefault' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'tags' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'update' was deleted or renamed in the current version
+  - The 'MongoClusterUpdate' method 'values' was deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had its instance variable 'administrator_login' deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had its instance variable 'administrator_login_password' deleted or renamed in the current version
+  - The model or publicly exposed class 'MongoClusterUpdateProperties' had its instance variable 'node_group_specs' deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'MongoClusterUpdateProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'MongoClusterUpdateProperties' method 'administrator_login' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'administrator_login_password' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'clear' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'copy' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'get' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'items' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'keys' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'node_group_specs' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'pop' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'popitem' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'public_network_access' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'server_version' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'setdefault' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'update' was deleted or renamed in the current version
+  - The 'MongoClusterUpdateProperties' method 'values' was deleted or renamed in the current version
+  - The 'Operation' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'Operation' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'Operation' method 'action_type' was deleted or renamed in the current version
+  - The 'Operation' method 'clear' was deleted or renamed in the current version
+  - The 'Operation' method 'copy' was deleted or renamed in the current version
+  - The 'Operation' method 'display' was deleted or renamed in the current version
+  - The 'Operation' method 'get' was deleted or renamed in the current version
+  - The 'Operation' method 'is_data_action' was deleted or renamed in the current version
+  - The 'Operation' method 'items' was deleted or renamed in the current version
+  - The 'Operation' method 'keys' was deleted or renamed in the current version
+  - The 'Operation' method 'name' was deleted or renamed in the current version
+  - The 'Operation' method 'origin' was deleted or renamed in the current version
+  - The 'Operation' method 'pop' was deleted or renamed in the current version
+  - The 'Operation' method 'popitem' was deleted or renamed in the current version
+  - The 'Operation' method 'setdefault' was deleted or renamed in the current version
+  - The 'Operation' method 'update' was deleted or renamed in the current version
+  - The 'Operation' method 'values' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'OperationDisplay' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'OperationDisplay' method 'clear' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'copy' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'description' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'get' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'items' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'keys' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'operation' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'pop' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'popitem' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'provider' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'resource' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'setdefault' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'update' was deleted or renamed in the current version
+  - The 'OperationDisplay' method 'values' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateEndpoint' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateEndpoint' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'get' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'id' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'items' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'update' was deleted or renamed in the current version
+  - The 'PrivateEndpoint' method 'values' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateEndpointConnection' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateEndpointConnection' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'get' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'id' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'items' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'name' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'properties' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'system_data' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'type' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'update' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnection' method 'values' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'get' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'group_ids' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'items' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'private_endpoint' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'private_link_service_connection_state' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'provisioning_state' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'update' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionProperties' method 'values' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateEndpointConnectionResource' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateEndpointConnectionResource' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'get' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'id' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'items' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'name' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'properties' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'system_data' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'type' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'update' was deleted or renamed in the current version
+  - The 'PrivateEndpointConnectionResource' method 'values' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateLinkResource' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateLinkResource' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'get' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'id' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'items' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'name' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'properties' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'system_data' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'type' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'update' was deleted or renamed in the current version
+  - The 'PrivateLinkResource' method 'values' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateLinkResourceProperties' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateLinkResourceProperties' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'get' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'group_id' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'items' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'required_members' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'required_zone_names' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'update' was deleted or renamed in the current version
+  - The 'PrivateLinkResourceProperties' method 'values' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'actions_required' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'clear' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'copy' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'description' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'get' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'items' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'keys' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'pop' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'popitem' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'setdefault' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'status' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'update' was deleted or renamed in the current version
+  - The 'PrivateLinkServiceConnectionState' method 'values' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'ProxyResource' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'ProxyResource' method 'clear' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'copy' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'get' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'id' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'items' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'keys' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'name' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'pop' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'popitem' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'setdefault' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'system_data' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'type' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'update' was deleted or renamed in the current version
+  - The 'ProxyResource' method 'values' was deleted or renamed in the current version
+  - The 'Resource' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'Resource' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'Resource' method 'clear' was deleted or renamed in the current version
+  - The 'Resource' method 'copy' was deleted or renamed in the current version
+  - The 'Resource' method 'get' was deleted or renamed in the current version
+  - The 'Resource' method 'id' was deleted or renamed in the current version
+  - The 'Resource' method 'items' was deleted or renamed in the current version
+  - The 'Resource' method 'keys' was deleted or renamed in the current version
+  - The 'Resource' method 'name' was deleted or renamed in the current version
+  - The 'Resource' method 'pop' was deleted or renamed in the current version
+  - The 'Resource' method 'popitem' was deleted or renamed in the current version
+  - The 'Resource' method 'setdefault' was deleted or renamed in the current version
+  - The 'Resource' method 'system_data' was deleted or renamed in the current version
+  - The 'Resource' method 'type' was deleted or renamed in the current version
+  - The 'Resource' method 'update' was deleted or renamed in the current version
+  - The 'Resource' method 'values' was deleted or renamed in the current version
+  - The 'SystemData' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'SystemData' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'SystemData' method 'clear' was deleted or renamed in the current version
+  - The 'SystemData' method 'copy' was deleted or renamed in the current version
+  - The 'SystemData' method 'created_at' was deleted or renamed in the current version
+  - The 'SystemData' method 'created_by' was deleted or renamed in the current version
+  - The 'SystemData' method 'created_by_type' was deleted or renamed in the current version
+  - The 'SystemData' method 'get' was deleted or renamed in the current version
+  - The 'SystemData' method 'items' was deleted or renamed in the current version
+  - The 'SystemData' method 'keys' was deleted or renamed in the current version
+  - The 'SystemData' method 'last_modified_at' was deleted or renamed in the current version
+  - The 'SystemData' method 'last_modified_by' was deleted or renamed in the current version
+  - The 'SystemData' method 'last_modified_by_type' was deleted or renamed in the current version
+  - The 'SystemData' method 'pop' was deleted or renamed in the current version
+  - The 'SystemData' method 'popitem' was deleted or renamed in the current version
+  - The 'SystemData' method 'setdefault' was deleted or renamed in the current version
+  - The 'SystemData' method 'update' was deleted or renamed in the current version
+  - The 'SystemData' method 'values' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'as_dict' had a 'positional_or_keyword' parameter 'keep_readonly' inserted in the current version
+  - The 'TrackedResource' method 'as_dict' had a 'positional_or_keyword' parameter 'key_transformer' inserted in the current version
+  - The 'TrackedResource' method 'clear' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'copy' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'get' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'id' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'items' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'keys' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'location' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'name' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'pop' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'popitem' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'setdefault' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'system_data' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'tags' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'type' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'update' was deleted or renamed in the current version
+  - The 'TrackedResource' method 'values' was deleted or renamed in the current version
+  - The model or publicly exposed class 'NodeGroupSpec' was deleted or renamed in the current version
+  - The model or publicly exposed class 'NodeKind' was deleted or renamed in the current version
+  - The class 'ErrorResponse' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'error', 'kwargs']' in the current version
+  - The class 'PrivateLinkResource' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'properties', 'kwargs']' in the current version
+  - The class 'FirewallRule' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'properties', 'kwargs']' in the current version
+  - The class 'PrivateEndpointConnection' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'properties', 'kwargs']' in the current version
+  - The class 'PrivateEndpointConnectionResource' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'properties', 'kwargs']' in the current version
+  - The class 'Operation' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'display', 'kwargs']' in the current version
+  - The class 'PrivateLinkResourceProperties' method '__init__' had its parameters re-ordered from '['self', 'args', 'kwargs']' to '['self', 'required_zone_names', 'kwargs']' in the current version
+
 ## 1.0.0b1 (2024-07-01)
 
 ### Other Changes

@@ -1,7 +1,14 @@
 {
-  "commit": "abad0096677005817d2c19df2364663e5583c8fc",
+  "commit": "a60ec599d935472072c8935718f80944f19a3b4b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/mongocluster/DocumentDB.MongoCluster.Management",
   "@azure-tools/typespec-python": "0.24.3",
-  "@autorest/python": "6.14.3"
+  "@autorest/python": "6.14.3",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.17.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/mongocluster/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.17.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/mongocluster/resource-manager/readme.md"
 }
