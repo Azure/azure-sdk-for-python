@@ -129,7 +129,7 @@ class WorkspaceConfigurationOptions(object):
         # Example private endpoint outbound to an application gateway
         appGwRule = PrivateEndpointDestination(
             name="appGwRule",
-            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Network/applicationGateways/appgw-name",
+            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Network/applicationGateways/appgw-name",  # cspell:disable-line
             subresource_target="appGwPrivateFrontendIpIPv4",
             spark_enabled=False,
             fqdns=["contoso.com", "contoso2.com"],

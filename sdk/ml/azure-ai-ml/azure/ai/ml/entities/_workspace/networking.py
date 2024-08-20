@@ -121,8 +121,8 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
-    :param fqdns: String list of FQDNs particular to the Private Endpoint resource creation. For application gateway PEs,
-    this is the FQDN which will resolve to the private IP of the application gateway PE inside the workspace's managed network.
+    :param fqdns: String list of FQDNs particular to the Private Endpoint resource creation. For application 
+        gateway PEs, this is the FQDN which will resolve to the private IP of the application gateway PE inside the workspace's managed network.
     :type fqdns: List[str]
     :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
     :vartype type: str
@@ -190,8 +190,8 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
-    :ivar address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
-    be ignored and address_prefixes will be used instead.
+    :ivar address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will 
+        be ignored and address_prefixes will be used instead.
     :vartype address_prefixes: List[str]
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
