@@ -70,6 +70,8 @@ sphinx = false
 black = false
 ```
 
+## TODO: skip CI tests
+
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
 If there is a replacement library, provide a link to the new library or an existing migration guide before closing.
@@ -82,9 +84,9 @@ Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://gi
 
 ## Fix any CI issues
 
-Wait for the CI to run. Fix any issues related to the PR. Any fixes that require updating the package code files and tests should be excluded, since these fixes are not necessary for deprecation.
+Wait for the CI to run. Fix any issues related to the deprecation in the PR.
 
-If ONLY tests are failing, `/check-enforcer override` can be used to get CI green.
+There should not be any tests or mypy/pylint/etc. failures as these checks have all been disabled.
 
 ## Update Development Status classifier in setup.py
 
@@ -96,7 +98,7 @@ Update `setup.py` to change the `Development Status` classifier to `Development 
 
 ## Post your PR in the Python review channel
 
-Post your PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) and request a review from the codeowner, as the PR will be blocked from merging until approved by the codeowner.
+Post your PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) for verification that all requirements for deprecation have been met. If you are not the codeowner, please explicitly tag the codeowner in the post for approval.
 
 ## Merge PR
 
@@ -151,7 +153,9 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
   - `Support`: Change the value to `deprecated`.
   - `Replace`: If it exists, set the value to the name of the package meant to replace the package being deprecated. If not, set the value to `NA`.
   - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`. If not, set the value to `NA`.
+- **Note: If you are deprecating multiple packages, please wait until all deprecated packages have been released and update all entries necessary in one PR.**
 - Create a PR to push these changes. Checks will run to notify the repo owners to review your commit.
+- If your PR has not been reviewed within a couple of days, please ping Xiang Yan (xiangyan) for a review and include a link to your PR.
 - Once the PR has been approved, merge.
 
 The Microsoft Learn API reference docs for your package will be updated to Legacy on the following Wednesday.
