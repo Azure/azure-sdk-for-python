@@ -5,6 +5,7 @@ from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
 from azure.ai.ml._restclient.v2024_07_01_preview.models import Workspace
+from azure.ai.ml.constants._workspace import IsolationMode
 from azure.ai.ml.entities import (
     ServerlessComputeSettings,
     Workspace,
@@ -74,3 +75,26 @@ class TestWorkspaceEntity:
             "./tests/test_configs/workspace/workspace_serverless.yaml", params_override=params_override
         )
         assert workspace_override.serverless_compute == settings
+
+    def test_workspace_load_yamls_to_test_outbound_rule_load(self):
+        workspace = load_workspace("./tests/test_configs/workspace/workspace_many_ob_rules.yaml")
+
+        assert workspace.managed_network is not None
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        rules = workspace.managed_network.outbound_rules
+        assert rules[0].name == "microsoft"
+        assert rules[0].destination == "microsoft.com"
+
+        assert rules[1].name == "appGwRule"
+        assert rules[1].service_resource_id == "/someappgwid"
+        assert rules[1].spark_enabled == False
+        assert rules[1].subresource_target == "appGwPrivateFrontendIpIPv4"
+        assert "contoso.com" in rules[1].fqdns
+        assert "contoso2.com" in rules[1].fqdns
+
+        assert rules[2].name == "servicetag-w-prefixes"
+        assert rules[2].service_tag == "sometag"
+        assert rules[2].protocol == "TCP"
+        assert rules[2].port_ranges == "80, 8080-8089"
+        assert "168.63.129.16" in rules[2].address_prefixes
+        assert "10.0.0.0/24" in rules[2].address_prefixes
