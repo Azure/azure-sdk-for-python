@@ -175,13 +175,13 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+            pk_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]] # pylint: disable=line-too-long
     ) -> _Range:
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(pk_value)
 
         # else return point range
-        effective_partition_key_string = self._get_effective_partition_key_string(pk_value)
+        effective_partition_key_string = self._get_effective_partition_key_string([pk_value])
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:

@@ -23,7 +23,7 @@
 database service.
 """
 from collections import deque
-from typing import Any, Deque, Dict
+from typing import Any, Deque, Dict, Optional
 
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
 from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRangePartitionKey
@@ -89,6 +89,7 @@ class FeedRangeCompositeContinuation(object):
                         for child_range_continuation_token in continuation_data]
 
         # parsing feed range
+        feed_range: Optional[FeedRange] = None
         if is_key_exists_and_not_none(data, FeedRangeEpk.type_property_name):
             feed_range = FeedRangeEpk.from_json(data)
         elif is_key_exists_and_not_none(data, FeedRangePartitionKey.type_property_name):

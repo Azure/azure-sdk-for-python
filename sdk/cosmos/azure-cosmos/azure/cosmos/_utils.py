@@ -82,4 +82,3 @@ def is_base64_encoded(data: str) -> bool:
 
 def is_key_exists_and_not_none(data: Dict[str, Any], key: str) -> bool:
     return key in data and data[key] is not None
-

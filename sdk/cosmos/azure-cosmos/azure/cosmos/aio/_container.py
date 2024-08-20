@@ -1213,14 +1213,15 @@ class ContainerProxy:
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
-    async def read_feed_ranges(
+    async def read_feed_ranges( # pylint: disable=unused-argument
             self,
             **kwargs: Any
-    ) -> List[str]: # pylint: disable=unused-argument
+    ) -> List[str]:
         partition_key_ranges =\
             await self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,
                 # default to full range
                 [Range("", "FF", True, False)])
 
-        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string() for partitionKeyRange in partition_key_ranges]
+        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
+                for partitionKeyRange in partition_key_ranges]

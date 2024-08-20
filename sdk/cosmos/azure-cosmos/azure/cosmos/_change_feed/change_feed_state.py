@@ -194,7 +194,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._container_rid = container_rid
         self._feed_range = feed_range
         self._change_feed_start_from = change_feed_start_from
-        if self._continuation is None:
+        if continuation is None:
             composite_continuation_token_queue: Deque = collections.deque()
             composite_continuation_token_queue.append(
                 CompositeContinuationToken(
@@ -374,7 +374,8 @@ class ChangeFeedStateV2(ChangeFeedState):
             container_link: str,
             collection_rid: str,
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
-
+        
+        feed_range: Optional[FeedRange] = None
         if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
             feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
             feed_range_json = json.loads(feed_range_str)
