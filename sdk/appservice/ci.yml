@@ -27,7 +27,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: appservice
-    TestProxy: true
     Artifacts:
     - name: azure-mgmt-web
       safeName: azuremgmtweb
