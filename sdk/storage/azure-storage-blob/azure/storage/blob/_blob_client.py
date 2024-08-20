@@ -3050,17 +3050,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def append_block(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        self, data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
-            Content of the block. This can be bytes, text, an iterable or a file-like object.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
+            Content of the block. This can be bytes, iterable or a file-like object.
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int length:
-            Size of the block in bytes.
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword validate_content:
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:
