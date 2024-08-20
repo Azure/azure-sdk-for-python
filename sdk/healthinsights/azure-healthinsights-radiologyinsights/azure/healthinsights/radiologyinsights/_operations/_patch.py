@@ -6,7 +6,21 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload, List, MutableMapping
+from copy import deepcopy
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+    MutableMapping,
+    TYPE_CHECKING,
+)# pylint: disable=too-many-lines
 
 __all__: List[str] = [
     "RadiologyInsightsClientOperationsMixin"
@@ -22,7 +36,9 @@ __all__: List[str] = [
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.pipeline import PipelineResponse
+from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline import PipelineResponse, policies
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest, HttpResponse
@@ -32,10 +48,97 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import _deserialize
 from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
+from .._configuration import RadiologyInsightsClientConfiguration
+from .._serialization import Deserializer, Serializer
+from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
+
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+class RadiologyInsightsClient(
+    GeneratedRadiologyInsightsClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
+    """RadiologyInsightsClient.
+
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+     https://westus2.api.cognitive.microsoft.com). Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
+    """
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        _endpoint = "{endpoint}/health-insights"
+        self._config = RadiologyInsightsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client : PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    def close(self) -> None:
+        self._client.close()
+
+    def __enter__(self) -> "RadiologyInsightsClient":
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
 
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 

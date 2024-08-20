@@ -6,14 +6,30 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload, MutableMapping
+from copy import deepcopy
+from typing import (
+    Any,
+    Callable,
+    Awaitable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+    MutableMapping,
+    TYPE_CHECKING,
+)# pylint: disable=too-many-lines
 
 __all__: List[str] = [
     "RadiologyInsightsClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
-from azure.core.pipeline import PipelineResponse
+from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline import PipelineResponse, policies
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -22,14 +38,126 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import _deserialize
-from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
+from ._operations import (
+    RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin,
+)
+from ..._serialization import Deserializer, Serializer
+from .._configuration import RadiologyInsightsClientConfiguration
+from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
-    @overload # type: ignore[override]
+class RadiologyInsightsClient(
+    GeneratedRadiologyInsightsClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
+    """RadiologyInsightsClient.
+
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+     https://westus2.api.cognitive.microsoft.com). Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}/health-insights"
+        self._config = RadiologyInsightsClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+        }
+
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> "RadiologyInsightsClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+
+class RadiologyInsightsClientOperationsMixin(
+    GeneratedRadiologyInsightsClientOperationsMixin
+):
+
+    @overload  # type: ignore[override]
     async def begin_infer_radiology_insights(
         self,
         id: str,
@@ -137,7 +265,9 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -152,42 +282,51 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 headers=_headers,
                 params=_params,
                 **kwargs
-            )# type: ignore
-        kwargs.pop('error_map', None)
+            )  # type: ignore
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-request-id")
+            )
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
+            deserialized = _deserialize(
+                _models.RadiologyInsightsInferenceResult, response.json().get("result")
+            )
             if cls:
-                return cls(pipeline_response, deserialized, response_headers) # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncLROBasePolling(
+                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
+            return AsyncLROPoller[
+                _models.RadiologyInsightsInferenceResult
+            ].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore

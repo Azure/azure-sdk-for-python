@@ -16,8 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import RadiologyInsightsClientConfiguration
-from ._operations._patch import RadiologyInsightsClientOperationsMixin
-
+from ._operations import RadiologyInsightsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
