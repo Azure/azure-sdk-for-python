@@ -441,7 +441,7 @@ class TestModelClient(ModelClientTestBase):
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
-            tool_choice=sdk.models.ChatCompletionsToolChoicePreset.REQUIRED,
+            tool_choice=sdk.models.ChatCompletionsNamedToolChoice(function=sdk.models.ChatCompletionsNamedToolChoiceFunction(name="my-function-name")),
             tools=[ModelClientTestBase.TOOL2],
             top_p=3.456,
         )

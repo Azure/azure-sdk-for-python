@@ -134,6 +134,11 @@ def sample_chat_completions_streaming_with_tools():
         tools=[flight_info],
         stream=True)
 
+    # Note that in the above call we did not specify `tool_choice`. The service defaults to a setting equivalent
+    # to specifying `tool_choice=ChatCompletionsToolChoicePreset.AUTO`. Other than ChatCompletionsToolChoicePreset
+    # options, you can also explicitly force the model to use a function tool by specifying:
+    # tool_choice=ChatCompletionsNamedToolChoice(function=ChatCompletionsNamedToolChoiceFunction(name="get_flight_info"))
+
     # At this point we expect a function tool call in the model response
     tool_call_id: str = ""
     function_name: str = ""

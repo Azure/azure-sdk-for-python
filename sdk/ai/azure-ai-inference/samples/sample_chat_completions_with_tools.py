@@ -105,6 +105,11 @@ def sample_chat_completions_with_tools():
         tools=[flight_info],
     )
 
+    # Note that in the above call we did not specify `tool_choice`. The service defaults to a setting equivalent
+    # to specifying `tool_choice=ChatCompletionsToolChoicePreset.AUTO`. Other than ChatCompletionsToolChoicePreset
+    # options, you can also explicitly force the model to use a function tool by specifying:
+    # tool_choice=ChatCompletionsNamedToolChoice(function=ChatCompletionsNamedToolChoiceFunction(name="get_flight_info"))
+
     # The model should be asking for a tool call
     if response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
