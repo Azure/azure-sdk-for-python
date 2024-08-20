@@ -50,8 +50,6 @@ If the last released version was 1.2.3, the version should be 1.2.4.
 
 Update the version in the `azure/mypackage/_version.py` file. This file may be called `version.py` if your package is very old.
 
-More information on specifics of versioning can be found at [the bottom of the guide under "More details - Versioning"](#versioning).
-
 ## sdk_packaging.toml
 
 - Add `auto_update = false` if not already present to avoid the bot overriding your changes.
@@ -59,10 +57,22 @@ More information on specifics of versioning can be found at [the bottom of the g
 ## pyproject.toml
 
 - Ensure `ci_enabled = false` is NOT present in pyproject.toml. If it is, remove the line, as this will prevent you from releasing the package.
+- Set your pyproject.toml to the following:
+```
+[tool.azure-sdk-build]
+type_check_samples = false
+verifytypes = false
+pyright = false
+mypy = false
+pylint = false
+regression = false
+sphinx = false
+black = false
+```
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
-If there is a Track 2, provide a link to the new package or an existing migration guide before closing.
+If there is a replacement library, provide a link to the new library or an existing migration guide before closing.
 
 # Step 3: Create a PR
 
@@ -72,7 +82,9 @@ Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://gi
 
 ## Fix any CI issues
 
-Wait for the CI to run. Fix any issues related to the PR.
+Wait for the CI to run. Fix any issues related to the PR. Any fixes that require updating the package code files and tests should be excluded, since these fixes are not necessary for deprecation.
+
+If ONLY tests are failing, `/check-enforcer override` can be used to get CI green.
 
 ## Update Development Status classifier in setup.py
 
@@ -153,9 +165,3 @@ More detailed instructions on updating the CSV file can be found [here](https://
 TODO: The process for this section is still a WIP. Guidance will be updated here once we have concrete steps.
 
 - These will be on the MS Learn page. You can search in the search bar for mentions of the deprecated packages.
-
-# More details
-
-## Versioning
-
-The best versioning approach would be to do a [post release](https://peps.python.org/pep-0440/#post-releases). However, due to some tooling issues at the moment, the version should be the next beta or the next patch version ([example](https://github.com/Azure/azure-sdk-for-python/commit/cf3bfed65a65fcbb4b5c93db89a221c2959c5bb4)). Follow these issues for more details https://github.com/Azure/azure-sdk/issues/7479 and https://github.com/Azure/azure-sdk-tools/issues/5916.
