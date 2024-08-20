@@ -6,17 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._workspaces_operations import WorkspacesOperations
 from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from ._quotas_operations import QuotasOperations
 from ._compute_operations import ComputeOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
-from ._workspace_connections_operations import WorkspaceConnectionsOperations
-from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
-from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 from ._registries_operations import RegistriesOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
 from ._registry_code_containers_operations import RegistryCodeContainersOperations
@@ -54,19 +47,30 @@ from ._online_endpoints_operations import OnlineEndpointsOperations
 from ._online_deployments_operations import OnlineDeploymentsOperations
 from ._schedules_operations import SchedulesOperations
 from ._serverless_endpoints_operations import ServerlessEndpointsOperations
+from ._operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
+from ._connection_operations import ConnectionOperations
+from ._connection_rai_blocklists_operations import ConnectionRaiBlocklistsOperations
+from ._connection_rai_blocklist_operations import ConnectionRaiBlocklistOperations
+from ._connection_rai_blocklist_item_operations import ConnectionRaiBlocklistItemOperations
+from ._connection_rai_blocklist_items_operations import ConnectionRaiBlocklistItemsOperations
+from ._connection_rai_policies_operations import ConnectionRaiPoliciesOperations
+from ._connection_rai_policy_operations import ConnectionRaiPolicyOperations
+from ._endpoint_deployment_operations import EndpointDeploymentOperations
+from ._endpoint_operations import EndpointOperations
+from ._rai_policies_operations import RaiPoliciesOperations
+from ._rai_policy_operations import RaiPolicyOperations
+from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 
 __all__ = [
-    'Operations',
-    'WorkspacesOperations',
     'UsagesOperations',
     'VirtualMachineSizesOperations',
     'QuotasOperations',
     'ComputeOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'WorkspaceConnectionsOperations',
-    'ManagedNetworkSettingsRuleOperations',
-    'ManagedNetworkProvisionsOperations',
     'RegistriesOperations',
     'WorkspaceFeaturesOperations',
     'RegistryCodeContainersOperations',
@@ -104,4 +108,22 @@ __all__ = [
     'OnlineDeploymentsOperations',
     'SchedulesOperations',
     'ServerlessEndpointsOperations',
+    'Operations',
+    'WorkspacesOperations',
+    'WorkspaceConnectionsOperations',
+    'ConnectionOperations',
+    'ConnectionRaiBlocklistsOperations',
+    'ConnectionRaiBlocklistOperations',
+    'ConnectionRaiBlocklistItemOperations',
+    'ConnectionRaiBlocklistItemsOperations',
+    'ConnectionRaiPoliciesOperations',
+    'ConnectionRaiPolicyOperations',
+    'EndpointDeploymentOperations',
+    'EndpointOperations',
+    'RaiPoliciesOperations',
+    'RaiPolicyOperations',
+    'ManagedNetworkSettingsRuleOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'ManagedNetworkProvisionsOperations',
 ]

@@ -236,6 +236,11 @@ class EventHubConsumer(
                     # If optional dependency is not installed, do not retry.
                     if isinstance(exception, ImportError):
                         raise exception
+
+                    # If authentication exception, do not retry.
+                    if isinstance(exception, self._amqp_transport.AUTHENTICATION_EXCEPTION):
+                        raise self._handle_exception(exception, is_consumer=True)
+
                     self._amqp_transport.check_link_stolen(self, exception)
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137

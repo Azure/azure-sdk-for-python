@@ -25,9 +25,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_windows_timezone_ids_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone.aio import TimezoneClient
+    from azure.maps.timezone.aio import MapsTimezoneClient
 
-    timezone_client = TimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with timezone_client:
             result = await timezone_client.get_windows_timezone_ids()

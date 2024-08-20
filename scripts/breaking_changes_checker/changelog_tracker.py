@@ -22,21 +22,21 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}.{}' was added in the current version"
+        "The client '{}' was added in the current version"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}.{}' client method '{}' was added in the current version"
+        "The '{}' client method '{}' was added in the current version"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}.{}' was added in the current version"
+        "The model or publicly exposed class '{}' was added in the current version"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}.{}' method '{}' was added in the current version"
+        "The '{}' method '{}' was added in the current version"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the {} method in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}.{}' had parameter '{}' added in the current version"
+        "The function '{}' had parameter '{}' added in the current version"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added in the current version"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}.{}' client had operation group '{}' added in the current version"
+        "The '{}' client had operation group '{}' added in the current version"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -159,7 +159,8 @@ class ChangelogTracker(BreakingChangesTracker):
             buffer.append(title)
             buffer.append("")
             for _, bc in enumerate(content):
-                msg, _, *args = bc
+                # Extract the message, skip the change type and the module name
+                msg, _, _,*args = bc
                 buffer.append("  - " + msg.format(*args))
             buffer.append("")
             return buffer
@@ -170,4 +171,6 @@ class ChangelogTracker(BreakingChangesTracker):
         if self.breaking_changes:
             _build_md(self.breaking_changes, "### Breaking Changes", buffer)
         content =  "\n".join(buffer).strip()
+
+        content = "===== changelog start =====\n" + content + "\n===== changelog end =====\n"
         return content
