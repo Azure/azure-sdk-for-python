@@ -20,6 +20,7 @@ from ._models import SupportedFileFormats
 from ._models import TranslationTarget
 from ._models import DocumentTranslationError
 from ._patch import TranslationStatus
+from ._patch import DocumentTranslationInput
 
 from ._enums import FileFormatType
 from ._enums import Status
@@ -49,6 +50,7 @@ __all__ = [
     "StorageInputType",
     "StorageSource",
     "TranslationErrorCode",
+    "DocumentTranslationInput",
 ]
 
 _patch_sdk()

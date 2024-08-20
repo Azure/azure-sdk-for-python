@@ -237,7 +237,7 @@ class DocumentTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -357,7 +357,7 @@ class InnerTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).

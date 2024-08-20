@@ -5,7 +5,7 @@
 # mypy: disable-error-code="attr-defined"
 # pylint: disable=too-many-lines
 
-from typing import Any, List, Union, overload, Optional, cast, Mapping
+from typing import Any, List, Union, overload, Optional, cast, MutableMapping, IO
 from enum import Enum
 import json
 import datetime
@@ -29,10 +29,12 @@ from .models import (
     StorageInputType,
     DocumentTranslationFileFormat,
     TranslationStatus,
-    DocumentStatus,
     DocumentTranslationError,
+    DocumentTranslationInput,
 )
 from .models._patch import convert_status
+
+JSON = MutableMapping[str, Any]
 
 POLLING_INTERVAL = 1
 
@@ -55,106 +57,6 @@ def convert_order_by(orderby: Optional[List[str]]) -> Optional[List[str]]:
         orderby = [order.replace("created_on", "createdDateTimeUtc") for order in orderby]
     return orderby
 
-
-class DocumentTranslationInput:
-    """Input for translation. This requires that you have your source document or
-    documents in an Azure Blob Storage container. Provide a URL to the source file or
-    source container containing the documents for translation. The source document(s) are
-    translated and written to the location provided by the TranslationTargets.
-
-    :param str source_url: Required. Location of the folder / container or single file with your
-        documents. This can be a SAS URL (see the service documentation for the supported SAS permissions
-        for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
-        or a managed identity can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-    :param targets: Required. Location of the destination for the output. This is a list of
-        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :type targets: list[~azure.ai.translation.document.TranslationTarget]
-    :keyword Optional[str] source_language: Language code for the source documents.
-        If none is specified, the source language will be auto-detected for each document.
-    :keyword Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
-        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
-        sub folders for translation.
-    :keyword Optional[str] suffix: A case-sensitive suffix string to filter documents in the source path for
-        translation. This is most often use for file extensions.
-    :keyword storage_type: Storage type of the input documents source string. Possible values
-        include: "Folder", "File".
-    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
-    :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
-        Currently only "AzureBlob" is supported.
-    """
-
-    source_url: str
-    """Location of the folder / container or single file with your
-        documents. This can be a SAS URL (see the service documentation for the supported SAS permissions
-        for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
-        or a managed identity can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity)."""
-    targets: List[TranslationTarget]
-    """Location of the destination for the output. This is a list of
-        TranslationTargets. Note that a TranslationTarget is required for each language code specified."""
-    source_language: Optional[str] = None
-    """Language code for the source documents.
-        If none is specified, the source language will be auto-detected for each document."""
-    storage_type: Optional[Union[str, StorageInputType]] = None
-    """Storage type of the input documents source string. Possible values
-        include: "Folder", "File"."""
-    storage_source: Optional[str] = None
-    """Storage Source. Default value: "AzureBlob".
-        Currently only "AzureBlob" is supported."""
-    prefix: Optional[str] = None
-    """A case-sensitive prefix string to filter documents in the source path for
-        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
-        sub folders for translation."""
-    suffix: Optional[str] = None
-    """A case-sensitive suffix string to filter documents in the source path for
-        translation. This is most often use for file extensions."""
-
-    def __init__(
-        self,
-        source_url: str,
-        targets: List[TranslationTarget],
-        *,
-        source_language: Optional[str] = None,
-        storage_type: Optional[Union[str, StorageInputType]] = None,
-        storage_source: Optional[str] = None,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None
-    ) -> None:
-        self.source_url = source_url
-        self.targets = targets
-        self.source_language = source_language
-        self.storage_type = storage_type
-        self.storage_source = storage_source
-        self.prefix = prefix
-        self.suffix = suffix
-
-    def _to_generated(self):
-        return BatchRequest(
-            source=SourceInput(
-                source_url=self.source_url,
-                filter=DocumentFilter(prefix=self.prefix, suffix=self.suffix),
-                language=self.source_language,
-                storage_source=self.storage_source,
-            ),
-            targets=self.targets,
-            storage_type=self.storage_type,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            "DocumentTranslationInput(source_url={}, targets={}, "
-            "source_language={}, storage_type={}, "
-            "storage_source={}, prefix={}, suffix={})".format(
-                self.source_url,
-                repr(self.targets),
-                self.source_language,
-                repr(self.storage_type),
-                self.storage_source,
-                self.prefix,
-                self.suffix,
-            )[:1024]
-        )
 
 
 class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -382,6 +284,16 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     @overload
     def begin_translation(
+        self, inputs: JSON, **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]: ...
+
+    @overload
+    def begin_translation(
+        self, inputs: IO[bytes], **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]: ...
+
+    @overload
+    def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -409,7 +321,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     @distributed_trace
     def begin_translation(  # pylint: disable=docstring-missing-param
-        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+        self, *args: Union[str, List[DocumentTranslationInput], IO[bytes], JSON], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
@@ -490,6 +402,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         **kwargs: Any
     ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
+
         :keyword int top: The total number of operations to return (across all pages) from all submitted translations.
         :keyword int skip: The number of operations to skip (from beginning of all submitted operations).
             By default, we sort by all submitted operations in descending order by start time.
@@ -508,7 +421,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :return: A pageable of TranslationStatus.
         :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sample_list_translations.py
                 :start-after: [START list_translations]
                 :end-before: [END list_translations]
@@ -552,6 +467,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         **kwargs: Any
     ) -> ItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
+
         :param str translation_id: ID of translation operation to list documents for.
         :keyword int top: The total number of documents to return (across all pages).
         :keyword int skip: The number of documents to skip (from beginning).
@@ -571,7 +487,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :return: A pageable of DocumentStatus.
         :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sample_check_document_statuses.py
                 :start-after: [START list_document_statuses]
                 :end-before: [END list_document_statuses]
@@ -604,6 +522,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the glossary formats supported by the Document Translation service.
+
         :return: A list of supported glossary formats.
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -614,6 +533,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @distributed_trace
     def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the document formats supported by the Document Translation service.
+
         :return: A list of supported document formats for translation.
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -635,8 +555,7 @@ __all__: List[str] = [
     "DocumentTranslationError",
     "DocumentTranslationFileFormat",
     "StorageInputType",
-]  # Add all objects you want publicly available to users at this package level
-
+]
 
 def patch_sdk():
     """Do not remove from this file.
