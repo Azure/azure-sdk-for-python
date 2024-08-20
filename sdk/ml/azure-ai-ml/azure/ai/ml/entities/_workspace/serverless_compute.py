@@ -12,7 +12,6 @@ from azure.ai.ml._schema._utils.utils import ArmId
 
 
 class ServerlessComputeSettings:
-
     custom_subnet: Optional[ArmId]
     no_public_ip: bool = False
 
