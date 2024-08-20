@@ -1140,3 +1140,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
+
+    def mergeSessionTokens(self,
+                           pks_to_session_tokens: List,
+                           target_pk: PartitionKey
+                           ) -> "Session Token":
+        """Merge session tokens from different clients to figure out which is the most up to date for a specific
+        partition key. This should only be used if maintaining own session token or else the sdk will keep track of
+        session token.
+
+        :param pks_to_session_tokens: list of partition key and session token tuples.
+        :type pks_to_session_tokens: List[Tuple(string, PartitionKey)]
+        :param target_pk: partition key to get most up to date session token.
+        :type target_pk: PartitionKey
+        :rtype: string
+        """
+        pass
