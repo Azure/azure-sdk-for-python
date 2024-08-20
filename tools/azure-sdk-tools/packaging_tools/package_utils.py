@@ -34,7 +34,6 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
     result = [l for l in output.split("\n")]
-    _LOGGER.info(f"breaking change detector output: {result}")
     begin = result.index("===== changelog start =====")
     end = result.index("===== changelog end =====")
     return "\n".join(result[begin + 1 : end]).strip()
