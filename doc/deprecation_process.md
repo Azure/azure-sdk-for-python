@@ -16,7 +16,7 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 ## README.md
 
-Replace the existing text with a disclaimer in the following format, with migration guide provided as necessary:
+Replace the existing text with a disclaimer in the following format, with a migration guide provided as necessary. If a migration guide will not be provided, omit the last line in the disclaimer.
 
 > # Microsoft Azure SDK for Python
 >
@@ -28,27 +28,25 @@ Replace the existing text with a disclaimer in the following format, with migrat
 
 ## CHANGELOG.md and _version.py
 
-In `CHANGELOG.md`, add a new version with a disclaimer in the following format. The version should be the next beta or patch version. For example:
+- Update the version in the `azure/mypackage/_version.py` file to the next beta or patch version. This file may be called `version.py` if your package is very old. For example:
+  - If the last released version was 1.2.3b1, the new version should be 1.2.3b2.
+  - If the last released version was 1.2.3, the new version should be 1.2.4.
+- In `CHANGELOG.md`, add the new version with a disclaimer in the following format. For example:
+  - If a replacement package exists and a migration guide is provided.
+    > ## 1.2.4 (2023-03-31)
+    >
+    > ### Other Changes
+    >
+    > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
-If the last released version was 1.2.3b1, the version should be 1.2.3b2.
+  - If the service has been retired and no replacement package exists.
 
-> ## 1.2.3b2 (2023-03-31)
->
-> ### Other Changes
->
-> - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-> - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
-   
-If the last released version was 1.2.3, the version should be 1.2.4.
-
-> ## 1.2.4 (2023-03-31)
->
-> ### Other Changes
->
-> - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-> - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
-
-Update the version in the `azure/mypackage/_version.py` file. This file may be called `version.py` if your package is very old.
+    > ## 1.2.4 (2023-03-31)
+    >
+    > ### Other Changes
+    >
+    > - This package is no longer being maintained.
 
 ## sdk_packaging.toml
 
