@@ -21,7 +21,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
 from .._generated.aio import AzureFileStorage
 from .._generated.models import StorageServiceProperties
-from .._models import service_properties_deserialize, ShareProperties
+from .._models import CorsRule, service_properties_deserialize, ShareProperties
 from .._serialize import get_api_version
 from .._share_service_client_helpers import _parse_url
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -39,7 +39,6 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._generated.models import CorsRule
     from .._models import Metrics, ShareProtocolSettings
 
 
@@ -217,7 +216,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
     async def set_service_properties(
         self, hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         protocol: Optional["ShareProtocolSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -258,11 +257,14 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
                 :dedent: 8
                 :caption: Sets file share service properties.
         """
+        if all(parameter is None for parameter in [hour_metrics, minute_metrics, cors, protocol]):
+            raise ValueError("set_service_properties should be called with at least one parameter")
+
         timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             protocol=protocol
         )
         try:
