@@ -62,7 +62,10 @@ def sample_document_status_checks():
                     )
                     completed_docs.append(document.id)
                 if document.status == "Running":
-                    print(f"Document ID: {document.id}, translation progress is " f"{document.translation_progress * 100} percent")
+                    print(
+                        f"Document ID: {document.id}, translation progress is "
+                        f"{document.translation_progress * 100} percent"
+                    )
 
     print("\nTranslation completed.")
     # [END list_document_statuses]

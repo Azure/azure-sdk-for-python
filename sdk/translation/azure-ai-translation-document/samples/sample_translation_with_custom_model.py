@@ -42,7 +42,7 @@ def sample_translation_with_custom_model():
     poller = client.begin_translation(source_container_url, target_container_url, "es", category_id=custom_model_id)
     result = poller.result()
 
-    print(f"Operation status: {poller.status()}")
+    print(f"Operation status: {poller.details.status}")
     print(f"Operation created on: {poller.details.created_on}")
     print(f"Operation last updated on: {poller.details.last_updated_on}")
     print(f"Total number of translations on documents: {poller.details.documents_total_count}")
