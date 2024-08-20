@@ -251,7 +251,7 @@ class _ConfigurationClientWrapper:
                     feature_flag_selectors, True, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
-        return False, None, None, []
+        return False, None, None, {}
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
