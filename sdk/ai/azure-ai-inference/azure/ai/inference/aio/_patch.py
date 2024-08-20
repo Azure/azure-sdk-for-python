@@ -905,8 +905,8 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._patch.EmbeddingsResult, response.json()
-            )  # pylint: disable=protected-access
+                _models._patch.EmbeddingsResult, response.json()  # pylint: disable=protected-access
+            )
 
         return deserialized  # type: ignore
 
@@ -1185,8 +1185,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._patch.EmbeddingsResult, response.json()
-            )  # pylint: disable=protected-access
+                _models._patch.EmbeddingsResult, response.json()  # pylint: disable=protected-access
+            )
 
         return deserialized  # type: ignore
 
