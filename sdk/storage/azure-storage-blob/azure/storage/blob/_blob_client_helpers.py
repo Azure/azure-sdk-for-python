@@ -950,9 +950,10 @@ def _upload_page_options(
     length: int,
     **kwargs: Any
 ) -> Dict[str, Any]:
+    page = page[:length]
     if isinstance(page, str):
         page = page.encode(kwargs.pop('encoding', 'UTF-8'))
-    page = page[:length]
+        length = len(page)  # Account for change in length due ot encoding
 
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
