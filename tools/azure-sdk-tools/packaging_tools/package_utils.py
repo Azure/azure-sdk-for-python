@@ -33,7 +33,7 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     except CalledProcessError as e:
         _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
-    result = [l for l in output.decode("utf-8").split(os.linesep)]
+    result = [l for l in output.split(os.linesep)]
     begin = result.index("===== changelog start =====")
     end = result.index("===== changelog end =====")
     return "\n".join(result[begin + 1 : end]).strip()
