@@ -5,9 +5,10 @@
 # mypy: disable-error-code="attr-defined"
 # pylint: disable=too-many-lines
 
-from typing import Any, List, Union, overload, Optional, cast
+from typing import Any, List, Union, overload, Optional, cast, Mapping
 from enum import Enum
 import json
+import datetime
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
@@ -20,15 +21,140 @@ from ._client import DocumentTranslationClient as GeneratedDocumentTranslationCl
 from .models import (
     BatchRequest,
     SourceInput,
-    TargetInput,
+    TranslationTarget,
     DocumentFilter,
-    Glossary,
+    TranslationGlossary,
     DocumentStatus,
     StartTranslationDetails,
     StorageInputType,
+    DocumentTranslationFileFormat,
+    TranslationStatus,
+    DocumentStatus,
+    DocumentTranslationError,
 )
+from .models._patch import convert_status
 
 POLLING_INTERVAL = 1
+
+def convert_datetime(date_time: Union[str, datetime.datetime]) -> datetime.datetime:
+    if isinstance(date_time, datetime.datetime):
+        return date_time
+    if isinstance(date_time, str):
+        try:
+            return datetime.datetime.strptime(date_time, "%Y-%m-%d")
+        except ValueError:
+            try:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    raise TypeError("Bad datetime type")
+
+
+def convert_order_by(orderby: Optional[List[str]]) -> Optional[List[str]]:
+    if orderby:
+        orderby = [order.replace("created_on", "createdDateTimeUtc") for order in orderby]
+    return orderby
+
+
+class DocumentTranslationInput:
+    """Input for translation. This requires that you have your source document or
+    documents in an Azure Blob Storage container. Provide a URL to the source file or
+    source container containing the documents for translation. The source document(s) are
+    translated and written to the location provided by the TranslationTargets.
+
+    :param str source_url: Required. Location of the folder / container or single file with your
+        documents. This can be a SAS URL (see the service documentation for the supported SAS permissions
+        for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
+        or a managed identity can be created and used to access documents in your storage account
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity).
+    :param targets: Required. Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
+    :type targets: list[~azure.ai.translation.document.TranslationTarget]
+    :keyword Optional[str] source_language: Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document.
+    :keyword Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation.
+    :keyword Optional[str] suffix: A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions.
+    :keyword storage_type: Storage type of the input documents source string. Possible values
+        include: "Folder", "File".
+    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
+    :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
+    """
+
+    source_url: str
+    """Location of the folder / container or single file with your
+        documents. This can be a SAS URL (see the service documentation for the supported SAS permissions
+        for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
+        or a managed identity can be created and used to access documents in your storage account
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity)."""
+    targets: List[TranslationTarget]
+    """Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified."""
+    source_language: Optional[str] = None
+    """Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document."""
+    storage_type: Optional[Union[str, StorageInputType]] = None
+    """Storage type of the input documents source string. Possible values
+        include: "Folder", "File"."""
+    storage_source: Optional[str] = None
+    """Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported."""
+    prefix: Optional[str] = None
+    """A case-sensitive prefix string to filter documents in the source path for
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation."""
+    suffix: Optional[str] = None
+    """A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions."""
+
+    def __init__(
+        self,
+        source_url: str,
+        targets: List[TranslationTarget],
+        *,
+        source_language: Optional[str] = None,
+        storage_type: Optional[Union[str, StorageInputType]] = None,
+        storage_source: Optional[str] = None,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None
+    ) -> None:
+        self.source_url = source_url
+        self.targets = targets
+        self.source_language = source_language
+        self.storage_type = storage_type
+        self.storage_source = storage_source
+        self.prefix = prefix
+        self.suffix = suffix
+
+    def _to_generated(self):
+        return BatchRequest(
+            source=SourceInput(
+                source_url=self.source_url,
+                filter=DocumentFilter(prefix=self.prefix, suffix=self.suffix),
+                language=self.source_language,
+                storage_source=self.storage_source,
+            ),
+            targets=self.targets,
+            storage_type=self.storage_type,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            "DocumentTranslationInput(source_url={}, targets={}, "
+            "source_language={}, storage_type={}, "
+            "storage_source={}, prefix={}, suffix={})".format(
+                self.source_url,
+                repr(self.targets),
+                self.source_language,
+                repr(self.storage_type),
+                self.storage_source,
+                self.prefix,
+                self.suffix,
+            )[:1024]
+        )
 
 
 class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,12 +165,22 @@ class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 def get_translation_input(args, kwargs, continuation_token):
+    if continuation_token:
+        return None
 
     inputs = kwargs.pop("inputs", None)
     if not inputs:
         inputs = args[0]
+
     if isinstance(inputs, StartTranslationDetails):
-        request = inputs if not continuation_token else None
+        request = inputs
+    elif inputs:
+        # backcompatibility
+        if isinstance(inputs[0], DocumentTranslationInput):
+            request = StartTranslationDetails(inputs=[input._to_generated() for input in inputs])
+        else:
+            # mapping
+            request = inputs
     else:
         try:
             source_url = kwargs.pop("source_url", None)
@@ -65,24 +201,26 @@ def get_translation_input(args, kwargs, continuation_token):
             category_id = kwargs.pop("category_id", None)
             glossaries = kwargs.pop("glossaries", None)
 
-            request = StartTranslationDetails(inputs=[
-                BatchRequest(
-                    source=SourceInput(
-                        source_url=source_url,
-                        filter=DocumentFilter(prefix=prefix, suffix=suffix),
-                        language=source_language,
-                    ),
-                    targets=[
-                        TargetInput(
-                            target_url=target_url,
-                            language=target_language,
-                            glossaries=glossaries,
-                            category=category_id,
-                        )
-                    ],
-                    storage_type=storage_type,
-                )
-            ])
+            request = StartTranslationDetails(
+                inputs=[
+                    BatchRequest(
+                        source=SourceInput(
+                            source_url=source_url,
+                            filter=DocumentFilter(prefix=prefix, suffix=suffix),
+                            language=source_language,
+                        ),
+                        targets=[
+                            TranslationTarget(
+                                target_url=target_url,
+                                language=target_language,
+                                glossaries=glossaries,
+                                category=category_id,
+                            )
+                        ],
+                        storage_type=storage_type,
+                    )
+                ]
+            )
         except (AttributeError, TypeError, IndexError) as exc:
             raise ValueError(
                 "Pass 'inputs' for multiple inputs or 'source_url', 'target_url', "
@@ -193,7 +331,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         suffix: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
         category_id: Optional[str] = None,
-        glossaries: Optional[List[Glossary]] = None,
+        glossaries: Optional[List[TranslationGlossary]] = None,
         **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -240,6 +378,11 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @overload
     def begin_translation(
         self, inputs: StartTranslationDetails, **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]: ...
+
+    @overload
+    def begin_translation(
+        self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
@@ -266,7 +409,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     @distributed_trace
     def begin_translation(  # pylint: disable=docstring-missing-param
-        self, *args: Union[str, StartTranslationDetails], **kwargs: Any
+        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
@@ -302,7 +445,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
-            return self.get_documents_status(translation_status["id"])
+            return super().list_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
             "polling_interval",
@@ -333,10 +476,165 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
+    @distributed_trace
+    def list_translation_statuses(
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        translation_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[TranslationStatus]:
+        """List all the submitted translation operations under the Document Translation resource.
+        :keyword int top: The total number of operations to return (across all pages) from all submitted translations.
+        :keyword int skip: The number of operations to skip (from beginning of all submitted operations).
+            By default, we sort by all submitted operations in descending order by start time.
+        :keyword list[str] translation_ids: Translation operations ids to filter by.
+        :keyword list[str] statuses: Translation operation statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
+            and 'ValidationFailed'.
+        :keyword created_after: Get operations created after a certain datetime.
+        :paramtype created_after: str or ~datetime.datetime
+        :keyword created_before: Get operations created before a certain datetime.
+        :paramtype created_before: str or ~datetime.datetime
+        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
+            'created_on' supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of TranslationStatus.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sample_list_translations.py
+                :start-after: [START list_translations]
+                :end-before: [END list_translations]
+                :language: python
+                :dedent: 4
+                :caption: List all submitted translations under the resource.
+        """
+
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
+        order_by = convert_order_by(order_by)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+
+        return cast(
+            ItemPaged[TranslationStatus],
+            super().list_translation_statuses(
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=translation_ids,
+                orderby=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            ),
+        )
+
+    @distributed_trace
+    def list_document_statuses(
+        self,
+        translation_id: str,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        document_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[DocumentStatus]:
+        """List all the document statuses for a given translation operation.
+        :param str translation_id: ID of translation operation to list documents for.
+        :keyword int top: The total number of documents to return (across all pages).
+        :keyword int skip: The number of documents to skip (from beginning).
+            By default, we sort by all documents in descending order by start time.
+        :keyword list[str] document_ids: Document IDs to filter by.
+        :keyword list[str] statuses: Document statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
+            and 'ValidationFailed'.
+        :keyword created_after: Get documents created after a certain datetime.
+        :paramtype created_after: str or ~datetime.datetime
+        :keyword created_before: Get documents created before a certain datetime.
+        :paramtype created_before: str or ~datetime.datetime
+        :keyword list[str] order_by: The sorting query for the documents. Currently only
+            'created_on' is supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of DocumentStatus.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sample_check_document_statuses.py
+                :start-after: [START list_document_statuses]
+                :end-before: [END list_document_statuses]
+                :language: python
+                :dedent: 4
+                :caption: List all the document statuses as they are being translated.
+        """
+
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
+        order_by = convert_order_by(order_by)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+
+        return cast(
+            ItemPaged[DocumentStatus],
+            super().list_document_statuses(
+                id=translation_id,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=document_ids,
+                orderby=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            ),
+        )
+
+    @distributed_trace
+    def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
+        """Get the list of the glossary formats supported by the Document Translation service.
+        :return: A list of supported glossary formats.
+        :rtype: List[DocumentTranslationFileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        return super().get_supported_formats(type="glossary", **kwargs)
+
+    @distributed_trace
+    def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
+        """Get the list of the document formats supported by the Document Translation service.
+        :return: A list of supported document formats for translation.
+        :rtype: List[DocumentTranslationFileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        return super().get_supported_formats(type="document", **kwargs)
+
 
 __all__: List[str] = [
     "DocumentTranslationClient",
     "DocumentTranslationLROPoller",
+    "DocumentTranslationApiVersion",
+    # re-export models at this level for backwards compatibility
+    "TranslationGlossary",
+    "TranslationTarget",
+    "DocumentTranslationInput",
+    "TranslationStatus",
+    "DocumentStatus",
+    "DocumentTranslationError",
+    "DocumentTranslationFileFormat",
+    "StorageInputType",
 ]  # Add all objects you want publicly available to users at this package level
 
 

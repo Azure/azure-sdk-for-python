@@ -32,20 +32,20 @@ def sample_list_translations():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    operations = client.get_translations_status()
+    operations = client.list_translation_statuses()
 
     for operation in operations:
         print(f"ID: {operation.id}")
         print(f"Status: {operation.status}")
-        print(f"Created on: {operation.created_date_time_utc}")
-        print(f"Last updated on: {operation.last_action_date_time_utc}")
-        print(f"Total number of operations on documents: {operation.summary.total}")
-        print(f"Total number of characters charged: {operation.summary.total_character_charged}")
+        print(f"Created on: {operation.created_on}")
+        print(f"Last updated on: {operation.last_updated_on}")
+        print(f"Total number of operations on documents: {operation.documents_total_count}")
+        print(f"Total number of characters charged: {operation.total_characters_charged}")
 
         print("\nOf total documents...")
-        print(f"{operation.summary.failed} failed")
-        print(f"{operation.summary.success} succeeded")
-        print(f"{operation.summary.cancelled} canceled\n")
+        print(f"{operation.documents_failed_count} failed")
+        print(f"{operation.documents_succeeded_count} succeeded")
+        print(f"{operation.documents_canceled_count} canceled\n")
 
     # [END list_translations]
 

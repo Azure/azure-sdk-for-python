@@ -14,13 +14,13 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._operations._patch import AsyncDocumentTranslationLROPoller, AsyncDocumentTranslationLROPollingMethod
-from ..operations._patch import TranslationPolling
+from .._operations._patch import TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
 from ..models import (
     DocumentStatus,
     StartTranslationDetails,
     StorageInputType,
-    Glossary,
+    TranslationGlossary,
 )
 from ...document._patch import (
     get_http_logging_policy,
@@ -123,7 +123,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         suffix: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
         category_id: Optional[str] = None,
-        glossaries: Optional[List[Glossary]] = None,
+        glossaries: Optional[List[TranslationGlossary]] = None,
         **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container

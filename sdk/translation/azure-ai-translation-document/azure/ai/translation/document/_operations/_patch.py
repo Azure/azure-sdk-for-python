@@ -111,9 +111,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
         if self._polling_method._current_body:  # pylint: disable=protected-access
-            return TranslationStatus(
-                self._polling_method._current_body  # pylint: disable=protected-access
-            )
+            return TranslationStatus(self._polling_method._current_body)  # pylint: disable=protected-access
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
 
     @classmethod

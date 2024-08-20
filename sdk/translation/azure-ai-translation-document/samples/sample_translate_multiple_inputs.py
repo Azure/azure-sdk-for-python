@@ -36,8 +36,7 @@ def sample_multiple_translation():
     # [START multiple_translation]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import DocumentTranslationClient
-    from azure.ai.translation.document.models import StartTranslationDetails, BatchRequest, SourceInput, TargetInput
+    from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -50,40 +49,38 @@ def sample_multiple_translation():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     poller = client.begin_translation(
-        StartTranslationDetails(
-            inputs=[
-                BatchRequest(
-                    source=SourceInput(source_url=source_container_url_1),
-                    targets=[
-                        TargetInput(target_url=target_container_url_fr, language="fr"),
-                        TargetInput(target_url=target_container_url_ar, language="ar"),
-                    ],
-                ),
-                BatchRequest(
-                    source=SourceInput(source_url=source_container_url_2),
-                    targets=[TargetInput(target_url=target_container_url_es, language="es")],
-                ),
-            ]
-        )
+        inputs=[
+            DocumentTranslationInput(
+                source_url=source_container_url_1,
+                targets=[
+                    TranslationTarget(target_url=target_container_url_fr, language="fr"),
+                    TranslationTarget(target_url=target_container_url_ar, language="ar"),
+                ],
+            ),
+            DocumentTranslationInput(
+                source_url=source_container_url_2,
+                targets=[TranslationTarget(target_url=target_container_url_es, language="es")],
+            ),
+        ]
     )
     result = poller.result()
 
     print(f"Status: {poller.status()}")
-    print(f"Created on: {poller.details.created_date_time_utc}")
-    print(f"Last updated on: {poller.details.last_action_date_time_utc}")
-    print(f"Total number of translations on documents: {poller.details.summary.total}")
+    print(f"Created on: {poller.details.created_on}")
+    print(f"Last updated on: {poller.details.last_updated_on}")
+    print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
     print("\nOf total documents...")
-    print(f"{poller.details.summary.failed} failed")
-    print(f"{poller.details.summary.success} succeeded")
+    print(f"{poller.details.documents_failed_count} failed")
+    print(f"{poller.details.documents_succeeded_count} succeeded")
 
     for document in result:
         print(f"Document ID: {document.id}")
         print(f"Document status: {document.status}")
         if document.status == "Succeeded":
-            print(f"Source document location: {document.source_path}")
-            print(f"Translated document location: {document.path}")
-            print(f"Translated to language: {document.to}\n")
+            print(f"Source document location: {document.source_document_url}")
+            print(f"Translated document location: {document.translated_document_url}")
+            print(f"Translated to language: {document.translated_to}\n")
         elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
     # [END multiple_translation]

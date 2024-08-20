@@ -14,11 +14,27 @@ __version__ = VERSION
 
 from ._patch import DocumentTranslationApiVersion
 from ._patch import DocumentTranslationLROPoller
+from ._patch import TranslationGlossary
+from ._patch import TranslationTarget
+from ._patch import DocumentTranslationInput
+from ._patch import TranslationStatus
+from ._patch import DocumentStatus
+from ._patch import DocumentTranslationError
+from ._patch import DocumentTranslationFileFormat
+from ._patch import StorageInputType
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DocumentTranslationApiVersion",
     "DocumentTranslationLROPoller",
+    "TranslationGlossary",
+    "TranslationTarget",
+    "DocumentTranslationInput",
+    "TranslationStatus",
+    "DocumentStatus",
+    "DocumentTranslationError",
+    "DocumentTranslationFileFormat",
+    "StorageInputType",
+    "DocumentTranslationApiVersion",
     "DocumentTranslationClient",
     "SingleDocumentTranslationClient",
 ]
