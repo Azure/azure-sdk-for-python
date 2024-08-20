@@ -1836,7 +1836,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def stage_block(
         self, block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1846,8 +1846,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
-        :param int length: Size of the block.
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
+        :param int length:
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword validate_content:
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:

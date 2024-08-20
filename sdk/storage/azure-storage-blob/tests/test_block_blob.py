@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import tempfile
 from datetime import datetime, timedelta
-from io import BytesIO
+from io import BytesIO, StringIO
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -47,7 +47,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=key,
             max_single_put_size=1024,
-            max_block_size=1024)
+            max_block_size=1024,
+            logging_enable=True)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name(container_name)
         self.source_container_name = self.get_resource_name('utcontainersource1')
@@ -521,18 +522,59 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_put_block_unicode(self, **kwargs):
+    def test_put_block_bytes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob = self._create_blob()
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'Hello World'
+        io = BytesIO(data)
+
+        def generator():
+            yield b'Hello'
+            yield b' '
+            yield b'World'
 
         # Act
-        headers = blob.stage_block('1', u'啊齄丂狛狜')
-        assert 'content_crc64' in headers
+        blob.stage_block('1', data)
+        blob.stage_block('2', io)
+        blob.stage_block('3', generator())
+        blob.stage_block('4', generator(), length=len(data))
+        blob.commit_block_list(['1', '2', '3', '4'])
 
         # Assert
+        content = blob.download_blob().read()
+        assert content == data * 4
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_str_legacy(self, **kwargs):
+        # Test operations with str types that are expected to work for legacy reasons but are no longer supported.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = 'Hello World'
+        unicode_data = '你好世界'
+        io = StringIO(data)
+
+        def generator():
+            yield 'Hello'
+            yield ' '
+            yield 'World'
+
+        # Act
+        blob.stage_block('1', data)
+        blob.stage_block('2', io)
+        blob.stage_block('3', generator(), length=len(data))
+        blob.stage_block('4', unicode_data, encoding='utf-32')
+        blob.commit_block_list(['1', '2', '3', '4'])
+
+        # Assert
+        content = blob.download_blob().read()
+        assert content == data.encode('latin-1') * 3 + unicode_data.encode('utf-32')
 
     @BlobPreparer()
     @recorded_by_proxy

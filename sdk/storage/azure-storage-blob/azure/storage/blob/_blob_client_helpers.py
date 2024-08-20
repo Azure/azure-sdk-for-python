@@ -684,7 +684,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
 
 def _stage_block_options(
     block_id: str,
-    data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:

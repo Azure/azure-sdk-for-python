@@ -20,11 +20,25 @@ DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
 
 class IterStreamer(IOBase):
     """A file-like wrapper over an iterable."""
-    def __init__(self, iterable: Iterable[AnyStr], encoding: str = "UTF-8"):
+    def __init__(
+            self, iterable: Iterable[AnyStr],
+            length: Optional[int] = None,
+            encoding: str = "UTF-8",
+            *,
+            block_str: bool = False):
         self.iterable: Union[Iterable[str], Iterable[bytes]] = iterable
         self.iterator: Union[Iterator[str], Iterator[bytes]] = iter(iterable)
-        self.leftover = bytearray()
+        self.length = length
         self.encoding = encoding
+        self.block_str = block_str
+
+        self._leftover = bytearray()
+        self._offset = 0
+
+    def __len__(self):
+        if self.length is not None:
+            return self.length
+        raise UnsupportedOperation()
 
     def __iter__(self):
         return self.iterator
@@ -32,30 +46,36 @@ class IterStreamer(IOBase):
     def __next__(self):
         return next(self.iterator)
 
+    def tell(self):
+        return self._offset
+
     def readable(self):
         return True
 
     def read(self, size: int = -1) -> bytes:
         if size < 0:
             size = sys.maxsize
-        data = self.leftover
-        count = len(self.leftover)
+        data = self._leftover
+        count = len(self._leftover)
         try:
             while count < size:
                 chunk = self.__next__()
                 if isinstance(chunk, str):
+                    if self.block_str:
+                        raise TypeError("Iterable[str] is not supported.")
                     chunk = chunk.encode(self.encoding)
                 data.extend(chunk)
                 count += len(chunk)
         # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
-            self.leftover = bytearray()
+            self._leftover = bytearray()
 
         if count >= size:
-            self.leftover = data[size:]
+            self._leftover = data[size:]
 
-        data_view = memoryview(data)
-        return bytes(data_view[:size])
+        ret = bytes(memoryview(data)[:size])
+        self._offset += len(ret)
+        return ret
 
 
 class StructuredMessageConstants:
