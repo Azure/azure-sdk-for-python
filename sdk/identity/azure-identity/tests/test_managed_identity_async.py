@@ -1223,10 +1223,9 @@ def test_validate_identity_config():
     ManagedIdentityCredential(identity_config={"object_id": "foo"})
     ManagedIdentityCredential(identity_config={"resource_id": "foo"})
     ManagedIdentityCredential(identity_config={"foo": "bar"}, client_id="foo")
-    ManagedIdentityCredential(identity_config={"client_id": "foo"}, client_id="foo")
 
     with pytest.raises(ValueError):
-        ManagedIdentityCredential(identity_config={"client_id": "bar"}, client_id="foo")
+        ManagedIdentityCredential(identity_config={"client_id": "foo"}, client_id="foo")
     with pytest.raises(ValueError):
         ManagedIdentityCredential(identity_config={"object_id": "bar"}, client_id="bar")
     with pytest.raises(ValueError):

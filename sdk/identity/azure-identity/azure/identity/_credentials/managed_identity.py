@@ -20,16 +20,11 @@ _LOGGER = logging.getLogger(__name__)
 def validate_identity_config(client_id: Optional[str], identity_config: Optional[Mapping[str, str]]) -> None:
     if identity_config:
         if client_id:
-            if any(key in identity_config for key in ("object_id", "resource_id")):
+            if any(key in identity_config for key in ("object_id", "resource_id", "client_id")):
                 raise ValueError(
-                    "identity_config must not contain 'object_id' or 'resource_id' when 'client_id' is present"
+                    "identity_config must not contain 'object_id', 'resource_id', or 'client_id' when 'client_id' is "
+                    "provided as a keyword argument."
                 )
-            if "client_id" in identity_config and identity_config["client_id"] != client_id:
-                raise ValueError(
-                    "Multiple client IDs were provided. When 'client_id' is provided as a keyword argument, "
-                    "it must match the 'client_id' in 'identity_config'."
-                )
-
         # Only one of these keys should be present if one is present.
         valid_keys = {"object_id", "resource_id", "client_id"}
         if len(identity_config.keys() & valid_keys) > 1:

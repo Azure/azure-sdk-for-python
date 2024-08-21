@@ -26,8 +26,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
     def __init__(
         self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> None:
-        self._client_id = client_id
-        self._identity_config = identity_config
+        self._settings = {"client_id": client_id, "identity_config": identity_config or {}}
         self._client = MsalClient(**kwargs)
         managed_identity = self.get_managed_identity()
         self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)
@@ -66,9 +65,10 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         :rtype: msal.UserAssignedManagedIdentity or msal.SystemAssignedManagedIdentity
         :return: The managed identity configuration.
         """
-        if self._client_id:
-            return msal.UserAssignedManagedIdentity(client_id=self._client_id)
-        identity_config = self._identity_config or {}
+
+        if "client_id" in self._settings and self._settings["client_id"]:
+            return msal.UserAssignedManagedIdentity(client_id=self._settings["client_id"])
+        identity_config = cast(Dict, self._settings.get("identity_config")) or {}
         if "client_id" in identity_config and identity_config["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=identity_config["client_id"])
         if "resource_id" in identity_config and identity_config["resource_id"]:
