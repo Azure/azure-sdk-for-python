@@ -209,7 +209,7 @@ def test_device_code_credential():
         disable_instance_discovery=True,
     )
 
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.timezone.utc)
     token = credential.get_token("scope")
     assert token.token == expected_token
 
@@ -269,7 +269,6 @@ def test_tenant_id():
         additionally_allowed_tenants=["*"],
     )
 
-    now = datetime.datetime.utcnow()
     token = credential.get_token("scope", tenant_id="tenant_id")
     assert token.token == expected_token
 
