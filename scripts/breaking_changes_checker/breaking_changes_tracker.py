@@ -8,18 +8,11 @@
 import jsondiff
 import re
 from enum import Enum
-from typing import Any, Dict, List, Union, Optional, NamedTuple
+from typing import Any, Dict, List, Union
 from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-from _models import ChangesChecker
+from _models import ChangesChecker, Suppression
 
-
-class Suppression(NamedTuple):
-    change_type: str
-    module: str
-    class_name: Optional[str] = None
-    function_name: Optional[str] = None
-    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"

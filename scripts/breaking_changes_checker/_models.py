@@ -8,6 +8,13 @@ class BreakingChange(NamedTuple):
     function_name: Optional[str] = None
     parameter_name: Optional[str] = None
 
+class Suppression(NamedTuple):
+    change_type: str
+    module: str
+    class_name: Optional[str] = None
+    function_name: Optional[str] = None
+    parameter_or_property_name: Optional[str] = None
+
 @runtime_checkable
 class ChangesChecker(Protocol):
     name: str
