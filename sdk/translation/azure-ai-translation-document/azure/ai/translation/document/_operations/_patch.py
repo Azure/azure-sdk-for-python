@@ -278,7 +278,7 @@ class TranslationPolling(OperationResourcePolling):
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    def begin_start_translation(  # type: ignore[override]
+    def _begin_start_translation(  # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> DocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

@@ -190,7 +190,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    async def begin_start_translation(  # type: ignore[override]
+    async def _begin_start_translation(  # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
