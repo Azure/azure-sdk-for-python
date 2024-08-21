@@ -50,7 +50,7 @@ from .._model_base import _deserialize
 from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
 from .._configuration import RadiologyInsightsClientConfiguration
 from .._serialization import Deserializer, Serializer
-from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
@@ -98,7 +98,14 @@ class RadiologyInsightsClient(
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client : PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+        from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+
+        self._client = GeneratedRadiologyInsightsClient(
+            endpoint=_endpoint,
+            credential=credential,
+            PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        )
         
         self._serialize = Serializer()
         self._deserialize = Deserializer()

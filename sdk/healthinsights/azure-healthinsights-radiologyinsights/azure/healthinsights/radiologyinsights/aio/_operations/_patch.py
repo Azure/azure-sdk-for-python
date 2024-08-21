@@ -43,7 +43,7 @@ from ._operations import (
 )
 from ..._serialization import Deserializer, Serializer
 from .._configuration import RadiologyInsightsClientConfiguration
-from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -105,8 +105,14 @@ class RadiologyInsightsClient(
                 ),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-        
+        from .._client import RadiologyInsightsClient as GeneratedRadiologyInsightsClient
+
+        self._client = GeneratedRadiologyInsightsClient(
+            endpoint=_endpoint,
+            credential=credential,
+            AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        ) 
+     
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
