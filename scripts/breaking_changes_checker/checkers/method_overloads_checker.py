@@ -1,0 +1,32 @@
+from _models import ChangesChecker
+import jsondiff
+
+class MethodOverloadsChecker(ChangesChecker):
+    name = "MethodOverloadRemoved"
+    message = "{}.{} had an overload `{}` removed"
+
+    def run_check(self, diff, stable_nodes, current_nodes, **kwargs):
+        bc_list = []
+        for module_name, module in diff.items():
+            for class_name, class_components in module.get("class_nodes", {}).items():
+                # We aren't checking for deleted classes in this checker
+                if isinstance(class_name, jsondiff.Symbol):
+                    continue
+                for method_name, method_components in class_components.get("methods", {}).items():
+                    # We aren't checking for deleted methods in this checker
+                    if isinstance(method_name, jsondiff.Symbol):
+                        continue
+                    for overload in method_components.get("overloads", []):
+                        if isinstance(overload, jsondiff.Symbol):
+                            if overload.label == "delete":
+                                for deleted_overload in method_components["overloads"][overload]:
+                                    stable_node_overloads = stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"][deleted_overload]
+                                    parsed_overload_signature = f"def {method_name}(" + ", ".join([f"{name}: {data['type']}" for name,  data in stable_node_overloads["parameters"].items()]) + ")"
+                                    if stable_node_overloads["return_type"] is not None:
+                                        parsed_overload_signature += f" -> {stable_node_overloads['return_type']}"
+                                    bc = (
+                                        self.message,
+                                        self.name, class_name, method_name, parsed_overload_signature
+                                    )
+                                    bc_list.append(bc)
+        return bc_list
