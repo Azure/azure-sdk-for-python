@@ -485,19 +485,6 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         )
 
     @distributed_trace
-    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
-        """Get the status of an individual document within a translation operation.
-
-        :param str translation_id: The translation operation ID.
-        :param str document_id: The ID for the document.
-        :return: A DocumentStatus with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatus
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-        """
-
-        return super().get_document_status(translation_id, document_id, **kwargs)
-
-    @distributed_trace
     def list_document_statuses(
         self,
         translation_id: str,
@@ -563,6 +550,19 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    @distributed_trace
+    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
+        """Get the status of an individual document within a translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return super().get_document_status(translation_id, document_id, **kwargs)
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
