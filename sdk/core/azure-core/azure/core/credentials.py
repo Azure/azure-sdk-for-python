@@ -23,6 +23,7 @@ class AccessTokenInfo:
 
     :param str token: The token string.
     :param int expires_on: The token's expiration time in Unix time.
+    :keyword str token_type: The type of access token. Defaults to 'Bearer'.
     :keyword int refresh_on: Specifies the time, in Unix time, when the cached token should be proactively
         refreshed. Optional.
     """
