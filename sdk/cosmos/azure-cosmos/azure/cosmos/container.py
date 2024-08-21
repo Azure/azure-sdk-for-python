@@ -132,7 +132,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
+    def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> Range: # pylint: disable=line-too-long
         container_properties = self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
@@ -583,13 +585,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
-            if self.__is_prefix_partitionkey(partition_key):
+            partition_key_value = self._set_partition_key(partition_key)
+            if self.__is_prefix_partitionkey(partition_key_value):
                 kwargs["isPrefixPartitionQuery"] = True
                 properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
-                kwargs["partitionKeyDefinition"]["partition_key"] = self._set_partition_key(partition_key)
+                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
             else:
-                feed_options["partitionKey"] = self._set_partition_key(partition_key)
+                feed_options["partitionKey"] = partition_key_value
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if max_integrated_cache_staleness_in_ms:
@@ -616,8 +619,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     def __is_prefix_partitionkey(
-        self, partition_key: PartitionKeyType
-    ) -> bool:
+        self,
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> bool: # pylint: disable=line-too-long
+
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])

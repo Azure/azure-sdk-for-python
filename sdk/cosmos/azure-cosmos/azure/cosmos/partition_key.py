@@ -238,7 +238,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_for_hash_partitioning_v2(
         self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: Sequence[Union[str, int, float, bool, _Empty, _Undefined]]
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
@@ -257,7 +257,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(
         self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: Sequence[Union[str, int, float, bool, _Empty, _Undefined]]
     ) -> str:
         sb = []
         for value in pk_value:
