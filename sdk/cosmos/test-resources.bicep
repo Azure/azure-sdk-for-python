@@ -95,7 +95,7 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   parent: cosmosAccount 
   name: guid(resourceGroup().id, roleAssignmentId, testApplicationOid) 
   properties: {
-    roleDefinitionId: '/${subscription().id}/resourceGroups/${resourceGroup().id}}/providers/Microsoft.DocumentDB/databaseAccounts/${accountName}/sqlRoleDefinitions/${roleDefinitionId}'
+    roleDefinitionId: '${resourceGroup().id}}/providers/Microsoft.DocumentDB/databaseAccounts/${accountName}/sqlRoleDefinitions/${roleDefinitionId}'
     principalId: testApplicationOid 
     scope: cosmosAccount.id
   }
