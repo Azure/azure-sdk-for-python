@@ -11,12 +11,12 @@ from ._models import DocumentFilter
 from ._patch import DocumentStatus
 from ._models import DocumentTranslateContent
 from ._models import DocumentTranslationFileFormat
-from ._models import TranslationGlossary
+from ._patch import TranslationGlossary
 from ._models import InnerTranslationError
 from ._models import SourceInput
 from ._models import StartTranslationDetails
 from ._models import StatusSummary
-from ._models import TranslationTarget
+from ._patch import TranslationTarget
 from ._models import DocumentTranslationError
 from ._patch import TranslationStatus
 from ._patch import DocumentTranslationInput

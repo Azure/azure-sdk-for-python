@@ -135,13 +135,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -178,30 +172,109 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @overload
     async def begin_translation(
         self, inputs: StartTranslationDetails, **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: A StartTranslationDetails including translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple TranslationTargets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: List[~azure.ai.translation.document.models.StartTranslationDetails]
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload
     async def begin_translation(
         self, inputs: JSON, **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: JSON including translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: JSON
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "inputs": [
+                        {
+                            "source": {
+                                "sourceUrl": "str",
+                                "filter": {
+                                    "prefix": "str",
+                                    "suffix": "str"
+                                },
+                                "language": "str",
+                                "storageSource": "str"
+                            },
+                            "targets": [
+                                {
+                                    "language": "str",
+                                    "targetUrl": "str",
+                                    "category": "str",
+                                    "glossaries": [
+                                        {
+                                            "format": "str",
+                                            "glossaryUrl": "str",
+                                            "storageSource": "str",
+                                            "version": "str"
+                                        }
+                                    ],
+                                    "storageSource": "str"
+                                }
+                            ],
+                            "storageType": "str"
+                        }
+                    ]
+                }
+        """
 
     @overload
     async def begin_translation(
         self, inputs: IO[bytes], **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: The translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: IO[bytes]
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+    """
 
     @overload
     async def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -218,22 +291,43 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @distributed_trace_async
-    async def begin_translation(  # pylint: disable=docstring-missing-param
+    async def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
         self, *args: Union[str, List[DocumentTranslationInput], IO[bytes], JSON], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
-        :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+        :param inputs: The translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput] or
+            IO[bytes] or JSON or ~azure.ai.translation.document.models.StartTranslationDetails
+        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
+            to be translated. See the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
+            should be written. See the service documentation for the supported SAS permissions for accessing
+            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_language: This is the language code you want your documents to be translated to.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+        :keyword str source_language: Language code for the source documents.
+            If none is specified, the source language will be auto-detected for each document.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+            sub folders for translation.
+        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+            translation. This is most often use for file extensions.
+        :keyword storage_type: Storage type of the input documents source string. Possible values
+            include: "Folder", "File".
+        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :keyword str category_id: Category / custom model ID for using custom translation.
+        :keyword glossaries: Glossaries to apply to translation.
+        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
         :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]

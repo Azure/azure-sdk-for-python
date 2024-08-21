@@ -7,17 +7,23 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, List, Optional, Union
-
+from typing import Any, List, Mapping, Optional, Union, overload, TYPE_CHECKING
+import datetime
 from ._models import (
     DocumentStatus as GeneratedDocumentStatus,
     TranslationStatus as GeneratedTranslationStatus,
-    TranslationTarget,
+    TranslationGlossary as GeneratedTranslationGlossary,
+    TranslationTarget as GeneratedTranslationTarget,
     BatchRequest,
     SourceInput,
     DocumentFilter,
 )
 from ._enums import StorageInputType
+
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 def convert_status(status, ll=False):
@@ -68,7 +74,7 @@ class DocumentTranslationInput:
         for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
         or a managed identity can be created and used to access documents in your storage account
         (see https://aka.ms/azsdk/documenttranslation/managed-identity)."""
-    targets: List[TranslationTarget]
+    targets: List["TranslationTarget"]
     """Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified."""
     source_language: Optional[str] = None
@@ -91,7 +97,7 @@ class DocumentTranslationInput:
     def __init__(
         self,
         source_url: str,
-        targets: List[TranslationTarget],
+        targets: List["TranslationTarget"],
         *,
         source_language: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
@@ -119,8 +125,232 @@ class DocumentTranslationInput:
             storage_type=self.storage_type,
         )
 
+    def __repr__(self) -> str:
+        return (
+            "DocumentTranslationInput(source_url={}, targets={}, "
+            "source_language={}, storage_type={}, "
+            "storage_source={}, prefix={}, suffix={})".format(
+                self.source_url,
+                repr(self.targets),
+                self.source_language,
+                repr(self.storage_type),
+                self.storage_source,
+                self.prefix,
+                self.suffix,
+            )[:1024]
+        )
+
+
+class TranslationTarget(GeneratedTranslationTarget):
+    """Destination for the finished translated documents.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_url: Location of the folder / container with your documents. Required.
+    :vartype target_url: str
+    :ivar category_id: Category / custom system for translation request.
+    :vartype category_id: str
+    :ivar language: Target Language. Required.
+    :vartype language: str
+    :ivar glossaries: List of Glossary.
+    :vartype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
+    :ivar storage_source: Storage Source. "AzureBlob"
+    :vartype storage_source: str or ~azure.ai.translation.document.models.StorageSource
+    """
+
+    target_url: str
+    """Location of the folder / container with your documents. Required."""
+    category_id: Optional[str]
+    """Category / custom system for translation request."""
+    language: str
+    """Target Language. Required."""
+    glossaries: Optional[List["TranslationGlossary"]]
+    """List of Glossary."""
+    storage_source: Optional[Union[str, "_models.StorageSource"]]
+    """Storage Source. \"AzureBlob\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_url: str,
+        language: str,
+        category_id: Optional[str] = None,
+        glossaries: Optional[List["TranslationGlossary"]] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(
+        self,
+        target_url: str,
+        language: str,
+        *,
+        category_id: Optional[str] = None,
+        glossaries: Optional[List["TranslationGlossary"]] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        target = kwargs.get("mapping")
+        if not target and len(args) == 2:
+            kwargs["target_url"] = args[0]
+            kwargs["language"] = args[1]
+
+        super().__init__(*args, **kwargs)
+
+
+class TranslationGlossary(GeneratedTranslationGlossary):
+    """Glossary / translation memory for the request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar glossary_url: Location of the glossary.
+     We will use the file extension to extract the
+     formatting if the format parameter is not supplied.
+
+     If the translation
+     language pair is not present in the glossary, it will not be applied. Required.
+    :vartype glossary_url: str
+    :ivar file_format: Format. Required.
+    :vartype file_format: str
+    :ivar format_version: Optional Version.  If not specified, default is used.
+    :vartype format_version: str
+    :ivar storage_source: Storage Source. "AzureBlob"
+    :vartype storage_source: str or ~azure.ai.translation.document.models.StorageSource
+    """
+
+    glossary_url: str
+    """Location of the glossary.
+     We will use the file extension to extract the
+     formatting if the format parameter is not supplied.
+     
+     If the translation
+     language pair is not present in the glossary, it will not be applied. Required."""
+    file_format: str
+    """Format. Required."""
+    format_version: Optional[str]
+    """Optional Version.  If not specified, default is used."""
+    storage_source: Optional[Union[str, "_models.StorageSource"]]
+    """Storage Source. \"AzureBlob\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        glossary_url: str,
+        file_format: str,
+        format_version: Optional[str] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(
+        self,
+        glossary_url: str,
+        file_format: str,
+        *,
+        format_version: Optional[str] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        glossary = kwargs.get("mapping")
+        if not glossary and len(args) == 2:
+            kwargs["glossary_url"] = args[0]
+            kwargs["file_format"] = args[1]
+
+        super().__init__(*args, **kwargs)
+
 
 class DocumentStatus(GeneratedDocumentStatus):
+    """Document Status Response.
+
+    :ivar translated_document_url: Location of the document or folder.
+    :vartype translated_document_url: str
+    :ivar source_document_url: Location of the source document. Required.
+    :vartype source_document_url: str
+    :ivar created_on: Operation created date time. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Date time in which the operation's status has been updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar status: List of possible statuses for job or document. Required. Known values are:
+     "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling", and
+     "ValidationFailed".
+    :vartype status: str or ~azure.ai.translation.document.models.Status
+    :ivar translated_to: To language. Required.
+    :vartype translated_to: str
+    :ivar error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :vartype error: ~azure.ai.translation.document.models.DocumentTranslationError
+    :ivar translation_progress: Progress of the translation if available. Required.
+    :vartype translation_progress: float
+    :ivar id: Document Id. Required.
+    :vartype id: str
+    :ivar characters_charged: Character charged by the API.
+    :vartype characters_charged: int
+    """
+
+    translated_document_url: Optional[str]
+    """Location of the document or folder."""
+    source_document_url: str
+    """Location of the source document. Required."""
+    created_on: datetime.datetime
+    """Operation created date time. Required."""
+    last_updated_on: datetime.datetime
+    """Date time in which the operation's status has been updated. Required."""
+    status: Union[str, "_models.Status"]
+    """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
+     \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
+     \"ValidationFailed\"."""
+    translated_to: str
+    """To language. Required."""
+    error: Optional["_models.DocumentTranslationError"]
+    """This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details."""
+    translation_progress: float
+    """Progress of the translation if available. Required."""
+    id: str
+    """Document Id. Required."""
+    characters_charged: Optional[int]
+    """Character charged by the API."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_document_url: str,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.Status"],
+        translated_to: str,
+        translation_progress: float,
+        id: str,  # pylint: disable=redefined-builtin
+        translated_document_url: Optional[str] = None,
+        error: Optional["_models.DocumentTranslationError"] = None,
+        characters_charged: Optional[int] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         status = kwargs.get("mapping")
@@ -137,6 +367,41 @@ class DocumentStatus(GeneratedDocumentStatus):
 
 
 class TranslationStatus(GeneratedTranslationStatus):
+    """Translation job status response.
+
+    :ivar id: Id of the operation. Required.
+    :vartype id: str
+    :ivar created_on: Operation created date time. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Date time in which the operation's status has been updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar status: List of possible statuses for job or document. Required. Known values are:
+     "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling", and
+     "ValidationFailed".
+    :vartype status: str or ~azure.ai.translation.document.models.Status
+    :ivar error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :vartype error: ~azure.ai.translation.document.models.DocumentTranslationError
+    :ivar summary: Status Summary. Required.
+    :vartype summary: ~azure.ai.translation.document.models.StatusSummary
+    """
+
+    id: str
+    """Id of the operation. Required."""
+    created_on: datetime.datetime
+    """Operation created date time. Required."""
+    last_updated_on: datetime.datetime
+    """Date time in which the operation's status has been updated. Required."""
+    status: Union[str, "_models.Status"]
+    """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
+     \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
+     \"ValidationFailed\"."""
+    error: Optional["_models.DocumentTranslationError"]
+    """This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details."""
+    summary: "_models.StatusSummary"
+    """Status Summary. Required."""
+
     # pylint: disable=too-many-return-statements,inconsistent-return-statements
     def __getattr__(self, name: str) -> Any:
         backcompat_attrs = [
@@ -168,6 +433,25 @@ class TranslationStatus(GeneratedTranslationStatus):
                 return None
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.Status"],
+        summary: "_models.StatusSummary",
+        error: Optional["_models.DocumentTranslationError"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         status = kwargs.get("mapping")
         if not status and args:
@@ -186,6 +470,8 @@ __all__: List[str] = [
     "DocumentStatus",
     "TranslationStatus",
     "DocumentTranslationInput",
+    "TranslationTarget",
+    "TranslationGlossary",
 ]  # Add all objects you want publicly available to users at this package level
 
 

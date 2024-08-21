@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,protected-access
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -92,9 +92,9 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
-        if self._polling_method._current_body:  # pylint: disable=protected-access
-            return self._polling_method._current_body.id  # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+        if self._polling_method._current_body:
+            return self._polling_method._current_body.id
+        return self._polling_method._get_id_from_headers()
 
     @property
     def details(self) -> TranslationStatus:
@@ -103,9 +103,9 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        if self._polling_method._current_body:  # pylint: disable=protected-access
-            return TranslationStatus(self._polling_method._current_body)  # pylint: disable=protected-access
-        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
+        if self._polling_method._current_body:
+            return TranslationStatus(self._polling_method._current_body)
+        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore
 
     @classmethod
     def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
