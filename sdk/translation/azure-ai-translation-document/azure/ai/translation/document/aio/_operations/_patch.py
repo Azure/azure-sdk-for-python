@@ -7,7 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-import json
 from typing import AsyncIterator, Callable, Dict, Type, TypeVar, overload, Any, IO, List, Optional, Union, cast, Tuple
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -29,11 +28,13 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     _raise_if_bad_http_status_and_method,
 )
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ..._vendor import prepare_multipart_form_data
 from ... import _model_base, models as _models
 
 from ..._model_base import _deserialize
+from ...models import (
+    TranslationStatus,
+)
 from ._operations import (
     DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
     SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
@@ -61,6 +62,8 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
+    _polling_method: "AsyncDocumentTranslationLROPollingMethod"
+
     @property
     def id(self) -> str:
         """The ID for the translation operation
@@ -73,19 +76,19 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
-    def details(self) -> _models.TranslationStatus:
+    def details(self) -> TranslationStatus:
         """The details for the translation operation
 
         :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
         if self._polling_method._current_body:  # pylint: disable=protected-access
-            return _models.TranslationStatus(  # pylint: disable=protected-access
+            return TranslationStatus(  # pylint: disable=protected-access
                 self._polling_method._current_body  # pylint: disable=protected-access
             )
-        return _models.TranslationStatus(
-            id=self._polling_method._get_id_from_headers()
-        )  # pylint: disable=protected-access
+        return TranslationStatus(
+            id=self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+        )
 
     @classmethod
     def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
@@ -111,11 +114,11 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         super().__init__(*args, **kwargs)
 
     @property
-    def _current_body(self) -> _models.TranslationStatus:
+    def _current_body(self) -> TranslationStatus:
         try:
-            return _models.TranslationStatus(self._pipeline_response.http_response.json())
-        except Exception:
-            return _models.TranslationStatus()  # type: ignore[call-overload]
+            return TranslationStatus(self._pipeline_response.http_response.json())
+        except Exception:  # pylint: disable=broad-exception-caught
+            return TranslationStatus()  # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:
         return (

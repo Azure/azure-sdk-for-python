@@ -7,8 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, List, Optional, Union
 
 from ._models import (
     DocumentStatus as GeneratedDocumentStatus,
@@ -138,6 +137,7 @@ class DocumentStatus(GeneratedDocumentStatus):
 
 
 class TranslationStatus(GeneratedTranslationStatus):
+    # pylint: disable=too-many-return-statements,inconsistent-return-statements
     def __getattr__(self, name: str) -> Any:
         backcompat_attrs = [
             "documents_total_count",
@@ -165,7 +165,8 @@ class TranslationStatus(GeneratedTranslationStatus):
                 if name == "total_characters_charged":
                     return self.summary["totalCharacterCharged"]
             except KeyError:
-                return AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+                return None
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         status = kwargs.get("mapping")

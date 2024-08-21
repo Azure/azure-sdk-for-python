@@ -9,13 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import sys
-import json
 from typing import Any, IO, Callable, Dict, Iterator, List, Optional, Type, TypeVar, Union, cast, overload, Tuple
-from azure.core.polling import NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -23,16 +20,10 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    ODataV4Format,
     map_error,
 )
-from azure.core.exceptions import HttpResponseError, ODataV4Format
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import (
-    HttpResponse,
-    AsyncHttpResponse,
-    HttpRequest,
-)
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
     OperationResourcePolling,
@@ -92,6 +83,8 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
+    _polling_method: "DocumentTranslationLROPollingMethod"
+
     @property
     def id(self) -> str:
         """The ID for the translation operation
@@ -141,7 +134,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
     def _current_body(self) -> TranslationStatus:
         try:
             return TranslationStatus(self._pipeline_response.http_response.json())
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return TranslationStatus()  # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:

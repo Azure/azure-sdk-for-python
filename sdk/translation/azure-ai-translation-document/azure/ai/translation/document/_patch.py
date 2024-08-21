@@ -83,6 +83,7 @@ def get_translation_input(args, kwargs, continuation_token):
         request = inputs
     # backcompatibility
     elif len(inputs) > 0 and isinstance(inputs[0], DocumentTranslationInput):
+        # pylint: disable=protected-access
         request = StartTranslationDetails(inputs=[input._to_generated() for input in inputs])
     else:
         try:
@@ -389,8 +390,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
-    def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
+    def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:  # type: ignore
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
@@ -404,8 +406,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         return super().get_translation_status(translation_id, **kwargs)
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
-    def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
+    def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore
         """Cancel a currently processing or queued translation operation.
 
         A translation will not be canceled if it is already completed, failed, or canceling.
@@ -484,8 +487,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
-    def list_document_statuses(
+    def list_document_statuses(  # type: ignore
         self,
         translation_id: str,
         *,
@@ -551,8 +555,14 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
-    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
+    def get_document_status(  # type: ignore
+        self,
+        translation_id: str,
+        document_id: str,
+        **kwargs: Any
+    ) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
