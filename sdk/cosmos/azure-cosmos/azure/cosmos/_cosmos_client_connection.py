@@ -27,7 +27,6 @@ import os
 import urllib.parse
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 
-from pycparser.ply.yacc import token
 from typing_extensions import TypedDict
 
 from urllib3.util.retry import Retry
@@ -3299,14 +3298,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         comparison_pk_range_id = ''
         for (pk, session_token) in pks_to_session_tokens:
             if pk == target_pk:
-                token_pairs = session_token.split(",")
+                token_pairs = session_token.split(":")
                 comparison_pk_range_id = token_pairs[0]
                 comparison_session_token = VectorSessionToken.create(token_pairs[1])
                 break
         for (pk, session_token) in pks_to_session_tokens:
-            token_pairs = session_token.split(",")
+            token_pairs = session_token.split(":")
             pk_range_id = token_pairs[0]
-            vector_session_token = VectorSessionToken.create(token_pairs[0])
+            vector_session_token = VectorSessionToken.create(token_pairs[1])
             # This should not be necessary
             # if pk_range_id == comparison_pk_range_id:
             #     comparison_session_token = comparison_session_token.merge(vector_session_token)
@@ -3316,5 +3315,5 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 elif session_token.is_greater(comparison_session_token):
                     comparison_pk_range_id = pk_range_id
                     comparison_session_token = session_token
-        return comparison_session_token
+        return comparison_pk_range_id + ":" + comparison_session_token.session_token
 
