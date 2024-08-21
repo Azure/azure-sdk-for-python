@@ -6,8 +6,6 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
-from urllib.parse import urlparse
-
 from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
@@ -23,6 +21,8 @@ from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._generated import AzureDataLakeStorageRESTAPI
 
+from ._data_lake_service_client_helper import _format_url, _parse_url
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
@@ -35,12 +35,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific file system, directory or file, clients for those entities
     can also be retrieved using the `get_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the datalake service endpoint.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URL to the DataLake storage account. Any other entities included
         in the URL path (e.g. file system or file) will be discarded. This URL can be optionally
@@ -58,7 +52,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -84,24 +78,24 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
     """
 
-    def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
+    url: str
+    """The full endpoint URL to the datalake service endpoint."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
 
-        blob_account_url = convert_dfs_url_to_blob_url(account_url)
+    def __init__(
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
+        parsed_url = _parse_url(account_url=account_url)
+        blob_account_url = convert_dfs_url_to_blob_url(parsed_url)
         self._blob_account_url = blob_account_url
+
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
-        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  # pylint: disable=protected-access
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
@@ -112,18 +106,17 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  #pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._blob_service_client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._blob_service_client.close()
         super(DataLakeServiceClient, self).__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -136,15 +129,14 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :returns: The formatted URL
         :rtype: str
         """
-        formatted_url = f"{self.scheme}://{hostname}/{self._query_str}"
-        return formatted_url
+        return _format_url(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """
         Create DataLakeServiceClient from a Connection String.
 
@@ -161,7 +153,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
-            str or dict[str, str] or None
+            str or Dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -284,7 +276,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :param public_access:
             Possible values include: file system, file.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
@@ -627,7 +619,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
         return get_datalake_service_properties(props)
