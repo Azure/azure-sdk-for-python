@@ -232,7 +232,7 @@ extends:
                       in_batch: true
                       checkout:
                         - package: msal-extensions
-                          download_uri: https://files.pythonhosted.org/packages/cb/ba/618771542cdc4bc5314c395076c397d67e2bdcd88564c6ca712a2497d1c6/msal-extensions-1.1.0.tar.gz
+                          download_uri: https://files.pythonhosted.org/packages/2d/38/ad49272d0a5af95f7a0cb64a79bbd75c9c187f3b789385a143d8d537a5eb/msal_extensions-1.2.0.tar.gz
                     - name: azure-identity
                       service: identity
                       in_batch: ${{ parameters.release_azure_identity }}
