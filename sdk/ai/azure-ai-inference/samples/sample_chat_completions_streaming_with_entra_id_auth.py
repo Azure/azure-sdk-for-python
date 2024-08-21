@@ -63,7 +63,7 @@ def sample_chat_completions_streaming_with_entra_id_auth():
     )
 
     for update in response:
-        print(update.choices[0].delta.content or "", end="")
+        print(update.choices[0].delta.content or "", end="", flush=True)
 
     client.close()
 

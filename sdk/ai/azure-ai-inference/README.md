@@ -289,7 +289,7 @@ response = client.complete(
 )
 
 for update in response:
-    print(update.choices[0].delta.content or "", end="")
+    print(update.choices[0].delta.content or "", end="", flush=True)
 
 client.close()
 ```

@@ -193,7 +193,7 @@ def sample_chat_completions_streaming_with_tools():
 
     print("Model response = ", end="")
     for update in response:
-        print(update.choices[0].delta.content or "", end="")
+        print(update.choices[0].delta.content or "", end="", flush=True)
 
     client.close()
 

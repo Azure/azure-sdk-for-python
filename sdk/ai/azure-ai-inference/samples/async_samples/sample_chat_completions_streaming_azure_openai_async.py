@@ -81,7 +81,7 @@ async def sample_chat_completions_streaming_azure_openai_async():
     # Iterate on the response to get chat completion updates, as they arrive from the service
     async for update in response:
         if len(update.choices) > 0:
-            print(update.choices[0].delta.content or "", end="")
+            print(update.choices[0].delta.content or "", end="", flush=True)
 
     await client.close()
 

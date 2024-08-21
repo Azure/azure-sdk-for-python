@@ -49,7 +49,7 @@ async def sample_chat_completions_streaming_async():
 
         # Iterate on the response to get chat completion updates, as they arrive from the service
         async for update in response:
-            print(update.choices[0].delta.content or "", end="")
+            print(update.choices[0].delta.content or "", end="", flush=True)
 
 
 async def main():
