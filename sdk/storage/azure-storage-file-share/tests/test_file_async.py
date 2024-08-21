@@ -9,6 +9,7 @@ import base64
 import os
 import tempfile
 from datetime import datetime, timedelta, timezone
+from io import BytesIO, StringIO
 
 import pytest
 import requests
@@ -1365,17 +1366,53 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_client = await self._create_file(storage_account_name, storage_account_key)
+        data = b'abcdefghijklmnop' * 32
+        file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_size=len(data) * 4)
+
+        def generator():
+            offset = 0
+            while offset < len(data):
+                yield data[offset:offset + 100]
+                offset += 100
+        io = BytesIO(data)
 
         # Act
-        data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, offset=0, length=512)
+        await file_client.upload_range(data, offset=0, length=len(data))
+        await file_client.upload_range(io, offset=len(data), length=len(data))
+        await file_client.upload_range(generator(), offset=len(data) * 2, length=len(data))
 
         # Assert
-        content = await file_client.download_file()
-        content = await content.readall()
-        assert data == content[:512]
-        assert self.short_byte_data[512:] == content[512:]
+        content = await (await file_client.download_file()).readall()
+        assert content == data * 3 + b'\x00' * len(data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_update_range_str_legacy(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        data = 'abcdefghijklmnop' * 32
+        unicode_data = '你好世界'
+        unicode_encoded = unicode_data.encode('utf-32')
+        file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_size=len(data) * 3 + len(unicode_encoded) * 2)
+
+        def generator():
+            offset = 0
+            while offset < len(data):
+                yield data[offset:offset + 100]
+                offset += 100
+        io = StringIO(data)
+
+        # Act
+        await file_client.upload_range(data, offset=0, length=len(data))
+        await file_client.upload_range(io, offset=len(data), length=len(data))
+        await file_client.upload_range(generator(), offset=len(data) * 2, length=len(data))
+        await file_client.upload_range(unicode_data, offset=len(data) * 3, length=len(unicode_encoded), encoding='utf-32')
+
+        # Assert
+        content = await (await file_client.download_file()).readall()
+        assert content == data.encode('latin-1') * 3 + unicode_encoded + b'\x00' * len(unicode_encoded)
 
     @FileSharePreparer()
     @recorded_by_proxy_async

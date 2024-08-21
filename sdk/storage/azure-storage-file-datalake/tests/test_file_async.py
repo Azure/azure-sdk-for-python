@@ -7,6 +7,7 @@ import asyncio
 import tempfile
 import unittest
 from datetime import datetime, timedelta
+from io import BytesIO, StringIO
 from math import ceil
 
 import pytest
@@ -361,10 +362,61 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         file_client = directory_client.get_file_client('filename')
         await file_client.create_file()
 
-        # Act
-        response = await file_client.append_data(b'abc', 0, 3)
+        data = b'Hello World'
+        io = BytesIO(data)
 
-        assert response is not None
+        def generator():
+            yield b'Hello'
+            yield b' '
+            yield b'World'
+
+        # Act
+        await file_client.append_data(data, 0)
+        await file_client.append_data(io, len(data))
+        await file_client.append_data(generator(), len(data) * 2)
+        await file_client.append_data(generator(), len(data) * 3, length=len(data))
+        await file_client.flush_data(len(data) * 4)
+
+        # Assert
+        content = await (await file_client.download_file()).read()
+        assert content == data * 4
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_append_data_str_legacy(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        await file_client.create_file()
+
+        data = 'Hello World'
+        unicode_data = '你好世界'
+        unicode_encoded = unicode_data.encode('utf-32')
+        io = StringIO(data)
+
+        def generator():
+            yield 'Hello'
+            yield ' '
+            yield 'World'
+
+        # Act
+        await file_client.append_data(data, 0)
+        await file_client.append_data(io, len(data))
+        await file_client.append_data(generator(), len(data) * 2, length=len(data))
+        await file_client.append_data(unicode_data, len(data) * 3, encoding='utf-32')
+        await file_client.flush_data(len(data) * 3 + len(unicode_encoded))
+
+        # Assert
+        content = await (await file_client.download_file()).read()
+        assert content == data.encode('latin-1') * 3 + unicode_encoded
 
     @DataLakePreparer()
     @recorded_by_proxy_async

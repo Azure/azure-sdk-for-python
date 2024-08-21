@@ -6,6 +6,7 @@
 import base64
 import tempfile
 from datetime import datetime, timedelta, timezone
+from io import BytesIO, StringIO
 
 import pytest
 import requests
@@ -1343,17 +1344,54 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_client = self._create_file()
+        data = b'abcdefghijklmnop' * 32
+        file_client = self._create_empty_file(file_size=len(data) * 4)
+
+        def generator():
+            offset = 0
+            while offset < len(data):
+                yield data[offset:offset + 100]
+                offset += 100
+
+        io = BytesIO(data)
 
         # Act
-        data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512)
+        file_client.upload_range(data, offset=0, length=len(data))
+        file_client.upload_range(io, offset=len(data), length=len(data))
+        file_client.upload_range(generator(), offset=len(data) * 2, length=len(data))
 
         # Assert
         content = file_client.download_file().readall()
-        assert len(data) == 512
-        assert data == content[:512]
-        assert self.short_byte_data[512:] == content[512:]
+        assert content == data * 3 + b'\x00' * len(data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_update_range_str_legacy(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        data = 'abcdefghijklmnop' * 32
+        unicode_data = '你好世界'
+        unicode_encoded = unicode_data.encode('utf-32')
+        file_client = self._create_empty_file(file_size=len(data) * 3 + len(unicode_encoded) * 2)
+
+        def generator():
+            offset = 0
+            while offset < len(data):
+                yield data[offset:offset + 100]
+                offset += 100
+        io = StringIO(data)
+
+        # Act
+        file_client.upload_range(data, offset=0, length=len(data))
+        file_client.upload_range(io, offset=len(data), length=len(data))
+        file_client.upload_range(generator(), offset=len(data) * 2, length=len(data))
+        file_client.upload_range(unicode_data, offset=len(data) * 3, length=len(unicode_encoded), encoding='utf-32')
+
+        # Assert
+        content = file_client.download_file().readall()
+        assert content == data.encode('latin-1') * 3 + unicode_encoded + b'\x00' * len(unicode_encoded)
 
     @FileSharePreparer()
     @recorded_by_proxy

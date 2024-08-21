@@ -6,6 +6,7 @@
 import tempfile
 import unittest
 from datetime import datetime, timedelta
+from io import BytesIO, StringIO
 from math import ceil
 
 import pytest
@@ -360,9 +361,61 @@ class TestFile(StorageRecordedTestCase):
         file_client = directory_client.get_file_client('filename')
         file_client.create_file()
 
+        data = b'Hello World'
+        io = BytesIO(data)
+
+        def generator():
+            yield b'Hello'
+            yield b' '
+            yield b'World'
+
         # Act
-        response = file_client.append_data(b'abc', 0, 3)
-        assert response is not None
+        file_client.append_data(data, 0)
+        file_client.append_data(io, len(data))
+        file_client.append_data(generator(), len(data) * 2)
+        file_client.append_data(generator(), len(data) * 3, length=len(data))
+        file_client.flush_data(len(data) * 4)
+
+        # Assert
+        content = file_client.download_file().read()
+        assert content == data * 4
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_append_data_str_legacy(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        data = 'Hello World'
+        unicode_data = '你好世界'
+        unicode_encoded = unicode_data.encode('utf-32')
+        io = StringIO(data)
+
+        def generator():
+            yield 'Hello'
+            yield ' '
+            yield 'World'
+
+        # Act
+        file_client.append_data(data, 0)
+        file_client.append_data(io, len(data))
+        file_client.append_data(generator(), len(data) * 2, length=len(data))
+        file_client.append_data(unicode_data, len(data) * 3, encoding='utf-32')
+        file_client.flush_data(len(data) * 3 + len(unicode_encoded))
+
+        # Assert
+        content = file_client.download_file().read()
+        assert content == data.encode('latin-1') * 3 + unicode_encoded
 
     @DataLakePreparer()
     @recorded_by_proxy

@@ -1268,7 +1268,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_range(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        self, data: Union[bytes, Iterable[bytes], IO[bytes]],
         offset: int,
         length: int,
         **kwargs: Any
@@ -1277,7 +1277,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param data:
             The data to upload.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int offset:
             Start of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
