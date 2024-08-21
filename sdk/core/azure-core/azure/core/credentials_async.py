@@ -53,7 +53,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
 
 
 @runtime_checkable
-class AsyncSupportsTokenInfo(Protocol):
+class AsyncSupportsTokenInfo(Protocol, AsyncContextManager["AsyncSupportsTokenInfo"]):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
     async def get_token_info(self, *scopes: str, options: Optional[_TokenRequestOptions] = None) -> _AccessTokenInfo:
@@ -70,6 +70,17 @@ class AsyncSupportsTokenInfo(Protocol):
         :return: An AccessTokenInfo instance containing the token string and its expiration time in Unix time.
         """
         ...
+
+    async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        pass
 
 
 AsyncTokenProvider = Union[AsyncTokenCredential, AsyncSupportsTokenInfo]
