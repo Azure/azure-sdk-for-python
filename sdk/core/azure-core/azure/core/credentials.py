@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Any, NamedTuple, Optional, TypedDict
+from typing import Any, NamedTuple, Optional, TypedDict, Union
 from typing_extensions import Protocol, runtime_checkable
 
 
@@ -110,6 +110,9 @@ class SupportsTokenInfo(Protocol):
         ...
 
 
+TokenProvider = Union[TokenCredential, SupportsTokenInfo]
+
+
 class AzureNamedKey(NamedTuple):
     """Represents a name and key pair."""
 
@@ -126,6 +129,7 @@ __all__ = [
     "AzureNamedKeyCredential",
     "TokenCredential",
     "TokenRequestOptions",
+    "TokenProvider",
 ]
 
 

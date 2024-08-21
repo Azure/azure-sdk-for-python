@@ -7,7 +7,7 @@ import time
 from typing import Any, Awaitable, Optional, cast, TypeVar, Union, Dict
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
+from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo, AsyncTokenProvider
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
@@ -27,15 +27,13 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
         tokens. Defaults to False.
     """
 
-    def __init__(
-        self, credential: Union[AsyncTokenCredential, AsyncSupportsTokenInfo], *scopes: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         self._scopes = scopes

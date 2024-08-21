@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Dict, Union, cast
-from azure.core.credentials import TokenCredential, SupportsTokenInfo, TokenRequestOptions
+from azure.core.credentials import TokenCredential, SupportsTokenInfo, TokenRequestOptions, TokenProvider
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpResponse, HttpRequest
@@ -30,13 +30,13 @@ class _BearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
 
     :param credential: The credential.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
         tokens. Defaults to False.
     """
 
-    def __init__(self, credential: Union[TokenCredential, SupportsTokenInfo], *scopes: str, **kwargs: Any) -> None:
+    def __init__(self, credential: TokenProvider, *scopes: str, **kwargs: Any) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential

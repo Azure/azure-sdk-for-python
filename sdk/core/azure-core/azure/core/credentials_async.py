@@ -4,7 +4,7 @@
 # ------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Optional, AsyncContextManager, Type
+from typing import Any, Optional, AsyncContextManager, Type, Union
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import (
     AccessToken as _AccessToken,
@@ -70,3 +70,6 @@ class AsyncSupportsTokenInfo(Protocol):
         :return: An AccessTokenInfo instance containing the token string and its expiration time in Unix time.
         """
         ...
+
+
+AsyncTokenProvider = Union[AsyncTokenCredential, AsyncSupportsTokenInfo]
