@@ -1,0 +1,17 @@
+from typing import List, Optional, NamedTuple, Protocol, runtime_checkable
+
+class BreakingChange(NamedTuple):
+    message: str
+    change_type: str
+    module: str
+    class_name: Optional[str] = None
+    function_name: Optional[str] = None
+    parameter_name: Optional[str] = None
+
+@runtime_checkable
+class ChangesChecker(Protocol):
+    name: str
+    message: str
+
+    def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> List[BreakingChange]:
+        ...

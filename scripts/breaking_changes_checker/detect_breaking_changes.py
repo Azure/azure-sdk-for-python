@@ -25,7 +25,7 @@ from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
-
+from checkers.method_overloads_checker import MethodOverloadsChecker
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 _LOGGER = logging.getLogger(__name__)
@@ -438,8 +438,15 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
-
-    checker = BreakingChangesTracker(stable, current, diff, package_name)
+    checker = BreakingChangesTracker(
+        stable,
+        current,
+        diff, # TODO in preparation for generic trackers, the diff can be created during init
+        package_name,
+        checkers = [
+            MethodOverloadsChecker(),
+        ]
+    )
     if changelog:
         checker = ChangelogTracker(stable, current, diff, package_name)
     checker.run_checks()
