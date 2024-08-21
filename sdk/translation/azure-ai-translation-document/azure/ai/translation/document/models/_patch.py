@@ -21,6 +21,20 @@ from ._models import (
 from ._enums import StorageInputType
 
 
+def convert_status(status, ll=False):
+    if ll is False:
+        if status == "Cancelled":
+            return "Canceled"
+        if status == "Cancelling":
+            return "Canceling"
+    elif ll is True:
+        if status == "Canceled":
+            return "Cancelled"
+        if status == "Canceling":
+            return "Cancelling"
+    return status
+
+
 class DocumentTranslationInput:
     """Input for translation. This requires that you have your source document or
     documents in an Azure Blob Storage container. Provide a URL to the source file or
@@ -105,20 +119,6 @@ class DocumentTranslationInput:
             targets=self.targets,
             storage_type=self.storage_type,
         )
-
-
-def convert_status(status, ll=False):
-    if ll is False:
-        if status == "Cancelled":
-            return "Canceled"
-        if status == "Cancelling":
-            return "Canceling"
-    elif ll is True:
-        if status == "Canceled":
-            return "Cancelled"
-        if status == "Canceling":
-            return "Cancelling"
-    return status
 
 
 class DocumentStatus(GeneratedDocumentStatus):
