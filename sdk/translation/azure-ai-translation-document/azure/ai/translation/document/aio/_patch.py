@@ -263,7 +263,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         pipeline_response = None
         if continuation_token:
-            pipeline_response = await super().get_translation_status(
+            pipeline_response = await self.get_translation_status(
                 continuation_token,
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
             )
@@ -288,6 +288,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @distributed_trace_async
     async def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
         """Gets the status of the translation operation.
+
         Includes the overall status, as well as a summary of
         the documents that are being translated as part of that translation operation.
 
@@ -302,6 +303,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @distributed_trace_async
     async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
         """Cancel a currently processing or queued translation operation.
+
         A translation will not be canceled if it is already completed, failed, or canceling.
         All documents that have completed translation will not be canceled and will be charged.
         If possible, all pending documents will be canceled.
@@ -313,19 +315,6 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
         await super().cancel_translation(translation_id, **kwargs)
-
-    @distributed_trace_async
-    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
-        """Get the status of an individual document within a translation operation.
-
-        :param str translation_id: The translation operation ID.
-        :param str document_id: The ID for the document.
-        :return: A DocumentStatus with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatus
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-        """
-
-        return await super().get_document_status(translation_id, document_id, **kwargs)
 
     @distributed_trace
     def list_translation_statuses(
@@ -362,6 +351,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_list_translations_async.py
                 :start-after: [START list_translations_async]
                 :end-before: [END list_translations_async]
@@ -389,6 +379,19 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    @distributed_trace_async
+    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
+        """Get the status of an individual document within a translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return await super().get_document_status(translation_id, document_id, **kwargs)
 
     @distributed_trace
     def list_document_statuses(
