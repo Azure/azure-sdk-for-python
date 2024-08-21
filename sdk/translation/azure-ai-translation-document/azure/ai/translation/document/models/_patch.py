@@ -97,7 +97,7 @@ class DocumentTranslationInput:
         storage_type: Optional[Union[str, StorageInputType]] = None,
         storage_source: Optional[str] = None,
         prefix: Optional[str] = None,
-        suffix: Optional[str] = None
+        suffix: Optional[str] = None,
     ) -> None:
         self.source_url = source_url
         self.targets = targets

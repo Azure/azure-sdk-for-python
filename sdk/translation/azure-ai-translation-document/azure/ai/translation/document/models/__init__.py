@@ -16,7 +16,6 @@ from ._models import InnerTranslationError
 from ._models import SourceInput
 from ._models import StartTranslationDetails
 from ._models import StatusSummary
-from ._models import SupportedFileFormats
 from ._models import TranslationTarget
 from ._models import DocumentTranslationError
 from ._patch import TranslationStatus
@@ -41,7 +40,6 @@ __all__ = [
     "SourceInput",
     "StartTranslationDetails",
     "StatusSummary",
-    "SupportedFileFormats",
     "TranslationTarget",
     "DocumentTranslationError",
     "TranslationStatus",

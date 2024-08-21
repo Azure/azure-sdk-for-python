@@ -52,7 +52,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_document_translation_start_translation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_document_translation__begin_start_translation_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -84,7 +86,7 @@ def build_document_translation_list_translation_statuses_request(  # pylint: dis
     created_date_time_utc_start: Optional[datetime.datetime] = None,
     created_date_time_utc_end: Optional[datetime.datetime] = None,
     orderby: Optional[List[str]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -214,7 +216,7 @@ def build_document_translation_list_document_statuses_request(  # pylint: disabl
     created_date_time_utc_start: Optional[datetime.datetime] = None,
     created_date_time_utc_end: Optional[datetime.datetime] = None,
     orderby: Optional[List[str]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -288,7 +290,7 @@ def build_single_document_translation_document_translate_request(  # pylint: dis
     source_language: Optional[str] = None,
     category: Optional[str] = None,
     allow_fallback: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -317,7 +319,7 @@ def build_single_document_translation_document_translate_request(  # pylint: dis
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    def _start_translation_initial(
+    def __begin_start_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -341,7 +343,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation_start_translation_request(
+        _request = build_document_translation__begin_start_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -379,7 +381,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    def begin_start_translation(
+    def _begin_start_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -452,7 +454,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def begin_start_translation(
+    def _begin_start_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -488,7 +490,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def begin_start_translation(
+    def _begin_start_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -524,7 +526,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace
-    def begin_start_translation(
+    def _begin_start_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -602,7 +604,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_translation_initial(
+            raw_result = self.__begin_start_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -644,7 +646,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.TranslationStatus"]:
         """Returns a list of batch requests submitted and the status for each request.
 
@@ -1158,7 +1160,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.DocumentStatus"]:
         """Returns the status for all documents in a batch document translation request.
 
@@ -1365,9 +1367,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_supported_formats(
+    def _get_supported_formats(  # pylint: disable=protected-access
         self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
-    ) -> _models.SupportedFileFormats:
+    ) -> _models._models.SupportedFileFormats:
         """Returns a list of supported document formats.
 
         The list of supported formats supported by the Document Translation
@@ -1379,7 +1381,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          "glossary". Default value is None.
         :paramtype type: str or ~azure.ai.translation.document.models.FileFormatType
         :return: SupportedFileFormats. The SupportedFileFormats is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
+        :rtype: ~azure.ai.translation.document.models._models.SupportedFileFormats
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1416,7 +1418,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SupportedFileFormats] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.SupportedFileFormats] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_get_supported_formats_request(
             type=type,
@@ -1448,7 +1450,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.SupportedFileFormats, response.json())
+            deserialized = _deserialize(
+                _models._models.SupportedFileFormats, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1469,7 +1473,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 
@@ -1522,7 +1526,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 
@@ -1566,7 +1570,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 

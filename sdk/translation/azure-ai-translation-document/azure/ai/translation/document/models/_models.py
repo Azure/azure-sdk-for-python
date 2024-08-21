@@ -548,23 +548,6 @@ class SupportedFileFormats(_model_base.Model):
     value: List["_models.DocumentTranslationFileFormat"] = rest_field()
     """list of objects. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.DocumentTranslationFileFormat"],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class TranslationGlossary(_model_base.Model):
     """Glossary / translation memory for the request.

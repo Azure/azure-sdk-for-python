@@ -49,13 +49,13 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
+    build_document_translation__begin_start_translation_request,
     build_document_translation_cancel_translation_request,
     build_document_translation_get_document_status_request,
     build_document_translation_get_supported_formats_request,
     build_document_translation_get_translation_status_request,
     build_document_translation_list_document_statuses_request,
     build_document_translation_list_translation_statuses_request,
-    build_document_translation_start_translation_request,
     build_single_document_translation_document_translate_request,
 )
 from ..._vendor import prepare_multipart_form_data
@@ -72,7 +72,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    async def _start_translation_initial(
+    async def __begin_start_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -96,7 +96,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation_start_translation_request(
+        _request = build_document_translation__begin_start_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -134,7 +134,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    async def begin_start_translation(
+    async def _begin_start_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -207,7 +207,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def begin_start_translation(
+    async def _begin_start_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -243,7 +243,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def begin_start_translation(
+    async def _begin_start_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -279,7 +279,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace_async
-    async def begin_start_translation(
+    async def _begin_start_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -357,7 +357,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_translation_initial(
+            raw_result = await self.__begin_start_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
@@ -1123,9 +1123,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_supported_formats(
+    async def _get_supported_formats(  # pylint: disable=protected-access
         self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
-    ) -> _models.SupportedFileFormats:
+    ) -> _models._models.SupportedFileFormats:
         """Returns a list of supported document formats.
 
         The list of supported formats supported by the Document Translation
@@ -1137,7 +1137,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          "glossary". Default value is None.
         :paramtype type: str or ~azure.ai.translation.document.models.FileFormatType
         :return: SupportedFileFormats. The SupportedFileFormats is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
+        :rtype: ~azure.ai.translation.document.models._models.SupportedFileFormats
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1174,7 +1174,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SupportedFileFormats] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.SupportedFileFormats] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_get_supported_formats_request(
             type=type,
@@ -1206,7 +1206,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.SupportedFileFormats, response.json())
+            deserialized = _deserialize(
+                _models._models.SupportedFileFormats, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

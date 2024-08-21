@@ -38,6 +38,7 @@ JSON = MutableMapping[str, Any]
 
 POLLING_INTERVAL = 1
 
+
 def convert_datetime(date_time: Union[str, datetime.datetime]) -> datetime.datetime:
     if isinstance(date_time, datetime.datetime):
         return date_time
@@ -56,7 +57,6 @@ def convert_order_by(orderby: Optional[List[str]]) -> Optional[List[str]]:
     if orderby:
         orderby = [order.replace("created_on", "createdDateTimeUtc") for order in orderby]
     return orderby
-
 
 
 class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -376,7 +376,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(
             DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
-            super().begin_start_translation(
+            super()._begin_start_translation(
                 body=inputs,
                 polling=DocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
@@ -558,10 +558,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     # pylint: disable=arguments-renamed
     @distributed_trace
     def get_document_status(  # type: ignore
-        self,
-        translation_id: str,
-        document_id: str,
-        **kwargs: Any
+        self, translation_id: str, document_id: str, **kwargs: Any
     ) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
 
@@ -583,7 +580,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super().get_supported_formats(type="glossary", **kwargs).value
+        return super()._get_supported_formats(type="glossary", **kwargs).value
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -594,7 +591,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super().get_supported_formats(type="document", **kwargs).value
+        return super()._get_supported_formats(type="document", **kwargs).value
 
 
 __all__: List[str] = [

@@ -33,6 +33,7 @@ from ...document._patch import (
     convert_order_by,
     convert_status,
 )
+
 JSON = MutableMapping[str, Any]
 POLLING_INTERVAL = 1
 
@@ -271,7 +272,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(
             AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]],
-            await super().begin_start_translation(
+            await super()._begin_start_translation(
                 body=inputs,
                 polling=AsyncDocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
@@ -453,10 +454,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     # pylint: disable=arguments-renamed
     @distributed_trace_async
     async def get_document_status(  # type: ignore
-        self,
-        translation_id: str,
-        document_id: str,
-        **kwargs: Any
+        self, translation_id: str, document_id: str, **kwargs: Any
     ) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
 
@@ -478,7 +476,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super().get_supported_formats(type="glossary", **kwargs)).value
+        return (await super()._get_supported_formats(type="glossary", **kwargs)).value
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -489,7 +487,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super().get_supported_formats(type="document", **kwargs)).value
+        return (await super()._get_supported_formats(type="document", **kwargs)).value
 
 
 __all__: List[str] = [

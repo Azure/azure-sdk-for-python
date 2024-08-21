@@ -86,9 +86,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
             return TranslationStatus(  # pylint: disable=protected-access
                 self._polling_method._current_body  # pylint: disable=protected-access
             )
-        return TranslationStatus(
-            id=self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
-        )
+        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
