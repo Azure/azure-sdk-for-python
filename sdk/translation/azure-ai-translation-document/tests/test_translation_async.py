@@ -463,8 +463,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             assert input.source.filter.prefix == ""
             assert input.source.filter.suffix == ".txt"
             assert input.storage_type == "File"
-            assert input.targets[0].category == "fake"
-            assert input.targets[0].glossaries[0].format == "txt"
+            assert input.targets[0].category_id == "fake"
+            assert input.targets[0].glossaries[0].file_format == "txt"
             assert input.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
             assert input.targets[0].language == "es"
             assert input.targets[0].target_url == target_container_sas_url

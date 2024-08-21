@@ -6,7 +6,8 @@
 
 import json
 import datetime
-from typing import Any, List, Union, overload, Optional, cast, Tuple, TypeVar
+from typing import Any, List, Union, overload, Optional, cast, IO, MutableMapping
+
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
@@ -18,15 +19,21 @@ from .._operations._patch import TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
 from ..models import (
     DocumentStatus,
+    TranslationStatus,
     StartTranslationDetails,
     StorageInputType,
     TranslationGlossary,
+    DocumentTranslationInput,
+    DocumentTranslationFileFormat,
 )
 from ...document._patch import (
     get_http_logging_policy,
     get_translation_input,
+    convert_datetime,
+    convert_order_by,
+    convert_status,
 )
-
+JSON = MutableMapping[str, Any]
 POLLING_INTERVAL = 1
 
 
@@ -170,6 +177,21 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     @overload
     async def begin_translation(
         self, inputs: StartTranslationDetails, **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+
+    @overload
+    async def begin_translation(
+        self, inputs: JSON, **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+
+    @overload
+    async def begin_translation(
+        self, inputs: IO[bytes], **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]: ...
+
+    @overload
+    async def begin_translation(
+        self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
@@ -196,7 +218,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     @distributed_trace_async
     async def begin_translation(  # pylint: disable=docstring-missing-param
-        self, *args: Union[str, StartTranslationDetails], **kwargs: Any
+        self, *args: Union[str, List[DocumentTranslationInput], IO[bytes], JSON], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
@@ -232,11 +254,11 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
-            return super().list_document_statuses(translation_status["id"])
+            return self.list_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
             "polling_interval",
-            super()._config.polling_interval,  # pylint: disable=protected-access
+            self._config.polling_interval,  # pylint: disable=protected-access
         )
 
         pipeline_response = None
@@ -262,6 +284,200 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    @distributed_trace_async
+    async def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
+        """Gets the status of the translation operation.
+        Includes the overall status, as well as a summary of
+        the documents that are being translated as part of that translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return await super().get_translation_status(translation_id, **kwargs)
+
+    @distributed_trace_async
+    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
+        """Cancel a currently processing or queued translation operation.
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
+
+        :param str translation_id: The translation operation ID.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        await super().cancel_translation(translation_id, **kwargs)
+
+    @distributed_trace_async
+    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
+        """Get the status of an individual document within a translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return await super().get_document_status(translation_id, document_id, **kwargs)
+
+    @distributed_trace
+    def list_translation_statuses(
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        translation_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[TranslationStatus]:
+        """List all the submitted translation operations under the Document Translation resource.
+
+        :keyword int top: The total number of operations to return (across all pages) from all submitted translations.
+        :keyword int skip: The number of operations to skip (from beginning of all submitted operations).
+            By default, we sort by all submitted operations in descending order by start time.
+        :keyword list[str] translation_ids: Translation operations ids to filter by.
+        :keyword list[str] statuses: Translation operation statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
+            and 'ValidationFailed'.
+        :keyword created_after: Get operations created after a certain datetime.
+        :paramtype created_after: str or ~datetime.datetime
+        :keyword created_before: Get operations created before a certain datetime.
+        :paramtype created_before: str or ~datetime.datetime
+        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
+            'created_on' supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of TranslationStatus.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TranslationStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/sample_list_translations_async.py
+                :start-after: [START list_translations_async]
+                :end-before: [END list_translations_async]
+                :language: python
+                :dedent: 4
+                :caption: List all submitted translations under the resource.
+        """
+
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
+        order_by = convert_order_by(order_by)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+
+        return cast(
+            AsyncItemPaged[TranslationStatus],
+            super().list_translation_statuses(
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=translation_ids,
+                orderby=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            ),
+        )
+
+    @distributed_trace
+    def list_document_statuses(
+        self,
+        translation_id: str,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        document_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[DocumentStatus]:
+        """List all the document statuses for a given translation operation.
+
+        :param str translation_id: ID of translation operation to list documents for.
+        :keyword int top: The total number of documents to return (across all pages).
+        :keyword int skip: The number of documents to skip (from beginning).
+            By default, we sort by all documents in descending order by start time.
+        :keyword list[str] document_ids: Document IDs to filter by.
+        :keyword list[str] statuses: Document statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
+            and 'ValidationFailed'.
+        :keyword created_after: Get documents created after a certain datetime.
+        :paramtype created_after: str or ~datetime.datetime
+        :keyword created_before: Get documents created before a certain datetime.
+        :paramtype created_before: str or ~datetime.datetime
+        :keyword list[str] order_by: The sorting query for the documents. Currently only
+            'created_on' is supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of DocumentStatus.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
+                :start-after: [START list_document_statuses_async]
+                :end-before: [END list_document_statuses_async]
+                :language: python
+                :dedent: 4
+                :caption: List all the document statuses as they are being translated.
+        """
+
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
+        order_by = convert_order_by(order_by)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+
+        return cast(
+            AsyncItemPaged[DocumentStatus],
+            super().list_document_statuses(
+                id=translation_id,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=document_ids,
+                orderby=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            ),
+        )
+
+    @distributed_trace_async
+    async def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
+        """Get the list of the glossary formats supported by the Document Translation service.
+
+        :return: A list of supported glossary formats.
+        :rtype: List[DocumentTranslationFileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        return (await super().get_supported_formats(type="glossary", **kwargs)).value
+
+    @distributed_trace_async
+    async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
+        """Get the list of the document formats supported by the Document Translation service.
+
+        :return: A list of supported document formats for translation.
+        :rtype: List[DocumentTranslationFileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        return (await super().get_supported_formats(type="document", **kwargs)).value
 
 
 __all__: List[str] = [
