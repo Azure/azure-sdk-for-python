@@ -1150,9 +1150,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session token.
 
         :param pks_to_session_tokens: list of partition key and session token tuples.
-        :type pks_to_session_tokens: List[Tuple(string, PartitionKey)]
+        :type pks_to_session_tokens: List[Tuple(str, PartitionKey)]
         :param target_pk: partition key to get most up to date session token.
         :type target_pk: PartitionKey
-        :rtype: string
+        :returns: a session token
+        :rtype: str
         """
-        pass
+        self.client_connection.MergeSessionTokens(pks_to_session_tokens, target_pk)

@@ -1,0 +1,57 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
+import unittest
+import uuid
+
+import pytest
+
+import azure.cosmos._synchronized_request as synchronized_request
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.exceptions as exceptions
+import test_config
+from azure.cosmos import DatabaseProxy
+from azure.cosmos import _retry_utility
+from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
+
+
+@pytest.mark.cosmosEmulator
+class TestSession(unittest.TestCase):
+    """Test to ensure escaping of non-ascii characters from partition key"""
+
+    created_db: DatabaseProxy = None
+    client: cosmos_client.CosmosClient = None
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
+    TEST_DATABASE_ID = configs.TEST_DATABASE_ID
+    TEST_COLLECTION_ID = configs.TEST_MULTI_PARTITION_CONTAINER_ID
+
+    @classmethod
+    def setUpClass(cls):
+        # creates the database, collection, and insert all the documents
+        # we will gain some speed up in running the tests by creating the
+        # database, collection and inserting all the docs only once
+
+        if cls.masterKey == '[YOUR_KEY_HERE]' or cls.host == '[YOUR_ENDPOINT_HERE]':
+            raise Exception("You must specify your Azure Cosmos account values for "
+                            "'masterKey' and 'host' at the top of this class to run the "
+                            "tests.")
+
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
+
+    # have a test for split, merge, several pkrangeIds from different logical pks, and for normal case for several session tokens
+    def test_session_token_not_sent_for_master_resource_ops(self):
+        pass
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()
