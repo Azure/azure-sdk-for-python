@@ -26,7 +26,7 @@ class MethodOverloadsChecker(ChangesChecker):
                                         parsed_overload_signature += f" -> {stable_node_overloads['return_type']}"
                                     bc = (
                                         self.message,
-                                        self.name, class_name, module_name, method_name, parsed_overload_signature
+                                        self.name, module_name, class_name, method_name, parsed_overload_signature
                                     )
                                     bc_list.append(bc)
         return bc_list
