@@ -363,7 +363,7 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-search --pre
 
 python samples/sample_geocode.py
-python sample/sample_geocode_batch.py
+python samples/sample_geocode_batch.py
 python samples/sample_get_polygon.py
 python samples/sample_reverse_geocode.py
 python samples/sample_reverse_geocode_batch.py

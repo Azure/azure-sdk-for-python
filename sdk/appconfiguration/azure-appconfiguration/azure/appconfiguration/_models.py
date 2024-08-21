@@ -5,7 +5,6 @@
 import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
-from typing_extensions import Literal
 
 from azure.core.async_paging import AsyncList
 from azure.core.rest import HttpResponse
@@ -17,6 +16,7 @@ from ._generated.models import (
     KeyValueFilter,
     Snapshot as GeneratedConfigurationSnapshot,
     SnapshotStatus,
+    SnapshotComposition,
 )
 
 
@@ -394,16 +394,21 @@ class ConfigurationSettingsFilter:
     """Filters configuration settings by their key field. Required."""
     label: Optional[str]
     """Filters configuration settings by their label field."""
+    tags: Optional[List[str]]
+    """Filters key-values by their tags field."""
 
-    def __init__(self, *, key: str, label: Optional[str] = None) -> None:
+    def __init__(self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None) -> None:
         """
         :keyword key: Filters configuration settings by their key field. Required.
         :paramtype key: str
         :keyword label: Filters configuration settings by their label field.
         :paramtype label: str or None
+        :keyword tags: Filters key-values by their tags field.
+        :paramtype tags: list[str] or None
         """
         self.key = key
         self.label = label
+        self.tags = tags
 
 
 class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
@@ -415,8 +420,8 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
     """The current status of the snapshot. Known values are: "provisioning", "ready",
         "archived", and "failed"."""
     filters: List[ConfigurationSettingsFilter]
-    """A list of filters used to filter the key-values included in the configuration snapshot."""
-    composition_type: Optional[str]
+    """A list of filters used to filter the key-values included in the configuration snapshot. Required."""
+    composition_type: Optional[Union[str, SnapshotComposition]]
     """The composition type describes how the key-values within the configuration snapshot
         are composed. The 'key' composition type ensures there are no two key-values containing the
         same key. The 'key_label' composition type ensures there are no two key-values containing the
@@ -442,7 +447,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         self,
         filters: List[ConfigurationSettingsFilter],
         *,
-        composition_type: Optional[Literal["key", "key_label"]] = None,
+        composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None:
@@ -487,7 +492,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
                 )
         snapshot = cls(
             filters=filters,
-            composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
+            composition_type=cast(SnapshotComposition, generated.composition_type),
             retention_period=generated.retention_period,
             tags=generated.tags,
         )
@@ -518,7 +523,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
                 )
         snapshot = cls(
             filters=filters,
-            composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
+            composition_type=cast(SnapshotComposition, deserialized.composition_type),
             retention_period=deserialized.retention_period,
             tags=deserialized.tags,
         )
@@ -544,6 +549,20 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         )
 
 
+class ConfigurationSettingLabel:
+    """The label info of a configuration setting."""
+
+    name: Optional[str]
+    """The name of the ConfigurationSetting label."""
+
+    def __init__(self, *, name: Optional[str] = None) -> None:
+        """
+        :keyword name: The configuration setting label name.
+        :paramtype composition_type: str or None
+        """
+        self.name = name
+
+
 def _return_deserialized_and_headers(_, deserialized, response_headers):
     return deserialized, response_headers
 
@@ -565,6 +584,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
+        self._tags = kwargs.get("tags")
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -575,6 +595,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            tags=self._tags,
             continuation_token=continuation_token,
             cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
@@ -602,6 +623,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
+        self._tags = kwargs.get("tags")
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -612,6 +634,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            tags=self._tags,
             continuation_token=continuation_token,
             cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )

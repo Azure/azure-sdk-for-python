@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 from typing import Dict, Optional, Callable, Any
 
@@ -93,10 +93,9 @@ class DeviceCodeCredential(InteractiveCredential):
             raise ClientAuthenticationError(
                 message="Couldn't begin authentication: {}".format(flow.get("error_description") or flow.get("error"))
             )
-
         if self._prompt_callback:
             self._prompt_callback(
-                flow["verification_uri"], flow["user_code"], datetime.utcfromtimestamp(flow["expires_at"])
+                flow["verification_uri"], flow["user_code"], datetime.fromtimestamp(flow["expires_at"], timezone.utc)
             )
         else:
             print(flow["message"])

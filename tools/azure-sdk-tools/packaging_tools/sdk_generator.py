@@ -305,8 +305,8 @@ def main(generate_input, generate_output):
                 "======================================= Whant Can I do (end) =========================================================================",
             ]:
                 _LOGGER.error(hint_message)
-                if len(readme_and_tsp) == 1:
-                    raise e
+            if len(readme_and_tsp) == 1:
+                raise e
 
         # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
         package_names = get_package_names(sdk_folder)
