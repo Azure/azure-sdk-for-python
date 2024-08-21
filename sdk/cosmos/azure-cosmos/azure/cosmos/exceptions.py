@@ -142,12 +142,12 @@ class CosmosFeedRangeGoneError(CosmosHttpResponseError):
         """
         :param int sub_status_code: HTTP response sub code.
         """
-        self.status_code = StatusCodes.GONE
+
         self.sub_status = SubStatusCodes.PARTITION_KEY_RANGE_GONE
         self.http_error_message = message
-        formatted_message = "Status code: %d Sub-status: %d\n%s" % (self.status_code, self.sub_status, str(message))
+        formatted_message = "Status code: %d Sub-status: %d\n%s" % (StatusCodes.GONE, self.sub_status, str(message))
         super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
-
+        self.status_code = StatusCodes.GONE
 
 def _partition_range_is_gone(e):
     if (e.status_code == http_constants.StatusCodes.GONE

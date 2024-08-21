@@ -291,5 +291,29 @@ class TestChangeFeed:
         assert actual_ids == expected_ids
         setup["created_db"].delete_container(created_collection.id)
 
+    def test_query_change_feed_with_multi_partition(self, setup):
+        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+                                                              PartitionKey(path="/pk"),
+                                                              offer_throughput=11000)
+
+        # create one doc and make sure change feed query can return the document
+        new_documents = [
+            {'pk': 'pk', 'id': 'doc1'},
+            {'pk': 'pk2', 'id': 'doc2'},
+            {'pk': 'pk3', 'id': 'doc3'},
+            {'pk': 'pk4', 'id': 'doc4'}]
+        expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
+
+        for document in new_documents:
+            created_collection.create_item(body=document)
+
+        query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
+        it = query_iterable.__iter__()
+        actual_ids = []
+        for item in it:
+            actual_ids.append(item['id'])
+
+        assert actual_ids == expected_ids
+
 if __name__ == "__main__":
     unittest.main()

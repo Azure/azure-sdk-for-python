@@ -332,8 +332,8 @@ class ChangeFeedStateV2(ChangeFeedState):
     def apply_server_response_continuation(self, continuation: str) -> None:
         self._continuation.apply_server_response_continuation(continuation)
 
-    def should_retry_on_not_modified_response(self):
-        self._continuation.should_retry_on_not_modified_response()
+    def should_retry_on_not_modified_response(self) -> bool:
+        return self._continuation.should_retry_on_not_modified_response()
 
     def apply_not_modified_response(self) -> None:
         self._continuation.apply_not_modified_response()
@@ -374,7 +374,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             container_link: str,
             collection_rid: str,
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
-        
+
         feed_range: Optional[FeedRange] = None
         if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
             feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')

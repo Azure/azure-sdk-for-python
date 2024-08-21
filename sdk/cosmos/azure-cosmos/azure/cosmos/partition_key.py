@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List
+from typing import IO, Sequence, Type, Union, overload, List, cast
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt64, _UInt128
@@ -149,7 +149,7 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_prefix_partition_key(
         self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: Sequence[Union[str, int, float, bool, _Empty, _Undefined]]
     ) -> _Range:
         if self.kind != "MultiHash":
             raise ValueError(
@@ -175,13 +175,16 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]] # pylint: disable=line-too-long
+            pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined] # pylint: disable=line-too-long
     ) -> _Range:
         if self._is_prefix_partition_key(pk_value):
-            return self._get_epk_range_for_prefix_partition_key(pk_value)
+            return self._get_epk_range_for_prefix_partition_key(
+                cast(List[Union[str, int, float, bool]], pk_value))
 
         # else return point range
-        effective_partition_key_string = self._get_effective_partition_key_string([pk_value])
+        effective_partition_key_string =\
+            self._get_effective_partition_key_string(
+                cast(List[Union[str, int, float, bool, _Empty, _Undefined]], [pk_value]))
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
@@ -190,7 +193,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_string(
         self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: Sequence[Union[str, int, float, bool, _Empty, _Undefined]]
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
@@ -278,7 +281,7 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
+            partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> bool: # pylint: disable=line-too-long
         if self.kind!= "MultiHash":
             return False
         if isinstance(partition_key, list) and len(self.path) == len(partition_key):

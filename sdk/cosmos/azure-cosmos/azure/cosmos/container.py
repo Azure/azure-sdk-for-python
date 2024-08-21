@@ -470,9 +470,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = args[3]
 
         if is_key_exists_and_not_none(kwargs, "partition_key"):
-            partition_key = kwargs.pop('partition_key')
-            change_feed_state_context["partitionKey"] = self._set_partition_key(partition_key)
-            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
+            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop('partition_key'))
+            change_feed_state_context["partitionKeyFeedRange"] =\
+                self._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
 
         if is_key_exists_and_not_none(kwargs, "feed_range"):
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
@@ -587,7 +587,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs["isPrefixPartitionQuery"] = True
                 properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
-                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key
+                kwargs["partitionKeyDefinition"]["partition_key"] = self._set_partition_key(partition_key)
             else:
                 feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
