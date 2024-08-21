@@ -95,11 +95,7 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   parent: cosmosAccount 
   name: guid(resourceGroup().id, roleAssignmentId, testApplicationOid) 
   properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions',
-      split('${accountName}/${roleDefinitionId}', '/')[0],
-      split('${accountName}/${roleDefinitionId}', '/')[1]
-    )
+    roleDefinitionId: '/${subscription().id}/resourceGroups/${resourceGroup().id}}/providers/Microsoft.DocumentDB/databaseAccounts/${accountName}/sqlRoleDefinitions/${roleDefinitionId}'
     principalId: testApplicationOid 
     scope: cosmosAccount.id
   }
