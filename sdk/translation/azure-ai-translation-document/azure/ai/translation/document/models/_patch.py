@@ -124,13 +124,16 @@ def convert_status(status, ll=False):
 class DocumentStatus(GeneratedDocumentStatus):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        doc_status = kwargs.get("mapping")
-        if not doc_status:
-            doc_status = args[0]
-        try:
-            doc_status["status"] = convert_status(doc_status["status"])
-        except KeyError:
-            kwargs["status"] = convert_status(kwargs["status"])
+        status = kwargs.get("mapping")
+        if not status and args:
+            status = args[0]
+        else:
+            status = kwargs
+
+        if status.get("status"):
+            status["status"] = convert_status(status["status"])
+        if status.get("error"):
+            status["error"]["code"] = status["error"].get("innerError", {}).get("code")
         super().__init__(*args, **kwargs)
 
 
@@ -143,18 +146,38 @@ class TranslationStatus(GeneratedTranslationStatus):
             "documents_succeeded_count",
             "documents_not_started_count",
             "documents_canceled_count",
+            "total_characters_charged",
         ]
         if name in backcompat_attrs:
-            return self.summary[name.split("documents_")[1].split("_count")[0]]
+            try:
+                if name == "documents_succeeded_count":
+                    return self.summary["success"]
+                if name == "documents_failed_count":
+                    return self.summary["failed"]
+                if name == "documents_total_count":
+                    return self.summary["total"]
+                if name == "documents_in_progress_count":
+                    return self.summary["inProgress"]
+                if name == "documents_not_started_count":
+                    return self.summary["notYetStarted"]
+                if name == "documents_canceled_count":
+                    return self.summary["cancelled"]
+                if name == "total_characters_charged":
+                    return self.summary["totalCharacterCharged"]
+            except KeyError:
+                return AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        translation_status = kwargs.get("mapping")
-        if not translation_status:
-            translation_status = args[0]
-        try:
-            translation_status["status"] = convert_status(translation_status["status"])
-        except KeyError:
-            kwargs["status"] = convert_status(kwargs["status"])
+        status = kwargs.get("mapping")
+        if not status and args:
+            status = args[0]
+        else:
+            status = kwargs
+
+        if status.get("status"):
+            status["status"] = convert_status(status["status"])
+        if status.get("error"):
+            status["error"]["code"] = status["error"].get("innerError", {}).get("code")
         super().__init__(*args, **kwargs)
 
 

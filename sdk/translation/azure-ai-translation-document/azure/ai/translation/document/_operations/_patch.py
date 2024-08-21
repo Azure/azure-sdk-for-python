@@ -141,7 +141,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
     def _current_body(self) -> TranslationStatus:
         try:
             return TranslationStatus(self._pipeline_response.http_response.json())
-        except json.decoder.JSONDecodeError:
+        except Exception:
             return TranslationStatus()  # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:

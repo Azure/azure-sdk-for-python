@@ -5,11 +5,11 @@
 # mypy: disable-error-code="attr-defined"
 # pylint: disable=too-many-lines
 
-from typing import Any, List, Union, overload, Optional, cast, MutableMapping, IO
+from typing import Any, List, Union, overload, Optional, cast, Mapping, IO, MutableMapping
 from enum import Enum
 import json
 import datetime
-
+from io import IOBase
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
@@ -72,17 +72,18 @@ def get_translation_input(args, kwargs, continuation_token):
 
     inputs = kwargs.pop("inputs", None)
     if not inputs:
-        inputs = args[0]
+        try:
+            inputs = args[0]
+        except IndexError:
+            inputs = args
 
     if isinstance(inputs, StartTranslationDetails):
         request = inputs
-    elif inputs:
-        # backcompatibility
-        if isinstance(inputs[0], DocumentTranslationInput):
-            request = StartTranslationDetails(inputs=[input._to_generated() for input in inputs])
-        else:
-            # mapping
-            request = inputs
+    elif isinstance(inputs, (Mapping, IOBase, bytes)):
+        request = inputs
+    # backcompatibility
+    elif len(inputs) > 0 and isinstance(inputs[0], DocumentTranslationInput):
+        request = StartTranslationDetails(inputs=[input._to_generated() for input in inputs])
     else:
         try:
             source_url = kwargs.pop("source_url", None)
@@ -116,7 +117,7 @@ def get_translation_input(args, kwargs, continuation_token):
                                 target_url=target_url,
                                 language=target_language,
                                 glossaries=glossaries,
-                                category=category_id,
+                                category_id=category_id,
                             )
                         ],
                         storage_type=storage_type,
@@ -357,7 +358,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
-            return super().list_document_statuses(translation_status["id"])
+            return self.list_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
             "polling_interval",
@@ -387,6 +388,48 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    @distributed_trace
+    def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
+        """Gets the status of the translation operation.
+        Includes the overall status, as well as a summary of
+        the documents that are being translated as part of that translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return super().get_translation_status(translation_id, **kwargs)
+
+    @distributed_trace
+    def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
+        """Cancel a currently processing or queued translation operation.
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
+
+        :param str translation_id: The translation operation ID.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        super().cancel_translation(translation_id, **kwargs)
+
+    @distributed_trace
+    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
+        """Get the status of an individual document within a translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return super().get_document_status(translation_id, document_id, **kwargs)
 
     @distributed_trace
     def list_translation_statuses(
@@ -528,7 +571,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super().get_supported_formats(type="glossary", **kwargs)
+        return super().get_supported_formats(type="glossary", **kwargs).value
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -539,7 +582,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super().get_supported_formats(type="document", **kwargs)
+        return super().get_supported_formats(type="document", **kwargs).value
 
 
 __all__: List[str] = [
