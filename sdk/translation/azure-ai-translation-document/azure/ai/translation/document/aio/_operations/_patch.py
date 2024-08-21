@@ -202,7 +202,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_translation_initial(  # type: ignore[func-returns-value]
+            raw_result = await self.__begin_start_translation_initial(  # type: ignore[func-returns-value]
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
