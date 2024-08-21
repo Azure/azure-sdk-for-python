@@ -92,11 +92,13 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert document.content_format == "text"
 
         return recorded_variables
-    
+
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
-    def test_custom_document_transform_with_continuation_token(self, documentintelligence_storage_container_sas_url, **kwargs):
+    def test_custom_document_transform_with_continuation_token(
+        self, documentintelligence_storage_container_sas_url, **kwargs
+    ):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         di_admin_client = DocumentIntelligenceAdministrationClient(documentintelligence_endpoint, get_credential())
