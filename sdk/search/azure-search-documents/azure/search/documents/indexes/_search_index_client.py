@@ -134,7 +134,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return cast(ItemPaged[str], names)
 
     @distributed_trace
-    def get_index(self, name: str, **kwargs: Any) -> Optional[SearchIndex]:
+    def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
         """
 
         :param name: The name of the index to retrieve.
@@ -154,7 +154,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(name, **kwargs)
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def get_index_statistics(self, index_name: str, **kwargs: Any) -> MutableMapping[str, Any]:
@@ -357,7 +357,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return [x.name for x in result.synonym_maps]
 
     @distributed_trace
-    def get_synonym_map(self, name: str, **kwargs: Any) -> Optional[SynonymMap]:
+    def get_synonym_map(self, name: str, **kwargs: Any) -> SynonymMap:
         """Retrieve a named Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to get
@@ -378,7 +378,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.get(name, **kwargs)
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def delete_synonym_map(

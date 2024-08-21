@@ -14,6 +14,8 @@
 
 ### Other Changes
 
+- Updated the API version to "2024-09-01-preview"
+
 ## 11.6.0b4 (2024-05-07)
 
 ### Features Added

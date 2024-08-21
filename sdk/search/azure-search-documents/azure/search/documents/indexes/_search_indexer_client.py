@@ -402,7 +402,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
     @distributed_trace
-    def get_data_source_connection(self, name: str, **kwargs: Any) -> Optional[SearchIndexerDataSourceConnection]:
+    def get_data_source_connection(self, name: str, **kwargs: Any) -> SearchIndexerDataSourceConnection:
         """Retrieves a data source connection definition.
 
         :param name: The name of the data source connection to retrieve.
@@ -421,7 +421,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(result)  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
     @distributed_trace
     def get_data_source_connections(
@@ -537,7 +538,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.skillsets]
 
     @distributed_trace
-    def get_skillset(self, name: str, **kwargs: Any) -> Optional[SearchIndexerSkillset]:
+    def get_skillset(self, name: str, **kwargs: Any) -> SearchIndexerSkillset:
         """Retrieve a named SearchIndexerSkillset in an Azure Search service
 
         :param name: The name of the SearchIndexerSkillset to get
@@ -548,7 +549,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
     @distributed_trace
     def delete_skillset(

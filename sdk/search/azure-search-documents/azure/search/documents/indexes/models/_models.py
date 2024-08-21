@@ -28,7 +28,7 @@ from .._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
     CognitiveServicesAccount,
     SearchIndexerKnowledgeStore,
-    SearchIndexerIndexProjections,
+    SearchIndexerIndexProjection,
     SearchIndexerDataContainer,
     DataChangeDetectionPolicy,
     DataDeletionDetectionPolicy,
@@ -55,8 +55,8 @@ class SearchIndexerSkillset(_serialization.Model):
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :ivar index_projections: Definition of additional projections to secondary search index(es).
-    :vartype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
+    :ivar index_projection: Definition of additional projections to secondary search index(es).
+    :vartype index_projection: ~azure.search.documents.indexes.models.SearchIndexerIndexProjection
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -78,7 +78,7 @@ class SearchIndexerSkillset(_serialization.Model):
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
         knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
-        index_projections: Optional["SearchIndexerIndexProjections"] = None,
+        index_projection: Optional["SearchIndexerIndexProjection"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -89,7 +89,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
         self.knowledge_store = knowledge_store
-        self.index_projections = index_projections
+        self.index_projection = index_projection
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -107,7 +107,7 @@ class SearchIndexerSkillset(_serialization.Model):
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
             knowledge_store=getattr(self, "knowledge_store", None),
-            index_projections=getattr(self, "index_projections", None),
+            index_projection=getattr(self, "index_projection", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=getattr(self, "encryption_key", None),
         )
@@ -604,20 +604,6 @@ class CustomAnalyzer(LexicalAnalyzer):
      filters are run in the order in which they are listed.
     :vartype char_filters: list[str]
     """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "name": {"required": True},
-        "tokenizer_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
 
     def __init__(self, **kwargs):
         super(CustomAnalyzer, self).__init__(**kwargs)
