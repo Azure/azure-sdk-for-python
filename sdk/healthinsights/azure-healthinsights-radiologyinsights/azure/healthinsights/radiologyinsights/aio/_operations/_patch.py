@@ -110,7 +110,6 @@ class RadiologyInsightsClient(
         self._client = GeneratedRadiologyInsightsClient(
             endpoint=_endpoint,
             credential=credential,
-            AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
         ) 
      
         self._serialize = Serializer()

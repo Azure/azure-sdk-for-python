@@ -104,7 +104,6 @@ class RadiologyInsightsClient(
         self._client = GeneratedRadiologyInsightsClient(
             endpoint=_endpoint,
             credential=credential,
-            PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
         )
         
         self._serialize = Serializer()
