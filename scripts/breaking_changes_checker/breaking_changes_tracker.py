@@ -105,7 +105,7 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
-        checkers = kwargs.get("checkers", [])
+        checkers: List[ChangesChecker] = kwargs.get("checkers", [])
         for checker in checkers:
             if not isinstance(checker, ChangesChecker):
                 raise ValueError(f"Checker {checker} does not implement ChangesChecker protocol")

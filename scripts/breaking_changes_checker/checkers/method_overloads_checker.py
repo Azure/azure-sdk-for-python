@@ -8,7 +8,7 @@ class MethodOverloadsChecker(ChangesChecker):
         "all": "{}.{} had all overloads removed"
     }
 
-    def run_check(self, diff, stable_nodes, current_nodes, **kwargs):
+    def run_check(self, diff, stable_nodes, current_nodes):
         bc_list = []
         for module_name, module in diff.items():
             for class_name, class_components in module.get("class_nodes", {}).items():
@@ -19,11 +19,13 @@ class MethodOverloadsChecker(ChangesChecker):
                     # We aren't checking for deleted methods in this checker
                     if isinstance(method_name, jsondiff.Symbol):
                         continue
-                    # Check if all of the overloads were deleted for a specific method
+                    # Check if all of the overloads were deleted for an existing stable method
                     if len(method_components.get("overloads", [])) == 0:
-                        if len(stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"]) > 0:
-                            bc_list.append((self.message["all"], self.name, module_name, class_name, method_name))
-                            continue
+                        if method_name in stable_nodes[module_name]["class_nodes"][class_name]["methods"] and \
+                                "overloads" in stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]:
+                            if len(stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"]) > 0:
+                                bc_list.append((self.message["all"], self.name, module_name, class_name, method_name))
+                                continue
                     # Check for specific overloads that were deleted
                     for overload in method_components.get("overloads", []):
                         if isinstance(overload, jsondiff.Symbol):
