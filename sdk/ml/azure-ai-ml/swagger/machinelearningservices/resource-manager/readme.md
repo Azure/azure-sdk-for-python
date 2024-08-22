@@ -274,6 +274,7 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2024-07-01-preview/registries.json
   - Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceFeatures.json
   - Microsoft.MachineLearningServices/preview/2024-07-01-preview/mfe.json
+  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_07_01_preview
 ```
 

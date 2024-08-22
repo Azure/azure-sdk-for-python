@@ -1,5 +1,176 @@
 # Release History
 
+## 9.0.0 (2024-08-19)
+
+### Features Added
+
+  - The model or publicly exposed class 'AmazonMWSLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AmazonRdsForOracleLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AmazonRdsForSqlServerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AmazonRedshiftLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AmazonS3CompatibleLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AmazonS3LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AppFiguresLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AsanaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureBatchLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureBlobFSLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureBlobStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureDataExplorerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureDataLakeAnalyticsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureDataLakeStoreLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureDatabricksDeltaLakeLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureDatabricksLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureFileStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureFileStorageLinkedService' had property 'service_endpoint' added in the current version
+  - The model or publicly exposed class 'AzureFileStorageLinkedService' had property 'credential' added in the current version
+  - The model or publicly exposed class 'AzureFunctionLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureKeyVaultLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureMLLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureMLServiceLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureMariaDBLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureMySqlLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzurePostgreSqlLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureSearchLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureSqlDWLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureSqlDatabaseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureSqlMILinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureSynapseArtifactsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureTableStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureTableStorageLinkedService' had property 'service_endpoint' added in the current version
+  - The model or publicly exposed class 'AzureTableStorageLinkedService' had property 'credential' added in the current version
+  - The model or publicly exposed class 'CassandraLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CommonDataServiceForAppsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CommonDataServiceForAppsLinkedService' had property 'domain' added in the current version
+  - The model or publicly exposed class 'ConcurLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CosmosDbLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CosmosDbMongoDbApiLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CouchbaseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CustomDataSourceLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DataworldLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'Db2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DrillLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DynamicsAXLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DynamicsAuthenticationType' had property 'ACTIVE_DIRECTORY' added in the current version
+  - The model or publicly exposed class 'DynamicsCrmLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DynamicsCrmLinkedService' had property 'domain' added in the current version
+  - The model or publicly exposed class 'DynamicsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DynamicsLinkedService' had property 'domain' added in the current version
+  - The model or publicly exposed class 'EloquaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ExecuteDataFlowActivity' had property 'continuation_settings' added in the current version
+  - The model or publicly exposed class 'ExecuteDataFlowActivityTypeProperties' had property 'continuation_settings' added in the current version
+  - The model or publicly exposed class 'ExecutePowerQueryActivityTypeProperties' had property 'continuation_settings' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ExecuteWranglingDataflowActivity' had property 'continuation_settings' added in the current version
+  - The model or publicly exposed class 'FileServerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'FtpServerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GlobalParameterType' had property 'INT' added in the current version
+  - The model or publicly exposed class 'GoogleAdWordsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GoogleBigQueryLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GoogleBigQueryV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GoogleCloudStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GoogleSheetsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'GreenplumLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HBaseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HDInsightLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HDInsightOnDemandLinkedService' had property 'version_type_properties_version' added in the current version
+  - The model or publicly exposed class 'HdfsLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HiveLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HttpLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'HubspotLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ImpalaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'InformixLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'JiraLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'LakeHouseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'LinkedService' had property 'version' added in the current version
+  - The model or publicly exposed class 'MagentoLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MariaDBLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MarketoLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MicrosoftAccessLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MongoDbAtlasLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MongoDbLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MongoDbV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'MySqlLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'NetezzaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'NotebookParameterType' had property 'INT' added in the current version
+  - The model or publicly exposed class 'ODataLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'OdbcLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'Office365LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'OracleCloudStorageLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'OracleLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'OracleServiceCloudLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ParameterType' had property 'INT' added in the current version
+  - The model or publicly exposed class 'PaypalLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PhoenixLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PostgreSqlLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PostgreSqlV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PrestoLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'QuickBooksLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'QuickbaseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ResponsysLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'RestServiceLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'RestServiceLinkedService' had property 'service_principal_credential_type' added in the current version
+  - The model or publicly exposed class 'RestServiceLinkedService' had property 'service_principal_embedded_cert' added in the current version
+  - The model or publicly exposed class 'RestServiceLinkedService' had property 'service_principal_embedded_cert_password' added in the current version
+  - The model or publicly exposed class 'RunQueryFilterOperator' had property 'IN' added in the current version
+  - The model or publicly exposed class 'SalesforceLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SalesforceMarketingCloudLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SalesforceServiceCloudLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SalesforceServiceCloudV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SalesforceV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapBWLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapCloudForCustomerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapEccLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapHanaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapOdpLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapOpenHubLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SapTableLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ServiceNowLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ServiceNowV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SftpServerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SharePointOnlineListLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SharePointOnlineListLinkedService' had property 'service_principal_credential_type' added in the current version
+  - The model or publicly exposed class 'SharePointOnlineListLinkedService' had property 'service_principal_embedded_cert' added in the current version
+  - The model or publicly exposed class 'SharePointOnlineListLinkedService' had property 'service_principal_embedded_cert_password' added in the current version
+  - The model or publicly exposed class 'ShopifyLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SmartsheetLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SnowflakeExportCopyCommand' had property 'storage_integration' added in the current version
+  - The model or publicly exposed class 'SnowflakeImportCopyCommand' had property 'storage_integration' added in the current version
+  - The model or publicly exposed class 'SnowflakeLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SnowflakeV2LinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SparkLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SqlServerAuthenticationType' had property 'USER_ASSIGNED_MANAGED_IDENTITY' added in the current version
+  - The model or publicly exposed class 'SqlServerLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'SqlServerLinkedService' had property 'credential' added in the current version
+  - The model or publicly exposed class 'SqlServerLinkedServiceTypeProperties' had property 'credential' added in the current version
+  - The model or publicly exposed class 'SquareLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'StoredProcedureParameterType' had property 'INT' added in the current version
+  - The model or publicly exposed class 'SybaseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'TeamDeskLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'TeradataLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'TwilioLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'VerticaLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'VerticaLinkedService' had property 'server' added in the current version
+  - The model or publicly exposed class 'VerticaLinkedService' had property 'port' added in the current version
+  - The model or publicly exposed class 'VerticaLinkedService' had property 'uid' added in the current version
+  - The model or publicly exposed class 'VerticaLinkedService' had property 'database' added in the current version
+  - The model or publicly exposed class 'WarehouseLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'WebLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'XeroLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ZendeskLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ZohoLinkedService' had property 'version' added in the __init__ method in the current version
+  - The model or publicly exposed class 'AzureStorageLinkedServiceTypeProperties' was added in the current version
+  - The model or publicly exposed class 'AzureTableStorageLinkedServiceTypeProperties' was added in the current version
+  - The model or publicly exposed class 'ContinuationSettingsReference' was added in the current version
+
+### Breaking Changes
+
+  - The 'GlobalParameterType' enum had its value 'INT_ENUM' deleted or renamed in the current version
+  - The model or publicly exposed class 'HDInsightOnDemandLinkedService' had its instance variable 'version' deleted or renamed in the current version
+  - The 'NotebookParameterType' enum had its value 'INT_ENUM' deleted or renamed in the current version
+  - The 'ParameterType' enum had its value 'INT_ENUM' deleted or renamed in the current version
+  - The 'RunQueryFilterOperator' enum had its value 'IN_ENUM' deleted or renamed in the current version
+  - The 'StoredProcedureParameterType' enum had its value 'INT_ENUM' deleted or renamed in the current version
+
 ## 8.0.0 (2024-06-06)
 
 ### Features Added
