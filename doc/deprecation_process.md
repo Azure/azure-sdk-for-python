@@ -55,20 +55,12 @@ Replace the existing text with a disclaimer in the following format, with a migr
 ## pyproject.toml
 
 - Ensure `ci_enabled = false` is NOT present in pyproject.toml. If it is, remove the line, as this will prevent you from releasing the package.
-- Set your pyproject.toml to the following:
-```
-[tool.azure-sdk-build]
-type_check_samples = false
-verifytypes = false
-pyright = false
-mypy = false
-pylint = false
-regression = false
-sphinx = false
-black = false
-```
 
-## TODO: skip CI tests
+## Update Development Status classifier in setup.py
+
+Update `setup.py` to change the `Development Status` classifier to `Development Status :: 7 - Inactive`.
+
+`Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -82,17 +74,9 @@ Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://gi
 
 ## Fix any CI issues
 
-Wait for the CI to run. Fix any issues related to the deprecation in the PR.
+Wait for the CI to run. Fix any issues related to deprecation in the PR, such as changelog formatting.
 
-There should not be any tests or mypy/pylint/etc. failures as these checks have all been disabled.
-
-## Update Development Status classifier in setup.py
-
-Update `setup.py` to change the `Development Status` classifier to `Development Status :: 7 - Inactive`.
-
-**Note: This needs to be your LAST commit on the PR.**
-
-`Inactive` packages are disabled from most CI verification, therefore the CI should be faster and have fewer requirements.
+There should not be any tests or mypy/pylint/etc. failures as these checks are disabled on `Inactive` packages.
 
 ## Post your PR in the Python review channel
 
