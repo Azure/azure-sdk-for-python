@@ -16,37 +16,46 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 ## README.md
 
-Replace the existing text with a disclaimer in the following format, with a migration guide provided as necessary. If a migration guide will not be provided, omit the last line in the disclaimer.
+A disclaimer should be added directing to a replacement package and migration guide as necessary.
+  - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
+  - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
+  - **NOTE**: While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package. 
 
-> # Microsoft Azure SDK for Python
->
-> This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
->
-> For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
-**NOTE**: While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
+Replace the existing text with a disclaimer in the following format.
+
+  - If a replacement package and migration guide exist.
+
+    > # Microsoft Azure SDK for Python
+    >
+    > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    >
+    > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+
+  - If a migration guide will not be provided.
+
+    > # Microsoft Azure SDK for Python
+    >
+    > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+
+  - If the service has been retired and no replacement package exists.
+
+    > # Microsoft Azure SDK for Python
+    >
+    > This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
 
 ## CHANGELOG.md and _version.py
 
 - Update the version in the `azure/mypackage/_version.py` file to the next beta or patch version. This file may be called `version.py` if your package is very old. For example:
   - If the last released version was 1.2.3b1, the new version should be 1.2.3b2.
   - If the last released version was 1.2.3, the new version should be 1.2.4.
-- In `CHANGELOG.md`, add the new version with a disclaimer in the following format. For example:
-  - If a replacement package exists and a migration guide is provided.
-    > ## 1.2.4 (2023-03-31)
-    >
-    > ### Other Changes
-    >
-    > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-    > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
-
-  - If the service has been retired and no replacement package exists.
-
-    > ## 1.2.4 (2023-03-31)
-    >
-    > ### Other Changes
-    >
-    > - This package is no longer being maintained.
+- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. For example:
+  > ## 1.2.4 (2023-03-31)
+  >
+  > ### Other Changes
+  >
+  > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+  > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
 ## sdk_packaging.toml
 
@@ -56,11 +65,10 @@ Replace the existing text with a disclaimer in the following format, with a migr
 
 - Ensure `ci_enabled = false` is NOT present in pyproject.toml. If it is, remove the line, as this will prevent you from releasing the package.
 
-## Update Development Status classifier in setup.py
+## setup.py
 
-Update `setup.py` to change the `Development Status` classifier to `Development Status :: 7 - Inactive`.
-
-`Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
+- Update the `Development Status` classifier in `setup.py` to `Development Status :: 7 - Inactive`.
+  - `Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -74,7 +82,7 @@ Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://gi
 
 ## Fix any CI issues
 
-Wait for the CI to run. Fix any issues related to deprecation in the PR, such as changelog formatting.
+Wait for the CI to run. Fix any issues related to deprecation in the PR, such as CHANGELOG.md or README.md formatting.
 
 There should not be any tests or mypy/pylint/etc. failures as these checks are disabled on `Inactive` packages.
 
