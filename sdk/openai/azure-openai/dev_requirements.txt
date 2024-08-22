@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../identity/azure-identity
-httpx
 aiohttp
+openai
+pillow

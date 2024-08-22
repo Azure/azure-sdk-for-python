@@ -39,6 +39,18 @@ def _in_span(word, spans):
     return False
 
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+
+
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
+
 def analyze_read():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -88,31 +100,33 @@ def analyze_read():
             for line_idx, line in enumerate(page.lines):
                 words = get_words(page, line)
                 print(
-                    f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{line.polygon}'"
+                    f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within "
+                    f"bounding polygon '{format_polygon(line.polygon)}'"
                 )
 
-                for word in words:
-                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+        if page.words:
+            for word in page.words:
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
                 print(
                     f"...Selection mark is '{selection_mark.state}' within bounding polygon "
-                    f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                    f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
                 )
 
     if result.paragraphs:
         print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
-        for paragraph in result.paragraphs:
-            print(f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region")
-            print(f"...with content: '{paragraph.content}'")
-
+        # Sort all paragraphs by span's offset to read in the right order.
         result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
         print("-----Print sorted paragraphs-----")
-        for idx, paragraph in enumerate(result.paragraphs):
+        for paragraph in result.paragraphs:
             print(
-                f"...paragraph:{idx} with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
+                f"Found paragraph with role: '{paragraph.role}' within "
+                f"{format_bounding_region(paragraph.bounding_regions)} bounding regions"
             )
+            print(f"...with content: '{paragraph.content}'")
+            print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
     print("----------------------------------------")
 

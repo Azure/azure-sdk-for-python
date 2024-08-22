@@ -15,6 +15,8 @@ parameters:
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
+  UseFederatedAuth: false
+  ServiceConnection: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -31,20 +33,26 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      Activate: false
+
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip freeze
-      python -m pip install pip==23.2.1
-      python -m pip install setuptools==67.6.0
-      python -m pip install wheel==0.37.0
-      python -m pip install -r eng/ci_tools.txt
-      pip --version
-      pip freeze
+      python -m pip install --force -r eng/ci_tools.txt
+      python -m pip freeze --all
+      Write-Host (Get-Command python).Source
     displayName: 'Prep Environment'
 
   - ${{if eq(parameters.TestProxy, true) }}:
@@ -61,20 +69,63 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
-        --mark_arg="${{ parameters.TestMarkArgument }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="${{ parameters.ToxTestEnv }}"
-        --injected-packages="${{ parameters.InjectedPackages }}"
-        ${{ parameters.ToxEnvParallel }}
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+
+    - task: AzurePowerShell@5
+      displayName: Run Tests (AzurePowerShell@5)
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
+          if ($IsWindows) {
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
+          }
+          Write-Host (Get-Command python).Source
+
+          python scripts/devops_tasks/dispatch_tox.py
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          ${{ parameters.ToxEnvParallel }};
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+
+  - ${{ else }}:
+    - pwsh: |
+        if ($IsWindows) {
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
+        }
+        Write-Host (Get-Command python).Source
+        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+          ${{ parameters.AdditionalTestArgs }} `
+          ${{ parameters.CoverageArg }} `
+          --mark_arg="${{ parameters.TestMarkArgument }}" `
+          --service="${{ parameters.ServiceDirectory }}" `
+          --toxenv="${{ parameters.ToxTestEnv }}" `
+          --injected-packages="${{ parameters.InjectedPackages }}" `
+          ${{ parameters.ToxEnvParallel }}
+        exit $LASTEXITCODE;
+      env: ${{ parameters.EnvVars }}
+      displayName: Run Tests
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
@@ -90,21 +141,66 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
+      Write-Host (Get-Command python).Source
+
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="samples"
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+    - task: AzurePowerShell@5
+      displayName: Test Samples (AzurePowerShell@5)
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: |
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
+          if ($IsWindows) {
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
+          }
+          Write-Host (Get-Command python).Source
+
+          python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+            --service="${{ parameters.ServiceDirectory }}" `
+            --toxenv="samples"
+
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+  - ${{ else }}:
+    - pwsh: |
+        if ($IsWindows) {
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
+        }
+        Write-Host (Get-Command python).Source
+        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+          --service="${{ parameters.ServiceDirectory }}" `
+          --toxenv="samples"
+        exit $LASTEXITCODE;
+      env: ${{ parameters.EnvVars }}
+      displayName: 'Test Samples'
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
 
   - task: PublishTestResults@2
     condition: always()

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, List
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -22,7 +22,6 @@ from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import Optional, Iterable, List, Any
     from azure.core.credentials import TokenCredential
 
 

@@ -126,8 +126,8 @@ class RemoteRenderingClient:
                                input_settings: AssetConversionInputSettings,
                                output_settings: AssetConversionOutputSettings,
                                **kwargs) -> LROPoller[AssetConversion]:
-        """
-        Start a new asset conversion with the given options.
+        """Start a new asset conversion with the given options.
+
         :param str conversion_id:
             An ID uniquely identifying the conversion for the remote rendering account. The ID is case sensitive, can
             contain any combination of alphanumeric characters including hyphens and underscores, and cannot contain
@@ -160,8 +160,8 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def get_asset_conversion(self, conversion_id: str, **kwargs) -> AssetConversion:
-        """
-        Retrieve the state of a previously created conversion.
+        """Retrieve the state of a previously created conversion.
+
         :param str conversion_id:
             The identifier of the conversion to retrieve.
         :return: Information about the ongoing conversion process.
@@ -173,9 +173,9 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def get_asset_conversion_poller(self, **kwargs) -> LROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
-        """
-        Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
-        poller.
+        """Returns a poller for an existing conversion by conversion id or a continuation 
+        token retrieved from a previous poller.
+
         :keyword str conversion_id: The conversion_id of a previously created conversion.
         :keyword str continuation_token: A continuation token retrieved from a poller of a conversion.
         :return: A poller for the created asset conversion
@@ -216,7 +216,8 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def list_asset_conversions(self, **kwargs) -> ItemPaged[AssetConversion]:
-        """ Returns list of conversions for the remote rendering account.
+        """Returns list of conversions for the remote rendering account.
+
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
         :return: List of conversion for the remote rendering account.
@@ -230,6 +231,7 @@ class RemoteRenderingClient:
                                 lease_time_minutes: int,
                                 **kwargs) -> LROPoller[RenderingSession]:
         """
+
         :param str session_id: An ID uniquely identifying the rendering session for the given account. The ID is case
             sensitive, can contain any combination of alphanumeric characters including hyphens and underscores, and
             cannot contain more than 256 characters.
@@ -259,8 +261,8 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def get_rendering_session(self, session_id: str, **kwargs) -> RenderingSession:
-        '''
-        Returns the properties of a previously generated rendering session.
+        '''Returns the properties of a previously generated rendering session.
+
         :param str session_id: The identifier of the rendering session.
         :return: Properties of the rendering session
         :rtype:  ~azure.mixedreality.remoterendering.models.RenderingSession
@@ -273,9 +275,9 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def get_rendering_session_poller(self, **kwargs) -> LROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
-        """
-        Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
+        """Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
         previous poller.
+
         :keyword str session_id: The conversion id of a previously created conversion.
         :keyword str continuation_token: A continuation token retrieved from a poller of a session.
         :return: A session poller for the given session
@@ -317,6 +319,7 @@ class RemoteRenderingClient:
     @distributed_trace
     def stop_rendering_session(self, session_id: str, **kwargs) -> None:
         """
+
         :param str session_id: The identifier of the session to be stopped.
         :return: None
         :rtype: None
@@ -327,8 +330,8 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def update_rendering_session(self, session_id: str, **kwargs) -> RenderingSession: # pylint:disable=docstring-keyword-should-match-keyword-only
-        """
-        Updates an already existing rendering session.
+        """Updates an already existing rendering session.
+
         :param str session_id: The identifier of the session to be updated.
         :keyword int lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
             the previous lease time.
@@ -352,8 +355,8 @@ class RemoteRenderingClient:
 
     @distributed_trace
     def list_rendering_sessions(self, **kwargs) -> ItemPaged[RenderingSession]:
-        """
-        Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+        """Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+
         Does not return stopped or failed rendering sessions.
         :rtype: ItemPaged[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:

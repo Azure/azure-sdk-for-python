@@ -34,17 +34,33 @@ Integrate the logic in your application code to fetch a Microsoft Entra access t
 
 ```python
 import redis
+import base64
+import json
 from azure.identity import DefaultAzureCredential
 
 scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
-user_name = ""  # Required
 
+def extract_username_from_token(token):
+    parts = token.split('.')
+    base64_str = parts[1]
+
+    if len(base64_str) % 4 == 2:
+        base64_str += "=="
+    elif len(base64_str) % 4 == 3:
+        base64_str += "="
+
+    json_bytes = base64.b64decode(base64_str)
+    json_str = json_bytes.decode('utf-8')
+    jwt = json.loads(json_str)
+
+    return jwt['oid']
 
 def hello_world():
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
+    user_name = extract_username_from_token(token.token)
     r = redis.Redis(host=host,
                     port=port,
                     ssl=True,    # ssl connection is required.
@@ -84,17 +100,34 @@ Integrate the logic in your application code to fetch a Microsoft Entra access t
 import time
 import logging
 import redis
+import base64
+import json
 from azure.identity import DefaultAzureCredential
 
 scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
-user_name = ""  # Required
+
+def extract_username_from_token(token):
+    parts = token.split('.')
+    base64_str = parts[1]
+
+    if len(base64_str) % 4 == 2:
+        base64_str += "=="
+    elif len(base64_str) % 4 == 3:
+        base64_str += "="
+
+    json_bytes = base64.b64decode(base64_str)
+    json_str = json_bytes.decode('utf-8')
+    jwt = json.loads(json_str)
+
+    return jwt['oid']
 
 def re_authentication():
     _LOGGER = logging.getLogger(__name__)
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
+    user_name = extract_username_from_token(token.token)
     r = redis.Redis(host=host,
                     port=port,
                     ssl=True,   # ssl connection is required.
@@ -152,3 +185,10 @@ To mitigate this error, navigate to your Azure Cache for Redis resource in the A
 
 - In **Data Access Configuration**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
 - In the event you're using a custom role, ensure the permissions granted under your custom role include the one required for your target action.
+
+##### Managed Identity not working from Local Development Machine
+
+Managed identity does not work from a local development machine. To use managed identity, your code must be running 
+in an Azure VM (or another type of resource in Azure). To run locally with Entra ID authentication, you'll need to 
+use a service principal or user account. This is a common source of confusion, so ensure that when developing locally,
+you configure your application to use a service principal or user credentials for authentication.

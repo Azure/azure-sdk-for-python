@@ -57,7 +57,12 @@ def main():
                     "type": "AzureKeyVault",
                 },
                 "highAvailability": {"mode": "ZoneRedundant", "standbyAvailabilityZone": "3"},
-                "storage": {"autoGrow": "Disabled", "iops": 600, "storageSizeGB": 100},
+                "storage": {
+                    "autoGrow": "Disabled",
+                    "iops": 600,
+                    "storageRedundancy": "LocalRedundancy",
+                    "storageSizeGB": 100,
+                },
                 "version": "5.7",
             },
             "sku": {"name": "Standard_D2ds_v4", "tier": "GeneralPurpose"},
@@ -67,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/stable/2023-12-30/examples/ServerCreateWithBYOK.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-02-01-preview/examples/ServerCreateWithBYOK.json
 if __name__ == "__main__":
     main()

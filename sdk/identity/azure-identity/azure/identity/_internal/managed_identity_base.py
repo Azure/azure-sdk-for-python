@@ -25,8 +25,7 @@ class ManagedIdentityBase(GetTokenMixin):
         pass
 
     @abc.abstractmethod
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self, desc: str = "") -> str:
         pass
 
     def __enter__(self: T) -> T:

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -55,6 +56,10 @@ from ...operations._diagnostics_operations import (
 )
 from .._vendor import WebSiteManagementClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -80,7 +85,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
-    def list_hosting_environment_detector_responses(
+    def list_hosting_environment_detector_responses(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponse"]:
         """List Hosting Environment Detector Responses.
@@ -91,7 +96,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Site Name. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DetectorResponse or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DetectorResponse]
@@ -103,7 +107,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -114,17 +118,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_hosting_environment_detector_responses_request(
+                _request = build_list_hosting_environment_detector_responses_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_hosting_environment_detector_responses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -135,14 +138,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
@@ -152,11 +155,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -169,12 +172,8 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_hosting_environment_detector_responses.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors"
-    }
-
     @distributed_trace_async
-    async def get_hosting_environment_detector_response(
+    async def get_hosting_environment_detector_response(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
@@ -200,12 +199,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DetectorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -219,7 +217,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        request = build_get_hosting_environment_detector_response_request(
+        _request = build_get_hosting_environment_detector_response_request(
             resource_group_name=resource_group_name,
             name=name,
             detector_name=detector_name,
@@ -228,16 +226,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.get_hosting_environment_detector_response.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -250,13 +247,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_hosting_environment_detector_response.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_detector_responses(
@@ -270,7 +263,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param site_name: Site Name. Required.
         :type site_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DetectorResponse or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DetectorResponse]
@@ -282,7 +274,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -293,17 +285,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_detector_responses_request(
+                _request = build_list_site_detector_responses_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detector_responses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -314,14 +305,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
@@ -331,11 +322,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -347,10 +338,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_detector_responses.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors"
-    }
 
     @distributed_trace_async
     async def get_site_detector_response(
@@ -379,12 +366,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DetectorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -398,7 +384,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        request = build_get_site_detector_response_request(
+        _request = build_get_site_detector_response_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
@@ -407,16 +393,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.get_site_detector_response.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -429,13 +414,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_detector_response.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_diagnostic_categories(
@@ -449,7 +430,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param site_name: Site Name. Required.
         :type site_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DiagnosticCategory or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DiagnosticCategory]
@@ -461,7 +441,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -472,17 +452,16 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_diagnostic_categories_request(
+                _request = build_list_site_diagnostic_categories_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_diagnostic_categories.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -493,14 +472,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
@@ -510,11 +489,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -526,10 +505,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_diagnostic_categories.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics"
-    }
 
     @distributed_trace_async
     async def get_site_diagnostic_category(
@@ -545,12 +520,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type site_name: str
         :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticCategory or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -564,22 +538,21 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
-        request = build_get_site_diagnostic_category_request(
+        _request = build_get_site_diagnostic_category_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_diagnostic_category.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -592,13 +565,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticCategory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_diagnostic_category.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_analyses(
@@ -614,7 +583,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type site_name: str
         :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnalysisDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.AnalysisDefinition]
@@ -626,7 +594,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -637,18 +605,17 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_analyses_request(
+                _request = build_list_site_analyses_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_analyses.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -659,14 +626,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
@@ -676,11 +643,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -692,10 +659,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_analyses.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses"
-    }
 
     @distributed_trace_async
     async def get_site_analysis(
@@ -713,12 +676,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type diagnostic_category: str
         :param analysis_name: Analysis Name. Required.
         :type analysis_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalysisDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.AnalysisDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -732,23 +694,22 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_site_analysis_request(
+        _request = build_get_site_analysis_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             analysis_name=analysis_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_analysis.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -761,13 +722,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("AnalysisDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_analysis.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def execute_site_analysis(
@@ -799,12 +756,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysis or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticAnalysis
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -818,7 +774,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
-        request = build_execute_site_analysis_request(
+        _request = build_execute_site_analysis_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
@@ -828,16 +784,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.execute_site_analysis.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -850,13 +805,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticAnalysis", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute_site_analysis.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_detectors(
@@ -872,7 +823,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type site_name: str
         :param diagnostic_category: Diagnostic Category. Required.
         :type diagnostic_category: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DetectorDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DetectorDefinition]
@@ -884,7 +834,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -895,18 +845,17 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_detectors_request(
+                _request = build_list_site_detectors_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detectors.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -917,14 +866,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
@@ -934,11 +883,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -950,10 +899,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_detectors.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors"
-    }
 
     @distributed_trace_async
     async def get_site_detector(
@@ -971,12 +916,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type diagnostic_category: str
         :param detector_name: Detector Name. Required.
         :type detector_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DetectorDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -990,23 +934,22 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_site_detector_request(
+        _request = build_get_site_detector_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1019,13 +962,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DetectorDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_detector.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def execute_site_detector(
@@ -1057,12 +996,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticDetectorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1076,7 +1014,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
-        request = build_execute_site_detector_request(
+        _request = build_execute_site_detector_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
@@ -1086,16 +1024,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.execute_site_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1108,13 +1045,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticDetectorResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute_site_detector.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_detector_responses_slot(
@@ -1130,7 +1063,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type site_name: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DetectorResponse or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DetectorResponse]
@@ -1142,7 +1074,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1153,18 +1085,17 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_detector_responses_slot_request(
+                _request = build_list_site_detector_responses_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detector_responses_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1175,14 +1106,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
@@ -1192,11 +1123,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1208,10 +1139,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_detector_responses_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors"
-    }
 
     @distributed_trace_async
     async def get_site_detector_response_slot(
@@ -1243,12 +1170,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DetectorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1262,7 +1188,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
-        request = build_get_site_detector_response_slot_request(
+        _request = build_get_site_detector_response_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
@@ -1272,16 +1198,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.get_site_detector_response_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1294,13 +1219,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DetectorResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_detector_response_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_diagnostic_categories_slot(
@@ -1316,7 +1237,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type site_name: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DiagnosticCategory or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DiagnosticCategory]
@@ -1328,7 +1248,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1339,18 +1259,17 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_diagnostic_categories_slot_request(
+                _request = build_list_site_diagnostic_categories_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_diagnostic_categories_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1361,14 +1280,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
@@ -1378,11 +1297,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1394,10 +1313,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_diagnostic_categories_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics"
-    }
 
     @distributed_trace_async
     async def get_site_diagnostic_category_slot(
@@ -1415,12 +1330,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type diagnostic_category: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticCategory or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1434,23 +1348,22 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
-        request = build_get_site_diagnostic_category_slot_request(
+        _request = build_get_site_diagnostic_category_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_diagnostic_category_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1463,13 +1376,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticCategory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_diagnostic_category_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_analyses_slot(
@@ -1487,7 +1396,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type diagnostic_category: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnalysisDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.AnalysisDefinition]
@@ -1499,7 +1407,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1510,19 +1418,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_analyses_slot_request(
+                _request = build_list_site_analyses_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_analyses_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1533,14 +1440,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
@@ -1550,11 +1457,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1566,10 +1473,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_analyses_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses"
-    }
 
     @distributed_trace_async
     async def get_site_analysis_slot(
@@ -1595,12 +1498,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type analysis_name: str
         :param slot: Slot - optional. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalysisDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.AnalysisDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1614,7 +1516,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_site_analysis_slot_request(
+        _request = build_get_site_analysis_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
@@ -1622,16 +1524,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_analysis_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1644,13 +1545,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("AnalysisDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_analysis_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def execute_site_analysis_slot(
@@ -1685,12 +1582,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysis or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticAnalysis
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1704,7 +1600,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
-        request = build_execute_site_analysis_slot_request(
+        _request = build_execute_site_analysis_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
@@ -1715,16 +1611,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.execute_site_analysis_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1737,13 +1632,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticAnalysis", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute_site_analysis_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_site_detectors_slot(
@@ -1761,7 +1652,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type diagnostic_category: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DetectorDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_01.models.DetectorDefinition]
@@ -1773,7 +1663,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1784,19 +1674,18 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_site_detectors_slot_request(
+                _request = build_list_site_detectors_slot_request(
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_site_detectors_slot.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1807,14 +1696,14 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
@@ -1824,11 +1713,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1840,10 +1729,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_site_detectors_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors"
-    }
 
     @distributed_trace_async
     async def get_site_detector_slot(
@@ -1869,12 +1754,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type detector_name: str
         :param slot: Slot Name. Required.
         :type slot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DetectorDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1888,7 +1772,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_site_detector_slot_request(
+        _request = build_get_site_detector_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
@@ -1896,16 +1780,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             slot=slot,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_site_detector_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1918,13 +1801,9 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DetectorDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_site_detector_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def execute_site_detector_slot(
@@ -1959,12 +1838,11 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         :type end_time: ~datetime.datetime
         :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorResponse or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2021_01_01.models.DiagnosticDetectorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1978,7 +1856,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
-        request = build_execute_site_detector_slot_request(
+        _request = build_execute_site_detector_slot_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
@@ -1989,16 +1867,15 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
             end_time=end_time,
             time_grain=time_grain,
             api_version=api_version,
-            template_url=self.execute_site_detector_slot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2011,10 +1888,6 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DiagnosticDetectorResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute_site_detector_slot.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"
-    }
+        return deserialized  # type: ignore

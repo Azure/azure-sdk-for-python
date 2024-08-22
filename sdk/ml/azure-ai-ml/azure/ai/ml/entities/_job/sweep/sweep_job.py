@@ -71,6 +71,11 @@ module_logger = logging.getLogger(__name__)
 class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
+    .. note::
+        For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix
+        ``AZUREML_SWEEP_``. For example, if you have a parameter named "learning_rate", you can access it as
+        ``AZUREML_SWEEP_learning_rate``.
+
     :keyword name: Name of the job.
     :paramtype name: str
     :keyword display_name: Display name of the job.
@@ -268,6 +273,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 self.resources._to_rest_object() if self.resources and not isinstance(self.resources, dict) else None
             ),
         )
+
+        if not sweep_job.resources and sweep_job.trial.resources:
+            sweep_job.resources = sweep_job.trial.resources
+
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
         return sweep_job_resource
@@ -323,7 +332,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             search_space=_search_space,  # type: ignore[arg-type]
             limits=SweepJobLimits._from_rest_object(properties.limits),
             early_termination=early_termination,
-            objective=properties.objective,
+            objective=Objective._from_rest_object(properties.objective) if properties.objective else None,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
             identity=(

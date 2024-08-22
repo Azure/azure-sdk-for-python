@@ -12,6 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import OnBehalfOfCredential
 import pytest
@@ -305,3 +306,54 @@ async def test_no_client_credential():
     """The credential should raise ValueError when ctoring with no client_secret or client_certificate"""
     with pytest.raises(TypeError):
         credential = OnBehalfOfCredential("tenant-id", "client-id", user_assertion="assertion")
+
+
+@pytest.mark.asyncio
+async def test_client_assertion_func():
+    """The credential should accept a client_assertion_func"""
+    expected_client_assertion = "client-assertion"
+    expected_user_assertion = "user-assertion"
+    expected_token = "***"
+    func_call_count = 0
+
+    def client_assertion_func():
+        nonlocal func_call_count
+        func_call_count += 1
+        return expected_client_assertion
+
+    async def send(request, **kwargs):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+
+        assert request.data.get("client_assertion") == expected_client_assertion
+        assert request.data.get("client_assertion_type") == JWT_BEARER_ASSERTION
+        assert request.data.get("assertion") == expected_user_assertion
+        return mock_response(json_payload=build_aad_response(access_token=expected_token))
+
+    transport = Mock(send=send)
+    credential = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_assertion_func=client_assertion_func,
+        user_assertion=expected_user_assertion,
+        transport=transport,
+    )
+    token = await credential.get_token("scope")
+    assert token.token == expected_token
+    assert func_call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_client_assertion_func_with_client_certificate():
+    """The credential should raise when given both client_assertion_func and client_certificate"""
+    with pytest.raises(ValueError) as ex:
+        OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_assertion_func=lambda: "client-assertion",
+            client_certificate=b"cert",
+            user_assertion="assertion",
+        )
+    assert "It is invalid to specify more than one of the following" in str(ex.value)

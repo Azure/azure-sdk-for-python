@@ -113,6 +113,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             OutboundRuleCategory.REQUIRED,
             OutboundRuleCategory.RECOMMENDED,
             OutboundRuleCategory.USER_DEFINED,
+            OutboundRuleCategory.DEPENDENCY,
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},

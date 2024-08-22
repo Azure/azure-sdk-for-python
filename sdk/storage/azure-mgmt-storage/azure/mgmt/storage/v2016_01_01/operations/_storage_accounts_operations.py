@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -347,7 +352,6 @@ class StorageAccountsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -355,18 +359,17 @@ class StorageAccountsOperations:
 
     @overload
     def check_name_availability(
-        self, account_name: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, account_name: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
-        :type account_name: IO
+        :type account_name: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -374,25 +377,22 @@ class StorageAccountsOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, account_name: Union[_models.StorageAccountCheckNameAvailabilityParameters, IO], **kwargs: Any
+        self, account_name: Union[_models.StorageAccountCheckNameAvailabilityParameters, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Is either a StorageAccountCheckNameAvailabilityParameters type or a IO
-         type. Required.
+         lower-case letters only. Is either a StorageAccountCheckNameAvailabilityParameters type or a
+         IO[bytes] type. Required.
         :type account_name:
-         ~azure.mgmt.storage.v2016_01_01.models.StorageAccountCheckNameAvailabilityParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.storage.v2016_01_01.models.StorageAccountCheckNameAvailabilityParameters or
+         IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -415,22 +415,21 @@ class StorageAccountsOperations:
         else:
             _json = self._serialize.body(account_name, "StorageAccountCheckNameAvailabilityParameters")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -442,22 +441,18 @@ class StorageAccountsOperations:
         deserialized = self._deserialize("CheckNameAvailabilityResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, IO],
+        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.StorageAccount]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -480,7 +475,7 @@ class StorageAccountsOperations:
         else:
             _json = self._serialize.body(parameters, "StorageAccountCreateParameters")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -488,16 +483,15 @@ class StorageAccountsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -511,13 +505,9 @@ class StorageAccountsOperations:
             deserialized = self._deserialize("StorageAccount", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_create(
@@ -546,14 +536,6 @@ class StorageAccountsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either StorageAccount or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.v2016_01_01.models.StorageAccount]
@@ -565,7 +547,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -583,18 +565,10 @@ class StorageAccountsOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the created account. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either StorageAccount or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.v2016_01_01.models.StorageAccount]
@@ -606,7 +580,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, IO],
+        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageAccount]:
         """Asynchronously creates a new storage account with the specified parameters. If an account is
@@ -622,19 +596,9 @@ class StorageAccountsOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the created account. Is either a
-         StorageAccountCreateParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountCreateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         StorageAccountCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountCreateParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns either StorageAccount or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.v2016_01_01.models.StorageAccount]
@@ -666,7 +630,7 @@ class StorageAccountsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("StorageAccount", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -676,17 +640,15 @@ class StorageAccountsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.StorageAccount].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
-    }
+        return LROPoller[_models.StorageAccount](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -701,12 +663,11 @@ class StorageAccountsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -720,21 +681,20 @@ class StorageAccountsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -744,11 +704,7 @@ class StorageAccountsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_properties(self, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.StorageAccount:
@@ -763,12 +719,11 @@ class StorageAccountsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -782,21 +737,20 @@ class StorageAccountsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-01-01"))
         cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -808,13 +762,9 @@ class StorageAccountsOperations:
         deserialized = self._deserialize("StorageAccount", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_properties.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def update(
@@ -847,7 +797,6 @@ class StorageAccountsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -858,7 +807,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -880,11 +829,10 @@ class StorageAccountsOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the updated account. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -895,7 +843,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountUpdateParameters, IO],
+        parameters: Union[_models.StorageAccountUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageAccount:
         """The update operation can be used to update the SKU, encryption, access tier, or tags for a
@@ -915,17 +863,14 @@ class StorageAccountsOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the updated account. Is either a
-         StorageAccountUpdateParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         StorageAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountUpdateParameters or
+         IO[bytes]
         :return: StorageAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -948,7 +893,7 @@ class StorageAccountsOperations:
         else:
             _json = self._serialize.body(parameters, "StorageAccountUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -956,16 +901,15 @@ class StorageAccountsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -977,20 +921,15 @@ class StorageAccountsOperations:
         deserialized = self._deserialize("StorageAccount", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.StorageAccount"]:
         """Lists all the storage accounts available under the subscription. Note that storage keys are not
         returned; use the ListKeys operation for this.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageAccount or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2016_01_01.models.StorageAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1001,7 +940,7 @@ class StorageAccountsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-01-01"))
         cls: ClsType[_models.StorageAccountListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1012,15 +951,14 @@ class StorageAccountsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1031,14 +969,14 @@ class StorageAccountsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("StorageAccountListResult", pipeline_response)
@@ -1048,11 +986,11 @@ class StorageAccountsOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1063,8 +1001,6 @@ class StorageAccountsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.StorageAccount"]:
@@ -1074,7 +1010,6 @@ class StorageAccountsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageAccount or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2016_01_01.models.StorageAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1085,7 +1020,7 @@ class StorageAccountsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-01-01"))
         cls: ClsType[_models.StorageAccountListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1096,16 +1031,15 @@ class StorageAccountsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1116,14 +1050,14 @@ class StorageAccountsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("StorageAccountListResult", pipeline_response)
@@ -1133,11 +1067,11 @@ class StorageAccountsOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1148,10 +1082,6 @@ class StorageAccountsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts"
-    }
 
     @distributed_trace
     def list_keys(
@@ -1166,12 +1096,11 @@ class StorageAccountsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccountListKeysResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountListKeysResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1185,21 +1114,20 @@ class StorageAccountsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-01-01"))
         cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
 
-        request = build_list_keys_request(
+        _request = build_list_keys_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_keys.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1211,13 +1139,9 @@ class StorageAccountsOperations:
         deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_keys.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def regenerate_key(
@@ -1245,7 +1169,6 @@ class StorageAccountsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccountListKeysResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountListKeysResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1256,7 +1179,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        regenerate_key: IO,
+        regenerate_key: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1272,11 +1195,10 @@ class StorageAccountsOperations:
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1 or key2.
          Required.
-        :type regenerate_key: IO
+        :type regenerate_key: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccountListKeysResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountListKeysResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1287,7 +1209,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        regenerate_key: Union[_models.StorageAccountRegenerateKeyParameters, IO],
+        regenerate_key: Union[_models.StorageAccountRegenerateKeyParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageAccountListKeysResult:
         """Regenerates one of the access keys for the specified storage account.
@@ -1300,18 +1222,14 @@ class StorageAccountsOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1 or key2.
-         Is either a StorageAccountRegenerateKeyParameters type or a IO type. Required.
+         Is either a StorageAccountRegenerateKeyParameters type or a IO[bytes] type. Required.
         :type regenerate_key:
-         ~azure.mgmt.storage.v2016_01_01.models.StorageAccountRegenerateKeyParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.storage.v2016_01_01.models.StorageAccountRegenerateKeyParameters or IO[bytes]
         :return: StorageAccountListKeysResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountListKeysResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1334,7 +1252,7 @@ class StorageAccountsOperations:
         else:
             _json = self._serialize.body(regenerate_key, "StorageAccountRegenerateKeyParameters")
 
-        request = build_regenerate_key_request(
+        _request = build_regenerate_key_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -1342,16 +1260,15 @@ class StorageAccountsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.regenerate_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1363,10 +1280,6 @@ class StorageAccountsOperations:
         deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    regenerate_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/regenerateKey"
-    }
+        return deserialized  # type: ignore

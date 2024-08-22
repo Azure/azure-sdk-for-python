@@ -6,7 +6,7 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, AZURE, OPENAI, AZURE_AD, PREVIEW, GA
+from conftest import configure, AZURE, OPENAI, PREVIEW, GA
 
 
 class TestEmbeddings(AzureRecordedTestCase):
@@ -14,7 +14,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_embedding(self, client, api_type, api_version, **kwargs):
 
@@ -65,7 +65,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_dimensions(self, client, api_type, api_version, **kwargs):
 
@@ -82,7 +82,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_encoding_format(self, client, api_type, api_version, **kwargs):
 

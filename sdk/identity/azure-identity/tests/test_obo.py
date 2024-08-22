@@ -12,6 +12,7 @@ except ImportError:
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import OnBehalfOfCredential, UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 from urllib.parse import urlparse
@@ -228,3 +229,76 @@ def test_no_client_credential():
     """The credential should raise ValueError when ctoring with no client_secret or client_certificate"""
     with pytest.raises(TypeError):
         credential = OnBehalfOfCredential("tenant-id", "client-id", user_assertion="assertion")
+
+
+def test_client_assertion_func():
+    """The credential should accept a client_assertion_func"""
+    expected_client_assertion = "client-assertion"
+    expected_user_assertion = "user-assertion"
+    expected_token = "***"
+    func_call_count = 0
+
+    def client_assertion_func():
+        nonlocal func_call_count
+        func_call_count += 1
+        return expected_client_assertion
+
+    def send(request, **kwargs):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+
+        assert request.data.get("client_assertion") == expected_client_assertion
+        assert request.data.get("client_assertion_type") == JWT_BEARER_ASSERTION
+        assert request.data.get("assertion") == expected_user_assertion
+        return mock_response(json_payload=build_aad_response(access_token=expected_token))
+
+    transport = Mock(send=Mock(wraps=send))
+    credential = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_assertion_func=client_assertion_func,
+        user_assertion=expected_user_assertion,
+        transport=transport,
+    )
+
+    access_token = credential.get_token("scope")
+    assert access_token.token == expected_token
+    assert func_call_count == 1
+
+
+def test_client_assertion_func_with_client_certificate():
+    """The credential should raise ValueError when ctoring with both client_assertion_func and client_certificate"""
+    with pytest.raises(ValueError) as ex:
+        credential = OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_assertion_func=lambda: "client-assertion",
+            client_certificate=b"certificate",
+            user_assertion="assertion",
+        )
+    assert "It is invalid to specify more than one of the following" in str(ex.value)
+
+
+def test_client_certificate_with_params():
+    """Ensure keyword arguments are passed to get_client_credential when client_certificate is provided"""
+    expected_send_certificate_chain = True
+
+    cert_path = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
+    cert_password = "password"
+    with open(cert_path, "rb") as f:
+        cert_bytes = f.read()
+
+    credential = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_certificate=cert_bytes,
+        password=cert_password,
+        send_certificate_chain=expected_send_certificate_chain,
+        user_assertion="assertion",
+    )
+
+    assert "passphrase" in credential._client_credential
+    assert credential._client_credential["passphrase"] == cert_password.encode("utf-8")
+    assert "public_certificate" in credential._client_credential

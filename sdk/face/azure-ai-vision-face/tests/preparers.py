@@ -48,21 +48,15 @@ class ClientPreparer(AzureMgmtPreparer):
 FacePreparer = functools.partial(
     EnvironmentVariableLoader,
     "face",
-    azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
+    azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     azure_face_api_name="fakeaccountname",
     azure_face_api_account_key="fakeaccountkey",
 )
 
-FaceAdministrationClientPreparer = functools.partial(
-    ClientPreparer, Client.FaceAdministrationClient
-)
 FaceClientPreparer = functools.partial(ClientPreparer, Client.FaceClient)
 FaceSessionClientPreparer = functools.partial(ClientPreparer, Client.FaceSessionClient)
 
 # Async client
-AsyncFaceAdministrationClientPreparer = functools.partial(
-    ClientPreparer, AsyncClient.FaceAdministrationClient
-)
 AsyncFaceClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceClient)
 AsyncFaceSessionClientPreparer = functools.partial(
     ClientPreparer, AsyncClient.FaceSessionClient

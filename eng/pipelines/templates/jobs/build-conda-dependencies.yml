@@ -103,7 +103,7 @@ jobs:
   timeoutInMinutes: 90
   pool:
     name: Azure Pipelines
-    vmImage: macos-11
+    vmImage: macos-latest
     os: macOS
   variables:
     MacOSXDeploymentTarget: '10.9'

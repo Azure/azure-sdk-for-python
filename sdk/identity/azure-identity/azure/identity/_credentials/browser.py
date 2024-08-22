@@ -27,8 +27,10 @@ class InteractiveBrowserCredential(InteractiveCredential):
         defines authorities for other clouds.
     :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts.
-    :keyword str client_id: Client ID of the Microsoft Entra application users will sign in to. If
-        unspecified, users will authenticate to an Azure development application.
+    :keyword str client_id: Client ID of the Microsoft Entra application that users will sign into. It is recommended
+        that developers register their applications and assign appropriate roles. For more information,
+        visit https://aka.ms/azsdk/identity/AppRegistrationAndRoleAssignment. If not specified, users will
+        authenticate to an Azure development application, which is not recommended for production scenarios.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
     :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure

@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -45,6 +46,10 @@ from ...operations._share_operations import (
     build_set_properties_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -77,6 +82,10 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -100,11 +109,24 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mibps: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -126,6 +148,11 @@ class ShareOperations:
             access_tier=access_tier,
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
+            paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -181,7 +208,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -204,6 +231,7 @@ class ShareOperations:
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -261,6 +289,18 @@ class ShareOperations:
             "str", response.headers.get("x-ms-enabled-protocols")
         )
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
+        response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
+        )
+        response_headers["x-ms-share-paid-bursting-enabled"] = self._deserialize(
+            "bool", response.headers.get("x-ms-share-paid-bursting-enabled")
+        )
+        response_headers["x-ms-share-paid-bursting-max-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-iops")
+        )
+        response_headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-bandwidth-mibps")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -294,7 +334,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -318,6 +358,7 @@ class ShareOperations:
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -383,7 +424,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -406,6 +447,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -472,7 +514,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -494,6 +536,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -564,7 +607,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -587,6 +630,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -653,7 +697,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -675,6 +719,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -750,7 +795,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -777,6 +822,7 @@ class ShareOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             sharesnapshot=sharesnapshot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -832,7 +878,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -851,6 +897,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -953,7 +1000,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1018,12 +1065,23 @@ class ShareOperations:
 
     @distributed_trace_async
     async def get_permission(
-        self, file_permission_key: str, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        file_permission_key: str,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.SharePermission:
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
         :type file_permission_key: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1033,7 +1091,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1051,6 +1109,7 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -1093,6 +1152,10 @@ class ShareOperations:
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1111,13 +1174,26 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mibps: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1143,6 +1219,11 @@ class ShareOperations:
             access_tier=access_tier,
             lease_id=_lease_id,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
+            paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1198,7 +1279,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1222,6 +1303,7 @@ class ShareOperations:
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1273,7 +1355,7 @@ class ShareOperations:
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1296,6 +1378,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1354,7 +1437,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1385,6 +1468,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -1438,7 +1522,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1461,6 +1545,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1526,7 +1611,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1547,6 +1632,7 @@ class ShareOperations:
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
             deleted_share_version=deleted_share_version,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,

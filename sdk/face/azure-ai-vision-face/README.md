@@ -1,4 +1,4 @@
-# Azure Ai Vision Face client library for Python
+# Azure AI Face client library for Python
 
 The Azure AI Face service provides AI algorithms that detect, recognize, and analyze human faces in images. It includes the following main features:
 
@@ -6,7 +6,6 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 - Liveness detection
 - Face recognition
   - Face verification ("one-to-one" matching)
-  - Face identification ("one-to-many" matching)
 - Find similar faces
 - Group faces
 
@@ -25,13 +24,13 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 - Your Azure account must have a `Cognitive Services Contributor` role assigned in order for you to agree to the responsible AI terms and create a resource. To get this role assigned to your account, follow the steps in the [Assign roles][azure_role_assignment] documentation, or contact your administrator.
 - Once you have sufficient permissions to control your Azure subscription, you need either
   * an [Azure Face account][azure_portal_list_face_account] or
-  * an [Azure Cognitive Service account][azure_portal_list_cognitive_service_account]
+  * an [Azure AI services multi-service account][azure_portal_list_cognitive_service_account]
 
-### Create a Face or a Cognitive Services resource
+### Create a Face or an Azure AI services multi-service account
 
-Azure AI Face supports both [multi-service][azure_cognitive_service_account] and single-service access. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Face access only, create a Face resource. Please note that you will need a single-service resource if you intend to use [Microsoft Entra ID authentication](#create-the-client-with-an-azure-active-directory-credential).
+Azure AI Face supports both [multi-service][azure_cognitive_service_account] and single-service access. Create an Azure AI services multi-service account if you plan to access multiple Azure AI services under a single endpoint/key. For Face access only, create a Face resource.
 
-* To create a new Face or Cognitive Services account, you can use [Azure Portal][azure_portal_create_face_account], [Azure PowerShell][quick_start_create_account_via_azure_powershell], or [Azure CLI][quick_start_create_account_via_azure_cli].
+* To create a new Face or Azure AI services multi-service account, you can use [Azure Portal][azure_portal_create_face_account], [Azure PowerShell][quick_start_create_account_via_azure_powershell], or [Azure CLI][quick_start_create_account_via_azure_cli].
 
 ### Install the package
 
@@ -63,31 +62,12 @@ Regional endpoint: https://<region>.api.cognitive.microsoft.com/
 Custom subdomain: https://<resource-name>.cognitiveservices.azure.com/
 ```
 
-A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support Microsoft Entra ID authentication.
+A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support Microsoft Entra ID authentication. If you'd like migrate your resource to use custom subdomain, follow the instructions [here][how_to_migrate_resource_to_custom_subdomain].
 
-A custom subdomain, on the other hand, is a name that is unique to the Face resource. They can only be used by [single-service resources][azure_portal_create_face_account].
+A custom subdomain, on the other hand, is a name that is unique to the resource. Once created and linked to a resource, it cannot be modified.
 
 
-#### Create the client with AzureKeyCredential
-
-To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
-You can get the API key for your Face resource using the [Azure Portal][get_key_via_azure_portal] or [Azure CLI][get_key_via_azure_cli]:
-
-```bash
-# Get the API keys for the Face resource
-az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
-```
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.face import FaceClient
-
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-face_client = FaceClient(endpoint, credential)
-```
-
-#### Create the client with an Microsoft Entra ID credential
+#### Create the client with a Microsoft Entra ID credential
 
 `AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also authenticate with Microsoft Entra ID using the [azure-identity][azure_sdk_python_identity] library.
 Note that regional endpoints do not support Microsoft Entra ID authentication. Create a [custom subdomain][custom_subdomain] name for your resource in order to use this type of authentication.
@@ -116,6 +96,26 @@ credential = DefaultAzureCredential()
 face_client = FaceClient(endpoint, credential)
 ```
 
+#### Create the client with AzureKeyCredential
+
+To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
+You can get the API key for your Face resource using the [Azure Portal][get_key_via_azure_portal] or [Azure CLI][get_key_via_azure_cli]:
+
+```bash
+# Get the API keys for the Face resource
+az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
+```
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.vision.face import FaceClient
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+face_client = FaceClient(endpoint, credential)
+```
+
+
 ## Key concepts
 
 ### FaceClient
@@ -126,37 +126,10 @@ face_client = FaceClient(endpoint, credential)
    and optionally with landmarks, and face-related attributes. This operation is required as a first step in all the
    other face recognition scenarios.
  - Face recognition: Confirm that a user is who they claim to be based on how closely their face data matches the target face.
-   It includes Face verification ("one-to-one" matching) and Face identification ("one-to-many" matching).
+   It includes Face verification ("one-to-one" matching).
  - Finding similar faces from a smaller set of faces that look similar to the target face.
  - Grouping faces into several smaller groups based on similarity.
 
-### FaceAdministrationClient
-
-`FaceAdministrationClient` is provided to interact with the following data structures that hold data on faces and
-persons for Face recognition:
-
- - `person`: It is a container that holds faces and is used by face recognition. It can either not belong to any group or be a member of multiple `dynamic_person_group` simultaneously.
-   - Each person can have up to 248 faces, and the total number of persons can reach 75 million.
-   - For [face verification][face_verification], call `verify_from_person_directory()`.
-   - For [face identification][face_identification], training is not needed before calling `identify_from_person_directory()`.
-   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
- - `dynamic_person_group`: It is a group that can hold several `person`, and is used by face identification.
-   - The total `dynamic_person_group` is unlimited.
-   - Training is not needed before calling `identify_from_dynamic_person_group()`.
-   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
- - `face_list`: It is a list of faces and used by [find similar faces][find_similar] (call `find_similar_from_face_list()`).
-   - It can up to 1,000 faces.
- - `large_face_list`: It is a list of faces which can hold more faces and used by [find similar faces][find_similar].
-   - It can up to 1,000,000 faces.
-   - Training (`begin_train_large_face_list()`) is required before calling `find_similar_from_large_face_list()`.
- - `person_group`: It is a container that store the uploaded person data, including their face recognition features, and is used by face recognition.
-   - It can up to 10,000 persons, with each person capable of holding up to 248 faces.
-   - For [face verification][face_verification], call `verify_from_person_group()`.
-   - For [face identification][face_identification], training (`begin_train_person_group()`) is required before calling `identify_from_person_group()`.
- - `large_person_group`: It is a container which can hold more persons, and is used by face recognition.
-   - It can up to 1,000,000 persons, with each person capable of holding up to 248 faces. The total persons in all `large_person_group` should not exceed 1,000,000,000.
-   - For [face verification][face_verification], call `verify_from_large_person_group()`.
-   - For [face identification][face_identification], training (`begin_train_large_person_group()`) is required before calling `identify_from_large_person_group()`.
 
 ### FaceSessionClient
 
@@ -166,24 +139,12 @@ persons for Face recognition:
  - Query the liveness and verification result.
  - Query the audit result.
 
-### Long-running operations
-
-Long-running operations are operations which consist of an initial request sent to the service to start an operation,
-followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
-succeeded, to get the result.
-
-Methods that train a group (LargeFaceList, PersonGroup or LargePersonGroup), create/delete a Person/DynamicPersonGroup, 
-add a face or delete a face from a Person are modeled as long-running operations.
-The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
-for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
-Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Face tasks, including:
 
 * [Detecting faces in an image](#face-detection "Face Detection")
-* [Identifying the specific face from a LargePersonGroup](#face-recognition-from-largepersongroup "Face Recognition from LargePersonGroup")
 * [Determining if a face in an video is real (live) or fake (spoof)](#liveness-detection "Liveness Detection")
 
 ### Face Detection
@@ -231,110 +192,13 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
         print(f"Face: {face.as_dict()}")
 ```
 
-### Face Recognition from LargePersonGroup
-Identify a face against a defined LargePersonGroup.
-
-First, we have to use `FaceAdministrationClient` to create a `LargePersonGroup`, add a few `Person` to it,
-and then register faces with these `Person`.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.face import FaceAdministrationClient, FaceClient
-from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
-
-
-def read_file_content(file_path: str):
-    with open(file_path, "rb") as fd:
-        file_content = fd.read()
-
-    return file_content
-
-
-endpoint = "<your endpoint>"
-key = "<your api key>"
-
-large_person_group_id = "lpg_family"
-
-with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
-    print(f"Create a large person group with id: {large_person_group_id}")
-    face_admin_client.create_large_person_group(
-        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION_04
-    )
-
-    print("Create a Person Bill and add a face to him.")
-    bill_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Bill", user_data="Dad"
-    ).person_id
-    bill_image_file_path = "./samples/images/Family1-Dad1.jpg"
-    face_admin_client.add_large_person_group_person_face(
-        large_person_group_id,
-        bill_person_id,
-        read_file_content(bill_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Dad-0001",
-    )
-
-    print("Create a Person Clare and add a face to her.")
-    clare_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Clare", user_data="Mom"
-    ).person_id
-    clare_image_file_path = "./samples/images/Family1-Mom1.jpg"
-    face_admin_client.add_large_person_group_person_face(
-        large_person_group_id,
-        clare_person_id,
-        read_file_content(clare_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Mom-0001",
-    )
-```
-
-Before doing the identification, we need to train the LargePersonGroup first.
-```python
-    print(f"Start to train the large person group: {large_person_group_id}.")
-    poller = face_admin_client.begin_train_large_person_group(large_person_group_id)
-
-    # Wait for the train operation to be completed.
-    # If the training status isn't succeed, an exception will be thrown from the poller.
-    training_result = poller.result()
-```
-
-When the training operation is completed successfully, we can identify the faces in this LargePersonGroup through
-`FaceClient`.
-```python
-with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_client:
-    # Detect the face from the target image.
-    target_image_file_path = "./samples/images/identification1.jpg"
-    detect_result = face_client.detect(
-        read_file_content(target_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        recognition_model=FaceRecognitionModel.RECOGNITION_04,
-        return_face_id=True,
-    )
-    target_face_ids = list(f.face_id for f in detect_result)
-
-    # Identify the faces in the large person group.
-    result = face_client.identify_from_large_person_group(
-        face_ids=target_face_ids, large_person_group_id=large_person_group_id
-    )
-    for idx, r in enumerate(result):
-        print(f"----- Identification result: #{idx+1} -----")
-        print(f"{r.as_dict()}")
-```
-
-Finally, use `FaceAdministrationClient` to remove the large person group if you don't need it anymore.
-```python
-with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
-    print(f"Delete the large person group: {large_person_group_id}")
-    face_admin_client.delete_large_person_group(large_person_group_id)
-```
-
 ### Liveness detection
 Face Liveness detection can be used to determine if a face in an input video stream is real (live) or fake (spoof).
 The goal of liveness detection is to ensure that the system is interacting with a physically present live person at
 the time of authentication. The whole process of authentication is called a session.
 
-There are two different components in the authentication: a mobile application and an app server/orchestrator.
-Before uploading the video stream, the app server has to create a session, and then the mobile client could upload
+There are two different components in the authentication: a frontend application and an app server/orchestrator.
+Before uploading the video stream, the app server has to create a session, and then the frontend client could upload
 the payload with a `session authorization token` to call the liveness detection. The app server can query for the
 liveness detection result and audit logs anytime until the session is deleted.
 
@@ -342,8 +206,8 @@ The Liveness detection operation can not only confirm if the input is live or sp
 belongs to the expected person's face, which is called **liveness detection with face verification**. For the detail
 information, please refer to the [tutorial][liveness_tutorial].
 
-This package is only responsible for creating, quering, deleting a session and getting audit logs. For how to perform a
-liveness detection, please see the sample of [mobile applications][integrate_liveness_into_mobile_application].
+This package is only responsible for app server to create, query, delete a session and get audit logs. For how to
+integrate the UI and the code into your native frontend application, please follow instructions in the [tutorial][liveness_tutorial].
 
 Here is an example to create and get the liveness detection result of a session.
 ```python
@@ -498,6 +362,7 @@ additional questions or comments.
 [get_key_via_azure_portal]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#get-the-keys-for-your-resource
 [get_key_via_azure_cli]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli#get-the-keys-for-your-resource
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
+[how_to_migrate_resource_to_custom_subdomain]: https://learn.microsoft.com/azure/ai-services/cognitive-services-custom-subdomains#how-does-this-impact-existing-resources
 [azure_sdk_python_azure_key_credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [azure_sdk_python_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
@@ -512,7 +377,6 @@ additional questions or comments.
 [evaluate_different_detection_models]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model#evaluate-different-models
 [recommended_recognition_model]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model#recommended-model
 [liveness_tutorial]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness
-[integrate_liveness_into_mobile_application]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application
 
 [python_azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [face_errors]: https://aka.ms/face-error-codes-and-messages

@@ -409,11 +409,56 @@ class TestConfigure(unittest.TestCase):
         configurations = {
             "connection_string": "test_cs",
             "resource": TEST_RESOURCE,
+            "views": [],
         }
         _setup_metrics(configurations)
         mp_mock.assert_called_once_with(
             metric_readers=[reader_init_mock],
-            resource=TEST_RESOURCE
+            resource=TEST_RESOURCE,
+            views=[],
+        )
+        set_meter_provider_mock.assert_called_once_with(mp_init_mock)
+        metric_exporter_mock.assert_called_once_with(**configurations)
+        reader_mock.assert_called_once_with(metric_exp_init_mock)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.AzureMonitorMetricExporter",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.set_meter_provider",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.MeterProvider",
+        autospec=True,
+    )
+    def test_setup_metrics_views(
+        self,
+        mp_mock,
+        set_meter_provider_mock,
+        metric_exporter_mock,
+        reader_mock,
+    ):
+        mp_init_mock = Mock()
+        mp_mock.return_value = mp_init_mock
+        metric_exp_init_mock = Mock()
+        metric_exporter_mock.return_value = metric_exp_init_mock
+        reader_init_mock = Mock()
+        reader_mock.return_value = reader_init_mock        
+        view_mock = Mock()
+
+        configurations = {
+            "connection_string": "test_cs",
+            "resource": TEST_RESOURCE,
+            "views": [view_mock],
+        }
+        _setup_metrics(configurations)
+        mp_mock.assert_called_once_with(
+            metric_readers=[reader_init_mock],
+            resource=TEST_RESOURCE,
+            views=[view_mock],
         )
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)

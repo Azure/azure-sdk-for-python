@@ -1,0 +1,61 @@
+{% set name = "azure-ai-translation-text" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('TRANSLATION_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.translation.text
+    - azure.ai.translation.text.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Azure Text Translation client library for Python"
+  description: |
+    Text Translation is a cloud-based REST API feature of the Translator service that uses neural machine translation technology to enable quick and accurate source-to-target text translation in real time across all supported languages.
+    Use the Text Translation client library for Python to:
+    * Return a list of languages supported by Translate, Transliterate, and Dictionary operations.
+    * Render single source-language text to multiple target-language texts with a single request.
+    * Convert text of a source language in letters of a different script.
+    *Return equivalent words for the source term in the target language.
+    *Return grammatical structure and context examples for the source term and target term pair.
+    Please see https://aka.ms/azsdk/conda/releases/text-translation for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

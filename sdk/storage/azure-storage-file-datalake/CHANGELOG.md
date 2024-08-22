@@ -1,9 +1,27 @@
 # Release History
 
-## 12.16.0b1 (Unreleased)
+## 12.17.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.17.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.16.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.16.0b1
+
+## 12.16.0b1 (2024-06-11)
+
+### Features Added
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
 
 ## 12.15.0 (2024-05-07)
 

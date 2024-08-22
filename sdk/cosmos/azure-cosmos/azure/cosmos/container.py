@@ -21,27 +21,28 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-from datetime import datetime, timezone
 import warnings
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
-from ._cosmos_client_connection import CosmosClientConnection
 from ._base import (
     build_options,
     validate_cache_staleness_value,
     _deserialize_throughput,
     _replace_throughput,
-    GenerateGuidId
+    GenerateGuidId,
+    _set_properties_cache
 )
-from .exceptions import CosmosResourceNotFoundError
-from .http_constants import StatusCodes
+from ._cosmos_client_connection import CosmosClientConnection
+from ._routing import routing_range
+from ._routing.routing_range import Range
+from ._utils import is_key_exists_and_not_none
 from .offer import Offer, ThroughputProperties
-from .scripts import ScriptsProxy
 from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
@@ -49,10 +50,11 @@ from .partition_key import (
     _Undefined,
     _return_undefined_or_empty_partition_key
 )
+from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
@@ -83,17 +85,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
-        self._properties = properties
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        if properties:
+            self.client_connection._set_container_properties_cache(self.container_link,
+                                                                   _set_properties_cache(properties))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_properties(self) -> Dict[str, Any]:
-        if self._properties is None:
-            self._properties = self.read()
-        return self._properties
+        if self.container_link not in self.__get_client_container_caches():
+            self.read()
+        return self.__get_client_container_caches()[self.container_link]
 
     @property
     def is_system_key(self) -> bool:
@@ -127,6 +131,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
+
+    def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> Range: # pylint: disable=line-too-long
+        container_properties = self._get_properties()
+        partition_key_definition = container_properties["partitionKey"]
+        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+
+        return partition_key._get_epk_range_for_partition_key(partition_key_value)
+
+    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+        return self.client_connection._container_properties_cache
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
@@ -173,11 +189,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-        collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(
-            collection_link, options=request_options, **kwargs
-        )
-        return self._properties
+        container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        return container
 
     @distributed_trace
     def read_item(  # pylint:disable=docstring-missing-param
@@ -212,6 +227,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples.py
@@ -220,7 +236,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Get an item from the database and update one of its properties:
-                :name: update_item
         """
         doc_link = self._get_document_link(item)
         if session_token is not None:
@@ -243,7 +258,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -296,62 +312,178 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    @distributed_trace
+    @overload
     def query_items_change_feed(
-        self,
-        partition_key_range_id: Optional[str] = None,
-        is_start_from_beginning: bool = False,
-        continuation: Optional[str] = None,
-        max_item_count: Optional[int] = None,
-        *,
-        start_time: Optional[datetime] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param str partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
-            This is used to process the change feed in parallel across multiple consumers.
-        :param bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default, it's start from current (false).
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param str continuation: e_tag value to be used as continuation for reading change feed.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword ~datetime.datetime start_time: Specifies a point of time to start change feed. Provided value will be
-            converted to UTC. This value will be ignored if `is_start_from_beginning` is set to true.
-        :keyword partition_key: partition key at which ChangeFeed requests are targeted.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time:
+            The start time to start processing chang feed items.
+                Beginning: Processing the change feed items from the beginning of the change feed.
+                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+                By default, it is start from current (NOW)
+        :keyword PartitionKeyType partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
-        if priority is not None:
-            kwargs['priority'] = priority
-        feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if partition_key_range_id is not None:
-            feed_options["partitionKeyRangeId"] = partition_key_range_id
-        if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if is_start_from_beginning is not None:
-            feed_options["isStartFromBeginning"] = is_start_from_beginning
-        if start_time is not None and is_start_from_beginning is False:
-            feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if continuation is not None:
-            feed_options["continuation"] = continuation
+        # pylint: enable=line-too-long
+        ...
 
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            feed_range: Optional[str] = None,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
+
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :keyword str feed_range: The feed range that is used to define the scope.
+            By default, the scope will be the entire container.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Union[datetime, Literal["Now", "Beginning"]]
+            start_time: The start time to start processing chang feed items.
+                Beginning: Processing the change feed items from the beginning of the change feed.
+                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+                By default, it is start from current (NOW)
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
+        # pylint: enable=line-too-long
+        ...
+
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            continuation: Optional[str] = None,
+            max_item_count: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=line-too-long
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
+        # pylint: enable=line-too-long
+        ...
+
+    @distributed_trace
+    def query_items_change_feed(
+            self,
+            *args: Any,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        # pylint: disable=too-many-statements
+        if is_key_exists_and_not_none(kwargs, "priority"):
+            kwargs['priority'] = kwargs['priority']
+        feed_options = build_options(kwargs)
+
+        change_feed_state_context = {}
+        # Back compatibility with deprecation warnings for partition_key_range_id
+        if (args and args[0] is not None) or is_key_exists_and_not_none(kwargs, "partition_key_range_id"):
+            warnings.warn(
+                "partition_key_range_id is deprecated. Please pass in feed_range instead.",
+                DeprecationWarning
+            )
+
+            try:
+                change_feed_state_context["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
+            except KeyError:
+                change_feed_state_context['partitionKeyRangeId'] = args[0]
+
+        # Back compatibility with deprecation warnings for is_start_from_beginning
+        if (len(args) >= 2 and args[1] is not None) or is_key_exists_and_not_none(kwargs, "is_start_from_beginning"):
+            warnings.warn(
+                "is_start_from_beginning is deprecated. Please pass in start_time instead.",
+                DeprecationWarning
+            )
+
+            try:
+                is_start_from_beginning = kwargs.pop('is_start_from_beginning')
+            except KeyError:
+                is_start_from_beginning = args[1]
+
+            if is_start_from_beginning:
+                change_feed_state_context["startTime"] = "Beginning"
+
+        # parse start_time
+        if is_key_exists_and_not_none(kwargs, "start_time"):
+            if change_feed_state_context.get("startTime") is not None:
+                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
+
+            start_time = kwargs.pop('start_time')
+            if not isinstance(start_time, (datetime, str)):
+                raise TypeError(
+                    "'start_time' must be either a datetime object, or either the values 'now' or 'beginning'.")
+            change_feed_state_context["startTime"] = start_time
+
+        # parse continuation token
+        if len(args) >= 3 and args[2] is not None or is_key_exists_and_not_none(feed_options, "continuation"):
+            try:
+                continuation = feed_options.pop('continuation')
+            except KeyError:
+                continuation = args[2]
+            change_feed_state_context["continuation"] = continuation
+
+        if len(args) >= 4 and args[3] is not None or is_key_exists_and_not_none(kwargs, "max_item_count"):
+            try:
+                feed_options["maxItemCount"] = kwargs.pop('max_item_count')
+            except KeyError:
+                feed_options["maxItemCount"] = args[3]
+
+        if is_key_exists_and_not_none(kwargs, "partition_key"):
+            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop('partition_key'))
+            change_feed_state_context["partitionKeyFeedRange"] =\
+                self._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
+
+        if is_key_exists_and_not_none(kwargs, "feed_range"):
+            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+
+        container_properties = self._get_properties()
+        feed_options["changeFeedStateContext"] = change_feed_state_context
+        feed_options["containerRID"] = container_properties["_rid"]
+
+        response_hook = kwargs.pop('response_hook', None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -428,7 +560,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
-                :name: query_items
 
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START query_items_param]
@@ -436,7 +567,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
-                :name: query_items_param
         """
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -455,13 +585,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
-            if self.__is_prefix_partitionkey(partition_key):
+            partition_key_value = self._set_partition_key(partition_key)
+            if self.__is_prefix_partitionkey(partition_key_value):
                 kwargs["isPrefixPartitionQuery"] = True
                 properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
-                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key
+                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
             else:
-                feed_options["partitionKey"] = self._set_partition_key(partition_key)
+                feed_options["partitionKey"] = partition_key_value
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if max_integrated_cache_staleness_in_ms:
@@ -473,7 +604,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
-
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -487,16 +619,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     def __is_prefix_partitionkey(
-        self, partition_key: PartitionKeyType
-    ) -> bool:
+        self,
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> bool: # pylint: disable=line-too-long
+
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-        if partition_key_definition.kind != "MultiHash":
-            return False
-        if isinstance(partition_key, list) and len(partition_key_definition['paths']) == len(partition_key):
-            return False
-        return True
+        return partition_key_definition._is_prefix_partition_key(partition_key)
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
@@ -562,6 +691,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
         return self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
@@ -625,6 +757,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -700,7 +834,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQueryMetrics"] = populate_query_metrics
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
 
@@ -765,6 +900,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
 
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         return self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
@@ -885,7 +1022,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -919,17 +1057,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
+        throughput_properties: List[Dict[str, Any]]
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for container " + self.container_link)
+        options = {"containerRID": properties["_rid"]}
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -947,24 +1083,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param throughput: The throughput to be set.
-        :type throughput: Union[int, ThroughputProperties]
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
+        throughput_properties: List[Dict[str, Any]]
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+        options = {"containerRID": properties["_rid"]}
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
@@ -989,6 +1123,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1030,6 +1166,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1062,6 +1200,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1090,6 +1230,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1137,23 +1279,37 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
 
-    def merge_session_tokens(self,
-                             pks_to_session_tokens: List,
-                             target_pk: PartitionKey
-                             ) -> str:
-        """Merge session tokens from different clients to figure out which is the most up to date for a specific
-        partition key. This should only be used if maintaining own session token or else the sdk will keep track of
-        session token.
+    def read_feed_ranges(  # pylint: disable=unused-argument
+            self,
+            **kwargs: Any
+    ) -> List[str]:
+        partition_key_ranges =\
+            self.client_connection._routing_map_provider.get_overlapping_ranges(
+                self.container_link,
+                [Range("", "FF", True, False)]) # default to full range
 
-        :param pks_to_session_tokens: list of partition key and session token tuples.
-        :type pks_to_session_tokens: List[Tuple(str, PartitionKey)]
-        :param target_pk: partition key to get most up to date session token.
-        :type target_pk: PartitionKey
+        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
+                for partitionKeyRange in partition_key_ranges]
+
+    def merge_session_tokens(self,
+                             feed_ranges_to_session_tokens: List,
+                             target_feed_range: Range
+                             ) -> "Session Token":
+        """Merge session tokens from different clients to figure out which is the most up to date for a specific
+        feed range. The feed range can be obtained from the response from crud operations.
+        This should only be used if maintaining own session token or else the sdk will keep track of
+        session token.
+        :param feed_ranges_to_session_tokens: list of partition key and session token tuples.
+        :type feed_ranges_to_session_tokens: List[Tuple(str, Range)]
+        :param target_feed_range: feed range to get most up to date session token.
+        :type target_feed_range: Range
         :returns: a session token
         :rtype: str
         """
-        return self.client_connection.MergeSessionTokens(pks_to_session_tokens, target_pk)
+        self.client_connection.MergeSessionTokens(feed_ranges_to_session_tokens, target_feed_range)

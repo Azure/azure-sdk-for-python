@@ -25,7 +25,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 generate_mgmt_script = os.path.join(root_dir, "doc/sphinx/generate_doc.py")
 
 def is_mgmt_package(pkg_name):
-    return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
+    return pkg_name != "azure-mgmt-core" and ("mgmt" in pkg_name or "cognitiveservices" in pkg_name)
 
 def copy_existing_docs(source, target):
     for file in os.listdir(source):

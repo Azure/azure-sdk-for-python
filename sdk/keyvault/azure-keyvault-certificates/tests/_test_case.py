@@ -26,8 +26,8 @@ class CertificatesClientPreparer(AzureRecordedTestCase):
         
         if is_live():
             self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
-            os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
-            os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
+            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
+            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
             os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
             
     def __call__(self, fn):

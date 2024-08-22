@@ -26,8 +26,8 @@
 from __future__ import annotations
 import inspect
 from types import TracebackType
-from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager, TypeGuard
+from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type, AsyncContextManager
+from typing_extensions import TypeGuard
 
 from . import PipelineRequest, PipelineResponse, PipelineContext
 from ..policies import AsyncHTTPPolicy, SansIOHTTPPolicy

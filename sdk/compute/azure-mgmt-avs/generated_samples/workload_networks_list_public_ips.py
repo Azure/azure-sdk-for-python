@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.avs import AVSClient
 
 """
@@ -29,7 +30,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.workload_networks.list_public_i_ps(
+    response = client.workload_networks.list_public_ips(
         resource_group_name="group1",
         private_cloud_name="cloud1",
     )
@@ -37,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/WorkloadNetworks_ListPublicIPs.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-09-01/examples/WorkloadNetworks_ListPublicIPs.json
 if __name__ == "__main__":
     main()

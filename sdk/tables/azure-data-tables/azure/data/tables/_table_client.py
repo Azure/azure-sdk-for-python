@@ -94,7 +94,7 @@ class TableClient(TablesBaseClient):
 
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
-        """Create TableClient from a Connection String.
+        """Creates TableClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
         :param str table_name: The table name.
@@ -400,7 +400,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 partition_key=encoder.prepare_key(partition_key),
                 row_key=encoder.prepare_key(row_key),
-                etag=etag,
+                etag=etag or "*",
                 match_condition=match_condition,
                 **kwargs,
             )
@@ -413,7 +413,7 @@ class TableClient(TablesBaseClient):
     def create_entity(
         self, entity: EntityType, *, encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER, **kwargs
     ) -> Dict[str, Any]:
-        """Insert entity in a table.
+        """Inserts an entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, Mapping[str, Any]]
@@ -436,7 +436,7 @@ class TableClient(TablesBaseClient):
 
     @overload
     def create_entity(self, entity: T, *, encoder: TableEntityEncoderABC[T], **kwargs) -> Dict[str, Any]:
-        """Insert entity in a table.
+        """Inserts an entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
@@ -483,7 +483,7 @@ class TableClient(TablesBaseClient):
         encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
-        """Updates an entity in a table.
+        """Updates an already existing entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
@@ -522,7 +522,7 @@ class TableClient(TablesBaseClient):
         encoder: TableEntityEncoderABC[T],
         **kwargs,
     ) -> Dict[str, Any]:
-        """Update entity in a table.
+        """Updates an already existing entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
@@ -745,7 +745,7 @@ class TableClient(TablesBaseClient):
         encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
-        """Updates (merge or replace) an entity into a table.
+        """Updates (merge or replace) or inserts an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
@@ -772,7 +772,7 @@ class TableClient(TablesBaseClient):
     def upsert_entity(
         self, entity: T, mode: Union[str, UpdateMode] = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
     ) -> Dict[str, Any]:
-        """Updates (merge or replace) an entity into a table.
+        """Updates (merge or replace) or inserts an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: Custom entity type

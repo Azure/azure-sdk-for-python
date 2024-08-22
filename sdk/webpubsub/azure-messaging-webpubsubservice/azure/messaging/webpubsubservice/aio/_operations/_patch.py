@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -21,10 +22,10 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
     JSON,
-    build_send_to_all_request,
-    build_send_to_connection_request,
-    build_send_to_user_request,
-    build_send_to_group_request,
+    build_web_pub_sub_service_send_to_all_request,
+    build_web_pub_sub_service_send_to_connection_request,
+    build_web_pub_sub_service_send_to_user_request,
+    build_web_pub_sub_service_send_to_group_request,
 )
 from ..._operations._patch import get_token_by_key
 
@@ -39,10 +40,11 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         minutes_to_expire: Optional[int] = 60,
         jwt_headers: Dict[str, Any] = None,
         groups: Optional[List[str]] = None,
+        client_protocol: Optional[str] = "Default",
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
-        Generate token for the client to connect Azure Web PubSub service.
+
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -55,11 +57,16 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
+        :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
+         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
+         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
+        :paramtype client_type: str
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
+
         Example:
-            .. code-block:: python
+
                 >>> get_client_access_token()
                 {
                     'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
@@ -73,15 +80,19 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(endpoint)
             )
         # Ensure endpoint has no trailing slash
+
         endpoint = endpoint.rstrip("/")
 
         # Switch from http(s) to ws(s) scheme
+
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
+        client_url = client_endpoint + path + hub
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(
                 endpoint,
+                path,
                 hub,
                 self._config.credential.key,
                 user_id=user_id,
@@ -93,7 +104,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             )
         else:
             access_token = await super().get_client_access_token(
-                user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, groups=groups, **kwargs
+                user_id=user_id,
+                roles=roles,
+                minutes_to_expire=minutes_to_expire,
+                groups=groups,
+                client_protocol=client_protocol,
+                **kwargs
             )
             token = access_token.get("token")
         return {
@@ -106,7 +122,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: Union[str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        message: Union[str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -128,7 +150,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: str, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+        self,
+        message: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "text/plain",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -150,7 +178,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        message: IO,
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -172,7 +206,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace_async
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: Union[IO, str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self,
+        message: Union[IO, str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -202,7 +242,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type # type: str
+        content_type = (
+            _headers.pop("Content-Type", "application/json") if content_type is None else content_type
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -217,7 +259,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_all_request(
+        request = build_web_pub_sub_service_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
             filter=filter,
@@ -229,7 +271,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -383,7 +425,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type # type: str
+        content_type = (
+            _headers.pop("Content-Type", "application/json") if content_type is None else content_type
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -398,7 +442,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_group_request(
+        request = build_web_pub_sub_service_send_to_group_request(
             group=group,
             hub=self._config.hub,
             excluded=excluded,
@@ -411,7 +455,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -426,10 +470,15 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
-        
+
     @overload
     async def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: Union[str, JSON], *, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        connection_id: str,
+        message: Union[str, JSON],
+        *,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -467,7 +516,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: IO, *, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        connection_id: str,
+        message: IO,
+        *,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -513,7 +567,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type  # type: str
+        content_type = (
+            _headers.pop("Content-Type", "application/json") if content_type is None else content_type
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -528,7 +584,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_connection_request(
+        request = build_web_pub_sub_service_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
             content_type=content_type,
@@ -539,7 +595,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -557,7 +613,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self,
+        user_id: str,
+        message: Union[str, JSON],
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -579,7 +641,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: str, *, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+        self,
+        user_id: str,
+        message: str,
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "text/plain",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -601,7 +669,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     async def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
+        self,
+        user_id: str,
+        message: IO,
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/octet-stream",
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -623,7 +697,13 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace_async
     async def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[IO, str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self,
+        user_id: str,
+        message: Union[IO, str, JSON],
+        *,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -653,7 +733,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type  # type: str
+        content_type = (
+            _headers.pop("Content-Type", "application/json") if content_type is None else content_type
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -668,7 +750,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_user_request(
+        request = build_web_pub_sub_service_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
             filter=filter,
@@ -680,7 +762,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
