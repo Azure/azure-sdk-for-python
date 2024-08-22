@@ -44,6 +44,14 @@ Replace the existing text with a disclaimer in the following format.
     >
     > This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
 
+  - If the Azure service no longer exists, a new non-Azure service has replaced it, and existing customers should be directed to the new service's Rest API docs/repo.
+
+    > # Microsoft Azure SDK for Python
+    >
+    > This package is no longer being maintained. Please refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+    >
+    > For additional support, please open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
+
 ## CHANGELOG.md and _version.py
 
 - Update the version in the `azure/mypackage/_version.py` file to the next beta or patch version. This file may be called `version.py` if your package is very old. For example:
