@@ -115,6 +115,19 @@ class BreakingChangesTracker:
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
+        self.run_async_breaking_cleanup()
+
+    # Remove duplicate reporting of changes that apply to both sync and async package components
+    def run_async_breaking_cleanup(self) -> None:
+        # Create a list of all sync changes
+        non_aio_changes = [fa for fa in self.breaking_changes if "aio" not in fa[2]]
+        # Remove any aio change if there is a sync change that is the same
+        for change in non_aio_changes:
+            for c in self.breaking_changes:
+                if "aio" in c[2]:
+                    if change[1] == c[1] and change[3:] == c[3:]:
+                        self.breaking_changes.remove(c)
+                        break
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
