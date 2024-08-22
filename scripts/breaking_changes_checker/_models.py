@@ -1,4 +1,4 @@
-from typing import List, Optional, NamedTuple, Protocol, runtime_checkable
+from typing import List, Optional, NamedTuple, Protocol, runtime_checkable, Union
 
 class BreakingChange(NamedTuple):
     message: str
@@ -18,7 +18,7 @@ class Suppression(NamedTuple):
 @runtime_checkable
 class ChangesChecker(Protocol):
     name: str
-    message: str
+    message: Union[str, dict]
 
     def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> List[BreakingChange]:
         ...

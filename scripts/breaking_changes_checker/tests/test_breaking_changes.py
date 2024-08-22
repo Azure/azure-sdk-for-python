@@ -11,6 +11,7 @@ import jsondiff
 import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
+from breaking_changes_checker.checkers.method_overloads_checker import MethodOverloadsChecker
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -438,6 +439,131 @@ def test_removed_operation_group():
 
     diff = jsondiff.diff(stable, current)
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+def test_removed_overload():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "Test",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": "TestResult"
+                                },
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "foo": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": []
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(RemovedMethodOverload): class_name.one had an overload `def one(testing: Test) -> TestResult` removed",
+        "(RemovedMethodOverload): class_name.two had all overloads removed"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-contoso", checkers=[MethodOverloadsChecker()])
     bc.run_checks()
 
     changes = bc.report_changes()

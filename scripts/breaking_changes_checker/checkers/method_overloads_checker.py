@@ -2,8 +2,11 @@ from _models import ChangesChecker
 import jsondiff
 
 class MethodOverloadsChecker(ChangesChecker):
-    name = "MethodOverloadRemoved"
-    message = "{}.{} had an overload `{}` removed"
+    name = "RemovedMethodOverload"
+    message = {
+        "default": "{}.{} had an overload `{}` removed",
+        "all": "{}.{} had all overloads removed"
+    }
 
     def run_check(self, diff, stable_nodes, current_nodes, **kwargs):
         bc_list = []
@@ -16,6 +19,12 @@ class MethodOverloadsChecker(ChangesChecker):
                     # We aren't checking for deleted methods in this checker
                     if isinstance(method_name, jsondiff.Symbol):
                         continue
+                    # Check if all of the overloads were deleted for a specific method
+                    if len(method_components.get("overloads", [])) == 0:
+                        if len(stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"]) > 0:
+                            bc_list.append((self.message["all"], self.name, module_name, class_name, method_name))
+                            continue
+                    # Check for specific overloads that were deleted
                     for overload in method_components.get("overloads", []):
                         if isinstance(overload, jsondiff.Symbol):
                             if overload.label == "delete":
@@ -24,9 +33,5 @@ class MethodOverloadsChecker(ChangesChecker):
                                     parsed_overload_signature = f"def {method_name}(" + ", ".join([f"{name}: {data['type']}" for name,  data in stable_node_overloads["parameters"].items()]) + ")"
                                     if stable_node_overloads["return_type"] is not None:
                                         parsed_overload_signature += f" -> {stable_node_overloads['return_type']}"
-                                    bc = (
-                                        self.message,
-                                        self.name, module_name, class_name, method_name, parsed_overload_signature
-                                    )
-                                    bc_list.append(bc)
+                                    bc_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
         return bc_list
