@@ -59,7 +59,6 @@ def _request_body_from_data(data):
     if data is None or isinstance(data, str) or _is_readable_stream(data):
         return data
     if isinstance(data, (dict, list, tuple)):
-
         json_dumped = json.dumps(data, separators=(",", ":"))
 
         return json_dumped
@@ -97,11 +96,14 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
-        base_url = request_params.endpoint_override
+        if request_params.location_endpoint_to_route:
+            base_url = request_params.location_endpoint_to_route
+        else:
+            base_url = request_params.endpoint_override
     else:
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
-    if base_url != pipeline_client._base_url:
-        request.url = request.url.replace(pipeline_client._base_url, base_url)
+    if base_url != request.url:
+        request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
 
@@ -167,20 +169,31 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     return result, headers
 
 
+def _replace_url_prefix(original_url, new_prefix):
+    parts = original_url.split('/', 3)
+
+    if not new_prefix.endswith('/'):
+        new_prefix += '/'
+
+    new_url = new_prefix + parts[3] if len(parts) > 3 else new_prefix
+
+    return new_url
+
+
 def _PipelineRunFunction(pipeline_client, request, **kwargs):
     # pylint: disable=protected-access
 
     return pipeline_client._pipeline.run(request, **kwargs)
 
 def SynchronizedRequest(
-    client,
-    request_params,
-    global_endpoint_manager,
-    connection_policy,
-    pipeline_client,
-    request,
-    request_data,
-    **kwargs
+        client,
+        request_params,
+        global_endpoint_manager,
+        connection_policy,
+        pipeline_client,
+        request,
+        request_data,
+        **kwargs
 ):
     """Performs one synchronized http request according to the parameters.
 
