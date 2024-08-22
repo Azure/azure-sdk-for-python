@@ -20,5 +20,5 @@ class ChangesChecker(Protocol):
     name: str
     message: Union[str, dict]
 
-    def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> List[BreakingChange]:
+    def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict) -> List[BreakingChange]:
         ...

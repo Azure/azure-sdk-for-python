@@ -1,7 +1,6 @@
-from _models import ChangesChecker
 import jsondiff
 
-class MethodOverloadsChecker(ChangesChecker):
+class MethodOverloadsChecker:
     name = "RemovedMethodOverload"
     message = {
         "default": "{}.{} had an overload `{}` removed",
