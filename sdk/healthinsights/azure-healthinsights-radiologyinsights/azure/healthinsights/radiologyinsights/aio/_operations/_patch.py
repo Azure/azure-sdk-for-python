@@ -110,7 +110,7 @@ class RadiologyInsightsClient(
         self._client = GeneratedRadiologyInsightsClient(
             endpoint=_endpoint,
             credential=credential,
-            AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)# type: ignore
+            AsyncPipelineClient=AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)# type: ignore
         ) 
 
         self._serialize = Serializer()
@@ -144,9 +144,7 @@ class RadiologyInsightsClient(
             ),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments) # pylint: disable=no-member
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
