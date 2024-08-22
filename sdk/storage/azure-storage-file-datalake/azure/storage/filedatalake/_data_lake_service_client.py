@@ -5,7 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing import (
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING
+)
 from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
@@ -17,7 +20,14 @@ from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
+from ._models import (
+    DirectoryProperties,
+    FileProperties,
+    FileSystemProperties,
+    FileSystemPropertiesPaged,
+    LocationMode,
+    UserDelegationKey
+)
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._generated import AzureDataLakeStorageRESTAPI
 
@@ -25,6 +35,7 @@ from ._data_lake_service_client_helper import _format_url, _parse_url
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from ._models import PublicAccess
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -112,7 +123,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._blob_service_client.__enter__()
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self._blob_service_client.close()
         super(DataLakeServiceClient, self).__exit__(*args)
 
@@ -122,7 +133,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         self.__exit__()
 
-    def _format_url(self, hostname):
+    def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to hostname.
 
         :param str hostname: The hostname for the endpoint URL.
@@ -173,11 +184,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_user_delegation_key(self, key_start_time,  # type: datetime
-                                key_expiry_time,  # type: datetime
-                                **kwargs  # type: Any
-                                ):
-        # type: (...) -> UserDelegationKey
+    def get_user_delegation_key(
+        self, key_start_time: "datetime",
+        key_expiry_time: "datetime",
+        **kwargs: Any
+    ) -> UserDelegationKey:
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -204,16 +215,19 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Get user delegation key from datalake service client.
         """
-        delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
-                                                                           key_expiry_time=key_expiry_time,
-                                                                           **kwargs)  # pylint: disable=protected-access
+        delegation_key = self._blob_service_client.get_user_delegation_key(
+            key_start_time=key_start_time,
+            key_expiry_time=key_expiry_time,
+            **kwargs
+        )  # pylint: disable=protected-access
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
-                          include_metadata=None,  # type: Optional[bool]
-                          **kwargs):
-        # type: (...) -> ItemPaged[FileSystemProperties]
+    def list_file_systems(
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileSystemProperties]:
         """Returns a generator to list the file systems under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -253,18 +267,21 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
-        item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
-                                                               include_metadata=include_metadata,
-                                                               **kwargs)  # pylint: disable=protected-access
+        item_paged = self._blob_service_client.list_containers(
+            name_starts_with=name_starts_with,
+            include_metadata=include_metadata,
+            **kwargs
+        )  # pylint: disable=protected-access
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
     @distributed_trace
-    def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                           metadata=None,  # type: Optional[Dict[str, str]]
-                           public_access=None,  # type: Optional[PublicAccess]
-                           **kwargs):
-        # type: (...) -> FileSystemClient
+    def create_file_system(
+        self, file_system: Union[FileSystemProperties, str],
+        metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional["PublicAccess"] = None,
+        **kwargs: Any
+    ) -> FileSystemClient:
         """Creates a new file system under the specified account.
 
         If the file system with the same name already exists, a ResourceExistsError will
@@ -309,8 +326,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
 
-    def _rename_file_system(self, name, new_name, **kwargs):
-        # type: (str, str, **Any) -> FileSystemClient
+    def _rename_file_system(self, name: str, new_name: str, **kwargs: Any) -> FileSystemClient:
         """Renames a filesystem.
 
         Operation is successful only if the source filesystem exists.
@@ -337,8 +353,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return renamed_file_system
 
     @distributed_trace
-    def undelete_file_system(self, name, deleted_version, **kwargs):
-        # type: (str, str, **Any) -> FileSystemClient
+    def undelete_file_system(self, name: str, deleted_version: str, **kwargs: Any) -> FileSystemClient:
         """Restores soft-deleted filesystem.
 
         Operation will only be successful if used within the specified number of days
@@ -362,14 +377,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         new_name = kwargs.pop('new_name', None)
         file_system = self.get_file_system_client(new_name or name)
-        self._blob_service_client.undelete_container(
-            name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+        self._blob_service_client.undelete_container(name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
         return file_system
 
     @distributed_trace
-    def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                           **kwargs):
-        # type: (...) -> FileSystemClient
+    def delete_file_system(self, file_system: Union[FileSystemProperties, str], **kwargs: Any) -> FileSystemClient:  # pylint: disable=delete-operation-wrong-return-type
         """Marks the specified file system for deletion.
 
         The file system and any files contained within it are later deleted during garbage collection.
@@ -423,9 +435,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         file_system_client.delete_file_system(**kwargs)
         return file_system_client
 
-    def get_file_system_client(self, file_system  # type: Union[FileSystemProperties, str]
-                               ):
-        # type: (...) -> FileSystemClient
+    def get_file_system_client(self, file_system: Union[FileSystemProperties, str]) -> FileSystemClient:
         """Get a client to interact with the specified file system.
 
         The file system need not already exist.
@@ -446,24 +456,24 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file system client to interact with a specific file system.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
                                 api_version=self.api_version,
                                 _configuration=self._config,
                                 _pipeline=_pipeline, _hosts=self._hosts)
 
-    def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                             directory  # type: Union[DirectoryProperties, str]
-                             ):
-        # type: (...) -> DataLakeDirectoryClient
+    def get_directory_client(
+        self, file_system: Union[FileSystemProperties, str],
+        directory: Union[DirectoryProperties, str]
+    ) -> DataLakeDirectoryClient:
         """Get a client to interact with the specified directory.
 
         The directory need not already exist.
@@ -488,18 +498,18 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
-        try:
+        if isinstance(directory, DirectoryProperties):
             directory_name = directory.name
-        except AttributeError:
+        else:
             directory_name = directory
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
@@ -507,10 +517,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts)
 
-    def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                        file_path  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(
+        self, file_system: Union[FileSystemProperties, str],
+        file_path: Union[FileProperties, str]
+    ) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -535,18 +545,18 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
+        if isinstance(file_system, FileSystemProperties):
             file_system_name = file_system.name
-        except AttributeError:
+        else:
             file_system_name = file_system
-        try:
+        if isinstance(file_path, FileProperties):
             file_path = file_path.name
-        except AttributeError:
+        else:
             pass
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
@@ -554,8 +564,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     @distributed_trace
-    def set_service_properties(self, **kwargs):
-        # type: (**Any) -> None
+    def set_service_properties(self, **kwargs: Any) -> None:
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
@@ -603,8 +612,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
 
     @distributed_trace
-    def get_service_properties(self, **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
 
