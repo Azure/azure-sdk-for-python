@@ -81,6 +81,7 @@ steps:
   - task: ComponentGovernanceComponentDetection@0
     displayName: 'Component Governance - Component Detection'
     inputs:
+      scanType: Register
       sourceScanPath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
   - ${{ parameters.BeforePublishSteps }}
