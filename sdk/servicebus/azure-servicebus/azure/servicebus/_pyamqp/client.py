@@ -304,6 +304,7 @@ class AMQPClient(
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
+        _logger.info("Opening AMQP client %r.", self._name)
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
@@ -361,6 +362,7 @@ class AMQPClient(
         self._shutdown = True
         if not self._session:
             return  # already closed.
+        _logger.info("Closing AMQP client %r.", self._name)
         self._close_link()
         if self._cbs_authenticator:
             self._cbs_authenticator.close()

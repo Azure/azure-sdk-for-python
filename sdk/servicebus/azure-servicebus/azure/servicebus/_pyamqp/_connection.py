@@ -861,6 +861,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :raises ValueError: If `wait` is set to `False` and `allow_pipelined_open` is disabled.
         :rtype: None
         """
+        _LOGGER.info("Opening AMQP connection.", extra=self._network_trace_params)
         self._connect()
         self._outgoing_open()
         if self.state == ConnectionState.HDR_EXCH:
@@ -884,6 +885,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
+        _LOGGER.info("Closing AMQP connection.", extra=self._network_trace_params)
         try:
             if self.state in [
                 ConnectionState.END,
