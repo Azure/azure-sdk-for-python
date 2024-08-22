@@ -18,7 +18,6 @@ from azure.cosmos.partition_key import PartitionKey
 
 class _config:
     host = test_config.TestConfig.host
-    master_key = test_config.TestConfig.masterKey
     connection_policy = test_config.TestConfig.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
@@ -48,15 +47,7 @@ class TestAggregateQuery(unittest.TestCase):
 
     @classmethod
     def _setup(cls):
-        if not _config.master_key or not _config.host:
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(_config.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(_config.host, test_config.TestConfig.credential)
         cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.created_collection = cls._create_collection(cls.created_db)
         if _config.host == "https://localhost:8081/":

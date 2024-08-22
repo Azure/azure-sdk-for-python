@@ -31,9 +31,8 @@ class TestConfig(object):
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
     is_emulator = host == 'https://localhost:8081/'
     is_live._cache = True if not is_emulator else False
-    credential = get_credential()
-    credential_async = get_credential(is_async=True)
-
+    credential =  masterKey if is_emulator else get_credential()
+    credential_async = masterKey if is_emulator else get_credential(is_async=True)
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
 
@@ -184,7 +183,6 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
             }
         ]
     }
-
 
 class FakeResponse:
     def __init__(self, headers):

@@ -33,7 +33,6 @@ class TestMultiOrderBy(unittest.TestCase):
     PARTITION_KEY = "pk"
     items = []
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     configs = test_config.TestConfig
 
@@ -42,9 +41,7 @@ class TestMultiOrderBy(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"

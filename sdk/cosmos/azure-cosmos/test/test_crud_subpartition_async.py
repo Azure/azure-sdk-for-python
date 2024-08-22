@@ -51,8 +51,6 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
     configs = test_config.TestConfig
     host = configs.host
-    masterKey = configs.masterKey
-    is_emulator = configs.is_emulator
     credential = configs.credential_async
     connectionPolicy = configs.connectionPolicy
     last_headers = []
@@ -71,18 +69,8 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
-    @classmethod
-    def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
-                                                                                                    self.credential)
+        self.client = CosmosClient(self.host, self.credential)
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):

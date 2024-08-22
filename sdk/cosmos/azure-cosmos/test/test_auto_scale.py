@@ -16,21 +16,11 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 class TestAutoScale(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):

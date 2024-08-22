@@ -23,22 +23,13 @@ class TestContainerPropertiesCache(unittest.TestCase):
 
     configs = test_config.TestConfig
     host = configs.host
-    masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     client: cosmos_client.CosmosClient = None
 
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.databaseForTest = cls.client.create_database_if_not_exists(cls.configs.TEST_DATABASE_ID)
 
     def test_container_properties_cache(self):
