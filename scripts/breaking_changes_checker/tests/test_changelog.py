@@ -439,3 +439,21 @@ def test_added_operation_group():
     assert args == ['azure.contoso', 'ContosoClient', 'foo']
     msg, _, *args = bc.features_added[1]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+
+
+def test_async_features_added_cleanup():
+    features_added = [
+        ("Message", "AddedClient", "azure.contoso.aio", "FooClient", "foo"),
+        ("Message", "AddedClient", "azure.contoso", "FooClient", "foo"),
+        ("Message", "AddedClassMethod", "azure.contoso", "FooClient", "from_connection_string"),
+    ]
+
+    # create dummy BreakingChangesTracker instance
+    ct = ChangelogTracker({}, {}, {}, "azure-contoso")
+    ct.features_added = features_added
+
+    ct.run_async_changelog_cleanup()
+
+    assert len(ct.features_added) == 2
+    assert ct.features_added[0] == ("Message", "AddedClient", "azure.contoso", "FooClient", "foo")
+    assert ct.features_added[1] == ("Message", "AddedClassMethod", "azure.contoso", "FooClient", "from_connection_string")
