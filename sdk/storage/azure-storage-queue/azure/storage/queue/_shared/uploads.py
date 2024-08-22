@@ -11,7 +11,7 @@ from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperati
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import Any, AnyStr, cast, Dict, Generator, IO, Iterable, Optional, Sized, Tuple, Union
+from typing import Any, cast, Dict, Generator, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
@@ -27,7 +27,7 @@ _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.
 
 
 def prepare_upload_data(
-    data: Union[bytes, str, IO[AnyStr], Iterable[AnyStr]],
+    data: Union[bytes, str, IO[bytes], IO[str], Iterable[bytes], Iterable[str]],
     encoding: str,
     data_length: Optional[int],
     validate_content: Union[bool, str, None]
@@ -61,7 +61,7 @@ def prepare_upload_data(
                 raise TypeError("Only IO[bytes] is supported when using CRC64.")
     elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
         data = IterStreamer(
-            cast(Iterable[AnyStr], data),
+            cast(Iterable[bytes], data),
             length=data_length,
             encoding='latin-1',  # Use latin-1 for backwards compatibility with Requests
             block_str=structured_message)

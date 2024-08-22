@@ -524,7 +524,7 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         offset: int,
         scheme: str,
         length: Optional[int] = None,

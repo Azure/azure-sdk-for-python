@@ -684,7 +684,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
 
 def _stage_block_options(
     block_id: str,
-    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+    data: Union[bytes, IO[bytes], Iterable[bytes]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -1093,7 +1093,7 @@ def _clear_page_options(
     return options
 
 def _append_block_options(
-    data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+    data: Union[bytes, IO[bytes], Iterable[bytes]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
