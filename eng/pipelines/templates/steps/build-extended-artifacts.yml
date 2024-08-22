@@ -95,3 +95,8 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
       ArtifactName: 'documentation'
+
+  - task: ComponentGovernanceComponentDetection@0
+    displayName: 'Component Governance - Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
