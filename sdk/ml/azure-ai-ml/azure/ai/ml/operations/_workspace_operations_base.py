@@ -654,6 +654,7 @@ class WorkspaceOperationsBase(ABC):
 
         if workspace.public_network_access:
             _set_val(param["publicNetworkAccess"], workspace.public_network_access)
+            _set_val(param["associatedResourcePNA"], workspace.public_network_access)
 
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
@@ -756,6 +757,11 @@ class WorkspaceOperationsBase(ABC):
         managed_network = None
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()
+            if workspace.managed_network.isolation_mode in [
+                IsolationMode.ALLOW_INTERNET_OUTBOUND,
+                IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
+            ]:
+                _set_val(param["associatedResourcePNA"], "Disabled")
         else:
             managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
         _set_obj_val(param["managedNetwork"], managed_network)
