@@ -1,14 +1,9 @@
 # Release History
 
-## 1.1.0 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.1.0 (08-27-24)
 
 ### Other Changes
+- This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
 - This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
 - Removed dependency on `six`.
 

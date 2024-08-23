@@ -15,7 +15,7 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
 
 ## Getting started
 
