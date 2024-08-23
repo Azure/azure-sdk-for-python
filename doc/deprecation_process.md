@@ -21,8 +21,7 @@ A disclaimer should be added directing to a replacement package and migration gu
   - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
   - **NOTE**: While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package. 
 
-
-Replace the existing text with a disclaimer in the following format.
+Replace ALL existing text with a disclaimer in the following format.
 
   - If a replacement package and migration guide exist.
 
@@ -57,7 +56,7 @@ Replace the existing text with a disclaimer in the following format.
 - Update the version in the `azure/mypackage/_version.py` file to the next patch version. This file may be called `version.py` if your package is very old. For example:
   - If the last released version was 1.2.3b1, the new version should be 1.2.4.
   - If the last released version was 1.2.3, the new version should be 1.2.4.
-- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. For example:
+- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. No other changes/features added/breaking changes should be included for this version. For example:
   > ## 1.2.4 (2023-03-31)
   >
   > ### Other Changes
@@ -104,7 +103,9 @@ Once the PR is approved, merge.
 
 # Step 4: Trigger a release 
 
-A release here is the same as usual, triggering the release pipeline of your SDK. This release DOES NOT need to be done during during release week and can be done any time. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
+A release here is the same as usual, triggering the release pipeline of your SDK. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
+
+**Note: This release DOES NOT need to be done during during release week and can be done any time.**
 
 ## Post-Release
 
