@@ -31,7 +31,7 @@ Studio.
 * For GitHub models
   * The AI model name, such as "gpt-4o" or "mistral-large"
   * A GitHub personal access token. [Create one here](https://github.com/settings/tokens). You do not need to give any permissions to the token. The token is a string that starts with `github_pat_`.
-* For Serverless API endpoints and Managed Compute endpoints
+* For Serverless API endpoints or Managed Compute endpoints
   * An [Azure subscription](https://azure.microsoft.com/free).
   * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
   * The endpoint URL of your model, in of the form `https://<your-host-name>.<your-azure-region>.models.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
@@ -236,7 +236,9 @@ In the following sections you will find simple examples of:
 * [Text Embeddings](#text-embeddings-example)
 <!-- * [Image Embeddings](#image-embeddings-example) -->
 
-The examples create a synchronous client as mentioned in [Create and authenticate a client directly, using key](#create-and-authenticate-a-client-directly-using-key). Only mandatory input settings are shown for simplicity.
+The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client 
+construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
+endpoint. Only mandatory input settings are shown for simplicity.
 
 See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
 
