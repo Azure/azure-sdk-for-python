@@ -524,7 +524,7 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         offset: int,
         scheme: str,
         length: Optional[int] = None,
@@ -557,7 +557,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace
     def append_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        self, data: Union[bytes, Iterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
@@ -565,10 +565,11 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int offset: start position of the data to be appended to.
-        :param length: Size of the data in bytes.
-        :type length: int or None
+        :param int length:
+            Size of the data to append. Optional if the length of data can be determined. For Iterable and IO,
+            if the length is not provided and cannot be determined, all data will be read into memory.
         :keyword bool flush:
             If true, will commit the data after it is appended.
         :keyword validate_content:

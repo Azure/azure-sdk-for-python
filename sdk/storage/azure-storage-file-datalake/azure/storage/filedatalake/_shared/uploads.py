@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import warnings
 from collections import namedtuple
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import Any, AnyStr, cast, Dict, Generator, IO, Iterable, Optional, Sized, Tuple, Union
+from typing import Any, cast, Dict, Generator, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
@@ -26,7 +27,7 @@ _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.
 
 
 def prepare_upload_data(
-    data: Union[bytes, str, IO[bytes], Iterable[AnyStr]],
+    data: Union[bytes, str, IO[bytes], IO[str], Iterable[bytes], Iterable[str]],
     encoding: str,
     data_length: Optional[int],
     validate_content: Union[bool, str, None]
@@ -34,11 +35,9 @@ def prepare_upload_data(
     # Trim the incoming data per provided length
     if data_length is not None and isinstance(data, (str, bytes)) and data_length != len(data):
         data = data[:data_length]
-    # Encode raw string data
+
     if isinstance(data, str):
         data = data.encode(encoding)
-        # The user provided length was in terms of characters and has already been used to slice input.
-        # Now convert to a byte length.
         data_length = len(data)
 
     # Attempt to determine length of data if it's not provided
@@ -46,23 +45,29 @@ def prepare_upload_data(
         data_length = get_length(data)
     # If we still can't get the length, read all the data into memory
     if data_length is None:
+        warnings.warn("Unable to determine length for Iterable/IO, reading all data into memory.")
         data_length, data = read_length(data)
 
     structured_message = validate_content == ChecksumAlgorithm.CRC64
     md5 = validate_content in (True, ChecksumAlgorithm.MD5)
     if isinstance(data, bytes):
-        # Structured message requires a stream
         if structured_message:
             data = BytesIO(data)
     elif hasattr(data, 'read'):
-        # TODO: Block IO[str] here?
-        pass
+        # Block IO[str] with CRC64
+        if structured_message:
+            test = data.read(0)
+            if not isinstance(test, bytes):
+                raise TypeError("Only IO[bytes] is supported when using CRC64.")
     elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
-        data = IterStreamer(cast(Iterable[AnyStr], data), encoding=encoding)
+        data = IterStreamer(
+            cast(Iterable[bytes], data),
+            length=data_length,
+            encoding='latin-1',  # Use latin-1 for backwards compatibility with Requests
+            block_str=structured_message)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    # TODO: Do something about this?
     # If MD5, read data out of IterStreamer because the pipeline
     # will require a seekable stream which IterStreamer is not.
     if isinstance(data, IterStreamer) and md5:

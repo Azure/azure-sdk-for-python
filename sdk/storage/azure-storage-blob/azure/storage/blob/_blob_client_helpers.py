@@ -684,7 +684,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
 
 def _stage_block_options(
     block_id: str,
-    data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+    data: Union[bytes, IO[bytes], Iterable[bytes]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -950,9 +950,10 @@ def _upload_page_options(
     length: int,
     **kwargs: Any
 ) -> Dict[str, Any]:
+    page = page[:length]
     if isinstance(page, str):
         page = page.encode(kwargs.pop('encoding', 'UTF-8'))
-    page = page[:length]
+        length = len(page)  # Account for change in length due to encoding
 
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
@@ -1092,7 +1093,7 @@ def _clear_page_options(
     return options
 
 def _append_block_options(
-    data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+    data: Union[bytes, IO[bytes], Iterable[bytes]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:

@@ -5,9 +5,8 @@
 # --------------------------------------------------------------------------
 
 import tempfile
-import uuid
 from datetime import datetime, timedelta
-from os import path, remove
+from io import BytesIO, StringIO
 
 import pytest
 from azure.core import MatchConditions
@@ -201,22 +200,59 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_append_block_unicode(self, **kwargs):
+    def test_append_block_bytes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         self._setup(bsc)
         blob = self._create_blob(bsc)
+        data = b'Hello World'
+        io = BytesIO(data)
+
+        def generator():
+            yield b'Hello'
+            yield b' '
+            yield b'World'
 
         # Act
-        resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16')
+        blob.append_block(data)
+        blob.append_block(io)
+        blob.append_block(generator())
+        blob.append_block(generator(), length=len(data))
 
         # Assert
-        assert int(resp['blob_append_offset']) == 0
-        assert resp['blob_committed_block_count'] == 1
-        assert resp['etag'] is not None
-        assert resp['last_modified'] is not None
+        content = blob.download_blob().read()
+        assert content == data * 4
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_str_legacy(self, **kwargs):
+        # Test operations with str types that are expected to work for legacy reasons but are no longer supported.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = 'Hello World'
+        unicode_data = '你好世界'
+        io = StringIO(data)
+
+        def generator():
+            yield 'Hello'
+            yield ' '
+            yield 'World'
+
+        # Act
+        blob.append_block(data)
+        blob.append_block(io)
+        blob.append_block(generator(), length=len(data))
+        blob.append_block(unicode_data, encoding='utf-32')
+
+        # Assert
+        content = blob.download_blob().read()
+        assert content == data.encode('latin-1') * 3 + unicode_data.encode('utf-32')
 
     @BlobPreparer()
     @recorded_by_proxy

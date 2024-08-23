@@ -8,8 +8,8 @@ from __future__ import annotations
 import inspect
 import sys
 from collections.abc import AsyncIterable, AsyncIterator
-from io import BytesIO, IOBase
-from typing import AnyStr, IO, Union
+from io import BytesIO, IOBase, UnsupportedOperation
+from typing import AnyStr, IO, Optional, Union
 
 from .streams import StructuredMessageConstants, StructuredMessageProperties
 from .validation import calculate_crc64
@@ -17,11 +17,26 @@ from .validation import calculate_crc64
 
 class AsyncIterStreamer(IOBase):
     """An async file-like wrapper over an async iterable."""
-    def __init__(self, iterable: AsyncIterable[AnyStr], encoding: str = "UTF-8"):
+
+    def __init__(
+            self, iterable: AsyncIterable[AnyStr],
+            length: Optional[int] = None,
+            encoding: str = "UTF-8",
+            *,
+            block_str: bool = False):
         self.iterable: Union[AsyncIterable[str], AsyncIterable[bytes]] = iterable
         self.iterator: Union[AsyncIterator[str], AsyncIterator[bytes]] = iterable.__aiter__()
-        self.leftover = bytearray()
+        self.length = length
         self.encoding = encoding
+        self.block_str = block_str
+
+        self._leftover = bytearray()
+        self._offset = 0
+
+    def __len__(self):
+        if self.length is not None:
+            return self.length
+        raise UnsupportedOperation()
 
     def __aiter__(self):
         return self.iterator
@@ -29,30 +44,36 @@ class AsyncIterStreamer(IOBase):
     def __anext__(self):
         return self.iterator.__anext__()
 
+    def tell(self):
+        return self._offset
+
     def readable(self):
         return True
 
     async def read(self, size: int = -1) -> bytes:
         if size < 0:
             size = sys.maxsize
-        data = self.leftover
-        count = len(self.leftover)
+        data = self._leftover
+        count = len(self._leftover)
         try:
             while count < size:
                 chunk = await self.iterator.__anext__()
                 if isinstance(chunk, str):
+                    if self.block_str:
+                        raise TypeError("Iterable[str] is not supported.")
                     chunk = chunk.encode(self.encoding)
                 data.extend(chunk)
                 count += len(chunk)
         # This means count < size and what's leftover will be returned in this call.
         except StopAsyncIteration:
-            self.leftover = bytearray()
+            self._leftover = bytearray()
 
         if count >= size:
-            self.leftover = data[size:]
+            self._leftover = data[size:]
 
-        data_view = memoryview(data)
-        return bytes(data_view[:size])
+        ret = bytes(memoryview(data)[:size])
+        self._offset += len(ret)
+        return ret
 
 
 class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attributes

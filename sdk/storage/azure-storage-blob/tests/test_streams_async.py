@@ -6,7 +6,7 @@
 
 import os
 import random
-from io import BytesIO
+from io import BytesIO, UnsupportedOperation
 
 import pytest
 from azure.storage.blob._shared.streams import (
@@ -273,6 +273,19 @@ async def data_generator(data, chunk_size):
 
 @pytest.mark.asyncio
 class TestAsyncIterStreamer:
+    async def test_length_tell(self):
+        generator = data_generator(b'abcdef', 3)
+        stream = AsyncIterStreamer(generator)
+        with pytest.raises(UnsupportedOperation):
+            len(stream)
+        stream = AsyncIterStreamer(generator, length=6)
+        assert len(stream) == 6
+        assert stream.tell() == 0
+        await stream.read(4)
+        assert stream.tell() == 4
+        await stream.read()
+        assert stream.tell() == 6
+
     async def test_empty(self):
         async def empty_gen():
             yield b''

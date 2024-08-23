@@ -636,6 +636,19 @@ def data_generator(data, chunk_size):
 
 
 class TestIterStreamer:
+    def test_length_tell(self):
+        data = [b'abc', b'def']
+        stream = IterStreamer(data)
+        with pytest.raises(UnsupportedOperation):
+            len(stream)
+        stream = IterStreamer(data, length=6)
+        assert len(stream) == 6
+        assert stream.tell() == 0
+        stream.read(4)
+        assert stream.tell() == 4
+        stream.read()
+        assert stream.tell() == 6
+
     def test_empty(self):
         stream = IterStreamer([])
         assert stream.read() == b''
