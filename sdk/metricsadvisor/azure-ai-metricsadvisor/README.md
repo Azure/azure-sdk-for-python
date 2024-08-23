@@ -23,7 +23,7 @@ This package is no longer being maintained, as the service has been retired. The
 
 Install the Azure Metrics Advisor client library for Python with pip:
 
-```commandline
+```Bash
 pip install azure-ai-metricsadvisor
 ```
 
