@@ -5,7 +5,7 @@ parameters:
     type: object
     default:
       - azure-appconfiguration
-      - azure-appconfiguration-provider
+      # - azure-appconfiguration-provider
 
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
