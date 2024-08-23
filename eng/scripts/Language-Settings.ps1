@@ -95,7 +95,6 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkgId = $pkgId.Replace("_","-")
   $docsReadMeName = $pkgId -replace "^azure-" , ""
 
-  Read-Host "Extracting package $pkgId"
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
