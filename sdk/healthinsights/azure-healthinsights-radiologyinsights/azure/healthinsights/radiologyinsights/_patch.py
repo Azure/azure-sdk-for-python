@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, IO, Optional, Dict, Union, cast, overload, List, MutableMapping, TypeVar, Callable
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
-from .._serialization import Deserializer, Serializer
+from ._serialization import Deserializer, Serializer
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
