@@ -8,22 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import ChatRole
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class ChatRequestMessage(_model_base.Model):
@@ -674,6 +667,8 @@ class EmbeddingsResult(_model_base.Model):
     recommendations, and other similar scenarios.
 
 
+    :ivar id: Unique identifier for the embeddings result. Required.
+    :vartype id: str
     :ivar data: Embedding values for the prompts submitted in the request. Required.
     :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
     :ivar usage: Usage counts for tokens input using the embeddings API. Required.
@@ -682,6 +677,8 @@ class EmbeddingsResult(_model_base.Model):
     :vartype model: str
     """
 
+    id: str = rest_field()
+    """Unique identifier for the embeddings result. Required."""
     data: List["_models.EmbeddingItem"] = rest_field()
     """Embedding values for the prompts submitted in the request. Required."""
     usage: "_models.EmbeddingsUsage" = rest_field()
@@ -693,6 +690,7 @@ class EmbeddingsResult(_model_base.Model):
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         data: List["_models.EmbeddingItem"],
         usage: "_models.EmbeddingsUsage",
         model: str,

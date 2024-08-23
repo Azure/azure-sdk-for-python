@@ -24,6 +24,7 @@ USAGE:
     2) AZURE_AI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_embeddings_with_base64_encoding():
     import os
 
@@ -73,6 +74,7 @@ def decode_base64(base64_str):
 
     import base64
     import numpy
+
     decoded_bytes = base64.b64decode(base64_str)
     return numpy.frombuffer(decoded_bytes, dtype=numpy.float32)
 

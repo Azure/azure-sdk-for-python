@@ -25,6 +25,7 @@ USAGE:
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_with_tools():
     import os
     import json

@@ -27,6 +27,7 @@ USAGE:
        python sample_chat_completions_azure_openai.py
 """
 
+
 def sample_chat_completions_azure_openai():
     import os
     from azure.ai.inference import ChatCompletionsClient

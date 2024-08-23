@@ -48,7 +48,7 @@ def sample_chat_completions_with_defaults():
         temperature=0.5,
         max_tokens=1000
     )
-    
+
     # Call the service with the defaults specified above
     response = client.complete(
         messages=[

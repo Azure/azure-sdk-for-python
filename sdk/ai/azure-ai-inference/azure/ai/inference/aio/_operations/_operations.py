@@ -203,84 +203,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "json_object":
-                chat_completions_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "text":
-                chat_completions_response_format = {
-                    "type": "text"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "messages": [
-                        chat_request_message
-                    ],
-                    "frequency_penalty": 0.0,
-                    "max_tokens": 0,
-                    "model": "str",
-                    "presence_penalty": 0.0,
-                    "response_format": chat_completions_response_format,
-                    "seed": 0,
-                    "stop": [
-                        "str"
-                    ],
-                    "stream": bool,
-                    "temperature": 0.0,
-                    "tool_choice": "str",
-                    "tools": [
-                        {
-                            "function": {
-                                "name": "str",
-                                "description": "str",
-                                "parameters": {}
-                            },
-                            "type": "function"
-                        }
-                    ],
-                    "top_p": 0.0
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "choices": [
-                        {
-                            "finish_reason": "str",
-                            "index": 0,
-                            "message": {
-                                "content": "str",
-                                "role": "str",
-                                "tool_calls": [
-                                    {
-                                        "function": {
-                                            "arguments": "str",
-                                            "name": "str"
-                                        },
-                                        "id": "str",
-                                        "type": "function"
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "created": "2020-02-20 00:00:00",
-                    "id": "str",
-                    "model": "str",
-                    "usage": {
-                        "completion_tokens": 0,
-                        "prompt_tokens": 0,
-                        "total_tokens": 0
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -365,20 +287,12 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
     async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "model_name": "str",
-                    "model_provider_name": "str",
-                    "model_type": "str"
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -510,35 +424,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "input": [
-                        "str"
-                    ],
-                    "dimensions": 0,
-                    "encoding_format": "str",
-                    "input_type": "str",
-                    "model": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": "str",
-                            "index": 0
-                        }
-                    ],
-                    "model": "str",
-                    "usage": {
-                        "prompt_tokens": 0,
-                        "total_tokens": 0
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -615,20 +500,12 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
     async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "model_name": "str",
-                    "model_provider_name": "str",
-                    "model_type": "str"
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -763,38 +640,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "input": [
-                        {
-                            "image": "str",
-                            "text": "str"
-                        }
-                    ],
-                    "dimensions": 0,
-                    "encoding_format": "str",
-                    "input_type": "str",
-                    "model": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": "str",
-                            "index": 0
-                        }
-                    ],
-                    "model": "str",
-                    "usage": {
-                        "prompt_tokens": 0,
-                        "total_tokens": 0
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -871,20 +716,12 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
     async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "model_name": "str",
-                    "model_provider_name": "str",
-                    "model_type": "str"
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,

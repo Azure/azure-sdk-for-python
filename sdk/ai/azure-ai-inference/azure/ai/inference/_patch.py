@@ -74,7 +74,7 @@ def load_client(
     on the given endpoint, to determine the model type and therefore which client to instantiate.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
-    
+
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
