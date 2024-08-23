@@ -982,7 +982,7 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype search_mode: str or ~azure.search.documents.models.SearchMode
     :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
-     lower latency. Known values are: "local", "global", and "global".
+     lower latency. Known values are: "local" and "global".
     :vartype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
     :ivar session_id: A value to be used to create a sticky session, which can help to get more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
@@ -1173,7 +1173,7 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
         :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
          statistics (such as document frequency) globally for more consistent scoring, or locally, for
-         lower latency. Known values are: "local", "global", and "global".
+         lower latency. Known values are: "local" and "global".
         :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
         :keyword session_id: A value to be used to create a sticky session, which can help to get more
          consistent results. As long as the same sessionId is used, a best-effort attempt will be made
