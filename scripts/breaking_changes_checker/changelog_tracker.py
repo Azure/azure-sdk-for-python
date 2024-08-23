@@ -9,6 +9,7 @@ from enum import Enum
 from typing import Any, Dict, List, Union
 import jsondiff
 from breaking_changes_tracker import BreakingChangesTracker
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
@@ -167,6 +168,9 @@ class ChangelogTracker(BreakingChangesTracker):
                 )
 
     def report_changes(self) -> None:
+        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        self.get_reportable_breaking_changes(ignore_changes)
+
         # Code borrowed and modified from the previous change log tool
         def _build_md(content: list, title: str, buffer: list):
             buffer.append(title)
