@@ -120,7 +120,7 @@ class BreakingChangesTracker:
     # Remove duplicate reporting of changes that apply to both sync and async package components
     def run_async_breaking_cleanup(self) -> None:
         # Create a list of all sync changes
-        non_aio_changes = [fa for fa in self.breaking_changes if "aio" not in fa[2]]
+        non_aio_changes = [bc for bc in self.breaking_changes if "aio" not in bc[2]]
         # Remove any aio change if there is a sync change that is the same
         for change in non_aio_changes:
             for c in self.breaking_changes:
