@@ -194,7 +194,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.tables[1].column_count == 5
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
-    
+
     @pytest.mark.live_test_only
     @skip_flaky_test
     @DocumentIntelligencePreparer()

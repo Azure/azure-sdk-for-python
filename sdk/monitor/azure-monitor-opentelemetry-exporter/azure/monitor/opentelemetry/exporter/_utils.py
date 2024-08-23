@@ -121,12 +121,12 @@ azure_monitor_context = {
 
 def ns_to_duration(nanoseconds: int) -> str:
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
-    value, microseconds = divmod(value, 1000)
+    value, milliseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)
     value, minutes = divmod(value, 60)
     days, hours = divmod(value, 24)
     return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
-        days, hours, minutes, seconds, microseconds
+        days, hours, minutes, seconds, milliseconds
     )
 
 

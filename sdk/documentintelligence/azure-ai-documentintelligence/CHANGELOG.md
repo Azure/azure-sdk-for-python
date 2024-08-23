@@ -37,6 +37,7 @@
 
 ### Other Changes
 - Changed the default service API version to `2024-07-31-preview`.
+- Improved performance by about `1.5X` faster when deserializing `JSON` to an `AnalyzeResult` object compared to last version `1.0.0b3`. 
 
 ## 1.0.0b3 (2024-04-09)
 
