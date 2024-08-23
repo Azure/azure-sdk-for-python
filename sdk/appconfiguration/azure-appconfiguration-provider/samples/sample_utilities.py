@@ -48,12 +48,10 @@ def get_credential(authority, **kwargs):
         return  AsyncDefaultAzureCredential(
         authority=authority,
         validate_authority=False,
-        exclude_managed_identity_credential=True,
     )
     return DefaultAzureCredential(
         authority=authority,
         validate_authority=False,
-        exclude_managed_identity_credential=True,
     )
 
 
