@@ -8,6 +8,9 @@ DESCRIPTION:
     synchronous chat completions client. Similarly can be done with the other
     clients.
 
+    The get_model_info() method on the client only works with Serverless API or
+    Managed Compute endpoints.
+
 USAGE:
     python sample_get_model_info.py
 

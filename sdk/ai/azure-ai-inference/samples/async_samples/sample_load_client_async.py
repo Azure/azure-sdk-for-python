@@ -8,6 +8,8 @@ DESCRIPTION:
     the load_client() function, imported from azure.ai.inference.aio.
     In this sample, we get an asynchronous embeddings client and do one embeddings call.
 
+    The load_client() function only works with Serverless API or Managed Compute endpoints.
+
 USAGE:
     python sample_load_client_async.py
 

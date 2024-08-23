@@ -9,6 +9,8 @@ DESCRIPTION:
     In this sample, we get a synchronous chat completions client and do one
     chat completions call.
 
+    The load_client() function only works with Serverless API or Managed Compute endpoints.
+
 USAGE:
     python sample_load_client.py
 

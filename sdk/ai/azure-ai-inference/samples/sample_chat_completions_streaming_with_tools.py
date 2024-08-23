@@ -13,6 +13,11 @@ DESCRIPTION:
     `use_azure_openai_endpoint` to select between the two. API key authentication
     is used for both endpoints in this sample.
 
+    This sample assumes the AI model is hosted on a Serverless API or
+    Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
+    the client constructor needs to be modified. See package documentation:
+    https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
+
 USAGE:
     python sample_chat_completions_streaming_with_tools.py
 
@@ -112,8 +117,7 @@ def sample_chat_completions_streaming_with_tools():
         # Create a chat completion client for Azure OpenAI endpoint
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(""),  # Pass in an empty value
-            headers={"api-key": key},
+            credential=AzureKeyCredential(key),
             api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
     else:

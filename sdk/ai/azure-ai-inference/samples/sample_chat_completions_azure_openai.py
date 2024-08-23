@@ -53,8 +53,7 @@ def sample_chat_completions_azure_openai():
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(""),  # Pass in an empty value.
-            headers={"api-key": key},
+            credential=AzureKeyCredential(key),
             api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
 

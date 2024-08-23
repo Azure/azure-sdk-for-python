@@ -9,6 +9,11 @@ DESCRIPTION:
     flight information in order to answer a query about the next flight between two
     cities. Make sure that the AI model you use supports tools.
 
+    This sample assumes the AI model is hosted on a Serverless API or
+    Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
+    the client constructor needs to be modified. See package documentation:
+    https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
+
 USAGE:
     python sample_chat_completions_with_tools.py
 

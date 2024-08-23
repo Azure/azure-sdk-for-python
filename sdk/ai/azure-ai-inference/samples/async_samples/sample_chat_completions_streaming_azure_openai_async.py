@@ -55,8 +55,7 @@ async def sample_chat_completions_streaming_azure_openai_async():
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(""),  # Pass in an empty value.
-            headers={"api-key": key},
+            credential=AzureKeyCredential(key),
             api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
 
