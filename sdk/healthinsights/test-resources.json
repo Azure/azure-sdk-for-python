@@ -29,14 +29,39 @@
             "metadata": {
                 "description": "The principal to assign the role to. This is application object id."
             }
-        }
+        }, "identity": {
+        "defaultValue": {
+            "type": "SystemAssigned"
+        },
+        "type": "object"
+    }
     },
     "variables": {
+        "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
         "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "resourceGroupName":"[concat('rg-',parameters('endpointPrefix'),'-',parameters('baseName'))]",
+        "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('resourceGroupName') , '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "[variables('textAnalyticsName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S"
+            },
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
+            "kind": "TextAnalytics",
+            "properties": {
+                "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
+            },
+        "dependsOn": [
+            "[concat('Microsoft.CognitiveServices/accounts/', variables('uniqueSubDomainName'))]"
+        ]
+        },
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2022-12-01",
@@ -47,6 +72,9 @@
             },
             "kind": "HealthInsights",
             "properties": {
+                "apiProperties": {
+                    "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
+                },
                 "customSubDomainName": "[variables('uniqueSubDomainName')]"
             }
         },
