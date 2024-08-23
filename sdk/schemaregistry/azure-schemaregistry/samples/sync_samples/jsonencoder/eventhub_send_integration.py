@@ -34,7 +34,7 @@ from typing import cast, Iterator
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
@@ -92,7 +92,7 @@ client = SchemaRegistryClient(
 schema_id = pre_register_schema(client)
 
 # create a JsonSchemaEncoder instance
-json_schema_encoder = JsonSchemaEncoder(client=client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+json_schema_encoder = JsonSchemaEncoder(client=client, validate=cast(str, SCHEMA_JSON["$schema"]))
 
 with eventhub_producer, json_schema_encoder:
     send_event_data_batch(eventhub_producer, json_schema_encoder, schema_id)

@@ -6,14 +6,15 @@ extends:
       ServiceDirectory: schemaregistry
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-schemaregistry*
+      UseFederatedAuth: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(python-schema-registry-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(python-schema-registry-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(python-schema-registry-sdk-test-client-secret)
-        SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE: $(python-schema-registry-sdk-test-endpoint)
-        SCHEMAREGISTRY_GROUP: $(python-schema-registry-sdk-test-group)
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
       MatrixFilters:
         - '"PythonVersion=^(?!pypy3).*"'
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json

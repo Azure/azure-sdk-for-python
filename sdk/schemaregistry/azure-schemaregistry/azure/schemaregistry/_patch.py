@@ -21,10 +21,8 @@ from typing import (
     Any,
     overload,
     IO,
-    Type,
-    Optional,
 )
-from typing_extensions import Protocol, TypedDict
+from typing_extensions import Protocol, TypedDict, Self
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -62,16 +60,18 @@ def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]
 
 def _get_format(content_type: str) -> SchemaFormat:
     # pylint:disable=redefined-builtin
+    # Exception cases may be due to forward compatibility.
+    # i.e. Getting a schema with a content type from a future API version.
+    # In this case, we default to CUSTOM format.
     try:
         format = content_type.split("serialization=")[1]
         try:
-            return SchemaFormat(format)
-        except ValueError:
             return SchemaFormat(format.capitalize())
+        except ValueError:
+            pass
     except IndexError:
-        if "protobuf" in content_type:
-            return SchemaFormat.PROTOBUF
-        return SchemaFormat.CUSTOM
+        pass
+    return SchemaFormat.CUSTOM
 
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
@@ -110,8 +110,6 @@ def get_http_request_kwargs(kwargs):
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
-    if format.lower() == SchemaFormat.PROTOBUF.value.lower():
-        return "text/vnd.ms.protobuf"
     return f"application/json; serialization={format}"
 
 
@@ -137,7 +135,7 @@ class SchemaRegistryClient:
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2023-07-01".
+     Default value is "2022-10".
 
     .. admonition:: Example:
 
@@ -159,7 +157,7 @@ class SchemaRegistryClient:
             **kwargs,
         )
 
-    def __enter__(self) -> "SchemaRegistryClient":
+    def __enter__(self) -> Self:
         self._generated_client.__enter__()
         return self
 
@@ -209,7 +207,7 @@ class SchemaRegistryClient:
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client._register_schema( # type:ignore # pylint:disable=protected-access
+            self._generated_client._register_schema(  # type:ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
                 content=cast(IO[Any], definition),
@@ -284,7 +282,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -308,7 +306,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
+                        serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -386,13 +384,13 @@ class SchemaProperties:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.pop("id")
-        self.format = kwargs.pop("format")
-        self.group_name = kwargs.pop("group_name")
-        self.name = kwargs.pop("name")
-        self.version = kwargs.pop("version")
+        self.id: str = kwargs.pop("id")
+        self.format: SchemaFormat = kwargs.pop("format")
+        self.group_name: str = kwargs.pop("group_name")
+        self.name: str = kwargs.pop("name")
+        self.version: int = kwargs.pop("version")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
             f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
@@ -410,10 +408,10 @@ class Schema:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.definition = kwargs.pop("definition")
-        self.properties = kwargs.pop("properties")
+        self.definition: str = kwargs.pop("definition")
+        self.properties: SchemaProperties = kwargs.pop("properties")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
 
 
@@ -459,216 +457,30 @@ class MessageContent(TypedDict):
     content_type: str
 
 
-class MessageType(Protocol):
-    """Message Types that set and get content and content type values internally."""
+class OutboundMessageContent(Protocol):
+    """Protocol for classes that set content and content type values internally."""
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "MessageType":
-        """Creates an object that is a subtype of MessageType, given content type and
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> Self:
+        """Creates an object that is a subtype of OutboundMessageContent, given content type and
          a content value to be set on the object.
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.schemaregistry.MessageType
-        :returns: The MessageType object with encoded content and content type.
+        :rtype: ~azure.schemaregistry.OutboundMessageContent
+        :returns: The OutboundMessageContent object with encoded content and content type.
         """
+
+
+class InboundMessageContent(Protocol):
+    """Message Types that get content and content type values internally."""
 
     def __message_content__(self) -> MessageContent:
         """A MessageContent object, with `content` and `content_type` set to
-         the values of their respective properties on the MessageType object.
+         the values of their respective properties on the InboundMessageContent object.
 
         :rtype: ~azure.schemaregistry.MessageContent
-        :returns: TypedDict of the content and content type from the MessageType object.
-        """
-
-
-class SchemaEncoder(Protocol):
-    """
-    Provides the ability to encode and decode content according to a provided schema or schema ID
-     corresponding to a schema in a Schema Registry group.
-    """
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: str,
-        schema_id: None = None,
-        message_type: Type[MessageType],
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
-        """Encodes content after validating against the pre-registered schema. Encoded content and content
-         type will be passed to the provided MessageType callback to create message object.
-
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
-
-        :param content: The content to be encoded.
-        :type content: mapping[str, any]
-        :keyword schema: Required. The pre-registered schema used to validate the content. `schema_id`
-         must not be passed.
-        :paramtype schema: str
-        :keyword schema_id: None.
-        :paramtype schema_id: None
-        :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType]
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: The MessageType object with encoded content and content type.
-        :rtype: MessageType
-        """
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema_id: str,
-        schema: None = None,
-        message_type: Type[MessageType],
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
-        """Encodes content after validating against the pre-registered schema corresponding to
-         the provided schema ID. Encoded content and content type will be passed to the provided
-         MessageType callback to create message object.
-
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
-
-        :param content: The content to be encoded.
-        :type content: mapping[str, any]
-        :keyword schema: None.
-        :paramtype schema: None
-        :keyword schema_id: Required. The schema ID corresponding to the pre-registered schema to be used
-         for validation. `schema` must not be passed.
-        :paramtype schema_id: str
-        :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType]
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: The MessageType object with encoded content and content type.
-        :rtype: MessageType
-        """
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: str,
-        schema_id: None = None,
-        message_type: None = None,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageContent:
-        """Encodes content after validating against the pre-registered schema. The following dict will be returned:
-         {"content": encoded value, "content_type": schema format mime type string + schema ID}.
-
-        :param content: The content to be encoded.
-        :type content: mapping[str, any]
-        :keyword schema: Required. The pre-registered schema used to validate the content. `schema_id`
-         must not be passed.
-        :paramtype schema: str
-        :keyword schema_id: None.
-        :paramtype schema_id: None
-        :keyword message_type: None.
-        :paramtype message_type: None
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: TypedDict of encoded content and content type.
-        :rtype: MessageContent
-        """
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema_id: str,
-        schema: None = None,
-        message_type: None = None,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageContent:
-        """Encodes content after validating against the pre-registered schema corresponding to
-         the provided schema ID. The following dict will be returned:
-         {"content": encoded value, "content_type": schema format mime type string + schema ID}.
-
-        :param content: The content to be encoded.
-        :type content: mapping[str, any]
-        :keyword schema: None.
-        :paramtype schema: None
-        :keyword schema_id: Required. The schema ID corresponding to the pre-registered schema to be used
-         for validation. `schema` must not be passed.
-        :paramtype schema_id: str
-        :keyword message_type: None.
-        :paramtype message_type: None
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: TypedDict of encoded content and content type.
-        :rtype: MessageContent
-        """
-
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: Optional[str] = None,
-        schema_id: Optional[str] = None,
-        message_type: Optional[Type["MessageType"]] = None,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> Union["MessageType", "MessageContent"]:
-        """Encodes content after validating against the provided pre-registered schema or the one corresponding to
-         the provided schema ID. If provided with a MessageType subtype, encoded content and content type will be
-         passed to create the message object. If not provided, the following dict will be returned:
-         {"content": encoded value, "content_type": schema format mime type string + schema ID}.
-
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
-
-        :param content: The content to be encoded.
-        :type content: mapping[str, any]
-        :keyword schema: The pre-registered schema used to validate the content. Exactly one of
-         `schema` or `schema_id` must be passed.
-        :paramtype schema: str or None
-        :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used
-         for validation. Exactly one of `schema` or `schema_id` must be passed.
-        :paramtype schema_id: str or None
-        :keyword message_type: The message class to construct the message. If passed, must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType] or None
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: TypedDict of encoded content and content type if `message_type` is not set, otherwise the
-         constructed message object.
-        :rtype: MessageType or MessageContent
-        """
-
-    def decode(
-        self,  # pylint: disable=unused-argument
-        message: Union["MessageType", "MessageContent"],
-        *,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """
-        Returns the decoded data with the schema format specified by the `content-type` property.
-         If `validate` callable was passed to constructor, will validate content against schema retrieved
-         from the registry after decoding.
-
-        :param message: The message object which holds the content to be decoded and content type
-         containing the schema ID.
-        :type message: MessageType or MessageContent
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any] or None
-        :returns: The decoded content.
-        :rtype: dict[str, any]
+        :returns: TypedDict of the content and content type from the InboundMessageContent object.
         """
 
 
@@ -686,8 +498,8 @@ __all__: List[str] = [
     "SchemaProperties",
     "Schema",
     "SchemaFormat",
-    "SchemaEncoder",
     "SchemaContentValidate",
     "MessageContent",
-    "MessageType",
+    "OutboundMessageContent",
+    "InboundMessageContent",
 ]  # Add all objects you want publicly available to users at this package level

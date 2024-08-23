@@ -17,10 +17,10 @@ class AadAuthFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HTTP403 = "http403"
     """Indicates that requests that failed authentication should be presented with an HTTP status code
-    #: of 403 (Forbidden)."""
+    of 403 (Forbidden)."""
     HTTP401_WITH_BEARER_CHALLENGE = "http401WithBearerChallenge"
     """Indicates that requests that failed authentication should be presented with an HTTP status code
-    #: of 401 (Unauthorized) and present a Bearer Challenge."""
+    of 401 (Unauthorized) and present a Bearer Challenge."""
 
 
 class AdminKeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -59,7 +59,7 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that one or more user assigned identities will be assigned to the search service."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     """Indicates that system-assigned identity for the search service will be enabled along with the
-    #: assignment of one or more user assigned identities."""
+    assignment of one or more user assigned identities."""
 
 
 class PrivateLinkServiceConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,7 +69,7 @@ class PrivateLinkServiceConnectionProvisioningState(str, Enum, metaclass=CaseIns
 
     UPDATING = "Updating"
     """The private link service connection is in the process of being created along with other
-    #: resources for it to be fully functional."""
+    resources for it to be fully functional."""
     DELETING = "Deleting"
     """The private link service connection is in the process of being deleted."""
     FAILED = "Failed"
@@ -78,7 +78,7 @@ class PrivateLinkServiceConnectionProvisioningState(str, Enum, metaclass=CaseIns
     """The private link service connection has finished provisioning and is ready for approval."""
     INCOMPLETE = "Incomplete"
     """Provisioning request for the private link service connection resource has been accepted but the
-    #: process of creation has not commenced yet."""
+    process of creation has not commenced yet."""
     CANCELED = "Canceled"
     """Provisioning request for the private link service connection resource has been canceled."""
 
@@ -101,18 +101,18 @@ class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnu
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the last provisioning operation performed on the search service. Provisioning is
     an intermediate state that occurs while service capacity is being established. After capacity
-    is set up, provisioningState changes to either 'succeeded' or 'failed'. Client applications can
+    is set up, provisioningState changes to either 'Succeeded' or 'Failed'. Client applications can
     poll provisioning status (the recommended polling interval is from 30 seconds to one minute) by
     using the Get Search Service operation to see when an operation is completed. If you are using
-    the free service, this value tends to come back as 'succeeded' directly in the call to Create
+    the free service, this value tends to come back as 'Succeeded' directly in the call to Create
     search service. This is because the free service uses capacity that is already set up.
     """
 
-    SUCCEEDED = "succeeded"
+    SUCCEEDED = "Succeeded"
     """The last provisioning operation has completed successfully."""
-    PROVISIONING = "provisioning"
+    PROVISIONING = "Provisioning"
     """The search service is being provisioned or scaled up or down."""
-    FAILED = "failed"
+    FAILED = "Failed"
     """The last provisioning operation has failed."""
 
 
@@ -126,7 +126,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The search service is accessible from traffic originating from the public internet."""
     DISABLED = "disabled"
     """The search service is not accessible from traffic originating from the public internet. Access
-    #: is only permitted over approved private endpoint connections."""
+    is only permitted over approved private endpoint connections."""
 
 
 class SearchBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -134,10 +134,13 @@ class SearchBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     """Indicates that no origin can bypass the rules defined in the 'ipRules' section. This is the
-    #: default."""
+    default."""
     AZURE_PORTAL = "AzurePortal"
     """Indicates that requests originating from the Azure portal can bypass the rules defined in the
-    #: 'ipRules' section."""
+    'ipRules' section."""
+    AZURE_SERVICES = "AzureServices"
+    """Indicates that requests originating from Azure trusted services can bypass the rules defined in
+    the 'ipRules' section."""
 
 
 class SearchDisabledDataExfiltrationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,7 +158,7 @@ class SearchEncryptionComplianceStatus(str, Enum, metaclass=CaseInsensitiveEnumM
 
     COMPLIANT = "Compliant"
     """Indicates that the search service is compliant, either because the number of non-CMK-encrypted
-    #: objects is zero or enforcement is disabled."""
+    objects is zero or enforcement is disabled."""
     NON_COMPLIANT = "NonCompliant"
     """Indicates that the search service has more than one non-CMK-encrypted objects."""
 
@@ -167,13 +170,13 @@ class SearchEncryptionWithCmk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     """No enforcement of customer-managed key encryption will be made. Only the built-in
-    #: service-managed encryption is used."""
+    service-managed encryption is used."""
     ENABLED = "Enabled"
     """Search service will be marked as non-compliant if one or more objects aren't encrypted with a
-    #: customer-managed key."""
+    customer-managed key."""
     UNSPECIFIED = "Unspecified"
     """Enforcement policy is not explicitly specified, with the behavior being the same as if it were
-    #: set to 'Disabled'."""
+    set to 'Disabled'."""
 
 
 class SearchSemanticSearch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,11 +188,11 @@ class SearchSemanticSearch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that semantic reranker is disabled for the search service. This is the default."""
     FREE = "free"
     """Enables semantic reranker on a search service and indicates that it is to be used within the
-    #: limits of the free plan. The free plan would cap the volume of semantic ranking requests and is
-    #: offered at no extra charge. This is the default for newly provisioned search services."""
+    limits of the free plan. The free plan would cap the volume of semantic ranking requests and is
+    offered at no extra charge. This is the default for newly provisioned search services."""
     STANDARD = "standard"
     """Enables semantic reranker on a search service as a billable feature, with higher throughput and
-    #: volume of semantically reranked queries."""
+    volume of semantically reranked queries."""
 
 
 class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -218,7 +221,7 @@ class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The search service is disabled and all API requests will be rejected."""
     ERROR = "error"
     """The search service is in error state, indicating either a failure to provision or to be
-    #: deleted."""
+    deleted."""
     STOPPED = "stopped"
     """The search service is in a subscription that's disabled."""
 
@@ -238,7 +241,7 @@ class SharedPrivateLinkResourceProvisioningState(str, Enum, metaclass=CaseInsens
 
     UPDATING = "Updating"
     """The shared private link resource is in the process of being created along with other resources
-    #: for it to be fully functional."""
+    for it to be fully functional."""
     DELETING = "Deleting"
     """The shared private link resource is in the process of being deleted."""
     FAILED = "Failed"
@@ -247,7 +250,7 @@ class SharedPrivateLinkResourceProvisioningState(str, Enum, metaclass=CaseInsens
     """The shared private link resource has finished provisioning and is ready for approval."""
     INCOMPLETE = "Incomplete"
     """Provisioning request for the shared private link resource has been accepted but the process of
-    #: creation has not commenced yet."""
+    creation has not commenced yet."""
 
 
 class SharedPrivateLinkResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -285,7 +288,7 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Similar to 'standard', but with more capacity per search unit."""
     STANDARD3 = "standard3"
     """The largest Standard offering with up to 12 partitions and 12 replicas (or up to 3 partitions
-    #: with more indexes if you also set the hostingMode property to 'highDensity')."""
+    with more indexes if you also set the hostingMode property to 'highDensity')."""
     STORAGE_OPTIMIZED_L1 = "storage_optimized_l1"
     """Billable tier for a dedicated service that supports 1TB per partition, up to 12 partitions."""
     STORAGE_OPTIMIZED_L2 = "storage_optimized_l2"

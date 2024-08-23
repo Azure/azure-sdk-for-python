@@ -395,7 +395,7 @@ def test_pass_custom_reports_breaking(capsys):
     target_report = "test_current.json"
 
     try:
-        main(None, None, None, None, "tests", False, False, source_report, target_report)
+        main(None, None, None, None, "tests", False, False, False, source_report, target_report)
     except SystemExit as e:
         if e.code == 1:
             out, _ = capsys.readouterr()
@@ -403,3 +403,45 @@ def test_pass_custom_reports_breaking(capsys):
             assert out.endswith("See aka.ms/azsdk/breaking-changes-tool to resolve any reported breaking changes or false positives.\n\n")
         else:
             pytest.fail("test_compare_reports failed to report breaking changes when passing custom reports")
+
+
+def test_removed_operation_group():
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {}
+                }
+            },
+        }
+    }
+
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "foo": {
+                            "attr_type": "FooOperations",
+                        }
+                    }
+                }
+            },
+        }
+    }
+
+    EXPECTED = [
+        "(RemovedOrRenamedOperationGroup): The 'azure.contoso.ContosoClient' client had operation group 'foo' deleted or renamed in the current version"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc.run_checks()
+
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg

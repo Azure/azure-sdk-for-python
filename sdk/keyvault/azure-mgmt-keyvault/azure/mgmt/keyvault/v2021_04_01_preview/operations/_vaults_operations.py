@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Literal, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -21,9 +21,8 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -31,12 +30,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -432,10 +430,10 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, IO],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Vault:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -450,7 +448,7 @@ class VaultsOperations:
             "api_version", _params.pop("api-version", self._api_version or "2021-04-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -460,7 +458,7 @@ class VaultsOperations:
         else:
             _json = self._serialize.body(parameters, "VaultCreateOrUpdateParameters")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
@@ -468,38 +466,33 @@ class VaultsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("Vault", pipeline_response)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("Vault", pipeline_response)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -523,14 +516,6 @@ class VaultsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Vault or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -541,7 +526,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -554,18 +539,10 @@ class VaultsOperations:
         :param vault_name: Name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to create or update the vault. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Vault or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -576,7 +553,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, IO],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Vault]:
         """Create or update a key vault in the specified subscription.
@@ -587,20 +564,9 @@ class VaultsOperations:
         :param vault_name: Name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to create or update the vault. Is either a
-         VaultCreateOrUpdateParameters type or a IO type. Required.
+         VaultCreateOrUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultCreateOrUpdateParameters
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of LROPoller that returns either Vault or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -628,12 +594,13 @@ class VaultsOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Vault", pipeline_response)
+            deserialized = self._deserialize("Vault", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -643,17 +610,15 @@ class VaultsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Vault].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
-    }
+        return LROPoller[_models.Vault](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     def update(
@@ -677,7 +642,6 @@ class VaultsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Vault or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -688,7 +652,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -701,11 +665,10 @@ class VaultsOperations:
         :param vault_name: Name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to patch the vault. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Vault or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -716,7 +679,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultPatchParameters, IO],
+        parameters: Union[_models.VaultPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Vault:
         """Update a key vault in the specified subscription.
@@ -726,18 +689,15 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: Name of the vault. Required.
         :type vault_name: str
-        :param parameters: Parameters to patch the vault. Is either a VaultPatchParameters type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultPatchParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Parameters to patch the vault. Is either a VaultPatchParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultPatchParameters or
+         IO[bytes]
         :return: Vault or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -762,7 +722,7 @@ class VaultsOperations:
         else:
             _json = self._serialize.body(parameters, "VaultPatchParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
@@ -770,16 +730,14 @@ class VaultsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -789,19 +747,15 @@ class VaultsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("Vault", pipeline_response)
+            deserialized = self._deserialize("Vault", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("Vault", pipeline_response)
+            deserialized = self._deserialize("Vault", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
-    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -814,12 +768,11 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault to delete. Required.
         :type vault_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -835,21 +788,19 @@ class VaultsOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -859,11 +810,7 @@ class VaultsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> _models.Vault:
@@ -874,12 +821,11 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Vault or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -895,21 +841,19 @@ class VaultsOperations:
         )
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -918,16 +862,12 @@ class VaultsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Vault", pipeline_response)
+        deserialized = self._deserialize("Vault", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def update_access_policy(
@@ -956,7 +896,6 @@ class VaultsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultAccessPolicyParameters or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyParameters
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -968,7 +907,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -985,11 +924,10 @@ class VaultsOperations:
         :type operation_kind: str or
          ~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyUpdateKind
         :param parameters: Access policy to merge into the vault. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultAccessPolicyParameters or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyParameters
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1001,7 +939,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: Union[_models.VaultAccessPolicyParameters, IO],
+        parameters: Union[_models.VaultAccessPolicyParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultAccessPolicyParameters:
         """Update access policies in a key vault in the specified subscription.
@@ -1016,18 +954,14 @@ class VaultsOperations:
         :type operation_kind: str or
          ~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyUpdateKind
         :param parameters: Access policy to merge into the vault. Is either a
-         VaultAccessPolicyParameters type or a IO type. Required.
+         VaultAccessPolicyParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyParameters
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: VaultAccessPolicyParameters or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyParameters
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1052,7 +986,7 @@ class VaultsOperations:
         else:
             _json = self._serialize.body(parameters, "VaultAccessPolicyParameters")
 
-        request = build_update_access_policy_request(
+        _request = build_update_access_policy_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             operation_kind=operation_kind,
@@ -1061,16 +995,14 @@ class VaultsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1080,19 +1012,15 @@ class VaultsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("VaultAccessPolicyParameters", pipeline_response)
+            deserialized = self._deserialize("VaultAccessPolicyParameters", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("VaultAccessPolicyParameters", pipeline_response)
+            deserialized = self._deserialize("VaultAccessPolicyParameters", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    update_access_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/accessPolicies/{operationKind}"
-    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -1106,7 +1034,6 @@ class VaultsOperations:
         :type resource_group_name: str
         :param top: Maximum number of results to return. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Vault or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1119,7 +1046,7 @@ class VaultsOperations:
         )
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1130,17 +1057,15 @@ class VaultsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1151,14 +1076,13 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VaultListResult", pipeline_response)
@@ -1168,11 +1092,11 @@ class VaultsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1183,10 +1107,6 @@ class VaultsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults"
-    }
 
     @distributed_trace
     def list_by_subscription(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Vault"]:
@@ -1194,7 +1114,6 @@ class VaultsOperations:
 
         :param top: Maximum number of results to return. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Vault or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1207,7 +1126,7 @@ class VaultsOperations:
         )
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1218,16 +1137,14 @@ class VaultsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1238,14 +1155,13 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VaultListResult", pipeline_response)
@@ -1255,11 +1171,11 @@ class VaultsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1271,13 +1187,10 @@ class VaultsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/vaults"}
-
     @distributed_trace
     def list_deleted(self, **kwargs: Any) -> Iterable["_models.DeletedVault"]:
         """Gets information about the deleted vaults in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedVault or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVault]
@@ -1291,7 +1204,7 @@ class VaultsOperations:
         )
         cls: ClsType[_models.DeletedVaultListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1302,15 +1215,13 @@ class VaultsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deleted_request(
+                _request = build_list_deleted_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_deleted.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1321,14 +1232,13 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeletedVaultListResult", pipeline_response)
@@ -1338,11 +1248,11 @@ class VaultsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1354,8 +1264,6 @@ class VaultsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_deleted.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/deletedVaults"}
-
     @distributed_trace
     def get_deleted(self, vault_name: str, location: str, **kwargs: Any) -> _models.DeletedVault:
         """Gets the deleted Azure key vault.
@@ -1364,12 +1272,11 @@ class VaultsOperations:
         :type vault_name: str
         :param location: The location of the deleted vault. Required.
         :type location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedVault or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVault
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1385,21 +1292,19 @@ class VaultsOperations:
         )
         cls: ClsType[_models.DeletedVault] = kwargs.pop("cls", None)
 
-        request = build_get_deleted_request(
+        _request = build_get_deleted_request(
             vault_name=vault_name,
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_deleted.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1408,21 +1313,15 @@ class VaultsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DeletedVault", pipeline_response)
+        deserialized = self._deserialize("DeletedVault", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    get_deleted.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}"
-    }
-
-    def _purge_deleted_initial(  # pylint: disable=inconsistent-return-statements
-        self, vault_name: str, location: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    def _purge_deleted_initial(self, vault_name: str, location: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1436,37 +1335,40 @@ class VaultsOperations:
         api_version: str = kwargs.pop(
             "api_version", _params.pop("api-version", self._api_version or "2021-04-01-preview")
         )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_purge_deleted_request(
+        _request = build_purge_deleted_request(
             vault_name=vault_name,
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._purge_deleted_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
 
-    _purge_deleted_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge"
-    }
+        if response.status_code == 202:
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_purge_deleted(self, vault_name: str, location: str, **kwargs: Any) -> LROPoller[None]:
@@ -1476,14 +1378,6 @@ class VaultsOperations:
         :type vault_name: str
         :param location: The location of the soft-deleted vault. Required.
         :type location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1499,7 +1393,7 @@ class VaultsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._purge_deleted_initial(  # type: ignore
+            raw_result = self._purge_deleted_initial(
                 vault_name=vault_name,
                 location=location,
                 api_version=api_version,
@@ -1508,11 +1402,12 @@ class VaultsOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1521,17 +1416,13 @@ class VaultsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_purge_deleted.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Resource"]:
@@ -1539,14 +1430,6 @@ class VaultsOperations:
 
         :param top: Maximum number of results to return. Default value is None.
         :type top: int
-        :keyword filter: The filter to apply on the operation. Default value is "resourceType eq
-         'Microsoft.KeyVault/vaults'". Note that overriding this default value may result in unsupported
-         behavior.
-        :paramtype filter: str
-        :keyword api_version: Azure Resource Manager Api Version. Default value is "2015-11-01". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Resource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2021_04_01_preview.models.Resource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1562,7 +1445,7 @@ class VaultsOperations:
         )
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1573,17 +1456,15 @@ class VaultsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     top=top,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1594,14 +1475,13 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
@@ -1611,11 +1491,11 @@ class VaultsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1626,8 +1506,6 @@ class VaultsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}
 
     @overload
     def check_name_availability(
@@ -1645,7 +1523,6 @@ class VaultsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1653,16 +1530,15 @@ class VaultsOperations:
 
     @overload
     def check_name_availability(
-        self, vault_name: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, vault_name: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
         :param vault_name: The name of the vault. Required.
-        :type vault_name: IO
+        :type vault_name: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1670,23 +1546,20 @@ class VaultsOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, vault_name: Union[_models.VaultCheckNameAvailabilityParameters, IO], **kwargs: Any
+        self, vault_name: Union[_models.VaultCheckNameAvailabilityParameters, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
         :param vault_name: The name of the vault. Is either a VaultCheckNameAvailabilityParameters type
-         or a IO type. Required.
+         or a IO[bytes] type. Required.
         :type vault_name:
-         ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultCheckNameAvailabilityParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultCheckNameAvailabilityParameters or
+         IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2021_04_01_preview.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1711,22 +1584,20 @@ class VaultsOperations:
         else:
             _json = self._serialize.body(vault_name, "VaultCheckNameAvailabilityParameters")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1735,13 +1606,9 @@ class VaultsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CheckNameAvailabilityResult", pipeline_response)
+        deserialized = self._deserialize("CheckNameAvailabilityResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkNameAvailability"
-    }
+        return deserialized  # type: ignore

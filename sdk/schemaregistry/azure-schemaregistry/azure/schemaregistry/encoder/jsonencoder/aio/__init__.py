@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._schema_registry_json_encoder_async import JsonSchemaEncoder  # pylint: disable=import-error
+from ._schema_registry_json_encoder_async import (
+    JsonSchemaEncoder,
+)  # pylint: disable=import-error
 
 __all__ = ["JsonSchemaEncoder"]

@@ -36,8 +36,8 @@ sr_namespaces = {
     "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
     "schemaregistry_group": "fakegroup",
 }
-if is_livetest != "true":
-    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net"
+# if is_livetest != "true":
+#    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net"
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader, "schemaregistry", **sr_namespaces
@@ -59,32 +59,33 @@ JSON_SCHEMA = {
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
-current_path = os.getcwd()
-current_folder = current_path.split("\\")[-1]
-if current_folder == "tests":
-    proto_file = os.path.join(os.getcwd(), "person.proto")
-else:  # current_folder == "azure-schemaregistry"
-    proto_file = os.path.join(os.getcwd(), "tests", "person.proto")
-
-with open(proto_file, "r") as f:
-    PROTOBUF_SCHEMA_STR = f.read()
+# current_path = os.getcwd()
+# "\\" for Windows, "/" for Linux
+# current_folder = current_path.split("\\")[-1].split("/")[-1]
+# if current_folder == "tests":
+#    proto_file = os.path.join(os.getcwd(), "person.proto")
+# else:  # current_folder == "azure-schemaregistry"
+#    proto_file = os.path.join(os.getcwd(), "tests", "person.proto")
+#
+# with open(proto_file, "r") as f:
+#    PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"
 CUSTOM_FORMAT = "Custom"
-PROTOBUF_FORMAT = "Protobuf"
+# PROTOBUF_FORMAT = "Protobuf"
 
 avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
-protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
+# protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
 # TODO: add protobuf schema group to arm template + enable livetests
 format_params = [avro_args, json_args, custom_args]
 format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
-if is_livetest != "true":  # protobuf changes have not been rolled out
-    format_params.append(protobuf_args)
-    format_ids.append(PROTOBUF_FORMAT)
+# if is_livetest != "true":  # protobuf changes have not been rolled out
+#    format_params.append(protobuf_args)
+#    format_ids.append(PROTOBUF_FORMAT)
 
 # TODO: remove when protobuf changes have been rolled out
 format_params_no_protobuf = [avro_args, json_args, custom_args]

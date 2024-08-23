@@ -85,7 +85,7 @@ class CheckNameAvailabilityInput(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The search service name to validate. Search service names must only contain
      lowercase letters, digits or dashes, cannot use dash as the first two or last one characters,
@@ -316,7 +316,7 @@ class Identity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The principal ID of the system-assigned identity of the search service.
     :vartype principal_id: str
@@ -329,7 +329,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.search.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource IDs in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.search.models.UserAssignedManagedIdentity]
     """
@@ -362,7 +362,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.search.models.IdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource IDs in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.search.models.UserAssignedManagedIdentity]
         """
@@ -435,7 +435,7 @@ class NetworkRuleSet(_serialization.Model):
      be the exclusive access method.
     :vartype ip_rules: list[~azure.mgmt.search.models.IpRule]
     :ivar bypass: Possible origins of inbound traffic that can bypass the rules defined in the
-     'ipRules' section. Known values are: "None" and "AzurePortal".
+     'ipRules' section. Known values are: "None", "AzurePortal", and "AzureServices".
     :vartype bypass: str or ~azure.mgmt.search.models.SearchBypass
     """
 
@@ -460,7 +460,7 @@ class NetworkRuleSet(_serialization.Model):
          be the exclusive access method.
         :paramtype ip_rules: list[~azure.mgmt.search.models.IpRule]
         :keyword bypass: Possible origins of inbound traffic that can bypass the rules defined in the
-         'ipRules' section. Known values are: "None" and "AzurePortal".
+         'ipRules' section. Known values are: "None", "AzurePortal", and "AzureServices".
         :paramtype bypass: str or ~azure.mgmt.search.models.SearchBypass
         """
         super().__init__(**kwargs)
@@ -474,7 +474,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -510,7 +510,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -519,22 +519,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class NetworkSecurityPerimeterConfiguration(ProxyResource):
     """Network security perimeter configuration for a server.
@@ -542,7 +526,7 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -607,7 +591,7 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         self.provisioning_issues = provisioning_issues
 
 
-class NetworkSecurityPerimeterConfigurationListResult(_serialization.Model):
+class NetworkSecurityPerimeterConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of network security perimeter configurations for a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1271,7 +1255,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1402,7 +1386,7 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         self.provisioning_state = provisioning_state
 
 
-class PrivateEndpointConnectionPropertiesPrivateEndpoint(_serialization.Model):
+class PrivateEndpointConnectionPropertiesPrivateEndpoint(_serialization.Model):  # pylint: disable=name-too-long
     """The private endpoint resource from Microsoft.Network provider.
 
     :ivar id: The resource ID of the private endpoint resource from Microsoft.Network provider.
@@ -1422,7 +1406,9 @@ class PrivateEndpointConnectionPropertiesPrivateEndpoint(_serialization.Model):
         self.id = id
 
 
-class PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState(_serialization.Model):
+class PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Describes the current state of an existing Azure Private Link service connection to the private
     endpoint.
 
@@ -1472,7 +1458,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1741,10 +1727,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1789,10 +1775,10 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1843,13 +1829,13 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype status_details: str
     :ivar provisioning_state: The state of the last provisioning operation performed on the search
      service. Provisioning is an intermediate state that occurs while service capacity is being
-     established. After capacity is set up, provisioningState changes to either 'succeeded' or
-     'failed'. Client applications can poll provisioning status (the recommended polling interval is
+     established. After capacity is set up, provisioningState changes to either 'Succeeded' or
+     'Failed'. Client applications can poll provisioning status (the recommended polling interval is
      from 30 seconds to one minute) by using the Get Search Service operation to see when an
      operation is completed. If you are using the free service, this value tends to come back as
-     'succeeded' directly in the call to Create search service. This is because the free service
-     uses capacity that is already set up. Known values are: "succeeded", "provisioning", and
-     "failed".
+     'Succeeded' directly in the call to Create search service. This is because the free service
+     uses capacity that is already set up. Known values are: "Succeeded", "Provisioning", and
+     "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.search.models.ProvisioningState
     :ivar network_rule_set: Network specific rules that determine how the Azure AI Search service
      may be reached.
@@ -2065,7 +2051,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2119,13 +2105,13 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
     :vartype status_details: str
     :ivar provisioning_state: The state of the last provisioning operation performed on the search
      service. Provisioning is an intermediate state that occurs while service capacity is being
-     established. After capacity is set up, provisioningState changes to either 'succeeded' or
-     'failed'. Client applications can poll provisioning status (the recommended polling interval is
+     established. After capacity is set up, provisioningState changes to either 'Succeeded' or
+     'Failed'. Client applications can poll provisioning status (the recommended polling interval is
      from 30 seconds to one minute) by using the Get Search Service operation to see when an
      operation is completed. If you are using the free service, this value tends to come back as
-     'succeeded' directly in the call to Create search service. This is because the free service
-     uses capacity that is already set up. Known values are: "succeeded", "provisioning", and
-     "failed".
+     'Succeeded' directly in the call to Create search service. This is because the free service
+     uses capacity that is already set up. Known values are: "Succeeded", "Provisioning", and
+     "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.search.models.ProvisioningState
     :ivar network_rule_set: Network specific rules that determine how the Azure AI Search service
      may be reached.
@@ -2384,7 +2370,7 @@ class SharedPrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str

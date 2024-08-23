@@ -65,7 +65,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_dimensions(self, client, api_type, api_version, **kwargs):
 
@@ -82,7 +82,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_encoding_format(self, client, api_type, api_version, **kwargs):
 

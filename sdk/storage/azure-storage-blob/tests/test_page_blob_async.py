@@ -123,7 +123,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             storage_account_key = storage_account_key.encode('utf-8')
         bsc = BlobServiceClient(account_url, credential=storage_account_key, max_page_size=4 * 1024)
         await self._setup(bsc)
-        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -172,7 +172,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(

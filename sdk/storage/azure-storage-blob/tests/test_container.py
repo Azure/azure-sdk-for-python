@@ -88,6 +88,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         assert created
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_container_with_public_access_container(self, **kwargs):
@@ -104,6 +105,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         assert created
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_container_with_public_access_blob(self, **kwargs):
@@ -329,6 +331,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         assert containers[0].metadata == metadata
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_list_containers_with_public_access(self, **kwargs):
@@ -681,6 +684,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_set_container_acl_with_public_access(self, **kwargs):
@@ -2408,7 +2412,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         service_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
@@ -2709,7 +2713,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         cc.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ContainerClient)
         cc = ContainerClient(
             self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
             audience=f'https://{storage_account_name}.blob.core.windows.net'
