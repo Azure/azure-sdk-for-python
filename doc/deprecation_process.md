@@ -54,8 +54,8 @@ Replace the existing text with a disclaimer in the following format.
 
 ## CHANGELOG.md and _version.py
 
-- Update the version in the `azure/mypackage/_version.py` file to the next beta or patch version. This file may be called `version.py` if your package is very old. For example:
-  - If the last released version was 1.2.3b1, the new version should be 1.2.3b2.
+- Update the version in the `azure/mypackage/_version.py` file to the next patch version. This file may be called `version.py` if your package is very old. For example:
+  - If the last released version was 1.2.3b1, the new version should be 1.2.4.
   - If the last released version was 1.2.3, the new version should be 1.2.4.
 - In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. For example:
   > ## 1.2.4 (2023-03-31)
