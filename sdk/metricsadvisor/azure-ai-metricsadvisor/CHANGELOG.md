@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (08-27-24)
+## 1.0.1 (08-27-24)
 
 ### Other Changes
 - This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
