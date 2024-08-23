@@ -30,9 +30,10 @@ _X_API_KEY_HEADER_NAME = "x-api-key"
 class MetricsAdvisorKeyCredential:
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
-    :param str subscription_key: The subscription key
-    :param str api_key: The api key
-    :raises: TypeError
+        :param str subscription_key: The subscription key
+        :param str api_key: The api key
+        :raises: TypeError
+
     """
 
     def __init__(self, subscription_key: str, api_key: str) -> None:
