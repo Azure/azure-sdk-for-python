@@ -72,7 +72,9 @@ def load_client(
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
-
+    This method will only work when using Serverless API or Managed Compute endpoint.
+    It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
+    
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
@@ -663,6 +665,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
@@ -957,6 +962,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
@@ -1251,6 +1259,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
