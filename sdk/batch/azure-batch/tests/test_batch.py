@@ -38,11 +38,6 @@ from devtools_testutils import (
     set_custom_default_matcher,
 )
 
-# from azure_devtools.scenario_tests.recording_processors import (
-#     GeneralNameReplacer,
-#     RecordingProcessor,
-# )
-
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False
 BatchClient = SyncBatchClient if TEST_SYNC_CLIENT else AsyncBatchClient
@@ -69,28 +64,7 @@ def get_redacted_key(key):
     redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
     return redacted_value
 
-
-# class RecordingRedactor(RecordingProcessor):
-#     """Removes keys from test recordings"""
-
-#     def process_response(self, response):
-#         try:
-#             body = json.loads(response["body"]["string"])
-#         except (KeyError, ValueError):
-#             return response
-
-#         for field in body:
-#             if field in SECRET_FIELDS:
-#                 body[field] = get_redacted_key(body[field])
-
-#         response["body"]["string"] = json.dumps(body)
-#         return response
-
-
 class TestBatch(AzureMgmtRecordedTestCase):
-    # scrubber = GeneralNameReplacer()
-    # redactor = RecordingRedactor()
-
     def fail(self, err):
         raise RuntimeError(err)
 
@@ -99,8 +73,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
             await async_wrapper(func(*args, **kwargs))
             self.fail("BatchErrorException expected but not raised")
         except azure.core.exceptions.HttpResponseError as err:
-            # batcherror = err.model
-            # self.assertEqual(err.error.code, code)
             assert err.error.code == code
         except Exception as err:
             self.fail("Expected BatchErrorException, instead got: {!r}".format(err))
