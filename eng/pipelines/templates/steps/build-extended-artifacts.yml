@@ -23,6 +23,8 @@ parameters:
 #     eng/pipelines/templates/jobs/live.test.yml
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+variables:
+  ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
@@ -77,12 +79,6 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-
-  - task: ComponentGovernanceComponentDetection@0
-    displayName: 'Component Governance - Component Detection'
-    inputs:
-      scanType: Register
-      sourceScanPath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
   - ${{ parameters.BeforePublishSteps }}
 
