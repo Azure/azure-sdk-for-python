@@ -4,8 +4,6 @@
 
 ### Other Changes
 - This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
-- This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
-- Removed dependency on `six`.
 
 ## 1.0.0 (2021-07-06)
 
