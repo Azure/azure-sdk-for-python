@@ -1,5 +1,68 @@
 # Release History
 
+## 18.0.0 (2024-09-23)
+
+### Features Added
+
+  - The 'BatchManagementClient' client had operation group 'network_security_perimeter' added in the current version
+  - The 'BatchManagementClient' client had operation group 'network_security_perimeter' added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterOperations' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterOperations' was added in the current version
+  - The model or publicly exposed class 'Application' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ApplicationPackage' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'Certificate' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'CertificateCreateOrUpdateParameters' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DetectorResponse' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ImageReference' had property 'shared_gallery_image_id' added in the current version
+  - The model or publicly exposed class 'ImageReference' had property 'community_gallery_image_id' added in the current version
+  - The model or publicly exposed class 'ManagedDisk' had property 'security_profile' added in the current version
+  - The model or publicly exposed class 'Pool' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnection' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'PrivateLinkResource' had property 'tags' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ProxyResource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'ProxyResource' had property 'additional_properties' added in the current version
+  - The model or publicly exposed class 'PublicNetworkAccessType' had property 'SECURED_BY_PERIMETER' added in the current version
+  - The model or publicly exposed class 'Resource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'TaskContainerSettings' had property 'container_host_batch_bind_mounts' added in the current version
+  - The model or publicly exposed class 'AccessRule' was added in the current version
+  - The model or publicly exposed class 'AccessRuleDirection' was added in the current version
+  - The model or publicly exposed class 'AccessRuleProperties' was added in the current version
+  - The model or publicly exposed class 'AccessRulePropertiesSubscriptionsItem' was added in the current version
+  - The model or publicly exposed class 'AzureProxyResource' was added in the current version
+  - The model or publicly exposed class 'AzureResource' was added in the current version
+  - The model or publicly exposed class 'ContainerHostBatchBindMountEntry' was added in the current version
+  - The model or publicly exposed class 'ContainerHostDataPath' was added in the current version
+  - The model or publicly exposed class 'CreatedByType' was added in the current version
+  - The model or publicly exposed class 'ErrorAdditionalInfo' was added in the current version
+  - The model or publicly exposed class 'ErrorDetail' was added in the current version
+  - The model or publicly exposed class 'ErrorResponse' was added in the current version
+  - The model or publicly exposed class 'IssueType' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeter' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterConfiguration' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterConfigurationListResult' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterConfigurationProperties' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityPerimeterConfigurationProvisioningState' was added in the current version
+  - The model or publicly exposed class 'NetworkSecurityProfile' was added in the current version
+  - The model or publicly exposed class 'ProvisioningIssue' was added in the current version
+  - The model or publicly exposed class 'ProvisioningIssueProperties' was added in the current version
+  - The model or publicly exposed class 'ResourceAssociation' was added in the current version
+  - The model or publicly exposed class 'ResourceAssociationAccessMode' was added in the current version
+  - The model or publicly exposed class 'SecurityEncryptionTypes' was added in the current version
+  - The model or publicly exposed class 'SecurityTypes' was added in the current version
+  - The model or publicly exposed class 'Severity' was added in the current version
+  - The model or publicly exposed class 'SystemData' was added in the current version
+  - The model or publicly exposed class 'VMDiskSecurityProfile' was added in the current version
+
+### Breaking Changes
+
+  - The 'LocationOperations' method 'list_supported_cloud_service_skus' was deleted or renamed in the current version
+  - The 'LocationOperations' method 'list_supported_cloud_service_skus' was deleted or renamed in the current version
+  - The model or publicly exposed class 'DeploymentConfiguration' had its instance variable 'cloud_service_configuration' deleted or renamed in the current version
+  - The model or publicly exposed class 'ProxyResource' had its instance variable 'etag' deleted or renamed in the current version
+  - The model or publicly exposed class 'Resource' had its instance variable 'location' deleted or renamed in the current version
+  - The model or publicly exposed class 'Resource' had its instance variable 'tags' deleted or renamed in the current version
+  - The model or publicly exposed class 'CloudServiceConfiguration' was deleted or renamed in the current version
+
 ## 17.3.0 (2024-03-19)
 
 ### Features Added
