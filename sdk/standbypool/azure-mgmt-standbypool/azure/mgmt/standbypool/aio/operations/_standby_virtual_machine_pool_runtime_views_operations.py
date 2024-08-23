@@ -27,9 +27,9 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ...operations._standby_virtual_machines_operations import (
+from ...operations._standby_virtual_machine_pool_runtime_views_operations import (
     build_get_request,
-    build_list_by_standby_virtual_machine_pool_resource_request,
+    build_list_by_standby_pool_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -40,14 +40,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class StandbyVirtualMachinesOperations:
+class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.standbypool.aio.StandbyPoolMgmtClient`'s
-        :attr:`standby_virtual_machines` attribute.
+        :attr:`standby_virtual_machine_pool_runtime_views` attribute.
     """
 
     models = _models
@@ -60,27 +60,28 @@ class StandbyVirtualMachinesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_standby_virtual_machine_pool_resource(  # pylint: disable=name-too-long
+    def list_by_standby_pool(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyVirtualMachineResource"]:
-        """List StandbyVirtualMachineResource resources by StandbyVirtualMachinePoolResource.
+    ) -> AsyncIterable["_models.StandbyVirtualMachinePoolRuntimeViewResource"]:
+        """List StandbyVirtualMachinePoolRuntimeViewResource resources by
+        StandbyVirtualMachinePoolResource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param standby_virtual_machine_pool_name: Name of the standby virtual machine pool. Required.
         :type standby_virtual_machine_pool_name: str
-        :return: An iterator like instance of either StandbyVirtualMachineResource or the result of
-         cls(response)
+        :return: An iterator like instance of either StandbyVirtualMachinePoolRuntimeViewResource or
+         the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.standbypool.models.StandbyVirtualMachineResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.StandbyVirtualMachineResourceListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StandbyVirtualMachinePoolRuntimeViewResourceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -93,7 +94,7 @@ class StandbyVirtualMachinesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_by_standby_virtual_machine_pool_resource_request(
+                _request = build_list_by_standby_pool_request(
                     resource_group_name=resource_group_name,
                     standby_virtual_machine_pool_name=standby_virtual_machine_pool_name,
                     subscription_id=self._config.subscription_id,
@@ -121,7 +122,9 @@ class StandbyVirtualMachinesOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("StandbyVirtualMachineResourceListResult", pipeline_response)
+            deserialized = self._deserialize(
+                "StandbyVirtualMachinePoolRuntimeViewResourceListResult", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -147,23 +150,21 @@ class StandbyVirtualMachinesOperations:
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        standby_virtual_machine_pool_name: str,
-        standby_virtual_machine_name: str,
-        **kwargs: Any
-    ) -> _models.StandbyVirtualMachineResource:
-        """Get a StandbyVirtualMachineResource.
+        self, resource_group_name: str, standby_virtual_machine_pool_name: str, runtime_view: str, **kwargs: Any
+    ) -> _models.StandbyVirtualMachinePoolRuntimeViewResource:
+        """Get a StandbyVirtualMachinePoolRuntimeViewResource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param standby_virtual_machine_pool_name: Name of the standby virtual machine pool. Required.
         :type standby_virtual_machine_pool_name: str
-        :param standby_virtual_machine_name: Name of the standby virtual machine. Required.
-        :type standby_virtual_machine_name: str
-        :return: StandbyVirtualMachineResource or the result of cls(response)
-        :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachineResource
+        :param runtime_view: The unique identifier for the runtime view. The input string should be the
+         word 'latest', which will get the latest runtime view of the pool, otherwise the request will
+         fail with NotFound exception. Required.
+        :type runtime_view: str
+        :return: StandbyVirtualMachinePoolRuntimeViewResource or the result of cls(response)
+        :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -178,12 +179,12 @@ class StandbyVirtualMachinesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.StandbyVirtualMachineResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StandbyVirtualMachinePoolRuntimeViewResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             standby_virtual_machine_pool_name=standby_virtual_machine_pool_name,
-            standby_virtual_machine_name=standby_virtual_machine_name,
+            runtime_view=runtime_view,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -203,7 +204,9 @@ class StandbyVirtualMachinesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StandbyVirtualMachineResource", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "StandbyVirtualMachinePoolRuntimeViewResource", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

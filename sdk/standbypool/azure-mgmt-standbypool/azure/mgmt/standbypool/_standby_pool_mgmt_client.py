@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -19,7 +20,9 @@ from ._configuration import StandbyPoolMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     Operations,
+    StandbyContainerGroupPoolRuntimeViewsOperations,
     StandbyContainerGroupPoolsOperations,
+    StandbyVirtualMachinePoolRuntimeViewsOperations,
     StandbyVirtualMachinePoolsOperations,
     StandbyVirtualMachinesOperations,
 )
@@ -40,6 +43,14 @@ class StandbyPoolMgmtClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar standby_virtual_machine_pools: StandbyVirtualMachinePoolsOperations operations
     :vartype standby_virtual_machine_pools:
      azure.mgmt.standbypool.operations.StandbyVirtualMachinePoolsOperations
+    :ivar standby_container_group_pool_runtime_views:
+     StandbyContainerGroupPoolRuntimeViewsOperations operations
+    :vartype standby_container_group_pool_runtime_views:
+     azure.mgmt.standbypool.operations.StandbyContainerGroupPoolRuntimeViewsOperations
+    :ivar standby_virtual_machine_pool_runtime_views:
+     StandbyVirtualMachinePoolRuntimeViewsOperations operations
+    :vartype standby_virtual_machine_pool_runtime_views:
+     azure.mgmt.standbypool.operations.StandbyVirtualMachinePoolRuntimeViewsOperations
     :ivar standby_virtual_machines: StandbyVirtualMachinesOperations operations
     :vartype standby_virtual_machines:
      azure.mgmt.standbypool.operations.StandbyVirtualMachinesOperations
@@ -49,8 +60,8 @@ class StandbyPoolMgmtClient:  # pylint: disable=client-accepts-api-version-keywo
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-03-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -97,6 +108,12 @@ class StandbyPoolMgmtClient:  # pylint: disable=client-accepts-api-version-keywo
         self.standby_virtual_machine_pools = StandbyVirtualMachinePoolsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.standby_container_group_pool_runtime_views = StandbyContainerGroupPoolRuntimeViewsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.standby_virtual_machine_pool_runtime_views = StandbyVirtualMachinePoolRuntimeViewsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.standby_virtual_machines = StandbyVirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -126,7 +143,7 @@ class StandbyPoolMgmtClient:  # pylint: disable=client-accepts-api-version-keywo
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "StandbyPoolMgmtClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

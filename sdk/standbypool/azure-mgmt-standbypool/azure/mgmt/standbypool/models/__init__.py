@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ContainerGroupInstanceCountSummary
 from ._models_py3 import ContainerGroupProfile
 from ._models_py3 import ContainerGroupProfileUpdate
 from ._models_py3 import ContainerGroupProperties
@@ -16,6 +17,7 @@ from ._models_py3 import ErrorResponse
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PoolResourceStateCount
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import StandbyContainerGroupPoolElasticityProfile
@@ -25,6 +27,9 @@ from ._models_py3 import StandbyContainerGroupPoolResourceListResult
 from ._models_py3 import StandbyContainerGroupPoolResourceProperties
 from ._models_py3 import StandbyContainerGroupPoolResourceUpdate
 from ._models_py3 import StandbyContainerGroupPoolResourceUpdateProperties
+from ._models_py3 import StandbyContainerGroupPoolRuntimeViewResource
+from ._models_py3 import StandbyContainerGroupPoolRuntimeViewResourceListResult
+from ._models_py3 import StandbyContainerGroupPoolRuntimeViewResourceProperties
 from ._models_py3 import StandbyVirtualMachinePoolElasticityProfile
 from ._models_py3 import StandbyVirtualMachinePoolElasticityProfileUpdate
 from ._models_py3 import StandbyVirtualMachinePoolResource
@@ -32,12 +37,16 @@ from ._models_py3 import StandbyVirtualMachinePoolResourceListResult
 from ._models_py3 import StandbyVirtualMachinePoolResourceProperties
 from ._models_py3 import StandbyVirtualMachinePoolResourceUpdate
 from ._models_py3 import StandbyVirtualMachinePoolResourceUpdateProperties
+from ._models_py3 import StandbyVirtualMachinePoolRuntimeViewResource
+from ._models_py3 import StandbyVirtualMachinePoolRuntimeViewResourceListResult
+from ._models_py3 import StandbyVirtualMachinePoolRuntimeViewResourceProperties
 from ._models_py3 import StandbyVirtualMachineResource
 from ._models_py3 import StandbyVirtualMachineResourceListResult
 from ._models_py3 import StandbyVirtualMachineResourceProperties
 from ._models_py3 import Subnet
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import VirtualMachineInstanceCountSummary
 
 from ._standby_pool_mgmt_client_enums import ActionType
 from ._standby_pool_mgmt_client_enums import CreatedByType
@@ -50,6 +59,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ContainerGroupInstanceCountSummary",
     "ContainerGroupProfile",
     "ContainerGroupProfileUpdate",
     "ContainerGroupProperties",
@@ -60,6 +70,7 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "PoolResourceStateCount",
     "ProxyResource",
     "Resource",
     "StandbyContainerGroupPoolElasticityProfile",
@@ -69,6 +80,9 @@ __all__ = [
     "StandbyContainerGroupPoolResourceProperties",
     "StandbyContainerGroupPoolResourceUpdate",
     "StandbyContainerGroupPoolResourceUpdateProperties",
+    "StandbyContainerGroupPoolRuntimeViewResource",
+    "StandbyContainerGroupPoolRuntimeViewResourceListResult",
+    "StandbyContainerGroupPoolRuntimeViewResourceProperties",
     "StandbyVirtualMachinePoolElasticityProfile",
     "StandbyVirtualMachinePoolElasticityProfileUpdate",
     "StandbyVirtualMachinePoolResource",
@@ -76,12 +90,16 @@ __all__ = [
     "StandbyVirtualMachinePoolResourceProperties",
     "StandbyVirtualMachinePoolResourceUpdate",
     "StandbyVirtualMachinePoolResourceUpdateProperties",
+    "StandbyVirtualMachinePoolRuntimeViewResource",
+    "StandbyVirtualMachinePoolRuntimeViewResourceListResult",
+    "StandbyVirtualMachinePoolRuntimeViewResourceProperties",
     "StandbyVirtualMachineResource",
     "StandbyVirtualMachineResourceListResult",
     "StandbyVirtualMachineResourceProperties",
     "Subnet",
     "SystemData",
     "TrackedResource",
+    "VirtualMachineInstanceCountSummary",
     "ActionType",
     "CreatedByType",
     "Origin",

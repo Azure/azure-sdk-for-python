@@ -17,6 +17,34 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ContainerGroupInstanceCountSummary(_serialization.Model):
+    """Displays the counts of container groups in each state, as known by the StandbyPool resource
+    provider.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar instance_counts_by_state: The count of pooled resources in each state. Required.
+    :vartype instance_counts_by_state: list[~azure.mgmt.standbypool.models.PoolResourceStateCount]
+    """
+
+    _validation = {
+        "instance_counts_by_state": {"required": True},
+    }
+
+    _attribute_map = {
+        "instance_counts_by_state": {"key": "instanceCountsByState", "type": "[PoolResourceStateCount]"},
+    }
+
+    def __init__(self, *, instance_counts_by_state: List["_models.PoolResourceStateCount"], **kwargs: Any) -> None:
+        """
+        :keyword instance_counts_by_state: The count of pooled resources in each state. Required.
+        :paramtype instance_counts_by_state:
+         list[~azure.mgmt.standbypool.models.PoolResourceStateCount]
+        """
+        super().__init__(**kwargs)
+        self.instance_counts_by_state = instance_counts_by_state
+
+
 class ContainerGroupProfile(_serialization.Model):
     """Details of the ContainerGroupProfile.
 
@@ -369,6 +397,40 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class PoolResourceStateCount(_serialization.Model):
+    """Displays the counts of pooled resources in each state, as known by the StandbyPool resource
+    provider.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar state: The state that the pooled resources count is for. Required.
+    :vartype state: str
+    :ivar count: The count of pooled resources in the given state. Required.
+    :vartype count: int
+    """
+
+    _validation = {
+        "state": {"required": True},
+        "count": {"required": True},
+    }
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+    }
+
+    def __init__(self, *, state: str, count: int, **kwargs: Any) -> None:
+        """
+        :keyword state: The state that the pooled resources count is for. Required.
+        :paramtype state: str
+        :keyword count: The count of pooled resources in the given state. Required.
+        :paramtype count: int
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.count = count
+
+
 class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -630,8 +692,6 @@ class StandbyContainerGroupPoolResource(TrackedResource):
 class StandbyContainerGroupPoolResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The response of a StandbyContainerGroupPoolResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The StandbyContainerGroupPoolResource items on this page. Required.
@@ -642,7 +702,6 @@ class StandbyContainerGroupPoolResourceListResult(_serialization.Model):  # pyli
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -650,14 +709,22 @@ class StandbyContainerGroupPoolResourceListResult(_serialization.Model):  # pyli
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StandbyContainerGroupPoolResource"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: List["_models.StandbyContainerGroupPoolResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The StandbyContainerGroupPoolResource items on this page. Required.
         :paramtype value: list[~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class StandbyContainerGroupPoolResourceProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -718,7 +785,7 @@ class StandbyContainerGroupPoolResourceUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar properties: The updatable properties of the StandbyContainerGroupPoolResource.
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties:
      ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResourceUpdateProperties
     """
@@ -738,7 +805,7 @@ class StandbyContainerGroupPoolResourceUpdate(_serialization.Model):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword properties: The updatable properties of the StandbyContainerGroupPoolResource.
+        :keyword properties: The resource-specific properties for this resource.
         :paramtype properties:
          ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResourceUpdateProperties
         """
@@ -785,6 +852,131 @@ class StandbyContainerGroupPoolResourceUpdateProperties(_serialization.Model):  
         self.container_group_properties = container_group_properties
 
 
+class StandbyContainerGroupPoolRuntimeViewResource(ProxyResource):  # pylint: disable=name-too-long
+    """Contains information about a standby container group pool as last known by the StandbyPool
+    resource provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.standbypool.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResourceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "StandbyContainerGroupPoolRuntimeViewResourceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.StandbyContainerGroupPoolRuntimeViewResourceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties:
+         ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResourceProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class StandbyContainerGroupPoolRuntimeViewResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
+    """The response of a StandbyContainerGroupPoolRuntimeViewResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StandbyContainerGroupPoolRuntimeViewResource items on this page. Required.
+    :vartype value:
+     list[~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[StandbyContainerGroupPoolRuntimeViewResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.StandbyContainerGroupPoolRuntimeViewResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The StandbyContainerGroupPoolRuntimeViewResource items on this page. Required.
+        :paramtype value:
+         list[~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class StandbyContainerGroupPoolRuntimeViewResourceProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """Contains information about a standby pool as last known by the StandbyPool resource provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar instance_count_summary: A list containing the counts of container groups in each possible
+     state, as known by the StandbyPool resource provider. Required.
+    :vartype instance_count_summary:
+     list[~azure.mgmt.standbypool.models.ContainerGroupInstanceCountSummary]
+    :ivar provisioning_state: Displays the provisioning state of the standby pool. Known values
+     are: "Succeeded", "Failed", "Canceled", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.standbypool.models.ProvisioningState
+    """
+
+    _validation = {
+        "instance_count_summary": {"required": True, "readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "instance_count_summary": {"key": "instanceCountSummary", "type": "[ContainerGroupInstanceCountSummary]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.instance_count_summary = None
+        self.provisioning_state = None
+
+
 class StandbyVirtualMachinePoolElasticityProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Details of the elasticity profile.
 
@@ -793,24 +985,33 @@ class StandbyVirtualMachinePoolElasticityProfile(_serialization.Model):  # pylin
     :ivar max_ready_capacity: Specifies the maximum number of virtual machines in the standby
      virtual machine pool. Required.
     :vartype max_ready_capacity: int
+    :ivar min_ready_capacity: Specifies the desired minimum number of virtual machines in the
+     standby virtual machine pool. MinReadyCapacity cannot exceed MaxReadyCapacity.
+    :vartype min_ready_capacity: int
     """
 
     _validation = {
         "max_ready_capacity": {"required": True, "maximum": 2000, "minimum": 0},
+        "min_ready_capacity": {"maximum": 2000, "minimum": 0},
     }
 
     _attribute_map = {
         "max_ready_capacity": {"key": "maxReadyCapacity", "type": "int"},
+        "min_ready_capacity": {"key": "minReadyCapacity", "type": "int"},
     }
 
-    def __init__(self, *, max_ready_capacity: int, **kwargs: Any) -> None:
+    def __init__(self, *, max_ready_capacity: int, min_ready_capacity: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword max_ready_capacity: Specifies the maximum number of virtual machines in the standby
          virtual machine pool. Required.
         :paramtype max_ready_capacity: int
+        :keyword min_ready_capacity: Specifies the desired minimum number of virtual machines in the
+         standby virtual machine pool. MinReadyCapacity cannot exceed MaxReadyCapacity.
+        :paramtype min_ready_capacity: int
         """
         super().__init__(**kwargs)
         self.max_ready_capacity = max_ready_capacity
+        self.min_ready_capacity = min_ready_capacity
 
 
 class StandbyVirtualMachinePoolElasticityProfileUpdate(_serialization.Model):  # pylint: disable=name-too-long
@@ -819,24 +1020,35 @@ class StandbyVirtualMachinePoolElasticityProfileUpdate(_serialization.Model):  #
     :ivar max_ready_capacity: Specifies the maximum number of virtual machines in the standby
      virtual machine pool.
     :vartype max_ready_capacity: int
+    :ivar min_ready_capacity: Specifies the desired minimum number of virtual machines in the
+     standby virtual machine pool. MinReadyCapacity cannot exceed MaxReadyCapacity.
+    :vartype min_ready_capacity: int
     """
 
     _validation = {
         "max_ready_capacity": {"maximum": 2000, "minimum": 0},
+        "min_ready_capacity": {"maximum": 2000, "minimum": 0},
     }
 
     _attribute_map = {
         "max_ready_capacity": {"key": "maxReadyCapacity", "type": "int"},
+        "min_ready_capacity": {"key": "minReadyCapacity", "type": "int"},
     }
 
-    def __init__(self, *, max_ready_capacity: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, max_ready_capacity: Optional[int] = None, min_ready_capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword max_ready_capacity: Specifies the maximum number of virtual machines in the standby
          virtual machine pool.
         :paramtype max_ready_capacity: int
+        :keyword min_ready_capacity: Specifies the desired minimum number of virtual machines in the
+         standby virtual machine pool. MinReadyCapacity cannot exceed MaxReadyCapacity.
+        :paramtype min_ready_capacity: int
         """
         super().__init__(**kwargs)
         self.max_ready_capacity = max_ready_capacity
+        self.min_ready_capacity = min_ready_capacity
 
 
 class StandbyVirtualMachinePoolResource(TrackedResource):
@@ -907,8 +1119,6 @@ class StandbyVirtualMachinePoolResource(TrackedResource):
 class StandbyVirtualMachinePoolResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The response of a StandbyVirtualMachinePoolResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The StandbyVirtualMachinePoolResource items on this page. Required.
@@ -919,7 +1129,6 @@ class StandbyVirtualMachinePoolResourceListResult(_serialization.Model):  # pyli
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -927,14 +1136,22 @@ class StandbyVirtualMachinePoolResourceListResult(_serialization.Model):  # pyli
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StandbyVirtualMachinePoolResource"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: List["_models.StandbyVirtualMachinePoolResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The StandbyVirtualMachinePoolResource items on this page. Required.
         :paramtype value: list[~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class StandbyVirtualMachinePoolResourceProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -1003,7 +1220,7 @@ class StandbyVirtualMachinePoolResourceUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar properties: The updatable properties of the StandbyVirtualMachinePoolResource.
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties:
      ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResourceUpdateProperties
     """
@@ -1023,7 +1240,7 @@ class StandbyVirtualMachinePoolResourceUpdate(_serialization.Model):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword properties: The updatable properties of the StandbyVirtualMachinePoolResource.
+        :keyword properties: The resource-specific properties for this resource.
         :paramtype properties:
          ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResourceUpdateProperties
         """
@@ -1079,6 +1296,137 @@ class StandbyVirtualMachinePoolResourceUpdateProperties(_serialization.Model):  
         self.attached_virtual_machine_scale_set_id = attached_virtual_machine_scale_set_id
 
 
+class StandbyVirtualMachinePoolRuntimeViewResource(ProxyResource):  # pylint: disable=name-too-long
+    """Contains information about a standby virtual machine pool as last known by the StandbyPool
+    resource provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.standbypool.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResourceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "StandbyVirtualMachinePoolRuntimeViewResourceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.StandbyVirtualMachinePoolRuntimeViewResourceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties:
+         ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResourceProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class StandbyVirtualMachinePoolRuntimeViewResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
+    """The response of a StandbyVirtualMachinePoolRuntimeViewResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StandbyVirtualMachinePoolRuntimeViewResource items on this page. Required.
+    :vartype value:
+     list[~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[StandbyVirtualMachinePoolRuntimeViewResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.StandbyVirtualMachinePoolRuntimeViewResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The StandbyVirtualMachinePoolRuntimeViewResource items on this page. Required.
+        :paramtype value:
+         list[~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class StandbyVirtualMachinePoolRuntimeViewResourceProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """Contains information about a standby pool as last known by the StandbyPool resource provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar instance_count_summary: A list containing the counts of virtual machines in each possible
+     power state for each zone if enabled, as known by the StandbyPool resource provider.
+     If zones are not enabled on the attached VMSS, the list will contain a single entry with null
+     zone values.
+     Note: any updates to pool resources outside of StandbyPoolRP (i.e deleting a VM through
+     portal) are not reflected here.
+     Note: any resources in the Running state may still be installing extensions / not fully
+     provisioned. Required.
+    :vartype instance_count_summary:
+     list[~azure.mgmt.standbypool.models.VirtualMachineInstanceCountSummary]
+    :ivar provisioning_state: Displays the provisioning state of the standby pool. Known values
+     are: "Succeeded", "Failed", "Canceled", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.standbypool.models.ProvisioningState
+    """
+
+    _validation = {
+        "instance_count_summary": {"required": True, "readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "instance_count_summary": {"key": "instanceCountSummary", "type": "[VirtualMachineInstanceCountSummary]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.instance_count_summary = None
+        self.provisioning_state = None
+
+
 class StandbyVirtualMachineResource(ProxyResource):
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
@@ -1129,8 +1477,6 @@ class StandbyVirtualMachineResource(ProxyResource):
 class StandbyVirtualMachineResourceListResult(_serialization.Model):
     """The response of a StandbyVirtualMachineResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar value: The StandbyVirtualMachineResource items on this page. Required.
@@ -1141,7 +1487,6 @@ class StandbyVirtualMachineResourceListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1149,14 +1494,18 @@ class StandbyVirtualMachineResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StandbyVirtualMachineResource"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.StandbyVirtualMachineResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The StandbyVirtualMachineResource items on this page. Required.
         :paramtype value: list[~azure.mgmt.standbypool.models.StandbyVirtualMachineResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link = next_link
 
 
 class StandbyVirtualMachineResourceProperties(_serialization.Model):
@@ -1281,3 +1630,51 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class VirtualMachineInstanceCountSummary(_serialization.Model):
+    """Contains the counts of VMs in each power state in a given zone, fault domain, as known by the
+    StandbyPool resource provider.
+    Note: any updates to pool resources outside of StandbyPoolRP (i.e deleting a VM through portal)
+    are not reflected here.
+    Note: any resources in the Running state may still be installing extensions / not fully
+    provisioned.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar zone: The zone that the provided counts are in. This is null if zones are not enabled on
+     the attached VMSS.
+    :vartype zone: int
+    :ivar instance_counts_by_state: The count of pooled resources in each state for the given zone.
+     Required.
+    :vartype instance_counts_by_state: list[~azure.mgmt.standbypool.models.PoolResourceStateCount]
+    """
+
+    _validation = {
+        "instance_counts_by_state": {"required": True},
+    }
+
+    _attribute_map = {
+        "zone": {"key": "zone", "type": "int"},
+        "instance_counts_by_state": {"key": "instanceCountsByState", "type": "[PoolResourceStateCount]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        instance_counts_by_state: List["_models.PoolResourceStateCount"],
+        zone: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword zone: The zone that the provided counts are in. This is null if zones are not enabled
+         on the attached VMSS.
+        :paramtype zone: int
+        :keyword instance_counts_by_state: The count of pooled resources in each state for the given
+         zone. Required.
+        :paramtype instance_counts_by_state:
+         list[~azure.mgmt.standbypool.models.PoolResourceStateCount]
+        """
+        super().__init__(**kwargs)
+        self.zone = zone
+        self.instance_counts_by_state = instance_counts_by_state

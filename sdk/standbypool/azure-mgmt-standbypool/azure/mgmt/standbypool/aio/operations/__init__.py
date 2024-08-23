@@ -9,6 +9,8 @@
 from ._operations import Operations
 from ._standby_container_group_pools_operations import StandbyContainerGroupPoolsOperations
 from ._standby_virtual_machine_pools_operations import StandbyVirtualMachinePoolsOperations
+from ._standby_container_group_pool_runtime_views_operations import StandbyContainerGroupPoolRuntimeViewsOperations
+from ._standby_virtual_machine_pool_runtime_views_operations import StandbyVirtualMachinePoolRuntimeViewsOperations
 from ._standby_virtual_machines_operations import StandbyVirtualMachinesOperations
 
 from ._patch import __all__ as _patch_all
@@ -19,6 +21,8 @@ __all__ = [
     "Operations",
     "StandbyContainerGroupPoolsOperations",
     "StandbyVirtualMachinePoolsOperations",
+    "StandbyContainerGroupPoolRuntimeViewsOperations",
+    "StandbyVirtualMachinePoolRuntimeViewsOperations",
     "StandbyVirtualMachinesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
