@@ -12,7 +12,8 @@ from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
-import models as _models
+from . import models as _models
+from ._model_base import _deserialize
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -28,7 +29,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
-from _client import RadiologyInsightsClient as _RadiologyInsightsClient
+from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
 
 class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-keyword
     """RadiologyInsightsClient.
@@ -155,63 +156,63 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-        # _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        # _params = kwargs.pop("params", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        # content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        # cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
-        # polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        # lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        # cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        # if cont_token is None:
-        #     raw_result = self._infer_radiology_insights_initial(
-        #         id=id,
-        #         resource=resource,
-        #         expand=expand,
-        #         content_type=content_type,
-        #         cls=lambda x, y, z: x,
-        #         headers=_headers,
-        #         params=_params,
-        #         **kwargs
-        #     )
-        #     raw_result.http_response.read() # type: ignore
-        # kwargs.pop("error_map", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._client._infer_radiology_insights_initial(
+                id=id,
+                resource=resource,
+                expand=expand,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read() # type: ignore
+        kwargs.pop("error_map", None)
 
-        # def get_long_running_output(pipeline_response):
-        #     response_headers = {}
-        #     response = pipeline_response.http_response
-        #     response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        #     response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-        #     deserialized = _deserialize(
-        #         _models.RadiologyInsightsInferenceResult,
-        #         response.json().get("result")
-        #     )
-        #     if cls:
-        #         return cls(pipeline_response, deserialized, response_headers) # type: ignore
-        #     return deserialized
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers['x-ms-request-id']=self._client._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['Operation-Location']=self._client._deserialize('str', response.headers.get('Operation-Location'))
+            deserialized = _deserialize(
+                _models.RadiologyInsightsInferenceResult,
+                response.json().get("result")
+            )
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return deserialized
 
 
-        # path_format_arguments = {
-        #     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        # }
+        path_format_arguments = {
+            "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
+        }
 
-        # if polling is True:
-        #     polling_method: PollingMethod = cast(
-        #         PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        #     )
-        # elif polling is False:
-        #     polling_method = cast(PollingMethod, NoPolling())
-        # else:
-        #     polling_method = polling
-        # if cont_token:
-        #     return LROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
-        #         polling_method=polling_method,
-        #         continuation_token=cont_token,
-        #         client=self._client,
-        #         deserialization_callback=get_long_running_output
-        #     )
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client._client,
+                deserialization_callback=get_long_running_output
+            )
         return LROPoller[_models.RadiologyInsightsInferenceResult](
-            self._client.begin_infer_radiology_insights(id, resource, expand, kwargs)  # type: ignore
+            self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
