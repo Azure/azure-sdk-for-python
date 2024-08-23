@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.quota import QuotaMgmtClient
 
 """
@@ -26,6 +27,7 @@ from azure.mgmt.quota import QuotaMgmtClient
 def main():
     client = QuotaMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.usages.list(
@@ -35,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getComputeUsages.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2023-06-01-preview/examples/getComputeUsages.json
 if __name__ == "__main__":
     main()

@@ -102,8 +102,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         except Exception:  # pylint:disable=broad-except
             await await_result(self.on_exception, request)
             raise
-        else:
-            await await_result(self.on_response, request, response)
+        await await_result(self.on_response, request, response)
 
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
@@ -119,8 +118,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     except Exception:  # pylint:disable=broad-except
                         await await_result(self.on_exception, request)
                         raise
-                    else:
-                        await await_result(self.on_response, request, response)
+                    await await_result(self.on_response, request, response)
 
         return response
 
@@ -166,4 +164,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         return
 
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        return (
+            not self._token
+            or (self._token.refresh_on is not None and self._token.refresh_on <= now)
+            or self._token.expires_on - now < 300
+        )

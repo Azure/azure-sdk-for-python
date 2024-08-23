@@ -44,6 +44,13 @@ class TestSearchIndexClient:
         search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
 
+    def test_get_search_client_inherit_api_version(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexClient("endpoint", credential, api_version=ApiVersion.V2020_06_30)
+        search_client = client.get_search_client("index")
+        assert isinstance(search_client, SearchClient)
+        assert search_client._api_version == ApiVersion.V2020_06_30
+
     @mock.patch(
         "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
     )

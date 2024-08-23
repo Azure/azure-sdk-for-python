@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,19 +18,17 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -244,12 +242,11 @@ class MessagesOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of DequeuedMessageItem or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.DequeuedMessageItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -262,23 +259,21 @@ class MessagesOperations:
 
         cls: ClsType[List[_models.DequeuedMessageItem]] = kwargs.pop("cls", None)
 
-        request = build_dequeue_request(
+        _request = build_dequeue_request(
             url=self._config.url,
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.dequeue.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -293,14 +288,12 @@ class MessagesOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("[DequeuedMessageItem]", pipeline_response)
+        deserialized = self._deserialize("[DequeuedMessageItem]", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    dequeue.metadata = {"url": "{url}/messages"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def clear(  # pylint: disable=inconsistent-return-statements
@@ -316,12 +309,11 @@ class MessagesOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -334,21 +326,19 @@ class MessagesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_clear_request(
+        _request = build_clear_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.clear.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -364,9 +354,7 @@ class MessagesOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    clear.metadata = {"url": "{url}/messages"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def enqueue(
@@ -407,12 +395,11 @@ class MessagesOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of EnqueuedMessage or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.EnqueuedMessage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -428,7 +415,7 @@ class MessagesOperations:
 
         _content = self._serialize.body(queue_message, "QueueMessage", is_xml=True)
 
-        request = build_enqueue_request(
+        _request = build_enqueue_request(
             url=self._config.url,
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
@@ -437,16 +424,14 @@ class MessagesOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.enqueue.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -461,14 +446,12 @@ class MessagesOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("[EnqueuedMessage]", pipeline_response)
+        deserialized = self._deserialize("[EnqueuedMessage]", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    enqueue.metadata = {"url": "{url}/messages"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def peek(
@@ -494,15 +477,11 @@ class MessagesOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword peekonly: Peek message(s). Default value is "true". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype peekonly: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of PeekedMessageItem or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.PeekedMessageItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,23 +495,21 @@ class MessagesOperations:
         peekonly: Literal["true"] = kwargs.pop("peekonly", _params.pop("peekonly", "true"))
         cls: ClsType[List[_models.PeekedMessageItem]] = kwargs.pop("cls", None)
 
-        request = build_peek_request(
+        _request = build_peek_request(
             url=self._config.url,
             number_of_messages=number_of_messages,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             peekonly=peekonly,
             version=self._config.version,
-            template_url=self.peek.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -547,11 +524,9 @@ class MessagesOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("[PeekedMessageItem]", pipeline_response)
+        deserialized = self._deserialize("[PeekedMessageItem]", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    peek.metadata = {"url": "{url}/messages"}
+        return deserialized  # type: ignore

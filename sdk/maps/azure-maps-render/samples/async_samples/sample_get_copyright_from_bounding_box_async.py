@@ -20,31 +20,25 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_copyright_from_bounding_box_async():
     # [START get_copyright_from_bounding_box_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render.aio import MapsRenderClient
-    from azure.maps.render.models import BoundingBox
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_render_client:
         result = await maps_render_client.get_copyright_from_bounding_box(
-            bounding_box=BoundingBox(
-                south=42.982261,
-                west=24.980233,
-                north=56.526017,
-                east=1.355233
-            )
+            south_west=[42.982261, 24.980233],
+            north_east=[56.526017, 1.355233],
         )
 
     print("Get copyright from bounding box result:")
-    print(result.general_copyrights[0])
-    print("Result country code:")
-    print(result.regions[0].country.iso3)
+    print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
     # [END get_copyright_from_bounding_box_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_copyright_from_bounding_box_async())

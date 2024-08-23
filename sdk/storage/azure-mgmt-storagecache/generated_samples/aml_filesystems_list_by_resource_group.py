@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagecache import StorageCacheManagementClient
 
 """
@@ -36,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/preview/2023-11-01-preview/examples/amlFilesystems_ListByResourceGroup.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/amlFilesystems_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

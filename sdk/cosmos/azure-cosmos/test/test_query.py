@@ -1,9 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import os
 import unittest
 import uuid
-
+from datetime import datetime, timedelta, timezone
+from time import sleep
 import pytest
 
 import azure.cosmos._retry_utility as retry_utility
@@ -40,6 +42,8 @@ class TestQuery(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        if cls.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container(
@@ -277,6 +281,72 @@ class TestQuery(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.created_db.delete_container(created_collection.id)
+
+    def test_query_change_feed_with_start_time(self):
+        created_collection = self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
+                                                                            PartitionKey(path="/pk"))
+        batchSize = 50
+
+        def round_time():
+            utc_now = datetime.now(timezone.utc)
+            return utc_now - timedelta(microseconds=utc_now.microsecond)
+        def create_random_items(container, batch_size):
+            for _ in range(batch_size):
+                # Generate a Random partition key
+                partition_key = 'pk' + str(uuid.uuid4())
+
+                # Generate a random item
+                item = {
+                    'id': 'item' + str(uuid.uuid4()),
+                    'partitionKey': partition_key,
+                    'content': 'This is some random content',
+                }
+
+                try:
+                    # Create the item in the container
+                    container.upsert_item(item)
+                except exceptions.CosmosHttpResponseError as e:
+                    self.fail(e)
+
+        # Create first batch of random items
+        create_random_items(created_collection, batchSize)
+
+        # wait for 1 second and record the time, then wait another second
+        sleep(1)
+        start_time = round_time()
+        not_utc_time = datetime.now()
+        sleep(1)
+
+        # now create another batch of items
+        create_random_items(created_collection, batchSize)
+
+        # now query change feed based on start time
+        change_feed_iter = list(created_collection.query_items_change_feed(start_time=start_time))
+        totalCount = len(change_feed_iter)
+
+        # now check if the number of items that were changed match the batch size
+        self.assertEqual(totalCount, batchSize)
+
+        # negative test: pass in a valid time in the future
+        future_time = start_time + timedelta(hours=1)
+        change_feed_iter = list(created_collection.query_items_change_feed(start_time=future_time))
+        totalCount = len(change_feed_iter)
+        # A future time should return 0
+        self.assertEqual(totalCount, 0)
+
+        # test a date that is not utc, will be converted to utc by sdk
+        change_feed_iter = list(created_collection.query_items_change_feed(start_time=not_utc_time))
+        totalCount = len(change_feed_iter)
+        # Should equal batch size
+        self.assertEqual(totalCount, batchSize)
+
+        # test an invalid value, Attribute error will be raised for passing non datetime object
+        invalid_time = "Invalid value"
+        try:
+            change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
+            self.fail("Cannot format date on a non datetime object.")
+        except AttributeError as e:
+            self.assertTrue("'str' object has no attribute 'astimezone'" == e.args[0])
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container("query_metrics_test",

@@ -6,9 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, TYPE_CHECKING, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -46,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/AAD/preview/2023-06-01-preview/examples/AzureADAdministratorCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/AAD/stable/2023-12-30/examples/AzureADAdministratorCreate.json
 if __name__ == "__main__":
     main()

@@ -4,16 +4,26 @@
 # IMPORTANT: Do not invoke this file directly. Please instead run eng/New-TestResources.ps1 from the repository root.
 
 param (
-    [hashtable] $DeploymentOutputs
+    [hashtable] $DeploymentOutputs,
+
+    [Parameter()]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $TestApplicationId,
+
+    [Parameter()]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $SubscriptionId,
+
+    [Parameter(ValueFromRemainingArguments = $true)]
+    $RemoveTestResourcesRemainingArguments
 )
 
 # Outputs from the Bicep deployment passed in from New-TestResources
-$tenantId = $DeploymentOutputs['MONITOR_TENANT_ID']
-$clientId = $DeploymentOutputs['MONITOR_CLIENT_ID']
-$clientSecret = $DeploymentOutputs['MONITOR_CLIENT_SECRET']
+$tenantId = $DeploymentOutputs['AZURE_MONITOR_TENANT_ID']
 $dcrImmutableId = $DeploymentOutputs['AZURE_MONITOR_DCR_ID']
 $dceEndpoint = $DeploymentOutputs['AZURE_MONITOR_DCE']
 $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
+$environment = $DeploymentOutputs['MONITOR_ENVIRONMENT']
 
 ##################
 ### Step 0: Wait for role assignment to propagate
@@ -24,11 +34,25 @@ Start-Sleep -s 180
 ##################
 ### Step 1: Obtain a bearer token used later to authenticate against the DCE.
 ##################
-$scope= [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
-$body = "client_id=$clientId&scope=$scope&client_secret=$clientSecret&grant_type=client_credentials";
-$headers = @{"Content-Type"="application/x-www-form-urlencoded"};
-$uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
-$bearerToken = (Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers).access_token
+# Audience Mappings
+$audienceMappings = @{
+    "AzureCloud" = "https://monitor.azure.com";
+    "AzureUSGovernment" = "https://monitor.azure.us";
+    "AzureChinaCloud" = "https://monitor.azure.cn";
+}
+
+$audience = $audienceMappings[$environment]
+
+az cloud set --name $environment
+
+if ($CI) {
+    az login --service-principal -u $TestApplicationId --tenant $tenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
+} else {
+    az login
+}
+az account set --subscription $SubscriptionId
+
+$bearerToken = az account get-access-token --output json --resource $audience | ConvertFrom-Json | Select-Object -ExpandProperty accessToken
 
 ##################
 ### Step 2: Load up some sample data.
@@ -68,12 +92,12 @@ $staticData = @"
 ##################
 $body = $staticData;
 $headers = @{"Authorization"="Bearer $bearerToken";"Content-Type"="application/json"};
-$uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}?api-version=2021-11-01-preview"
-$uri2 = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}2?api-version=2021-11-01-preview"
+$uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}?api-version=2023-01-01"
+$uri2 = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}2?api-version=2023-01-01"
 
 Write-Host "Sending sample data..."
-Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
-Invoke-RestMethod -Uri $uri2 -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
+Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers -TimeoutSec 40 -MaximumRetryCount 3
+Invoke-RestMethod -Uri $uri2 -Method "Post" -Body $body -Headers $headers -TimeoutSec 40 -MaximumRetryCount 3
 
 ##################
 ### Step 4: Sleep to allow time for data to reflect in the workspace tables.

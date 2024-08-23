@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import os
 
+from typing import Any, AnyStr, Dict, cast, IO, Iterable, Optional, Union, TYPE_CHECKING
 from ._list_blobs_helper import BlobPrefix
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
@@ -15,13 +17,17 @@ from ._blob_service_client_async import BlobServiceClient
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
 
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 async def upload_blob_to_url(
-        blob_url,  # type: str
-        data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        **kwargs):
-    # type: (...) -> dict[str, Any]
+    blob_url: str,
+    data: Union[Iterable[AnyStr], IO[AnyStr]],
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+    **kwargs: Any
+) -> Dict[str, Any]:
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -31,7 +37,7 @@ async def upload_blob_to_url(
     :param data:
         The data to upload. This can be bytes, text, an iterable or a file-like object.
     :type data: bytes or str or Iterable
-   :param credential:
+    :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
@@ -40,7 +46,11 @@ async def upload_blob_to_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -64,10 +74,13 @@ async def upload_blob_to_url(
     :keyword str encoding:
         Encoding to use if text is supplied as input. Defaults to UTF-8.
     :returns: Blob-updated property dict (Etag and last modified)
-    :rtype: dict(str, Any)
+    :rtype: dict[str, Any]
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return await cast(BlobClient, client).upload_blob(
+            data=data,
+            blob_type=BlobType.BLOCKBLOB,
+            **kwargs)
 
 
 # Download data to specified open file-handle.
@@ -77,11 +90,11 @@ async def _download_to_stream(client, handle, **kwargs):
 
 
 async def download_blob_from_url(
-        blob_url,  # type: str
-        output,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        **kwargs):
-    # type: (...) -> None
+    blob_url: str,
+    output: str,
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+    **kwargs: Any
+) -> None:
     """Download the contents of a blob to a local file or stream.
 
     :param str blob_url:
@@ -99,7 +112,11 @@ async def download_blob_from_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to

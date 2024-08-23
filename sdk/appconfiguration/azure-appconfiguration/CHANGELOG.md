@@ -1,14 +1,37 @@
 # Release History
 
-## 1.6.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.7.1 (2024-08-22)
 
 ### Bugs Fixed
+- Fixed a bug in serializing/deserializing tags filter in `ConfigurationSnapshot`.
+
+## 1.7.0 (2024-08-15)
+
+### Features Added
+- Added operation `list_labels()` for listing configuration setting labels.
+- Supported filtering by configuration setting tags in `list_configuration_settings()` and `list_revisions()`.
+- Added a new property tags to ConfigurationSettingsFilter to support filtering settings with tags filter for snapshot.
+
+### Bugs Fixed
+- Fixed a bug where the `feature_id` of `FeatureFlagConfigurationSetting` will be different from `id` customer field, and may overwrite the original customer-defined value if different from the `FeatureFlagConfigurationSetting` key suffix.
 
 ### Other Changes
+- Updated the default `api_version` to "2023-11-01".
+- Published enum `LabelFields` and model `ConfigurationSettingLabel`.
+- Published enum `SnapshotFields`, and accepted the type for `fields` parameter in `get_snapshot()` and `list_snapshots()`.
+- Published enum `ConfigurationSettingFields`, and accepted the type for `fields` parameter in `list_configuration_settings()` and `list_revisions()`.
+- Published enum `SnapshotComposition`, and accepted the type for `ConfigurationSnapshot` property `composition_type` and `begion_create_snapshot()` kwarg `composition_type`.
+
+## 1.6.0 (2024-04-09)
+
+### Features Added
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
+- Supported to get page ETag while iterating `list_configuration_setting()` result by page.
+
+### Bugs Fixed
+- Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
+- Changed invalid default value `None` to `False` for property `enabled` in `FeatureFlagConfigurationSetting`.
+- Fixed the issue that `description`, `display_name` and other customer fields are missing when de/serializing `FeatureFlagConfigurationSetting` objects.
 
 ## 1.6.0b2 (2024-03-21)
 

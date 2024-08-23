@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
 """
@@ -36,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/Databases/preview/2023-06-01-preview/examples/DatabaseDelete.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/Databases/stable/2023-12-30/examples/DatabaseDelete.json
 if __name__ == "__main__":
     main()

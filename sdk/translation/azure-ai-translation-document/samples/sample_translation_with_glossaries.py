@@ -29,10 +29,7 @@ USAGE:
 def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import (
-        DocumentTranslationClient,
-        TranslationGlossary
-    )
+    from azure.ai.translation.document import DocumentTranslationClient, TranslationGlossary
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -46,7 +43,7 @@ def sample_translation_with_glossaries():
         source_container_url,
         target_container_url,
         "es",
-        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
+        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")],
     )
 
     result = poller.result()
@@ -71,5 +68,5 @@ def sample_translation_with_glossaries():
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_translation_with_glossaries()

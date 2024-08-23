@@ -19,8 +19,6 @@ from azure.core.exceptions import (
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 
-_ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
-_ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 
@@ -232,7 +230,7 @@ def _reprocess_error(decoded_error, identifiers=None):
         ):
             args_list = list(decoded_error.args)
             args_list[0] += (
-                "\nA possible cause of this error could be that the account URL used to"
+                "\nA possible cause of this error could be that the account URL used to "
                 "create the Client includes an invalid path, for example the table name. Please check your account URL."
             )
             decoded_error.args = tuple(args_list)

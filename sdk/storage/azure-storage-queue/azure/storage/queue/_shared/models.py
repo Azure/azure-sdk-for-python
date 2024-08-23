@@ -453,19 +453,20 @@ class AccountSasPermissions(object):
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
-    :param bool blob:
-        Access for the `~azure.storage.blob.BlobServiceClient`
-    :param bool queue:
-        Access for the `~azure.storage.queue.QueueServiceClient`
-    :param bool fileshare:
-        Access for the `~azure.storage.fileshare.ShareServiceClient`
+    :keyword bool blob:
+        Access for the `~azure.storage.blob.BlobServiceClient`. Default is False.
+    :keyword bool queue:
+        Access for the `~azure.storage.queue.QueueServiceClient`. Default is False.
+    :keyword bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`. Default is False.
     """
 
-    blob: bool = False
-    queue: bool = False
-    fileshare: bool = False
-
-    def __init__(self, blob: bool = False, queue: bool = False, fileshare: bool = False):
+    def __init__(
+        self, *,
+        blob: bool = False,
+        queue: bool = False,
+        fileshare: bool = False
+    ) -> None:
         self.blob = blob
         self.queue = queue
         self.fileshare = fileshare
@@ -493,7 +494,7 @@ class Services(object):
         res_queue = 'q' in string
         res_file = 'f' in string
 
-        parsed = cls(res_blob, res_queue, res_file)
+        parsed = cls(blob=res_blob, queue=res_queue, fileshare=res_file)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 

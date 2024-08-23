@@ -1,7 +1,7 @@
+# Azure Cosmos DB SQL API client library for Python
+
 ## _Disclaimer_
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
-# Azure Cosmos DB SQL API client library for Python
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
@@ -158,14 +158,12 @@ Currently, the features below are **not supported**. For alternatives options, c
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
-* Change Feed: Read specific time
 * Cross-partition ORDER BY for mixed types
 * Enabling diagnostics for async query-type methods
 
 ### Control Plane Limitations:
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create Geospatial Index
 * Get the connection string
 * Get the minimum RU/s of a container
 
@@ -176,7 +174,7 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### Using The Async Client as a Workaround to Bulk
-While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][concurrency_sample] we have developed as a reference for a possible workaround. 
+While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][cosmos_concurrency_sample] we have developed as a reference for a possible workaround. 
 >[WARNING]
 > Using the asynchronous client for concurrent operations like shown in this sample will consume a lot of RUs very fast. We **strongly recommend** testing this out against the cosmos emulator first to verify your code works well and avoid incurring charges.
 
@@ -629,6 +627,107 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
+### Public Preview - Vector Embeddings and Vector Indexes
+We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
+search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
+before you can use them.
+
+Each vector embedding should have a path to the relevant vector field in your items being stored, a supported data type
+(float32, int8, uint8), the vector's dimensions, and the distance function being used for that embedding. Vectors indexed 
+with the flat index type can be at most 505 dimensions. Vectors indexed with the quantizedFlat index type can be at most 4,096 dimensions.
+A sample vector embedding policy would look like this:
+```python
+vector_embedding_policy = {
+    "vectorEmbeddings": [
+        {
+            "path": "/vector1",
+            "dataType": "float32",
+            "dimensions": 256,
+            "distanceFunction": "euclidean"
+        },
+        {
+            "path": "/vector2",
+            "dataType": "int8",
+            "dimensions": 200,
+            "distanceFunction": "dotproduct"
+        },
+        {
+            "path": "/vector3",
+            "dataType": "uint8",
+            "dimensions": 400,
+            "distanceFunction": "cosine"
+        }
+    ]
+}
+```
+
+Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
+the path to the relevant field to be used, and the type of index from the possible options (flat or quantizedFlat).
+A sample indexing policy with vector indexes would look like this:
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "compositeIndexes": [
+            [
+                {"path": "/numberField", "order": "ascending"},
+                {"path": "/stringField", "order": "descending"}
+            ]
+        ],
+        "spatialIndexes": [
+            {"path": "/location/*", "types": [
+                "Point",
+                "Polygon"]}
+        ],
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "flat"},
+            {"path": "/vector2", "type": "quantizedFlat"}
+        ]
+    }
+```
+You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
+The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
+```python
+database.create_container(id=container_id, partition_key=PartitionKey(path="/id"),
+                          indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
+```
+***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
+
+### Public Preview - Vector Search
+
+With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
+These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
+since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
+Since these queries are relatively expensive, the SDK sets a default limit of 50000 max items per query - if you'd like to raise that further, you
+can use the `AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH` environment variable to do so. However, be advised that queries with too many vector results
+may have additional latencies associated with searching in the service.
+The query syntax for these operations looks like this:
+```python
+VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>])
+```
+Embeddings 1 and 2 are the arrays of values for the relevant embeddings, `exact_search` is an optional boolean indicating whether
+to do an exact search vs. an approximate one (default value of false), and `specification` is an optional Json snippet with embedding
+specs that can include `dataType`, `dimensions` and `distanceFunction`. The specifications within the query will take precedence
+to any configurations previously set by a vector embedding policy.
+A sample vector search query would look something like this:
+```python
+    query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}]) AS " \
+            "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(embeddings_string, embeddings_string)
+```
+Or if you'd like to add the optional parameters to the vector distance, you could do this:
+```python
+    query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}], true, {{'dataType': 'float32' , 'distanceFunction': 'cosine'}}) AS " \
+            "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], true, {{'dataType': " \
+            "'float32', 'distanceFunction': 'cosine'}})".format(embeddings_string, embeddings_string)
+```
+The `embeddings_string` above would be your string made from your vector embeddings.
+You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
+
+*Note: For a limited time, if your query operates against a region or emulator that has not yet been updated the client might run into some issues
+not being able to recognize the new NonStreamingOrderBy capability that makes vector search possible.
+If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
+functionality and continue operating as usual.*
+
 ## Troubleshooting
 
 ### General
@@ -763,6 +862,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
 [cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/nosql/transactional-batch
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
+[cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
+[cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
 
 ## Contributing
 

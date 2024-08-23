@@ -11,7 +11,7 @@ FILE: sample_insert_delete_entities_async.py
 
 DESCRIPTION:
     These samples demonstrate the following: inserting entities into a table
-    and deleting tables from a table.
+    and deleting entities from a table.
 
 USAGE:
     python sample_insert_delete_entities_async.py
@@ -70,19 +70,19 @@ class InsertDeleteEntity(object):
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         # Create a table in case it does not already exist
-        # [START create_entity]
         async with table_client:
             try:
                 await table_client.create_table()
             except HttpResponseError:
                 print("Table already exists")
 
+            # [START create_entity]
             try:
                 resp = await table_client.create_entity(entity=self.entity)
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
-        # [END create_entity]
+            # [END create_entity]
 
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
@@ -92,16 +92,16 @@ class InsertDeleteEntity(object):
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
-        # [START delete_entity]
         async with table_client:
             try:
-                resp = await table_client.create_entity(entity=self.entity)
+                await table_client.create_entity(entity=self.entity)
             except ResourceExistsError:
                 print("Entity already exists!")
 
+            # [START delete_entity]
             await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
             print("Successfully deleted!")
-        # [END delete_entity]
+            # [END delete_entity]
 
     async def clean_up(self):
         from azure.data.tables.aio import TableServiceClient

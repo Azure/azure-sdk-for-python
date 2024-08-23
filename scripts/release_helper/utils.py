@@ -21,6 +21,7 @@ AUTO_PARSE_LABEL = 'auto-link'
 AUTO_CLOSE_LABEL = 'auto-close'
 MULTI_LINK_LABEL = 'MultiLink'
 INCONSISTENT_TAG = 'Inconsistent tag'
+TYPESPEC_LABEL = 'TypeSpec'
 
 _LOG = logging.getLogger(__name__)
 
@@ -72,7 +73,7 @@ def get_python_release_pipeline(output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash="", target_date=""):
+def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash="", target_date="", issue_owner=""):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -109,6 +110,10 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo
             },
             "TARGET_DATE": {
                 "value": target_date,
+                "isSecret": False
+            },
+            "ISSUE_OWNER": {
+                "value": issue_owner,
                 "isSecret": False
             }
         }

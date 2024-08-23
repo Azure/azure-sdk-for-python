@@ -458,7 +458,7 @@ class AgentPoolAvailableVersions(_serialization.Model):
         self.agent_pool_versions = agent_pool_versions
 
 
-class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_serialization.Model):
+class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_serialization.Model):  # pylint: disable=name-too-long
     """AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem.
 
     :ivar default: Whether this version is the default agent pool version.
@@ -532,7 +532,7 @@ class AgentPoolUpgradeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the agent pool upgrade profile.
     :vartype id: str
@@ -603,7 +603,7 @@ class AgentPoolUpgradeProfile(_serialization.Model):
         self.latest_node_image_version = latest_node_image_version
 
 
-class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):
+class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):  # pylint: disable=name-too-long
     """AgentPoolUpgradeProfilePropertiesUpgradesItem.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch).
@@ -727,7 +727,7 @@ class CloudErrorBody(_serialization.Model):
 
 class Components1Q1Og48SchemasManagedclusterAllof1(
     _serialization.Model
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Components1Q1Og48SchemasManagedclusterAllof1.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -795,7 +795,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -928,7 +928,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -959,7 +959,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
 
 class Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties(
     _serialization.Model
-):
+):  # pylint: disable=name-too-long
     """Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1028,7 +1028,7 @@ class UserAssignedIdentity(_serialization.Model):
 
 class ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties(
     UserAssignedIdentity
-):
+):  # pylint: disable=name-too-long
     """ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties.
 
     :ivar resource_id: The resource id of the user assigned identity.
@@ -1039,35 +1039,11 @@ class ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAd
     :vartype object_id: str
     """
 
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "object_id": {"key": "objectId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        object_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: The resource id of the user assigned identity.
-        :paramtype resource_id: str
-        :keyword client_id: The client id of the user assigned identity.
-        :paramtype client_id: str
-        :keyword object_id: The object id of the user assigned identity.
-        :paramtype object_id: str
-        """
-        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
-
 
 class ContainerServiceDiagnosticsProfile(_serialization.Model):
     """Profile for diagnostics on the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
     :vartype vm_diagnostics:
@@ -1095,7 +1071,7 @@ class ContainerServiceDiagnosticsProfile(_serialization.Model):
 class ContainerServiceLinuxProfile(_serialization.Model):
     """Profile for Linux VMs in the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: The administrator username to use for Linux VMs. Required.
     :vartype admin_username: str
@@ -1131,7 +1107,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
      and 5. The default value is 1. Known values are: 1, 3, and 5.
@@ -1418,7 +1394,7 @@ class ContainerServiceNetworkProfile(_serialization.Model):
 class ContainerServiceSshConfiguration(_serialization.Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. Only
      expect one key specified. Required.
@@ -1448,7 +1424,7 @@ class ContainerServiceSshConfiguration(_serialization.Model):
 class ContainerServiceSshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
      certificate must be in PEM format with or without headers. Required.
@@ -1478,7 +1454,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
     :vartype enabled: bool
@@ -1575,7 +1551,7 @@ class KubeletConfig(_serialization.Model):
     :ivar topology_manager_policy: Topology Manager policy to use.
     :vartype topology_manager_policy: str
     :ivar allowed_unsafe_sysctls: Allowlist of unsafe sysctls or unsafe sysctl patterns (ending in
-     ``*``\ ).
+     ``*``\\ ).
     :vartype allowed_unsafe_sysctls: list[str]
     :ivar fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled on
      the node.
@@ -1623,7 +1599,7 @@ class KubeletConfig(_serialization.Model):
         :keyword topology_manager_policy: Topology Manager policy to use.
         :paramtype topology_manager_policy: str
         :keyword allowed_unsafe_sysctls: Allowlist of unsafe sysctls or unsafe sysctl patterns (ending
-         in ``*``\ ).
+         in ``*``\\ ).
         :paramtype allowed_unsafe_sysctls: list[str]
         :keyword fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled
          on the node.
@@ -1693,7 +1669,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1744,7 +1720,7 @@ class ManagedCluster(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar identity: The identity of the managed cluster, if configured.
     :vartype identity: ~azure.mgmt.containerservice.v2020_11_01.models.ManagedClusterIdentity
@@ -1809,7 +1785,7 @@ class ManagedCluster(
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -1967,7 +1943,7 @@ class ManagedCluster(
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+         ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
         :keyword location: Resource location. Required.
         :paramtype location: str
         :keyword tags: Resource tags.
@@ -2106,7 +2082,7 @@ class ManagedClusterAccessProfile(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2163,7 +2139,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the add-on is enabled or not. Required.
     :vartype enabled: bool
@@ -2208,30 +2184,6 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     :ivar object_id: The object id of the user assigned identity.
     :vartype object_id: str
     """
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "object_id": {"key": "objectId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        object_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: The resource id of the user assigned identity.
-        :paramtype resource_id: str
-        :keyword client_id: The client id of the user assigned identity.
-        :paramtype client_id: str
-        :keyword object_id: The object id of the user assigned identity.
-        :paramtype object_id: str
-        """
-        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
 
 
 class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -2584,7 +2536,7 @@ class ManagedClusterAgentPoolProfile(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
      range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
@@ -3017,9 +2969,9 @@ class ManagedClusterIdentity(_serialization.Model):
     :ivar user_assigned_identities: The user identity associated with the managed cluster. This
      identity will be used in control plane and only one user assigned identity is allowed. The user
      identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -3059,9 +3011,9 @@ class ManagedClusterIdentity(_serialization.Model):
         :keyword user_assigned_identities: The user identity associated with the managed cluster. This
          identity will be used in control plane and only one user assigned identity is allowed. The user
          identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.containerservice.v2020_11_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -3188,7 +3140,7 @@ class ManagedClusterLoadBalancerProfile(_serialization.Model):
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
 
 
-class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
+class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):  # pylint: disable=name-too-long
     """Desired managed outbound IPs for the cluster load balancer.
 
     :ivar count: Desired number of outbound IP created/managed by Azure for the cluster load
@@ -3214,7 +3166,7 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
         self.count = count
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):  # pylint: disable=name-too-long
     """Desired outbound IP Prefix resources for the cluster load balancer.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -3238,7 +3190,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
         self.public_ip_prefixes = public_ip_prefixes
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):  # pylint: disable=name-too-long
     """Desired outbound IP resources for the cluster load balancer.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -3263,7 +3215,7 @@ class ManagedClusterPodIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the pod identity. Required.
     :vartype name: str
@@ -3316,7 +3268,7 @@ class ManagedClusterPodIdentity(_serialization.Model):
 class ManagedClusterPodIdentityException(_serialization.Model):
     """ManagedClusterPodIdentityException.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the pod identity exception. Required.
     :vartype name: str
@@ -3399,7 +3351,7 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
         self.user_assigned_identity_exceptions = user_assigned_identity_exceptions
 
 
-class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):
+class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedClusterPodIdentityProvisioningInfo.
 
     :ivar error: Pod identity assignment error (if any).
@@ -3422,7 +3374,7 @@ class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):
 class ManagedClusterPoolUpgradeProfile(_serialization.Model):
     """The list of available upgrade versions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch). Required.
     :vartype kubernetes_version: str
@@ -3476,7 +3428,7 @@ class ManagedClusterPoolUpgradeProfile(_serialization.Model):
         self.upgrades = upgrades
 
 
-class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
+class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedClusterPoolUpgradeProfileUpgradesItem.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch).
@@ -3504,7 +3456,9 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
         self.is_preview = is_preview
 
 
-class ManagedClusterPropertiesAutoScalerProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterPropertiesAutoScalerProfile(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups:
@@ -3638,7 +3592,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
     """Information about a service principal identity for the cluster to use for manipulating Azure
     APIs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_id: The ID for the service principal. Required.
     :vartype client_id: str
@@ -3704,7 +3658,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of upgrade profile.
     :vartype id: str
@@ -3764,7 +3718,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
 class ManagedClusterWindowsProfile(_serialization.Model):
     """Profile for Windows VMs in the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
      **restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
@@ -3778,7 +3732,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
      **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
      :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
@@ -3818,7 +3772,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
          :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
          **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
          conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
          :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str

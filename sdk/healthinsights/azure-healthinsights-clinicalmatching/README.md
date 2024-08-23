@@ -226,7 +226,6 @@ additional questions or comments.
 [health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview?branch=main
 [clinical_matching_docs]: https://learn.microsoft.com/azure/azure-health-insights/trial-matcher/overview
 [hi_pypi]: https://pypi.org/project/azure-healthinsights-clinicalmatching/
-[hi_pypi]: https://pypi.org/
 [product_docs]: https://learn.microsoft.com/azure/azure-health-insights/trial-matcher/
 [clinical_matching_api_documentation]: https://learn.microsoft.com/rest/api/cognitiveservices/healthinsights/trial-matcher
 [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples

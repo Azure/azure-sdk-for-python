@@ -102,6 +102,7 @@ async def test_tenant_id():
 
 async def test_auth_code_credential():
     client_id = "client id"
+    secret = "fake-client-secret"
     tenant_id = "tenant"
     expected_code = "auth code"
     redirect_uri = "https://localhost"
@@ -116,6 +117,7 @@ async def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "code": expected_code,
                     "grant_type": "authorization_code",
                     "redirect_uri": redirect_uri,
@@ -126,6 +128,7 @@ async def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "grant_type": "refresh_token",
                     "refresh_token": expected_refresh_token,
                     "scope": expected_scope,
@@ -138,6 +141,7 @@ async def test_auth_code_credential():
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
+        client_secret=secret,
         tenant_id=tenant_id,
         authorization_code=expected_code,
         redirect_uri=redirect_uri,
@@ -156,7 +160,7 @@ async def test_auth_code_credential():
     assert transport.send.call_count == 1
 
     # no auth code, no cached token -> credential should redeem refresh token
-    cached_access_token = cache.find(cache.CredentialType.ACCESS_TOKEN)[0]
+    cached_access_token = list(cache.search(cache.CredentialType.ACCESS_TOKEN))[0]
     cache.remove_at(cached_access_token)
     token = await credential.get_token(expected_scope)
     assert token.token == expected_access_token

@@ -12,14 +12,14 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_autodetect(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
         input_text_elements = ["Hello world"]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements)
+            response = await client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.score > 0.9
@@ -28,9 +28,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_language(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = [
@@ -38,7 +38,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         ]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements, language="th")
+            response = await client.find_sentence_boundaries(body=input_text_elements, language="th")
         assert response is not None
         expected_lengths = [78, 41, 110, 46]
         for i, expected_length in enumerate(expected_lengths):
@@ -47,16 +47,16 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_language_script(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = ["zhè shì gè cè shì。"]
 
         async with client:
             response = await client.find_sentence_boundaries(
-                request_body=input_text_elements, language="zh-Hans", script="Latn"
+                body=input_text_elements, language="zh-Hans", script="Latn"
             )
         assert response is not None
         assert response[0].sent_len[0] == 18
@@ -64,9 +64,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_multiple_languages(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = [
@@ -75,7 +75,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         ]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements)
+            response = await client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[1].detected_language.language == "ar"

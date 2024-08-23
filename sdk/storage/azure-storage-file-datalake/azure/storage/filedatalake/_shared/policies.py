@@ -12,12 +12,12 @@ import re
 import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
-        parse_qsl,
-        urlencode,
-        urlparse,
-        urlunparse,
+    parse_qsl,
+    urlencode,
+    urlparse,
+    urlunparse,
 )
 from wsgiref.handlers import format_date_time
 
@@ -28,21 +28,16 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     NetworkTraceLoggingPolicy,
     RequestHistory,
-    SansIOHTTPPolicy,
+    SansIOHTTPPolicy
 )
 
-from .authentication import StorageHttpChallenge
+from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
-
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
         PipelineRequest,
         PipelineResponse
     )
@@ -52,7 +47,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, str):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
@@ -95,10 +90,14 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
         if status in [501, 505]:
             return False
         return True
+    return False
+
+
+def is_checksum_retry(response):
     # retry if invalid content md5
     if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
         computed_md5 = response.http_request.headers.get('content-md5', None) or \
-                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+                            encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
         if response.http_response.headers['content-md5'] != computed_md5:
             return True
     return False
@@ -301,7 +300,7 @@ class StorageResponseHook(HTTPPolicy):
 
         response = self.next.send(request)
 
-        will_retry = is_retry(response, request.context.options.get('mode'))
+        will_retry = is_retry(response, request.context.options.get('mode')) or is_checksum_retry(response)
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)
@@ -451,7 +450,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -471,12 +470,14 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param PipelineRequest request: A pipeline request object.
-        :param Optional[PipelineResponse] response: A pipeline response object.
+        :param dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: A pipeline response object.
+        :type response: ~azure.core.pipeline.PipelineResponse or None
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Optional[AzureError]
+        :type error: ~azure.core.exceptions.AzureError or None
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -527,7 +528,7 @@ class StorageRetryPolicy(HTTPPolicy):
         while retries_remaining:
             try:
                 response = self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
+                if is_retry(response, retry_settings['mode']) or is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
@@ -542,6 +543,8 @@ class StorageRetryPolicy(HTTPPolicy):
                         continue
                 break
             except AzureError as err:
+                if isinstance(err, AzureSigningError):
+                    raise
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
@@ -608,7 +611,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -660,7 +663,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

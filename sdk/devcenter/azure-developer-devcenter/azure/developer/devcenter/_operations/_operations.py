@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------
 import datetime
 from io import IOBase
+import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -28,6 +29,8 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .. import models as _models
+from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import DevCenterClientMixinABC
 
@@ -43,9 +46,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_dev_center_list_projects_request(
-    *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_projects_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -57,10 +58,6 @@ def build_dev_center_list_projects_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -92,9 +89,7 @@ def build_dev_center_get_project_request(project_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_pools_request(
-    project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_pools_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -111,10 +106,6 @@ def build_dev_center_list_pools_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -147,9 +138,7 @@ def build_dev_center_get_pool_request(project_name: str, pool_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_schedules_request(
-    project_name: str, pool_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_schedules_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -167,10 +156,6 @@ def build_dev_center_list_schedules_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -206,9 +191,7 @@ def build_dev_center_get_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-long
-    *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_all_dev_boxes_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -220,10 +203,6 @@ def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -232,7 +211,7 @@ def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-lon
 
 
 def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
-    user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    user_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -250,10 +229,6 @@ def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -261,9 +236,7 @@ def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_dev_boxes_request(
-    project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_dev_boxes_request(project_name: str, user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -281,10 +254,6 @@ def build_dev_center_list_dev_boxes_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -344,9 +313,9 @@ def build_dev_center_create_dev_box_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -553,9 +522,12 @@ def build_dev_center_get_dev_box_action_request(  # pylint: disable=name-too-lon
 def build_dev_center_skip_dev_box_action_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/projects/{projectName}/users/{userId}/devboxes/{devBoxName}/actions/{actionName}:skip"
     path_format_arguments = {
@@ -570,7 +542,10 @@ def build_dev_center_skip_dev_box_action_request(  # pylint: disable=name-too-lo
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_dev_center_delay_dev_box_action_request(  # pylint: disable=name-too-long
@@ -639,7 +614,7 @@ def build_dev_center_delay_all_dev_box_actions_request(  # pylint: disable=name-
 
 
 def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -657,8 +632,6 @@ def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -667,7 +640,7 @@ def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-
 
 
 def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
-    project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, user_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -686,8 +659,6 @@ def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -747,9 +718,9 @@ def build_dev_center_create_or_update_environment_request(  # pylint: disable=na
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -782,9 +753,7 @@ def build_dev_center_delete_environment_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_catalogs_request(
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_catalogs_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -801,8 +770,6 @@ def build_dev_center_list_catalogs_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -836,7 +803,7 @@ def build_dev_center_get_catalog_request(project_name: str, catalog_name: str, *
 
 
 def build_dev_center_list_environment_definitions_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -854,8 +821,6 @@ def build_dev_center_list_environment_definitions_request(  # pylint: disable=na
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -864,7 +829,7 @@ def build_dev_center_list_environment_definitions_request(  # pylint: disable=na
 
 
 def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
-    project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, catalog_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -883,8 +848,6 @@ def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -921,7 +884,7 @@ def build_dev_center_get_environment_definition_request(  # pylint: disable=name
 
 
 def build_dev_center_list_environment_types_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -939,8 +902,6 @@ def build_dev_center_list_environment_types_request(  # pylint: disable=name-too
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -949,19 +910,14 @@ def build_dev_center_list_environment_types_request(  # pylint: disable=name-too
 
 
 class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disable=too-many-public-methods
+
     @distributed_trace
-    def list_projects(
-        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_projects(self, **kwargs: Any) -> Iterable["_models.Project"]:
+        # pylint: disable=line-too-long
         """Lists all projects.
 
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Project
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Project]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -978,9 +934,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Project]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -992,8 +948,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             if not next_link:
 
                 _request = build_dev_center_list_projects_request(
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1029,7 +983,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Project], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1054,15 +1008,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_project(self, project_name: str, **kwargs: Any) -> JSON:
+    def get_project(self, project_name: str, **kwargs: Any) -> _models.Project:
+        # pylint: disable=line-too-long
         """Gets a project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: Project. The Project is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.Project
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1076,7 +1029,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       number of Dev Boxes a single user can create across all pools in the project.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1087,7 +1040,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Project] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_project_request(
             project_name=project_name,
@@ -1116,31 +1069,22 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Project, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_pools(
-        self, project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_pools(self, project_name: str, **kwargs: Any) -> Iterable["_models.Pool"]:
+        # pylint: disable=line-too-long
         """Lists available pools.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Pool
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1157,7 +1101,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -1197,9 +1152,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Pool]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1212,8 +1167,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_pools_request(
                     project_name=project_name,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1249,7 +1202,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Pool], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1274,17 +1227,16 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_pool(self, project_name: str, pool_name: str, **kwargs: Any) -> JSON:
+    def get_pool(self, project_name: str, pool_name: str, **kwargs: Any) -> _models.Pool:
+        # pylint: disable=line-too-long
         """Gets a pool.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param pool_name: The name of a pool of Dev Boxes. Required.
+        :param pool_name: Pool name. Required.
         :type pool_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: Pool. The Pool is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.Pool
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1301,7 +1253,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -1338,7 +1301,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1349,7 +1312,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Pool] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_pool_request(
             project_name=project_name,
@@ -1379,39 +1342,23 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Pool, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_schedules(
-        self,
-        project_name: str,
-        pool_name: str,
-        *,
-        filter: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> Iterable[JSON]:
-        """Lists available schedules for a pool.
+    def list_schedules(self, project_name: str, pool_name: str, **kwargs: Any) -> Iterable["_models.Schedule"]:
+        """Lists all schedules within a pool that are configured by your project administrator.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
         :param pool_name: The name of a pool of Dev Boxes. Required.
         :type pool_name: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Schedule
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1433,9 +1380,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Schedule]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1449,8 +1396,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_schedules_request(
                     project_name=project_name,
                     pool_name=pool_name,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1486,7 +1431,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Schedule], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1511,19 +1456,17 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_schedule(self, project_name: str, pool_name: str, schedule_name: str, **kwargs: Any) -> JSON:
+    def get_schedule(self, project_name: str, pool_name: str, schedule_name: str, **kwargs: Any) -> _models.Schedule:
         """Gets a schedule.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param pool_name: The name of a pool of Dev Boxes. Required.
+        :param pool_name: Pool name. Required.
         :type pool_name: str
-        :param schedule_name: The name of a schedule. Required.
+        :param schedule_name: Display name for the Schedule. Required.
         :type schedule_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1542,7 +1485,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       "StopDevBox"
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1553,7 +1496,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_schedule_request(
             project_name=project_name,
@@ -1584,29 +1527,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Schedule, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all_dev_boxes(
-        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_all_dev_boxes(self, **kwargs: Any) -> Iterable["_models.DevBox"]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes that the caller has access to in the DevCenter.
 
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of DevBox
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1639,7 +1573,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -1668,7 +1613,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -1684,9 +1631,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DevBox]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1698,8 +1645,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             if not next_link:
 
                 _request = build_dev_center_list_all_dev_boxes_request(
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1735,7 +1680,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.DevBox], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1760,21 +1705,15 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all_dev_boxes_by_user(
-        self, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_all_dev_boxes_by_user(self, user_id: str, **kwargs: Any) -> Iterable["_models.DevBox"]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes in the Dev Center for a particular user.
 
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of DevBox
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1807,7 +1746,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -1836,7 +1786,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -1852,9 +1804,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DevBox]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1867,8 +1819,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_all_dev_boxes_by_user_request(
                     user_id=user_id,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1904,7 +1854,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.DevBox], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1929,9 +1879,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_dev_boxes(
-        self, project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_dev_boxes(self, project_name: str, user_id: str, **kwargs: Any) -> Iterable["_models.DevBox"]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes in the project for a particular user.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1939,13 +1888,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of DevBox
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1978,7 +1922,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2007,7 +1962,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2023,9 +1980,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DevBox]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2039,8 +1996,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_dev_boxes_request(
                     project_name=project_name,
                     user_id=user_id,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2076,7 +2031,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.DevBox], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2101,20 +2056,19 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_dev_box(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> JSON:
+    def get_dev_box(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> _models.DevBox:
+        # pylint: disable=line-too-long
         """Gets a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: DevBox. The DevBox is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.DevBox
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2147,7 +2101,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2176,7 +2141,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2189,7 +2156,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       assigned to.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2200,7 +2167,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DevBox] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_dev_box_request(
             project_name=project_name,
@@ -2231,20 +2198,22 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.DevBox, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     def _create_dev_box_initial(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
+        self,
+        project_name: str,
+        user_id: str,
+        dev_box_name: str,
+        body: Union[_models.DevBox, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> JSON:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2259,12 +2228,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
-        _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = body
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dev_center_create_dev_box_request(
             project_name=project_name,
@@ -2272,7 +2240,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             dev_box_name=dev_box_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2297,10 +2264,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         response_headers = {}
         if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(JSON, response.json())
 
         if response.status_code == 201:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -2308,15 +2272,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(JSON, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_dev_box(
@@ -2324,34 +2285,30 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        body: JSON,
+        body: _models.DevBox,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.DevBox]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param body: Represents a environment. Required.
-        :type body: JSON
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: ~azure.developer.devcenter.models.DevBox
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns DevBox. The DevBox is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2384,7 +2341,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2413,7 +2381,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2453,7 +2423,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2482,7 +2463,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2502,34 +2485,30 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        body: IO,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.DevBox]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param body: Represents a environment. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns DevBox. The DevBox is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2562,7 +2541,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2591,7 +2581,127 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
+                    "storageProfile": {
+                        "osDisk": {
+                            "diskSizeGB": 0  # Optional. The size of the OS Disk in
+                              gigabytes.
+                        }
+                    },
+                    "uniqueId": "str",  # Optional. A unique identifier for the Dev Box. This is
+                      a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
+                    "user": "str"  # Optional. The AAD object id of the user this Dev Box is
+                      assigned to.
+                }
+        """
+
+    @overload
+    def begin_create_dev_box(
+        self,
+        project_name: str,
+        user_id: str,
+        dev_box_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DevBox]:
+        # pylint: disable=line-too-long
+        """Creates or replaces a Dev Box.
+
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
+        :type project_name: str
+        :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
+         authentication context. Required.
+        :type user_id: str
+        :param dev_box_name: The name of a Dev Box. Required.
+        :type dev_box_name: str
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DevBox. The DevBox is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.DevBox]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "name": "str",  # Display name for the Dev Box. Required.
+                    "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
+                      Required.
+                    "actionState": "str",  # Optional. The current action state of the Dev Box.
+                      This is state is based on previous action performed by user.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
+                      Box.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "hardwareProfile": {
+                        "memoryGB": 0,  # Optional. The amount of memory available for the
+                          Dev Box.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
+                        "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
+                          Box.
+                    },
+                    "hibernateSupport": "str",  # Optional. Indicates whether hibernate is
+                      enabled/disabled or unknown. Known values are: "Enabled", "Disabled", and
+                      "OsUnsupported".
+                    "imageReference": {
+                        "name": "str",  # Optional. The name of the image used.
+                        "operatingSystem": "str",  # Optional. The operating system of the
+                          image.
+                        "osBuildNumber": "str",  # Optional. The operating system build
+                          number of the image.
+                        "publishedDate": "2020-02-20 00:00:00",  # Optional. The datetime
+                          that the backing image version was published.
+                        "version": "str"  # Optional. The version of the image.
+                    },
+                    "localAdministrator": "str",  # Optional. Indicates whether the owner of the
+                      Dev Box is a local administrator. Known values are: "Enabled" and "Disabled".
+                    "location": "str",  # Optional. Azure region where this Dev Box is located.
+                      This will be the same region as the Virtual Network it is attached to.
+                    "osType": "str",  # Optional. The operating system type of this Dev Box.
+                      "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
+                    "projectName": "str",  # Optional. Name of the project this Dev Box belongs
+                      to.
+                    "provisioningState": "str",  # Optional. The current provisioning state of
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2607,31 +2717,30 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def begin_create_dev_box(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[JSON]:
+        self,
+        project_name: str,
+        user_id: str,
+        dev_box_name: str,
+        body: Union[_models.DevBox, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.DevBox]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param body: Represents a environment. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Is one of the following types:
+         DevBox, JSON, IO[bytes] Required.
+        :type body: ~azure.developer.devcenter.models.DevBox or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns DevBox. The DevBox is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2664,7 +2773,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2693,7 +2813,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2733,7 +2855,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "hardwareProfile": {
                         "memoryGB": 0,  # Optional. The amount of memory available for the
                           Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
+                        "skuName": "str",  # Optional. The name of the SKU. Known values are:
+                          "general_i_8c32gb256ssd_v2", "general_i_8c32gb512ssd_v2",
+                          "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+                          "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2",
+                          "general_i_16c64gb1024ssd_v2", "general_i_16c64gb2048ssd_v2",
+                          "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+                          "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2",
+                          "general_a_8c32gb512ssd_v2", "general_a_8c32gb1024ssd_v2",
+                          "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+                          "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2",
+                          "general_a_16c64gb2048ssd_v2", "general_a_32c128gb512ssd_v2",
+                          "general_a_32c128gb1024ssd_v2", and "general_a_32c128gb2048ssd_v2".
                         "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
                           Box.
                     },
@@ -2762,7 +2895,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
+                      the Dev Box. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Deleting", "Updating", "Starting", "Stopping", "Provisioning",
+                      "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
                     "storageProfile": {
                         "osDisk": {
                             "diskSizeGB": 0  # Optional. The size of the OS Disk in
@@ -2779,7 +2914,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DevBox] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -2799,10 +2934,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.DevBox, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -2820,18 +2952,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.DevBox].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.DevBox](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_dev_box_initial(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2878,10 +3012,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(JSON, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2891,7 +3022,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     @distributed_trace
     def begin_delete_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.OperationDetails]:
+        # pylint: disable=line-too-long
         """Deletes a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -2901,15 +3033,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2917,15 +3043,26 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
-                        "code": "str",  # Optional. The error code.
-                        "message": "str"  # Optional. The error message.
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -2938,7 +3075,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -2962,10 +3099,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.OperationDetails, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2983,16 +3117,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.OperationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.OperationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _start_dev_box_initial(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> JSON:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3034,36 +3170,30 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = _deserialize(JSON, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_start_dev_box(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> LROPoller[JSON]:
+    def begin_start_dev_box(
+        self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
+    ) -> LROPoller[_models.OperationDetails]:
+        # pylint: disable=line-too-long
         """Starts a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3071,15 +3201,26 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
-                        "code": "str",  # Optional. The error code.
-                        "message": "str"  # Optional. The error message.
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -3092,7 +3233,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3115,10 +3256,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.OperationDetails, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3136,18 +3274,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.OperationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.OperationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _stop_dev_box_initial(
         self, project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
     ) -> JSON:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3190,40 +3330,32 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = _deserialize(JSON, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_stop_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.OperationDetails]:
+        # pylint: disable=line-too-long
         """Stops a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :keyword hibernate: Optional parameter to hibernate the dev box. Default value is None.
         :paramtype hibernate: bool
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3231,15 +3363,26 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
-                        "code": "str",  # Optional. The error code.
-                        "message": "str"  # Optional. The error message.
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -3252,7 +3395,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3276,10 +3419,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.OperationDetails, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3297,16 +3437,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.OperationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.OperationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _restart_dev_box_initial(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> JSON:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3348,38 +3490,30 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = _deserialize(JSON, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_restart_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.OperationDetails]:
+        # pylint: disable=line-too-long
         """Restarts a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3387,15 +3521,26 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
-                        "code": "str",  # Optional. The error code.
-                        "message": "str"  # Optional. The error message.
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -3408,7 +3553,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3431,10 +3576,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.OperationDetails, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3452,16 +3594,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.OperationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.OperationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
-    def get_remote_connection(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> JSON:
+    def get_remote_connection(
+        self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
+    ) -> _models.RemoteConnection:
         """Gets RDP Connection info.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -3471,10 +3617,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: RemoteConnection. The RemoteConnection is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.RemoteConnection
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3487,7 +3631,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "webUrl": "str"  # Optional. URL to open a browser based RDP session.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3498,7 +3642,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RemoteConnection] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_remote_connection_request(
             project_name=project_name,
@@ -3529,29 +3673,28 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.RemoteConnection, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_dev_box_actions(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> Iterable[JSON]:
+    def list_dev_box_actions(
+        self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
+    ) -> Iterable["_models.DevBoxAction"]:
         """Lists actions on a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of DevBoxAction
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBoxAction]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3574,9 +3717,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DevBoxAction]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3626,7 +3769,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.DevBoxAction], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3653,22 +3796,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     @distributed_trace
     def get_dev_box_action(
         self, project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
-    ) -> JSON:
+    ) -> _models.DevBoxAction:
         """Gets an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: DevBoxAction. The DevBoxAction is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.DevBoxAction
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3688,7 +3829,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       the action could occur (UTC).
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3699,7 +3840,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DevBoxAction] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_dev_box_action_request(
             project_name=project_name,
@@ -3731,15 +3872,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.DevBoxAction, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def skip_dev_box_action(  # pylint: disable=inconsistent-return-statements
@@ -3747,22 +3885,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     ) -> None:
         """Skips an occurrence of an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3789,7 +3925,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3815,24 +3951,22 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         *,
         delay_until: datetime.datetime,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.DevBoxAction:
         """Delays the occurrence of an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: DevBoxAction. The DevBoxAction is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.DevBoxAction
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3852,7 +3986,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       the action could occur (UTC).
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3863,7 +3997,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DevBoxAction] = kwargs.pop("cls", None)
 
         _request = build_dev_center_delay_dev_box_action_request(
             project_name=project_name,
@@ -3896,33 +4030,31 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.DevBoxAction, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delay_all_dev_box_actions(
         self, project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> Iterable["_models.DevBoxActionDelayResult"]:
+        # pylint: disable=line-too-long
         """Delays all actions.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of DevBoxActionDelayResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBoxActionDelayResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3966,9 +4098,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DevBoxActionDelayResult]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4019,7 +4151,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.DevBoxActionDelayResult], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4044,16 +4176,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all_environments(self, project_name: str, *, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
+    def list_all_environments(self, project_name: str, **kwargs: Any) -> Iterable["_models.Environment"]:
+        # pylint: disable=line-too-long
         """Lists the environments for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Environment
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4065,6 +4195,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4080,10 +4211,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4093,9 +4227,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Environment]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4108,7 +4242,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_all_environments_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4144,7 +4277,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Environment], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4169,9 +4302,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_environments(
-        self, project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_environments(self, project_name: str, user_id: str, **kwargs: Any) -> Iterable["_models.Environment"]:
+        # pylint: disable=line-too-long
         """Lists the environments for a project and user.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4179,11 +4311,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Environment
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4195,6 +4324,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4210,10 +4340,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4223,9 +4356,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Environment]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4239,7 +4372,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_environments_request(
                     project_name=project_name,
                     user_id=user_id,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4275,7 +4407,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Environment], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4300,20 +4432,21 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_environment(self, project_name: str, user_id: str, environment_name: str, **kwargs: Any) -> JSON:
+    def get_environment(
+        self, project_name: str, user_id: str, environment_name: str, **kwargs: Any
+    ) -> _models.Environment:
+        # pylint: disable=line-too-long
         """Gets an environment.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param environment_name: The name of the environment. Required.
+        :param environment_name: Environment name. Required.
         :type environment_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: Environment. The Environment is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.Environment
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4325,6 +4458,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4340,17 +4474,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
                       Environment.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4361,7 +4498,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Environment] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_environment_request(
             project_name=project_name,
@@ -4392,20 +4529,22 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Environment, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     def _create_or_update_environment_initial(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
+        self,
+        project_name: str,
+        user_id: str,
+        environment_name: str,
+        body: Union[_models.Environment, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> JSON:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4420,12 +4559,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
-        _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = body
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dev_center_create_or_update_environment_request(
             project_name=project_name,
@@ -4433,7 +4571,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             environment_name=environment_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4459,15 +4596,117 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = _deserialize(JSON, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update_environment(
+        self,
+        project_name: str,
+        user_id: str,
+        environment_name: str,
+        body: _models.Environment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Environment]:
+        # pylint: disable=line-too-long
+        """Creates or updates an environment.
+
+        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :type project_name: str
+        :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
+         authentication context. Required.
+        :type user_id: str
+        :param environment_name: The name of the environment. Required.
+        :type environment_name: str
+        :param body: Represents an environment. Required.
+        :type body: ~azure.developer.devcenter.models.Environment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Environment. The Environment is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.Environment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "catalogName": "str",  # Name of the catalog. Required.
+                    "environmentDefinitionName": "str",  # Name of the environment definition.
+                      Required.
+                    "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
+                    "provisioningState": "str",  # Optional. The provisioning state of the
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
+                    "resourceGroupId": "str",  # Optional. The identifier of the resource group
+                      containing the environment's resources.
+                    "user": "str"  # Optional. The AAD object id of the owner of this
+                      Environment.
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "catalogName": "str",  # Name of the catalog. Required.
+                    "environmentDefinitionName": "str",  # Name of the environment definition.
+                      Required.
+                    "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
+                    "provisioningState": "str",  # Optional. The provisioning state of the
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
+                    "resourceGroupId": "str",  # Optional. The identifier of the resource group
+                      containing the environment's resources.
+                    "user": "str"  # Optional. The AAD object id of the owner of this
+                      Environment.
+                }
+        """
 
     @overload
     def begin_create_or_update_environment(
@@ -4479,7 +4718,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.Environment]:
+        # pylint: disable=line-too-long
         """Creates or updates an environment.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4494,50 +4734,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns Environment. The Environment is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "catalogName": "str",  # Name of the catalog. Required.
-                    "environmentDefinitionName": "str",  # Name of the environment definition.
-                      Required.
-                    "environmentType": "str",  # Environment type. Required.
-                    "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
-                            "innererror": ...
-                        },
-                        "target": "str"  # Optional. The target of the error.
-                    },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
-                    "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
-                    "resourceGroupId": "str",  # Optional. The identifier of the resource group
-                      containing the environment's resources.
-                    "user": "str"  # Optional. The AAD object id of the owner of this
-                      Environment.
-                }
 
                 # response body for status code(s): 201
                 response == {
@@ -4545,6 +4748,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4560,10 +4764,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4577,11 +4784,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         environment_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.Environment]:
+        # pylint: disable=line-too-long
         """Creates or updates an environment.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4592,19 +4800,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
         :param body: Represents an environment. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns Environment. The Environment is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4616,6 +4818,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4631,10 +4834,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4644,8 +4850,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def begin_create_or_update_environment(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[JSON]:
+        self,
+        project_name: str,
+        user_id: str,
+        environment_name: str,
+        body: Union[_models.Environment, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Environment]:
+        # pylint: disable=line-too-long
         """Creates or updates an environment.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4655,20 +4867,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :param body: Represents an environment. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :param body: Represents an environment. Is one of the following types: Environment, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.developer.devcenter.models.Environment or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns Environment. The Environment is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4680,6 +4884,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4695,10 +4900,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4711,6 +4919,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4726,10 +4935,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
+                      environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
+                      "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
+                      "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
                     "resourceGroupId": "str",  # Optional. The identifier of the resource group
                       containing the environment's resources.
                     "user": "str"  # Optional. The AAD object id of the owner of this
@@ -4740,7 +4952,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Environment] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -4765,10 +4977,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Environment, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -4786,18 +4995,20 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.Environment].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.Environment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_environment_initial(
         self, project_name: str, user_id: str, environment_name: str, **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4844,10 +5055,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(JSON, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4857,7 +5065,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     @distributed_trace
     def begin_delete_environment(
         self, project_name: str, user_id: str, environment_name: str, **kwargs: Any
-    ) -> LROPoller[JSON]:
+    ) -> LROPoller[_models.OperationDetails]:
+        # pylint: disable=line-too-long
         """Deletes an environment and all its associated resources.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4867,15 +5076,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4883,15 +5086,26 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
-                        "code": "str",  # Optional. The error code.
-                        "message": "str"  # Optional. The error message.
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...
+                        },
+                        "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -4904,7 +5118,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -4928,10 +5142,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.OperationDetails, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -4949,25 +5160,24 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[JSON].from_continuation_token(
+            return LROPoller[_models.OperationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.OperationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
-    def list_catalogs(self, project_name: str, *, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
+    def list_catalogs(self, project_name: str, **kwargs: Any) -> Iterable["_models.Catalog"]:
         """Lists all of the catalogs available for a project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of Catalog
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4981,9 +5191,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Catalog]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4996,7 +5206,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_catalogs_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5032,7 +5241,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.Catalog], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5057,17 +5266,15 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_catalog(self, project_name: str, catalog_name: str, **kwargs: Any) -> JSON:
+    def get_catalog(self, project_name: str, catalog_name: str, **kwargs: Any) -> _models.Catalog:
         """Gets the specified catalog within the project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param catalog_name: The name of the catalog. Required.
+        :param catalog_name: Name of the catalog. Required.
         :type catalog_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: Catalog. The Catalog is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5078,7 +5285,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str"  # Name of the catalog. Required.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5089,7 +5296,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_catalog_request(
             project_name=project_name,
@@ -5119,29 +5326,24 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.Catalog, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_environment_definitions(
-        self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+        self, project_name: str, **kwargs: Any
+    ) -> Iterable["_models.EnvironmentDefinition"]:
+        # pylint: disable=line-too-long
         """Lists all environment definitions available for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of EnvironmentDefinition
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5183,9 +5385,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.EnvironmentDefinition]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5198,7 +5400,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_environment_definitions_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5234,7 +5435,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.EnvironmentDefinition], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5260,19 +5461,17 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def list_environment_definitions_by_catalog(
-        self, project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+        self, project_name: str, catalog_name: str, **kwargs: Any
+    ) -> Iterable["_models.EnvironmentDefinition"]:
+        # pylint: disable=line-too-long
         """Lists all environment definitions available within a catalog.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
         :param catalog_name: The name of the catalog. Required.
         :type catalog_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of EnvironmentDefinition
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5314,9 +5513,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.EnvironmentDefinition]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5330,7 +5529,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_environment_definitions_by_catalog_request(
                     project_name=project_name,
                     catalog_name=catalog_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5366,7 +5564,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.EnvironmentDefinition], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5393,19 +5591,18 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     @distributed_trace
     def get_environment_definition(
         self, project_name: str, catalog_name: str, definition_name: str, **kwargs: Any
-    ) -> JSON:
+    ) -> _models.EnvironmentDefinition:
+        # pylint: disable=line-too-long
         """Get an environment definition from a catalog.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param catalog_name: The name of the catalog. Required.
+        :param catalog_name: Name of the catalog. Required.
         :type catalog_name: str
-        :param definition_name: The name of the environment definition. Required.
+        :param definition_name: Name of the environment definition. Required.
         :type definition_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: JSON object
-        :rtype: JSON
+        :return: EnvironmentDefinition. The EnvironmentDefinition is compatible with MutableMapping
+        :rtype: ~azure.developer.devcenter.models.EnvironmentDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5444,7 +5641,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       entrypoint file.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5455,7 +5652,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EnvironmentDefinition] = kwargs.pop("cls", None)
 
         _request = build_dev_center_get_environment_definition_request(
             project_name=project_name,
@@ -5486,27 +5683,22 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.EnvironmentDefinition, response.json())
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_environment_types(self, project_name: str, *, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
+    def list_environment_types(self, project_name: str, **kwargs: Any) -> Iterable["_models.EnvironmentType"]:
+        # pylint: disable=line-too-long
         """Lists all environment types configured for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :return: An iterator like instance of EnvironmentType
+        :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentType]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5525,9 +5717,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.EnvironmentType]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5540,7 +5732,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_environment_types_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5576,7 +5767,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            list_of_elem = _deserialize(List[_models.EnvironmentType], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

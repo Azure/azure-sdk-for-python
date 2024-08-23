@@ -1,5 +1,3 @@
 [tool.azure-sdk-build]
 pyright = false
-verifytypes = false
-ci_enabled = false
-strict_sphinx = true
+ci_enabled = true

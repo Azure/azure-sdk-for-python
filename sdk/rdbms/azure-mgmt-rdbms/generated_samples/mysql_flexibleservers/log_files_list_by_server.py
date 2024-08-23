@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
 """
@@ -37,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/LogFiles/preview/2023-06-01-preview/examples/LogFilesListByServer.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/LogFiles/stable/2023-12-30/examples/LogFilesListByServer.json
 if __name__ == "__main__":
     main()

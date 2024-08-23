@@ -22,6 +22,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = 'eastus2'
 
+@pytest.mark.live_test_only
 class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -308,8 +309,9 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.gallery_images.begin_delete(resource_group.name, GALLERY_NAME, IMAGE_NAME)
         result = result.result()
 
-        import time
-        time.sleep(180)
+        if self.is_live:
+          import time
+          time.sleep(180)
 
         # TODO: need finish
         # # Delete a gallery Application Version.[delete]

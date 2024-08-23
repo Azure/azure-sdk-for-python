@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
-../azure-storage-blob
+-e ../../core/azure-core
 -e ../../identity/azure-identity
+-e ../azure-storage-blob
 aiohttp>=3.0

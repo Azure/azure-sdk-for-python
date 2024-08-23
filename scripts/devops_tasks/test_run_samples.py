@@ -79,6 +79,11 @@ TIMEOUT_SAMPLES = {
 
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
+    "azure-appconfiguration-provider": [
+        "key_vault_reference_customized_clients_sample.py",
+        "aad_sample.py",
+        "key_vault_reference_sample.py"
+    ],
     "azure-ai-ml": [
         "ml_samples_authentication_sovereign_cloud.py"
     ],
@@ -91,6 +96,7 @@ IGNORED_SAMPLES = {
     ],
     "azure-eventhub": [
         "client_identity_authentication.py",    # TODO: remove after fixing issue #29177
+        "client_identity_authentication_async.py",    # TODO: remove after fixing issue #29177
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "connection_to_custom_endpoint_address_async.py",

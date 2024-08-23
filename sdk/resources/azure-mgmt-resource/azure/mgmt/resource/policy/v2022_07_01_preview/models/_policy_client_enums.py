@@ -17,7 +17,7 @@ class AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This option will validate the exemption is at or under the assignment scope."""
     DO_NOT_VALIDATE = "DoNotValidate"
     """This option will bypass the validation the exemption scope is at or under the policy assignment
-    #: scope."""
+    scope."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -36,7 +36,7 @@ class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This category of exemptions usually means the scope is not applicable for the policy."""
     MITIGATED = "Mitigated"
     """This category of exemptions usually means the mitigation actions have been applied to the
-    #: scope."""
+    scope."""
 
 
 class SelectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

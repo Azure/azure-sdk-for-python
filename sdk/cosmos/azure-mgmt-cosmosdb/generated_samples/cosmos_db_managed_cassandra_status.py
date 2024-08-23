@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 """
@@ -26,7 +27,7 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 def main():
     client = CosmosDBManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="subid",
     )
 
     response = client.cassandra_clusters.status(
@@ -36,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-02-15-preview/examples/CosmosDBManagedCassandraStatus.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBManagedCassandraStatus.json
 if __name__ == "__main__":
     main()

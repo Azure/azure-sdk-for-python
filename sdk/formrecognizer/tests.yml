@@ -14,7 +14,9 @@ extends:
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
         Prod:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           Location: $(LOCATION)
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)

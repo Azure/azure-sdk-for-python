@@ -20,13 +20,11 @@ USAGE:
     2) OAUTH_STORAGE_ACCOUNT_NAME - the oauth storage account name
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
-    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
-    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
-    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
 """
 
 
 import os
+import sys
 import asyncio
 
 class AuthSamplesAsync(object):
@@ -39,11 +37,12 @@ class AuthSamplesAsync(object):
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
     shared_access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
-    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
-    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     async def auth_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_connection_string_async")
+            sys.exit(1)
         # [START auth_from_connection_string]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -62,6 +61,10 @@ class AuthSamplesAsync(object):
         # [END auth_from_connection_string_blob]
 
     async def auth_shared_key_async(self):
+        if self.shared_access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: auth_shared_key_async")
+            sys.exit(1)
         # [START create_blob_service_client]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
@@ -80,22 +83,11 @@ class AuthSamplesAsync(object):
         blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
-    async def auth_active_directory_async(self):
-        # [START create_blob_service_client_oauth]
-        # Get a token credential for authentication
-        from azure.identity.aio import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_tenant_id,
-            self.active_directory_application_id,
-            self.active_directory_application_secret
-        )
-
-        # Instantiate a BlobServiceClient using a token credential
-        from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient(account_url=self.oauth_url, credential=token_credential)
-        # [END create_blob_service_client_oauth]
-
     async def auth_shared_access_signature_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_shared_access_signature_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -115,7 +107,7 @@ class AuthSamplesAsync(object):
         # [END create_sas_token]
 
     async def auth_default_azure_credential(self):
-        # [START create_blob_service_client_oauth_default_credential]
+        # [START create_blob_service_client_oauth]
         # Get a credential for authentication
         # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
         # For example user (who must be an Azure Event Hubs Data Owner role) to be logged in can be specified by the environment variable AZURE_USERNAME
@@ -130,7 +122,7 @@ class AuthSamplesAsync(object):
             account_url=self.oauth_url,
             credential=default_credential
         )
-        # [END create_blob_service_client_oauth_default_credential]
+        # [END create_blob_service_client_oauth]
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_service_properties()
@@ -138,7 +130,6 @@ class AuthSamplesAsync(object):
 async def main():
     sample = AuthSamplesAsync()
     await sample.auth_connection_string_async()
-    await sample.auth_active_directory_async()
     await sample.auth_shared_access_signature_async()
     await sample.auth_blob_url_async()
     await sample.auth_default_azure_credential()

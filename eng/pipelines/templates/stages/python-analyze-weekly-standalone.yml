@@ -10,7 +10,7 @@ parameters:
     default: 'Test'
 
 extends:
-  template: /eng/pipelines/templates/stages/1es-redirect.yml@self
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
       - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
@@ -25,7 +25,7 @@ extends:
 
               variables:
                 - name: PythonVersion
-                  value: '3.8' 
+                  value: '3.8'
 
               pool:
                 name: $(LINUXPOOL)
@@ -111,7 +111,7 @@ extends:
                     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
                     arguments: >-
                       ${{ parameters.BuildTargetingString }}
-                      --service="${{ parameters.ServiceDirectory }}" 
-                      --toxenv="strict-sphinx"
+                      --service="${{ parameters.ServiceDirectory }}"
+                      --toxenv="sphinx"
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)

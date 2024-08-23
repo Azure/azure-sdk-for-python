@@ -70,5 +70,6 @@ async def sample_translation_async():
 async def main():
     await sample_translation_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -229,6 +229,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         kwargs["headers"] = kwargs.get("headers", {})
 
         def _populate_header_within_kwargs(uri, header):
+            if not isinstance(
+                self._credential,
+                (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential)):
+                uri = JWT_TOKEN_SCOPE
             token = self._credential.get_token(uri).token
             if not isinstance(
                 self._credential,
@@ -262,6 +266,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          recent service version that is compatible with the current SDK. Setting to an older version may result
          in reduced feature compatibility.
         :paramtype api_version: str or ApiVersion
+        :returns: Returns a ServiceBusAdministrationClient.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         (
@@ -401,7 +406,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :returns: Returns properties of queue resource.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
@@ -659,7 +664,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :return: Returns properties of a topic resource.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         topic = TopicProperties(
@@ -909,6 +914,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
         :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :return: Return properties of a topic subscription resource.
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
@@ -1133,6 +1139,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
+        :return: Rule properties for a topic subscription.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)

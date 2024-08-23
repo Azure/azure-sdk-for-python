@@ -69,7 +69,12 @@ class _BearerTokenCredentialPolicyBase:
 
     @property
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        return (
+            not self._token
+            or (self._token.refresh_on is not None and self._token.refresh_on <= now)
+            or self._token.expires_on - now < 300
+        )
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -124,26 +129,26 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self.on_request(request)
         try:
             response = self.next.send(request)
-            self.on_response(request, response)
         except Exception:  # pylint:disable=broad-except
             self.on_exception(request)
             raise
-        else:
-            if response.http_response.status_code == 401:
-                self._token = None  # any cached token is invalid
-                if "WWW-Authenticate" in response.http_response.headers:
-                    request_authorized = self.on_challenge(request, response)
-                    if request_authorized:
-                        # if we receive a challenge response, we retrieve a new token
-                        # which matches the new target. In this case, we don't want to remove
-                        # token from the request so clear the 'insecure_domain_change' tag
-                        request.context.options.pop("insecure_domain_change", False)
-                        try:
-                            response = self.next.send(request)
-                            self.on_response(request, response)
-                        except Exception:  # pylint:disable=broad-except
-                            self.on_exception(request)
-                            raise
+
+        self.on_response(request, response)
+        if response.http_response.status_code == 401:
+            self._token = None  # any cached token is invalid
+            if "WWW-Authenticate" in response.http_response.headers:
+                request_authorized = self.on_challenge(request, response)
+                if request_authorized:
+                    # if we receive a challenge response, we retrieve a new token
+                    # which matches the new target. In this case, we don't want to remove
+                    # token from the request so clear the 'insecure_domain_change' tag
+                    request.context.options.pop("insecure_domain_change", False)
+                    try:
+                        response = self.next.send(request)
+                        self.on_response(request, response)
+                    except Exception:  # pylint:disable=broad-except
+                        self.on_exception(request)
+                        raise
 
         return response
 

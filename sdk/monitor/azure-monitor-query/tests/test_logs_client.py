@@ -8,7 +8,16 @@ from datetime import timedelta
 import pytest
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
+from azure.monitor.query import (
+    LogsQueryClient,
+    LogsBatchQuery,
+    LogsQueryError,
+    LogsTable,
+    LogsQueryResult,
+    LogsTableRow,
+    LogsQueryPartialResult,
+    LogsQueryStatus
+)
 from azure.monitor.query._helpers import native_col_type
 
 from base_testcase import AzureMonitorQueryLogsTestCase
@@ -26,6 +35,7 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
         response = client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
 
         assert response is not None
+        assert response.status == LogsQueryStatus.SUCCESS
         assert response.tables is not None
 
     def test_logs_single_query_raises_no_timespan(self, monitor_info):
@@ -57,19 +67,27 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
 
         assert response.partial_error is not None
         assert response.partial_data is not None
+        assert response.status == LogsQueryStatus.PARTIAL
         assert response.__class__ == LogsQueryPartialResult
 
     def test_logs_server_timeout(self, recorded_test, monitor_info):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
-        with pytest.raises(HttpResponseError) as e:
+        try:
             response = client.query_workspace(
-                monitor_info['workspace_id'],
+                monitor_info["workspace_id"],
                 "range x from 1 to 1000000000000000 step 1 | count",
                 timespan=None,
-                server_timeout=1,
+                server_timeout=2,
+                retry_total=0,
             )
-        assert 'Gateway timeout' in e.value.message
+        except HttpResponseError as e:
+            assert "Gateway timeout" in e.message
+        else:
+            # Response an be observed as either 504 response code from the gateway or a partial failure 200 response.
+            assert response.status == LogsQueryStatus.PARTIAL
+            assert "timed out" in str(response.partial_error)
+
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_query_batch_default(self, monitor_info):

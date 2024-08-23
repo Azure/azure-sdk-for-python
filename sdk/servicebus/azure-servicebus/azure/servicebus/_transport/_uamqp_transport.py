@@ -605,10 +605,11 @@ try:
             :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
              to send messages.
             :param message: ServiceBusMessage with uamqp.Message to be sent.
-            :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
+            :type message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
             :param int timeout: Timeout time.
-            :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param logger: Logger.
+            :param Exception or None last_exception: Exception to raise if message timed out.
+             Only used by uamqp transport.
+            :param Logger logger: Logger.
             """
             # pylint: disable=protected-access
             sender._open()
@@ -972,10 +973,11 @@ try:
         ) -> "Message":
             """
             :param message: The message to send in the management request.
-            :paramtype message: Any
+            :type message: Any
             :param Dict[bytes, str] application_properties: App props.
             :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
             :param str reply_to: Reply to.
+            :return: The message to send in the management request.
             :rtype: uamqp.Message
             """
             return Message(  # type: ignore # TODO: fix mypy error

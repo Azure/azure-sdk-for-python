@@ -53,7 +53,7 @@ pip install azure-cli=="2.56.0"
 
 $az_version = az version
 Write-Host "Azure CLI version: $az_version"
-az login --service-principal -u $TestApplicationId -p $TestApplicationSecret --tenant $TenantId
+az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
 az account set --subscription $SubscriptionId
 $versions = az aks get-versions -l westus -o json | ConvertFrom-Json
 Write-Host "AKS versions: $($versions | ConvertTo-Json -Depth 100)"

@@ -41,6 +41,13 @@ class FileLastWrittenMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESERVE = "Preserve"
 
 
+class FilePermissionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FilePermissionFormat."""
+
+    SDDL = "Sddl"
+    BINARY = "Binary"
+
+
 class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FileRangeWriteType."""
 
@@ -180,6 +187,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARE_SNAPSHOT_COUNT_EXCEEDED = "ShareSnapshotCountExceeded"
     SHARE_SNAPSHOT_OPERATION_NOT_SUPPORTED = "ShareSnapshotOperationNotSupported"
     SHARE_HAS_SNAPSHOTS = "ShareHasSnapshots"
+    PREVIOUS_SNAPSHOT_NOT_FOUND = "PreviousSnapshotNotFound"
     CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"
     AUTHORIZATION_SOURCE_IP_MISMATCH = "AuthorizationSourceIPMismatch"
     AUTHORIZATION_PROTOCOL_MISMATCH = "AuthorizationProtocolMismatch"

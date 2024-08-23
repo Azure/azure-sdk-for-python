@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.6.2 (Unreleased)
 
 ### Features Added
 
@@ -10,8 +10,64 @@
 
 ### Other Changes
 
+## 1.6.1 (2024-07-30)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36482](https://github.com/Azure/azure-sdk-for-python/pull/36482))
+
+## 1.6.0 (2024-06-06)
+
+### Features Added
+
+- Enable views configuration
+    ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
+- Rework autoinstrumentation: Configure exporters and samplers directly
+    ([#35890](https://github.com/Azure/azure-sdk-for-python/pull/35890))
+
+## 1.5.0 (2024-05-31)
+
+### Features Added
+
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+
+## 1.4.2 (2024-05-20)
+
+### Features Added
+
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.1 (2024-04-25)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
+## 1.4.0 (2024-04-09)
+
+### Features Added
+
+- Adding diagnostic warning when distro detects RP attach
+    ([#34971](https://github.com/Azure/azure-sdk-for-python/pull/34971))
+- Added `resource` parameter
+    ([#34900](https://github.com/Azure/azure-sdk-for-python/pull/34900))
+
+### Other Changes
+
 - Updated FastAPI sample
     ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Refactored constants and utils
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
 
 ## 1.3.0 (2024-02-29)
 

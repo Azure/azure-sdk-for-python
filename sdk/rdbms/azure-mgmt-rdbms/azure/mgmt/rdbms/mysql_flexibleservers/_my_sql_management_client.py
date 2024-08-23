@@ -8,9 +8,12 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import MySQLManagementClientConfiguration
@@ -73,17 +76,6 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.FirewallRulesOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.operations.ServersOperations
-    :ivar replicas: ReplicasOperations operations
-    :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.operations.ReplicasOperations
-    :ivar servers_migration: ServersMigrationOperations operations
-    :vartype servers_migration:
-     azure.mgmt.rdbms.mysql_flexibleservers.operations.ServersMigrationOperations
-    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
-     operations
-    :vartype advanced_threat_protection_settings:
-     azure.mgmt.rdbms.mysql_flexibleservers.operations.AdvancedThreatProtectionSettingsOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
@@ -115,6 +107,17 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.operations.Operations
     :ivar maintenances: MaintenancesOperations operations
     :vartype maintenances: azure.mgmt.rdbms.mysql_flexibleservers.operations.MaintenancesOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.operations.ServersOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.operations.ReplicasOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.ServersMigrationOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.AdvancedThreatProtectionSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -135,7 +138,25 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self._config = MySQLManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -157,14 +178,6 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers_migration = ServersMigrationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -192,8 +205,16 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.maintenances = MaintenancesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -213,12 +234,12 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "MySQLManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

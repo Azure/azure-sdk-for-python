@@ -718,7 +718,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._handler._received_messages.put((frame, message))
         else:
             # If receive_message or receive iterator is not being called, release message passed to callback.
-            receiver._handler.settle_messages(frame[1], 'released')
+            receiver._handler.settle_messages(frame[1], frame[2], 'released')
 
     @staticmethod
     def build_received_message(
@@ -780,10 +780,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, 'accepted')
+                return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=False
@@ -791,6 +792,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'rejected',
                     error=AMQPError(
                         condition=DEADLETTERNAME,
@@ -804,6 +806,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=True
@@ -813,6 +816,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
+
+        except AMQPException as ae:
+            if (
+                ae.condition == ErrorCondition.IllegalState
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from ae
+
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
@@ -903,10 +914,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "Message": # pylint:disable=unused-argument
         """
         :param message: The message to send in the management request.
-        :paramtype message: Any
+        :type message: Any
         :param dict[bytes, str] application_properties: App props.
         :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
         :param str reply_to: Reply to.
+        :return: The message to send in the management request.
         :rtype: ~pyamqp.message.Message
         """
         return Message(
@@ -925,7 +937,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         *,
         operation: bytes,
         operation_type: bytes,
-        node: bytes,
+        node: str,
         timeout: int,
         callback: Callable
     ) -> "ServiceBusReceivedMessage":
@@ -935,7 +947,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
-        :keyword bytes node: Mgmt target.
+        :keyword str node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword callable callback: Callback to process request response.
         :return: ServiceBusReceivedMessage

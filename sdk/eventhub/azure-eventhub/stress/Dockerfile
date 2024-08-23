@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/cbl-mariner/base/python:3
 
-RUN yum update -y
+RUN yum update -y && yum install -y ca-certificates
 
 WORKDIR /app
 

@@ -1,16 +1,23 @@
 # Release History
 
-## 7.12.2 (Unreleased)
+## 7.12.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-
-- Fixed incorrect dependency on typing-extensions ([34868](https://github.com/Azure/azure-sdk-for-python/issues/34868))
+ 
+ - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
 
 ### Other Changes
+
+## 7.12.2 (2024-05-08)
+
+### Bugs Fixed
+
+- Fixed a bug where WebsocketConnectionClosedException was not being caught when receiving with AmqpOverWebsocket ([34859](https://github.com/Azure/azure-sdk-for-python/pull/34859))
+- Fixed incorrect dependency on typing-extensions ([34869](https://github.com/Azure/azure-sdk-for-python/issues/34869), thanks @YaroBear).
 
 ## 7.12.1 (2024-03-20)
 

@@ -91,22 +91,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Advisor(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Database, Server or Elastic Pool Advisor.
@@ -544,11 +528,39 @@ class BenchmarkReference(_serialization.Model):
         self.reference = None
 
 
-class ChangeLongTermRetentionBackupAccessTierParameters(_serialization.Model):
+class CertificateInfo(_serialization.Model):
+    """Certificate information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar certificate_name: The certificate name.
+    :vartype certificate_name: str
+    :ivar expiry_date: The certificate expiry date.
+    :vartype expiry_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "certificate_name": {"readonly": True},
+        "expiry_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "certificate_name": {"key": "certificateName", "type": "str"},
+        "expiry_date": {"key": "expiryDate", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.certificate_name = None
+        self.expiry_date = None
+
+
+class ChangeLongTermRetentionBackupAccessTierParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Contains the information necessary to change long term retention backup access tier and related
     operation mode.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_storage_access_tier: The long term retention backup storage access tier. Required.
     :vartype backup_storage_access_tier: str
@@ -586,7 +598,7 @@ class CheckNameAvailabilityRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -658,7 +670,7 @@ class CheckNameAvailabilityResponse(_serialization.Model):
 class CompleteDatabaseRestoreDefinition(_serialization.Model):
     """Contains the information necessary to perform a complete database restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar last_backup_name: The last backup name to apply. Required.
     :vartype last_backup_name: str
@@ -754,7 +766,7 @@ class CopyLongTermRetentionBackupParameters(_serialization.Model):
 class CreateDatabaseRestorePointDefinition(_serialization.Model):
     """Contains the information necessary to perform a create database restore point operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar restore_point_label: The restore point label to apply. Required.
     :vartype restore_point_label: str
@@ -782,7 +794,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -828,7 +840,7 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1518,7 +1530,7 @@ class DatabaseAdvancedThreatProtection(ProxyResource):
         self.creation_time = None
 
 
-class DatabaseAdvancedThreatProtectionListResult(_serialization.Model):
+class DatabaseAdvancedThreatProtectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the database's Advanced Threat Protection configurations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1665,7 +1677,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
      duplicate audit logs.
 
      For more information, see `Database-Level Audit Action Groups
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1690,7 +1702,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
      SELECT on SCHEMA::mySchema by public
 
      For more information, see `Database-Level Audit Actions
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
     :vartype audit_actions_and_groups: list[str]
     :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
@@ -1706,7 +1718,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1832,7 +1844,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
          duplicate audit logs.
 
          For more information, see `Database-Level Audit Action Groups
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
          For Database auditing policy, specific Actions can also be specified (note that Actions cannot
          be specified for Server auditing policy). The supported actions to audit are:
@@ -1857,7 +1869,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
          SELECT on SCHEMA::mySchema by public
 
          For more information, see `Database-Level Audit Actions
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
         :paramtype audit_actions_and_groups: list[str]
         :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
          the storage's secondary key.
@@ -1873,7 +1885,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -2267,6 +2279,8 @@ class DatabaseOperation(ProxyResource):  # pylint: disable=too-many-instance-att
     :vartype description: str
     :ivar is_cancellable: Whether the operation can be cancelled.
     :vartype is_cancellable: bool
+    :ivar operation_phase_details: The operation phase details.
+    :vartype operation_phase_details: ~azure.mgmt.sql.models.PhaseDetails
     """
 
     _validation = {
@@ -2287,6 +2301,7 @@ class DatabaseOperation(ProxyResource):  # pylint: disable=too-many-instance-att
         "estimated_completion_time": {"readonly": True},
         "description": {"readonly": True},
         "is_cancellable": {"readonly": True},
+        "operation_phase_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2307,6 +2322,7 @@ class DatabaseOperation(ProxyResource):  # pylint: disable=too-many-instance-att
         "estimated_completion_time": {"key": "properties.estimatedCompletionTime", "type": "iso-8601"},
         "description": {"key": "properties.description", "type": "str"},
         "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
+        "operation_phase_details": {"key": "properties.operationPhaseDetails", "type": "PhaseDetails"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -2326,6 +2342,7 @@ class DatabaseOperation(ProxyResource):  # pylint: disable=too-many-instance-att
         self.estimated_completion_time = None
         self.description = None
         self.is_cancellable = None
+        self.operation_phase_details = None
 
 
 class DatabaseOperationListResult(_serialization.Model):
@@ -2368,22 +2385,6 @@ class DatabaseSchema(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class DatabaseSchemaListResult(_serialization.Model):
@@ -2550,7 +2551,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-many-in
         self.creation_time = None
 
 
-class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):
+class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):  # pylint: disable=name-too-long
     """A database sql vulnerability assessment baseline set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2592,7 +2593,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):
         self.results = results
 
 
-class DatabaseSqlVulnerabilityAssessmentBaselineSetListResult(_serialization.Model):
+class DatabaseSqlVulnerabilityAssessmentBaselineSetListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of SQL Vulnerability Assessments baseline set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2620,7 +2621,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSetListResult(_serialization.Mod
         self.next_link = None
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):
+class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: disable=name-too-long
     """A database sql vulnerability assessment rule baseline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2662,7 +2663,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):
         self.results = results
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):  # pylint: disable=name-too-long
     """A database sql vulnerability assessment rule baseline input.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2712,7 +2713,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):
         self.results = results
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):  # pylint: disable=name-too-long
     """A database sql vulnerability assessment rule baseline list input.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2763,7 +2764,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):
         self.results = results
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineListResult(_serialization.Model):
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of SQL Vulnerability Assessments rule baseline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3578,7 +3579,7 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
         self.recurring_scans = recurring_scans
 
 
-class DatabaseVulnerabilityAssessmentListResult(_serialization.Model):
+class DatabaseVulnerabilityAssessmentListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the database's vulnerability assessments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3606,7 +3607,7 @@ class DatabaseVulnerabilityAssessmentListResult(_serialization.Model):
         self.next_link = None
 
 
-class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
+class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: disable=name-too-long
     """A database vulnerability assessment rule baseline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3653,10 +3654,10 @@ class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
         self.baseline_results = baseline_results
 
 
-class DatabaseVulnerabilityAssessmentRuleBaselineItem(_serialization.Model):
+class DatabaseVulnerabilityAssessmentRuleBaselineItem(_serialization.Model):  # pylint: disable=name-too-long
     """Properties for an Azure SQL Database Vulnerability Assessment rule baseline's result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar result: The rule baseline result. Required.
     :vartype result: list[str]
@@ -3679,7 +3680,7 @@ class DatabaseVulnerabilityAssessmentRuleBaselineItem(_serialization.Model):
         self.result = result
 
 
-class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):
+class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):  # pylint: disable=name-too-long
     """A database Vulnerability Assessment scan export resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4110,90 +4111,307 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar target_database: The name of the target database.
-    :vartype target_database: str
-    :ivar source_endpoint: The source endpoint.
-    :vartype source_endpoint: str
-    :ivar primary_availability_group_name: The primary availability group name.
-    :vartype primary_availability_group_name: str
-    :ivar secondary_availability_group_name: The secondary availability group name.
-    :vartype secondary_availability_group_name: str
-    :ivar replication_mode: The replication mode of a distributed availability group. Parameter
-     will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
-    :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
-    :ivar distributed_availability_group_id: The distributed availability group id.
+    :ivar distributed_availability_group_name: Name of the distributed availability group.
+    :vartype distributed_availability_group_name: str
+    :ivar distributed_availability_group_id: ID of the distributed availability group.
     :vartype distributed_availability_group_id: str
-    :ivar source_replica_id: The source replica id.
-    :vartype source_replica_id: str
-    :ivar target_replica_id: The target replica id.
-    :vartype target_replica_id: str
-    :ivar link_state: The link state.
-    :vartype link_state: str
-    :ivar last_hardened_lsn: The last hardened lsn.
-    :vartype last_hardened_lsn: str
+    :ivar replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
+    :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
+    :ivar partner_link_role: SQL server side link role. Known values are: "Primary" and
+     "Secondary".
+    :vartype partner_link_role: str or ~azure.mgmt.sql.models.LinkRole
+    :ivar partner_availability_group_name: SQL server side availability group name.
+    :vartype partner_availability_group_name: str
+    :ivar partner_endpoint: SQL server side endpoint - IP or DNS resolvable name.
+    :vartype partner_endpoint: str
+    :ivar instance_link_role: Managed instance side link role. Known values are: "Primary" and
+     "Secondary".
+    :vartype instance_link_role: str or ~azure.mgmt.sql.models.LinkRole
+    :ivar instance_availability_group_name: Managed instance side availability group name.
+    :vartype instance_availability_group_name: str
+    :ivar failover_mode: The link failover mode - can be Manual if intended to be used for two-way
+     failover with a supported SQL Server, or None for one-way failover to Azure. Known values are:
+     "None" and "Manual".
+    :vartype failover_mode: str or ~azure.mgmt.sql.models.FailoverModeType
+    :ivar seeding_mode: Database seeding mode – can be Automatic (default), or Manual for supported
+     scenarios. Known values are: "Automatic" and "Manual".
+    :vartype seeding_mode: str or ~azure.mgmt.sql.models.SeedingModeType
+    :ivar databases: Databases in the distributed availability group.
+    :vartype databases: list[~azure.mgmt.sql.models.DistributedAvailabilityGroupDatabase]
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "distributed_availability_group_name": {"readonly": True},
         "distributed_availability_group_id": {"readonly": True},
-        "source_replica_id": {"readonly": True},
-        "target_replica_id": {"readonly": True},
-        "link_state": {"readonly": True},
-        "last_hardened_lsn": {"readonly": True},
+        "partner_link_role": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "target_database": {"key": "properties.targetDatabase", "type": "str"},
-        "source_endpoint": {"key": "properties.sourceEndpoint", "type": "str"},
-        "primary_availability_group_name": {"key": "properties.primaryAvailabilityGroupName", "type": "str"},
-        "secondary_availability_group_name": {"key": "properties.secondaryAvailabilityGroupName", "type": "str"},
-        "replication_mode": {"key": "properties.replicationMode", "type": "str"},
+        "distributed_availability_group_name": {"key": "properties.distributedAvailabilityGroupName", "type": "str"},
         "distributed_availability_group_id": {"key": "properties.distributedAvailabilityGroupId", "type": "str"},
-        "source_replica_id": {"key": "properties.sourceReplicaId", "type": "str"},
-        "target_replica_id": {"key": "properties.targetReplicaId", "type": "str"},
-        "link_state": {"key": "properties.linkState", "type": "str"},
-        "last_hardened_lsn": {"key": "properties.lastHardenedLsn", "type": "str"},
+        "replication_mode": {"key": "properties.replicationMode", "type": "str"},
+        "partner_link_role": {"key": "properties.partnerLinkRole", "type": "str"},
+        "partner_availability_group_name": {"key": "properties.partnerAvailabilityGroupName", "type": "str"},
+        "partner_endpoint": {"key": "properties.partnerEndpoint", "type": "str"},
+        "instance_link_role": {"key": "properties.instanceLinkRole", "type": "str"},
+        "instance_availability_group_name": {"key": "properties.instanceAvailabilityGroupName", "type": "str"},
+        "failover_mode": {"key": "properties.failoverMode", "type": "str"},
+        "seeding_mode": {"key": "properties.seedingMode", "type": "str"},
+        "databases": {"key": "properties.databases", "type": "[DistributedAvailabilityGroupDatabase]"},
     }
 
     def __init__(
         self,
         *,
-        target_database: Optional[str] = None,
-        source_endpoint: Optional[str] = None,
-        primary_availability_group_name: Optional[str] = None,
-        secondary_availability_group_name: Optional[str] = None,
-        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationModeType"]] = None,
+        partner_availability_group_name: Optional[str] = None,
+        partner_endpoint: Optional[str] = None,
+        instance_link_role: Optional[Union[str, "_models.LinkRole"]] = None,
+        instance_availability_group_name: Optional[str] = None,
+        failover_mode: Optional[Union[str, "_models.FailoverModeType"]] = None,
+        seeding_mode: Optional[Union[str, "_models.SeedingModeType"]] = None,
+        databases: Optional[List["_models.DistributedAvailabilityGroupDatabase"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword target_database: The name of the target database.
-        :paramtype target_database: str
-        :keyword source_endpoint: The source endpoint.
-        :paramtype source_endpoint: str
-        :keyword primary_availability_group_name: The primary availability group name.
-        :paramtype primary_availability_group_name: str
-        :keyword secondary_availability_group_name: The secondary availability group name.
-        :paramtype secondary_availability_group_name: str
-        :keyword replication_mode: The replication mode of a distributed availability group. Parameter
-         will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
-        :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
+        :keyword replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
+        :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
+        :keyword partner_availability_group_name: SQL server side availability group name.
+        :paramtype partner_availability_group_name: str
+        :keyword partner_endpoint: SQL server side endpoint - IP or DNS resolvable name.
+        :paramtype partner_endpoint: str
+        :keyword instance_link_role: Managed instance side link role. Known values are: "Primary" and
+         "Secondary".
+        :paramtype instance_link_role: str or ~azure.mgmt.sql.models.LinkRole
+        :keyword instance_availability_group_name: Managed instance side availability group name.
+        :paramtype instance_availability_group_name: str
+        :keyword failover_mode: The link failover mode - can be Manual if intended to be used for
+         two-way failover with a supported SQL Server, or None for one-way failover to Azure. Known
+         values are: "None" and "Manual".
+        :paramtype failover_mode: str or ~azure.mgmt.sql.models.FailoverModeType
+        :keyword seeding_mode: Database seeding mode – can be Automatic (default), or Manual for
+         supported scenarios. Known values are: "Automatic" and "Manual".
+        :paramtype seeding_mode: str or ~azure.mgmt.sql.models.SeedingModeType
+        :keyword databases: Databases in the distributed availability group.
+        :paramtype databases: list[~azure.mgmt.sql.models.DistributedAvailabilityGroupDatabase]
         """
         super().__init__(**kwargs)
-        self.target_database = target_database
-        self.source_endpoint = source_endpoint
-        self.primary_availability_group_name = primary_availability_group_name
-        self.secondary_availability_group_name = secondary_availability_group_name
-        self.replication_mode = replication_mode
+        self.distributed_availability_group_name = None
         self.distributed_availability_group_id = None
-        self.source_replica_id = None
-        self.target_replica_id = None
-        self.link_state = None
+        self.replication_mode = replication_mode
+        self.partner_link_role = None
+        self.partner_availability_group_name = partner_availability_group_name
+        self.partner_endpoint = partner_endpoint
+        self.instance_link_role = instance_link_role
+        self.instance_availability_group_name = instance_availability_group_name
+        self.failover_mode = failover_mode
+        self.seeding_mode = seeding_mode
+        self.databases = databases
+
+
+class DistributedAvailabilityGroupDatabase(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Database specific information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar database_name: The name of the database in link.
+    :vartype database_name: str
+    :ivar instance_replica_id: Managed instance replica id.
+    :vartype instance_replica_id: str
+    :ivar partner_replica_id: SQL server replica id.
+    :vartype partner_replica_id: str
+    :ivar replica_state: Current link state.
+    :vartype replica_state: str
+    :ivar seeding_progress: Seeding progress.
+    :vartype seeding_progress: str
+    :ivar synchronization_health: Link health state. Known values are: "NOT_HEALTHY",
+     "PARTIALLY_HEALTHY", and "HEALTHY".
+    :vartype synchronization_health: str or ~azure.mgmt.sql.models.ReplicaSynchronizationHealth
+    :ivar connected_state: Link connected state. Known values are: "DISCONNECTED" and "CONNECTED".
+    :vartype connected_state: str or ~azure.mgmt.sql.models.ReplicaConnectedState
+    :ivar last_received_lsn: Last received LSN.
+    :vartype last_received_lsn: str
+    :ivar last_received_time: Last received LSN time.
+    :vartype last_received_time: ~datetime.datetime
+    :ivar last_sent_lsn: Last sent LSN.
+    :vartype last_sent_lsn: str
+    :ivar last_sent_time: Last sent LSN time.
+    :vartype last_sent_time: ~datetime.datetime
+    :ivar last_commit_lsn: Last commit LSN.
+    :vartype last_commit_lsn: str
+    :ivar last_commit_time: Last commit LSN time.
+    :vartype last_commit_time: ~datetime.datetime
+    :ivar last_hardened_lsn: Last hardened LSN.
+    :vartype last_hardened_lsn: str
+    :ivar last_hardened_time: Last hardened LSN time.
+    :vartype last_hardened_time: ~datetime.datetime
+    :ivar last_backup_lsn: Last backup LSN.
+    :vartype last_backup_lsn: str
+    :ivar last_backup_time: Last backup LSN time.
+    :vartype last_backup_time: ~datetime.datetime
+    :ivar most_recent_link_error: The most recent link connection error description.
+    :vartype most_recent_link_error: str
+    :ivar partner_auth_cert_validity: SQL server certificate validity.
+    :vartype partner_auth_cert_validity: ~azure.mgmt.sql.models.CertificateInfo
+    :ivar instance_send_replication_lag_seconds: Replication lag when Managed Instance link side is
+     primary.
+    :vartype instance_send_replication_lag_seconds: int
+    :ivar instance_redo_replication_lag_seconds: Redo lag when Managed Instance link side is
+     primary.
+    :vartype instance_redo_replication_lag_seconds: int
+    """
+
+    _validation = {
+        "instance_replica_id": {"readonly": True},
+        "partner_replica_id": {"readonly": True},
+        "replica_state": {"readonly": True},
+        "seeding_progress": {"readonly": True},
+        "synchronization_health": {"readonly": True},
+        "connected_state": {"readonly": True},
+        "last_received_lsn": {"readonly": True},
+        "last_received_time": {"readonly": True},
+        "last_sent_lsn": {"readonly": True},
+        "last_sent_time": {"readonly": True},
+        "last_commit_lsn": {"readonly": True},
+        "last_commit_time": {"readonly": True},
+        "last_hardened_lsn": {"readonly": True},
+        "last_hardened_time": {"readonly": True},
+        "last_backup_lsn": {"readonly": True},
+        "last_backup_time": {"readonly": True},
+        "most_recent_link_error": {"readonly": True},
+        "partner_auth_cert_validity": {"readonly": True},
+        "instance_send_replication_lag_seconds": {"readonly": True},
+        "instance_redo_replication_lag_seconds": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "database_name": {"key": "databaseName", "type": "str"},
+        "instance_replica_id": {"key": "instanceReplicaId", "type": "str"},
+        "partner_replica_id": {"key": "partnerReplicaId", "type": "str"},
+        "replica_state": {"key": "replicaState", "type": "str"},
+        "seeding_progress": {"key": "seedingProgress", "type": "str"},
+        "synchronization_health": {"key": "synchronizationHealth", "type": "str"},
+        "connected_state": {"key": "connectedState", "type": "str"},
+        "last_received_lsn": {"key": "lastReceivedLsn", "type": "str"},
+        "last_received_time": {"key": "lastReceivedTime", "type": "iso-8601"},
+        "last_sent_lsn": {"key": "lastSentLsn", "type": "str"},
+        "last_sent_time": {"key": "lastSentTime", "type": "iso-8601"},
+        "last_commit_lsn": {"key": "lastCommitLsn", "type": "str"},
+        "last_commit_time": {"key": "lastCommitTime", "type": "iso-8601"},
+        "last_hardened_lsn": {"key": "lastHardenedLsn", "type": "str"},
+        "last_hardened_time": {"key": "lastHardenedTime", "type": "iso-8601"},
+        "last_backup_lsn": {"key": "lastBackupLsn", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "most_recent_link_error": {"key": "mostRecentLinkError", "type": "str"},
+        "partner_auth_cert_validity": {"key": "partnerAuthCertValidity", "type": "CertificateInfo"},
+        "instance_send_replication_lag_seconds": {"key": "instanceSendReplicationLagSeconds", "type": "int"},
+        "instance_redo_replication_lag_seconds": {"key": "instanceRedoReplicationLagSeconds", "type": "int"},
+    }
+
+    def __init__(self, *, database_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword database_name: The name of the database in link.
+        :paramtype database_name: str
+        """
+        super().__init__(**kwargs)
+        self.database_name = database_name
+        self.instance_replica_id = None
+        self.partner_replica_id = None
+        self.replica_state = None
+        self.seeding_progress = None
+        self.synchronization_health = None
+        self.connected_state = None
+        self.last_received_lsn = None
+        self.last_received_time = None
+        self.last_sent_lsn = None
+        self.last_sent_time = None
+        self.last_commit_lsn = None
+        self.last_commit_time = None
         self.last_hardened_lsn = None
+        self.last_hardened_time = None
+        self.last_backup_lsn = None
+        self.last_backup_time = None
+        self.most_recent_link_error = None
+        self.partner_auth_cert_validity = None
+        self.instance_send_replication_lag_seconds = None
+        self.instance_redo_replication_lag_seconds = None
+
+
+class DistributedAvailabilityGroupSetRole(_serialization.Model):
+    """Distributed availability group failover request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar instance_role: New role of managed instance in a distributed availability group, can be
+     Primary or Secondary. Required. Known values are: "Primary" and "Secondary".
+    :vartype instance_role: str or ~azure.mgmt.sql.models.InstanceRole
+    :ivar role_change_type: The type of the role change, can be Planned or Forced. Required. Known
+     values are: "Forced" and "Planned".
+    :vartype role_change_type: str or ~azure.mgmt.sql.models.RoleChangeType
+    """
+
+    _validation = {
+        "instance_role": {"required": True},
+        "role_change_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "instance_role": {"key": "instanceRole", "type": "str"},
+        "role_change_type": {"key": "roleChangeType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        instance_role: Union[str, "_models.InstanceRole"],
+        role_change_type: Union[str, "_models.RoleChangeType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword instance_role: New role of managed instance in a distributed availability group, can
+         be Primary or Secondary. Required. Known values are: "Primary" and "Secondary".
+        :paramtype instance_role: str or ~azure.mgmt.sql.models.InstanceRole
+        :keyword role_change_type: The type of the role change, can be Planned or Forced. Required.
+         Known values are: "Forced" and "Planned".
+        :paramtype role_change_type: str or ~azure.mgmt.sql.models.RoleChangeType
+        """
+        super().__init__(**kwargs)
+        self.instance_role = instance_role
+        self.role_change_type = role_change_type
+
+
+class DistributedAvailabilityGroupsFailoverRequest(_serialization.Model):  # pylint: disable=name-too-long
+    """Distributed availability group failover.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar failover_type: The failover type, can be ForcedAllowDataLoss or Planned. Required. Known
+     values are: "ForcedAllowDataLoss" and "Planned".
+    :vartype failover_type: str or ~azure.mgmt.sql.models.FailoverType
+    """
+
+    _validation = {
+        "failover_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "failover_type": {"key": "failoverType", "type": "str"},
+    }
+
+    def __init__(self, *, failover_type: Union[str, "_models.FailoverType"], **kwargs: Any) -> None:
+        """
+        :keyword failover_type: The failover type, can be ForcedAllowDataLoss or Planned. Required.
+         Known values are: "ForcedAllowDataLoss" and "Planned".
+        :paramtype failover_type: str or ~azure.mgmt.sql.models.FailoverType
+        """
+        super().__init__(**kwargs)
+        self.failover_type = failover_type
 
 
 class DistributedAvailabilityGroupsListResult(_serialization.Model):
@@ -4291,7 +4509,7 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -4596,7 +4814,7 @@ class ElasticPoolActivity(ProxyResource):  # pylint: disable=too-many-instance-a
 class ElasticPoolActivityListResult(_serialization.Model):
     """Represents the response to a list elastic pool activity request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of elastic pool activities. Required.
     :vartype value: list[~azure.mgmt.sql.models.ElasticPoolActivity]
@@ -4736,7 +4954,7 @@ class ElasticPoolDatabaseActivity(ProxyResource):  # pylint: disable=too-many-in
 class ElasticPoolDatabaseActivityListResult(_serialization.Model):
     """Represents the response to a list elastic pool database activity request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of elastic pool database activities. Required.
     :vartype value: list[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
@@ -4966,7 +5184,7 @@ class ElasticPoolOperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_serialization.Model):
+class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_serialization.Model):  # pylint: disable=name-too-long
     """The max per-database performance level capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5017,7 +5235,7 @@ class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_serialization.Model):
         self.reason = reason
 
 
-class ElasticPoolPerDatabaseMinPerformanceLevelCapability(_serialization.Model):
+class ElasticPoolPerDatabaseMinPerformanceLevelCapability(_serialization.Model):  # pylint: disable=name-too-long
     """The minimum per-database performance level capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5611,7 +5829,7 @@ class ErrorResponse(_serialization.Model):
 class ExportDatabaseDefinition(_serialization.Model):
     """Contains the information necessary to perform export database operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
      "StorageAccessKey".
@@ -5750,7 +5968,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
      duplicate audit logs.
 
      For more information, see `Database-Level Audit Action Groups
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -5775,7 +5993,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
      SELECT on SCHEMA::mySchema by public
 
      For more information, see `Database-Level Audit Actions
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
     :vartype audit_actions_and_groups: list[str]
     :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
@@ -5791,7 +6009,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -5919,7 +6137,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
          duplicate audit logs.
 
          For more information, see `Database-Level Audit Action Groups
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
          For Database auditing policy, specific Actions can also be specified (note that Actions cannot
          be specified for Server auditing policy). The supported actions to audit are:
@@ -5944,7 +6162,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
          SELECT on SCHEMA::mySchema by public
 
          For more information, see `Database-Level Audit Actions
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
         :paramtype audit_actions_and_groups: list[str]
         :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
          the storage's secondary key.
@@ -5960,7 +6178,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6011,7 +6229,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
         self.storage_account_subscription_id = storage_account_subscription_id
 
 
-class ExtendedDatabaseBlobAuditingPolicyListResult(_serialization.Model):
+class ExtendedDatabaseBlobAuditingPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of database extended auditing settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6060,7 +6278,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6117,7 +6335,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
      duplicate audit logs.
 
      For more information, see `Database-Level Audit Action Groups
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -6142,7 +6360,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
      SELECT on SCHEMA::mySchema by public
 
      For more information, see `Database-Level Audit Actions
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
     :vartype audit_actions_and_groups: list[str]
     :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
@@ -6158,7 +6376,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6247,7 +6465,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6304,7 +6522,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
          duplicate audit logs.
 
          For more information, see `Database-Level Audit Action Groups
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
          For Database auditing policy, specific Actions can also be specified (note that Actions cannot
          be specified for Server auditing policy). The supported actions to audit are:
@@ -6329,7 +6547,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
          SELECT on SCHEMA::mySchema by public
 
          For more information, see `Database-Level Audit Actions
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
         :paramtype audit_actions_and_groups: list[str]
         :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
          the storage's secondary key.
@@ -6345,7 +6563,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6397,7 +6615,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
         self.storage_account_subscription_id = storage_account_subscription_id
 
 
-class ExtendedServerBlobAuditingPolicyListResult(_serialization.Model):
+class ExtendedServerBlobAuditingPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of server extended auditing settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6576,7 +6794,7 @@ class FailoverGroupReadOnlyEndpoint(_serialization.Model):
 class FailoverGroupReadWriteEndpoint(_serialization.Model):
     """Read-write endpoint of the failover group instance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failover_policy: Failover policy of the read-write endpoint for the failover group. If
      failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required. Required.
@@ -6723,24 +6941,6 @@ class ProxyResourceWithWritableName(ResourceWithWritableName):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: Resource name.
-        :paramtype name: str
-        """
-        super().__init__(name=name, **kwargs)
-
 
 class FirewallRule(ProxyResourceWithWritableName):
     """A server firewall rule.
@@ -6852,7 +7052,7 @@ class GeoBackupPolicy(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -6927,7 +7127,7 @@ class GeoBackupPolicyListResult(_serialization.Model):
 class ImportExistingDatabaseDefinition(_serialization.Model):
     """Contains the information necessary to perform import operation for existing database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
      "StorageAccessKey".
@@ -7004,7 +7204,7 @@ class ImportExistingDatabaseDefinition(_serialization.Model):
         self.network_isolation = network_isolation
 
 
-class ImportExportExtensionsOperationListResult(_serialization.Model):
+class ImportExportExtensionsOperationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Import export operation extensions list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7185,7 +7385,7 @@ class ImportExportOperationResult(ProxyResource):  # pylint: disable=too-many-in
 class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Contains the information necessary to perform import operation for new database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar database_name: Name of the import database.
     :vartype database_name: str
@@ -7431,7 +7631,7 @@ class InstanceFailoverGroupReadOnlyEndpoint(_serialization.Model):
 class InstanceFailoverGroupReadWriteEndpoint(_serialization.Model):
     """Read-write endpoint of the failover group instance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failover_policy: Failover policy of the read-write endpoint for the failover group. If
      failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required. Required.
@@ -7482,7 +7682,7 @@ class InstancePool(TrackedResource):  # pylint: disable=too-many-instance-attrib
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -7946,7 +8146,7 @@ class JobAgent(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -8534,7 +8734,7 @@ class JobStep(ProxyResource):
 class JobStepAction(_serialization.Model):
     """The action to be executed by a job step.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of action being executed by the job step. "TSql"
     :vartype type: str or ~azure.mgmt.sql.models.JobStepActionType
@@ -8666,7 +8866,7 @@ class JobStepListResult(_serialization.Model):
 class JobStepOutput(_serialization.Model):
     """The output configuration of a job step.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The output destination type. "SqlDatabase"
     :vartype type: str or ~azure.mgmt.sql.models.JobStepOutputType
@@ -8752,7 +8952,7 @@ class JobTarget(_serialization.Model):
     """A job target, for example a specific database or a container of databases that is evaluated
     during job execution.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar membership_type: Whether the target is included or excluded from the group. Known values
      are: "Include" and "Exclude".
@@ -8905,22 +9105,6 @@ class JobVersion(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class JobVersionListResult(_serialization.Model):
@@ -9151,7 +9335,7 @@ class LogicalDatabaseTransparentDataEncryption(ProxyResource):
         self.state = state
 
 
-class LogicalDatabaseTransparentDataEncryptionListResult(_serialization.Model):
+class LogicalDatabaseTransparentDataEncryptionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of transparent data encryptions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9179,7 +9363,7 @@ class LogicalDatabaseTransparentDataEncryptionListResult(_serialization.Model):
         self.next_link = None
 
 
-class LogicalServerAdvancedThreatProtectionListResult(_serialization.Model):
+class LogicalServerAdvancedThreatProtectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the server's Advanced Threat Protection configurations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9207,7 +9391,7 @@ class LogicalServerAdvancedThreatProtectionListResult(_serialization.Model):
         self.next_link = None
 
 
-class LogicalServerSecurityAlertPolicyListResult(_serialization.Model):
+class LogicalServerSecurityAlertPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the server's security alert policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9817,7 +10001,7 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
         self.retention_days = retention_days
 
 
-class ManagedBackupShortTermRetentionPolicyListResult(_serialization.Model):
+class ManagedBackupShortTermRetentionPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of short term retention policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9850,7 +10034,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -10159,7 +10343,7 @@ class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
         self.creation_time = None
 
 
-class ManagedDatabaseAdvancedThreatProtectionListResult(_serialization.Model):
+class ManagedDatabaseAdvancedThreatProtectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the managed database's Advanced Threat Protection settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10218,7 +10402,7 @@ class ManagedDatabaseListResult(_serialization.Model):
 class ManagedDatabaseMoveDefinition(_serialization.Model):
     """Contains the information necessary to perform a managed database move.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar destination_managed_database_id: The destination managed database ID. Required.
     :vartype destination_managed_database_id: str
@@ -10380,7 +10564,7 @@ class ManagedDatabaseMoveOperationResult(ProxyResource):  # pylint: disable=too-
         self.is_user_error = None
 
 
-class ManagedDatabaseRestoreDetailsBackupSetProperties(_serialization.Model):
+class ManagedDatabaseRestoreDetailsBackupSetProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The managed database's restore details backup set properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10584,7 +10768,7 @@ class ManagedDatabaseRestoreDetailsResult(ProxyResource):  # pylint: disable=too
         self.unrestorable_files = None
 
 
-class ManagedDatabaseRestoreDetailsUnrestorableFileProperties(_serialization.Model):
+class ManagedDatabaseRestoreDetailsUnrestorableFileProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The managed database's restore details unrestorable file properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10711,7 +10895,7 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-
         self.creation_time = None
 
 
-class ManagedDatabaseSecurityAlertPolicyListResult(_serialization.Model):
+class ManagedDatabaseSecurityAlertPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the managed database's security alert policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10742,7 +10926,7 @@ class ManagedDatabaseSecurityAlertPolicyListResult(_serialization.Model):
 class ManagedDatabaseStartMoveDefinition(_serialization.Model):
     """Contains the information necessary to start a managed database move.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar destination_managed_database_id: The destination managed database ID. Required.
     :vartype destination_managed_database_id: str
@@ -11023,7 +11207,7 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -11085,12 +11269,11 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_i_ops: Storage IOps. Minimum value: 120. Maximum value: 120000. Increments of 1
+    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
     :vartype storage_i_ops: int
-    :ivar storage_throughput_m_bps: Storage throughput in MBps. Minimum value: 25. Maximum value:
-     4000. Increments of 1 MBps allowed only. Maximum value depends on the selected hardware family
-     and number of vCores.
+    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+     instance create/update operation.
     :vartype storage_throughput_m_bps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -11324,13 +11507,11 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_i_ops: Storage IOps. Minimum value: 120. Maximum value: 120000. Increments of
-         1 IOps allowed only. Maximum value depends on the selected hardware family and number of
-         vCores.
+        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+         IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
         :paramtype storage_i_ops: int
-        :keyword storage_throughput_m_bps: Storage throughput in MBps. Minimum value: 25. Maximum
-         value: 4000. Increments of 1 MBps allowed only. Maximum value depends on the selected hardware
-         family and number of vCores.
+        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+         instance create/update operation.
         :paramtype storage_throughput_m_bps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -11582,7 +11763,7 @@ class ManagedInstanceAdvancedThreatProtection(ProxyResource):
         self.creation_time = None
 
 
-class ManagedInstanceAdvancedThreatProtectionListResult(_serialization.Model):
+class ManagedInstanceAdvancedThreatProtectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the managed instance's Advanced Threat Protection settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11835,7 +12016,7 @@ class ManagedInstanceDtcSecuritySettings(_serialization.Model):
         self.xa_transactions_maximum_timeout = xa_transactions_maximum_timeout
 
 
-class ManagedInstanceDtcTransactionManagerCommunicationSettings(_serialization.Model):
+class ManagedInstanceDtcTransactionManagerCommunicationSettings(_serialization.Model):  # pylint: disable=name-too-long
     """The Transaction Manager Communication Settings of managed instance DTC.
 
     :ivar allow_inbound_enabled: Allow Inbound traffic to managed instance DTC.
@@ -12000,7 +12181,7 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
         self.auto_rotation_enabled = auto_rotation_enabled
 
 
-class ManagedInstanceEncryptionProtectorListResult(_serialization.Model):
+class ManagedInstanceEncryptionProtectorListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of managed instance encryption protectors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12336,7 +12517,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         self.backup_storage_redundancy = None
 
 
-class ManagedInstanceLongTermRetentionBackupListResult(_serialization.Model):
+class ManagedInstanceLongTermRetentionBackupListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of long term retention backups for managed database(s).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12428,7 +12609,7 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
         self.week_of_year = week_of_year
 
 
-class ManagedInstanceLongTermRetentionPolicyListResult(_serialization.Model):
+class ManagedInstanceLongTermRetentionPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of long term retention policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12456,7 +12637,7 @@ class ManagedInstanceLongTermRetentionPolicyListResult(_serialization.Model):
         self.next_link = None
 
 
-class ManagedInstanceMaintenanceConfigurationCapability(_serialization.Model):
+class ManagedInstanceMaintenanceConfigurationCapability(_serialization.Model):  # pylint: disable=name-too-long
     """The maintenance configuration capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12814,7 +12995,7 @@ class ManagedInstancePrivateEndpointConnection(ProxyResource):
         self.provisioning_state = None
 
 
-class ManagedInstancePrivateEndpointConnectionListResult(_serialization.Model):
+class ManagedInstancePrivateEndpointConnectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of private endpoint connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12842,7 +13023,7 @@ class ManagedInstancePrivateEndpointConnectionListResult(_serialization.Model):
         self.next_link = None
 
 
-class ManagedInstancePrivateEndpointConnectionProperties(_serialization.Model):
+class ManagedInstancePrivateEndpointConnectionProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of a private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13004,12 +13185,12 @@ class ManagedInstancePrivateLinkProperties(_serialization.Model):
         self.required_members = None
 
 
-class ManagedInstancePrivateLinkServiceConnectionStateProperty(_serialization.Model):
+class ManagedInstancePrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedInstancePrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The private link service connection status. Required.
     :vartype status: str
@@ -13165,12 +13346,11 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_i_ops: Storage IOps. Minimum value: 120. Maximum value: 120000. Increments of 1
+    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
     :vartype storage_i_ops: int
-    :ivar storage_throughput_m_bps: Storage throughput in MBps. Minimum value: 25. Maximum value:
-     4000. Increments of 1 MBps allowed only. Maximum value depends on the selected hardware family
-     and number of vCores.
+    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+     instance create/update operation.
     :vartype storage_throughput_m_bps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -13392,13 +13572,11 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_i_ops: Storage IOps. Minimum value: 120. Maximum value: 120000. Increments of
-         1 IOps allowed only. Maximum value depends on the selected hardware family and number of
-         vCores.
+        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+         IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
         :paramtype storage_i_ops: int
-        :keyword storage_throughput_m_bps: Storage throughput in MBps. Minimum value: 25. Maximum
-         value: 4000. Increments of 1 MBps allowed only. Maximum value depends on the selected hardware
-         family and number of vCores.
+        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+         instance create/update operation.
         :paramtype storage_throughput_m_bps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -13711,7 +13889,7 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
         self.recurring_scans = recurring_scans
 
 
-class ManagedInstanceVulnerabilityAssessmentListResult(_serialization.Model):
+class ManagedInstanceVulnerabilityAssessmentListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the ManagedInstance's vulnerability assessments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13855,7 +14033,7 @@ class ManagedServerDnsAlias(ProxyResource):
 class ManagedServerDnsAliasAcquisition(_serialization.Model):
     """A managed server DNS alias acquisition request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar old_managed_server_dns_alias_resource_id: The resource ID of the managed server DNS alias
      that will be acquired to point to this managed server instead. Required.
@@ -14036,7 +14214,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-ma
         self.creation_time = None
 
 
-class ManagedServerSecurityAlertPolicyListResult(_serialization.Model):
+class ManagedServerSecurityAlertPolicyListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of the managed Server's security alert policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14105,7 +14283,7 @@ class ManagedTransparentDataEncryption(ProxyResource):
         self.state = state
 
 
-class ManagedTransparentDataEncryptionListResult(_serialization.Model):
+class ManagedTransparentDataEncryptionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of managed transparent data encryptions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14339,7 +14517,7 @@ class MetricDefinition(_serialization.Model):
 class MetricDefinitionListResult(_serialization.Model):
     """The response to a list database metric definitions request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of metric definitions for the database. Required.
     :vartype value: list[~azure.mgmt.sql.models.MetricDefinition]
@@ -14365,7 +14543,7 @@ class MetricDefinitionListResult(_serialization.Model):
 class MetricListResult(_serialization.Model):
     """The response to a list database metrics request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of metrics for the database. Required.
     :vartype value: list[~azure.mgmt.sql.models.Metric]
@@ -14836,7 +15014,7 @@ class PartnerInfo(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource identifier of the partner server. Required.
     :vartype id: str
@@ -14927,6 +15105,35 @@ class PerformanceLevelCapability(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.unit = None
+
+
+class PhaseDetails(_serialization.Model):
+    """The phase details properties of a database operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar phase: The operation phase. Known values are: "Copying", "Catchup", "WaitingForCutover",
+     and "CutoverInProgress".
+    :vartype phase: str or ~azure.mgmt.sql.models.Phase
+    :ivar phase_information: The operation phase information.
+    :vartype phase_information: dict[str, str]
+    """
+
+    _validation = {
+        "phase": {"readonly": True},
+        "phase_information": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "phase": {"key": "phase", "type": "str"},
+        "phase_information": {"key": "phaseInformation", "type": "{str}"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.phase = None
+        self.phase_information = None
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -15228,12 +15435,12 @@ class PrivateLinkResourceProperties(_serialization.Model):
         self.required_zone_names = None
 
 
-class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
     """PrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The private link service connection status. Required. Known values are:
      "Approved", "Pending", "Rejected", and "Disconnected".
@@ -15932,7 +16139,7 @@ class RecommendedActionStateInfo(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar current_value: Current state the recommended action is in. Some commonly used states are:
      Active      -> recommended action is active and no action has been taken yet. Pending     ->
@@ -16225,7 +16432,7 @@ class RecoverableManagedDatabaseListResult(_serialization.Model):
         self.next_link = None
 
 
-class RefreshExternalGovernanceStatusOperationResult(ProxyResource):
+class RefreshExternalGovernanceStatusOperationResult(ProxyResource):  # pylint: disable=name-too-long
     """An RefreshExternalGovernanceStatus operation result resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16285,7 +16492,7 @@ class RefreshExternalGovernanceStatusOperationResult(ProxyResource):
         self.error_message = None
 
 
-class RefreshExternalGovernanceStatusOperationResultMI(ProxyResource):
+class RefreshExternalGovernanceStatusOperationResultMI(ProxyResource):  # pylint: disable=name-too-long
     """An RefreshExternalGovernanceStatus operation result resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16554,7 +16761,7 @@ class ResourceIdentity(_serialization.Model):
 class ResourceMoveDefinition(_serialization.Model):
     """Contains the information necessary to perform a resource move (rename).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The target ID for the resource. Required.
     :vartype id: str
@@ -16704,7 +16911,7 @@ class RestorableDroppedManagedDatabase(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -16763,7 +16970,7 @@ class RestorableDroppedManagedDatabase(TrackedResource):
         self.earliest_restore_date = None
 
 
-class RestorableDroppedManagedDatabaseListResult(_serialization.Model):
+class RestorableDroppedManagedDatabaseListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of restorable dropped managed databases.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16878,7 +17085,7 @@ class RestorePointListResult(_serialization.Model):
 class ScheduleItem(_serialization.Model):
     """Schedule info describing when the server should be started or stopped.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
      "Wednesday", "Thursday", "Friday", and "Saturday".
@@ -17075,7 +17282,7 @@ class SecurityEventsFilterParameters(_serialization.Model):
         self.show_server_records = show_server_records
 
 
-class SecurityEventSqlInjectionAdditionalProperties(_serialization.Model):
+class SecurityEventSqlInjectionAdditionalProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The properties of a security event sql injection additional properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -17348,7 +17555,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -17775,7 +17982,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -17830,7 +18037,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
      duplicate audit logs.
 
      For more information, see `Database-Level Audit Action Groups
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -17855,7 +18062,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
      SELECT on SCHEMA::mySchema by public
 
      For more information, see `Database-Level Audit Actions
-     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
     :vartype audit_actions_and_groups: list[str]
     :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
@@ -17871,7 +18078,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -17958,7 +18165,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -18013,7 +18220,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
          duplicate audit logs.
 
          For more information, see `Database-Level Audit Action Groups
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.  # pylint: disable=line-too-long
 
          For Database auditing policy, specific Actions can also be specified (note that Actions cannot
          be specified for Server auditing policy). The supported actions to audit are:
@@ -18038,7 +18245,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
          SELECT on SCHEMA::mySchema by public
 
          For more information, see `Database-Level Audit Actions
-         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.  # pylint: disable=line-too-long
         :paramtype audit_actions_and_groups: list[str]
         :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
          the storage's secondary key.
@@ -18054,7 +18261,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -18378,7 +18585,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
 
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -18453,7 +18660,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
 
          Diagnostic Settings URI format:
          PUT
-         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview  # pylint: disable=line-too-long
 
          For more information, see `Diagnostic Settings REST API
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -18562,7 +18769,7 @@ class ServerDnsAlias(ProxyResource):
 class ServerDnsAliasAcquisition(_serialization.Model):
     """A server dns alias acquisition request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar old_server_dns_alias_id: The id of the server alias that will be acquired to point to
      this server instead. Required.
@@ -18680,7 +18887,7 @@ class ServerExternalAdministrator(_serialization.Model):
 class ServerInfo(_serialization.Model):
     """Server info for the server trust group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar server_id: Server Id. Required.
     :vartype server_id: str
@@ -19485,7 +19692,7 @@ class ServerUsage(_serialization.Model):
 class ServerUsageListResult(_serialization.Model):
     """Represents the response to a list server metrics request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of server metrics for the server. Required.
     :vartype value: list[~azure.mgmt.sql.models.ServerUsage]
@@ -19821,7 +20028,7 @@ class ServiceObjectiveCapability(_serialization.Model):  # pylint: disable=too-m
 class ServiceObjectiveListResult(_serialization.Model):
     """Represents the response to a get database service objectives request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of database service objectives. Required.
     :vartype value: list[~azure.mgmt.sql.models.ServiceObjective]
@@ -19887,7 +20094,7 @@ class ServicePrincipal(_serialization.Model):
 class Sku(_serialization.Model):
     """An ARM Resource SKU.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU, typically, a letter + Number code, e.g. P3. Required.
     :vartype name: str
@@ -20277,7 +20484,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         self.last_scan_time = None
 
 
-class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):
+class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of vulnerability assessment scan records.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -20454,7 +20661,7 @@ class StartStopManagedInstanceSchedule(ProxyResource):
         self.next_execution_time = None
 
 
-class StartStopManagedInstanceScheduleListResult(_serialization.Model):
+class StartStopManagedInstanceScheduleListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Managed instance's Start/Stop schedule list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22185,7 +22392,7 @@ class VirtualCluster(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -22396,7 +22603,7 @@ class VirtualNetworkRuleListResult(_serialization.Model):
         self.next_link = None
 
 
-class VulnerabilityAssessmentRecurringScansProperties(_serialization.Model):
+class VulnerabilityAssessmentRecurringScansProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of a Vulnerability Assessment recurring scans.
 
     :ivar is_enabled: Recurring scans state.
@@ -22536,7 +22743,7 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=too-m
         self.number_of_failed_security_checks = None
 
 
-class VulnerabilityAssessmentScanRecordListResult(_serialization.Model):
+class VulnerabilityAssessmentScanRecordListResult(_serialization.Model):  # pylint: disable=name-too-long
     """A list of vulnerability assessment scan records.
 
     Variables are only populated by the server, and will be ignored when sending a request.

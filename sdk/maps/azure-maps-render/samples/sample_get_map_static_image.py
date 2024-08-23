@@ -18,24 +18,18 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_map_static_image():
     # [START get_map_static_image]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render.models import BoundingBox
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_render_client.get_map_static_image(
-        img_format="png",
-        layer="basic",
-        style="dark",
         zoom=10,
-        bounding_box_private= BoundingBox(
-            13.228, 52.4559, 13.5794, 52.629
-        )
+        bounding_box_private=[13.228, 52.4559, 13.5794, 52.629]
     )
 
     print("Get map tile result to png file as 'map_static_image.png'")
@@ -44,6 +38,7 @@ def get_map_static_image():
         file.write(next(result))
         file.close()
     # [END get_map_static_image]
+
 
 if __name__ == '__main__':
     get_map_static_image()

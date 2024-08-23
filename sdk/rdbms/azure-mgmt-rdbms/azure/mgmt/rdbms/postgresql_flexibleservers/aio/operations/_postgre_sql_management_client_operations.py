@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,22 +19,25 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._postgre_sql_management_client_operations import build_check_migration_name_availability_request
 from .._vendor import PostgreSQLManagementClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinABC):
+class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinABC):  # pylint: disable=name-too-long
+
     @overload
     async def check_migration_name_availability(
         self,
@@ -62,7 +66,6 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -74,7 +77,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         subscription_id: str,
         resource_group_name: str,
         target_db_server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -91,11 +94,10 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :type target_db_server_name: str
         :param parameters: The required parameters for checking if a migration name is available.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -107,7 +109,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         subscription_id: str,
         resource_group_name: str,
         target_db_server_name: str,
-        parameters: Union[_models.MigrationNameAvailabilityResource, IO],
+        parameters: Union[_models.MigrationNameAvailabilityResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationNameAvailabilityResource:
         """Check migration name validity and availability.
@@ -121,18 +123,15 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :param target_db_server_name: The name of the target database server. Required.
         :type target_db_server_name: str
         :param parameters: The required parameters for checking if a migration name is available. Is
-         either a MigrationNameAvailabilityResource type or a IO type. Required.
+         either a MigrationNameAvailabilityResource type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource or
+         IO[bytes]
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -155,7 +154,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         else:
             _json = self._serialize.body(parameters, "MigrationNameAvailabilityResource")
 
-        request = build_check_migration_name_availability_request(
+        _request = build_check_migration_name_availability_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
@@ -163,16 +162,14 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_migration_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -182,13 +179,9 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrationNameAvailabilityResource", pipeline_response)
+        deserialized = self._deserialize("MigrationNameAvailabilityResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_migration_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/checkMigrationNameAvailability"
-    }
+        return deserialized  # type: ignore

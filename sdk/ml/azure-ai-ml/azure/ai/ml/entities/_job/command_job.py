@@ -61,6 +61,11 @@ module_logger = logging.getLogger(__name__)
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
+    .. note::
+        For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix
+        ``AZUREML_PARAMETER_``. For example, if you have a parameter named "input_data", you can access it as
+        ``AZUREML_PARAMETER_input_data``.
+
     :keyword services: Read-only information on services associated with the job.
     :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :keyword inputs: Mapping of output data bindings used in the command.
@@ -74,6 +79,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :paramtype limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
     :keyword kwargs: A dictionary of additional configuration parameters.
     :paramtype kwargs: dict
+
 
     .. admonition:: Example:
 
@@ -154,13 +160,15 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             environment_id=self.environment,
-            distribution=self.distribution._to_rest_object()
-            if self.distribution and not isinstance(self.distribution, Dict)
-            else None,
+            distribution=(
+                self.distribution._to_rest_object()
+                if self.distribution and not isinstance(self.distribution, Dict)
+                else None
+            ),
             tags=self.tags,
-            identity=self.identity._to_job_rest_object()
-            if self.identity and not isinstance(self.identity, Dict)
-            else None,
+            identity=(
+                self.identity._to_job_rest_object() if self.identity and not isinstance(self.identity, Dict) else None
+            ),
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
             limits=self.limits._to_rest_object() if self.limits else None,
@@ -197,9 +205,11 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
             # pylint: disable=protected-access
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
-            if rest_command_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+                if rest_command_job.identity
+                else None
+            ),
             environment_variables=rest_command_job.environment_variables,
             resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
@@ -223,7 +233,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: CommandComponent
         """
@@ -252,7 +261,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: Command
         """

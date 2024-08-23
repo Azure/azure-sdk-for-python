@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import CdnManagementClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +50,7 @@ def build_list_by_profile_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +83,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -112,7 +117,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -149,7 +154,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -186,7 +191,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -220,7 +225,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,7 +259,7 @@ def build_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,7 +293,7 @@ def build_purge_content_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -325,7 +330,7 @@ def build_load_content_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -362,7 +367,7 @@ def build_validate_custom_domain_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -399,7 +404,7 @@ def build_list_resource_usage_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -457,7 +462,6 @@ class EndpointsOperations:
         :param profile_name: Name of the CDN profile which is unique within the resource group.
          Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Endpoint or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -468,7 +472,7 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.EndpointListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -479,17 +483,16 @@ class EndpointsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_profile_request(
+                _request = build_list_by_profile_request(
                     resource_group_name=resource_group_name,
                     profile_name=profile_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_profile.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -501,13 +504,13 @@ class EndpointsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("EndpointListResult", pipeline_response)
@@ -517,11 +520,11 @@ class EndpointsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -533,10 +536,6 @@ class EndpointsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_profile.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints"
-    }
 
     @distributed_trace
     def get(self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any) -> _models.Endpoint:
@@ -551,12 +550,11 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Endpoint or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -570,22 +568,21 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Endpoint] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -598,23 +595,19 @@ class EndpointsOperations:
         deserialized = self._deserialize("Endpoint", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_initial(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.Endpoint, IO],
+        endpoint: Union[_models.Endpoint, IO[bytes]],
         **kwargs: Any
     ) -> _models.Endpoint:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -637,7 +630,7 @@ class EndpointsOperations:
         else:
             _json = self._serialize.body(endpoint, "Endpoint")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -646,16 +639,15 @@ class EndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -681,10 +673,6 @@ class EndpointsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
 
     @overload
     def begin_create(
@@ -713,14 +701,6 @@ class EndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -732,7 +712,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: IO,
+        endpoint: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -749,18 +729,10 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint: Endpoint properties. Required.
-        :type endpoint: IO
+        :type endpoint: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -772,7 +744,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.Endpoint, IO],
+        endpoint: Union[_models.Endpoint, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Endpoint]:
         """Creates a new CDN endpoint with the specified endpoint name under the specified subscription,
@@ -786,19 +758,8 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param endpoint: Endpoint properties. Is either a Endpoint type or a IO type. Required.
-        :type endpoint: ~azure.mgmt.cdn.models.Endpoint or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param endpoint: Endpoint properties. Is either a Endpoint type or a IO[bytes] type. Required.
+        :type endpoint: ~azure.mgmt.cdn.models.Endpoint or IO[bytes]
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -830,7 +791,7 @@ class EndpointsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Endpoint", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -840,27 +801,25 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Endpoint].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
+        return LROPoller[_models.Endpoint](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _update_initial(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.EndpointUpdateParameters, IO],
+        endpoint_update_properties: Union[_models.EndpointUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Endpoint:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -883,7 +842,7 @@ class EndpointsOperations:
         else:
             _json = self._serialize.body(endpoint_update_properties, "EndpointUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -892,16 +851,15 @@ class EndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -924,10 +882,6 @@ class EndpointsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
 
     @overload
     def begin_update(
@@ -958,14 +912,6 @@ class EndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -977,7 +923,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: IO,
+        endpoint_update_properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -996,18 +942,10 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint_update_properties: Endpoint update properties. Required.
-        :type endpoint_update_properties: IO
+        :type endpoint_update_properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1019,7 +957,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.EndpointUpdateParameters, IO],
+        endpoint_update_properties: Union[_models.EndpointUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Endpoint]:
         """Updates an existing CDN endpoint with the specified endpoint name under the specified
@@ -1036,19 +974,8 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint_update_properties: Endpoint update properties. Is either a
-         EndpointUpdateParameters type or a IO type. Required.
-        :type endpoint_update_properties: ~azure.mgmt.cdn.models.EndpointUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         EndpointUpdateParameters type or a IO[bytes] type. Required.
+        :type endpoint_update_properties: ~azure.mgmt.cdn.models.EndpointUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1080,7 +1007,7 @@ class EndpointsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Endpoint", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1090,22 +1017,20 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Endpoint].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
+        return LROPoller[_models.Endpoint](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1119,22 +1044,21 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1149,11 +1073,7 @@ class EndpointsOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -1170,14 +1090,6 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1205,7 +1117,7 @@ class EndpointsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1214,22 +1126,18 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _start_initial(
         self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any
     ) -> _models.Endpoint:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1243,22 +1151,21 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Endpoint] = kwargs.pop("cls", None)
 
-        request = build_start_request(
+        _request = build_start_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1282,10 +1189,6 @@ class EndpointsOperations:
 
         return deserialized  # type: ignore
 
-    _start_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/start"
-    }
-
     @distributed_trace
     def begin_start(
         self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any
@@ -1300,14 +1203,6 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1336,7 +1231,7 @@ class EndpointsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Endpoint", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1346,22 +1241,20 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Endpoint].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/start"
-    }
+        return LROPoller[_models.Endpoint](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _stop_initial(
         self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any
     ) -> _models.Endpoint:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1375,22 +1268,21 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Endpoint] = kwargs.pop("cls", None)
 
-        request = build_stop_request(
+        _request = build_stop_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1414,10 +1306,6 @@ class EndpointsOperations:
 
         return deserialized  # type: ignore
 
-    _stop_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/stop"
-    }
-
     @distributed_trace
     def begin_stop(
         self, resource_group_name: str, profile_name: str, endpoint_name: str, **kwargs: Any
@@ -1432,14 +1320,6 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Endpoint or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Endpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1468,7 +1348,7 @@ class EndpointsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Endpoint", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1478,27 +1358,25 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Endpoint].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/stop"
-    }
+        return LROPoller[_models.Endpoint](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _purge_content_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.PurgeParameters, IO],
+        content_file_paths: Union[_models.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1521,7 +1399,7 @@ class EndpointsOperations:
         else:
             _json = self._serialize.body(content_file_paths, "PurgeParameters")
 
-        request = build_purge_content_request(
+        _request = build_purge_content_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -1530,16 +1408,15 @@ class EndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._purge_content_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1554,11 +1431,7 @@ class EndpointsOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _purge_content_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/purge"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_purge_content(
@@ -1588,14 +1461,6 @@ class EndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1607,7 +1472,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: IO,
+        content_file_paths: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1625,18 +1490,10 @@ class EndpointsOperations:
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
          '/pictures/*' which removes all folders and files in the directory. Required.
-        :type content_file_paths: IO
+        :type content_file_paths: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1648,7 +1505,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.PurgeParameters, IO],
+        content_file_paths: Union[_models.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Removes a content from CDN.
@@ -1664,19 +1521,8 @@ class EndpointsOperations:
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
          '/pictures/*' which removes all folders and files in the directory. Is either a PurgeParameters
-         type or a IO type. Required.
-        :type content_file_paths: ~azure.mgmt.cdn.models.PurgeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Required.
+        :type content_file_paths: ~azure.mgmt.cdn.models.PurgeParameters or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1707,7 +1553,7 @@ class EndpointsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1716,27 +1562,23 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_purge_content.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/purge"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _load_content_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.LoadParameters, IO],
+        content_file_paths: Union[_models.LoadParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1759,7 +1601,7 @@ class EndpointsOperations:
         else:
             _json = self._serialize.body(content_file_paths, "LoadParameters")
 
-        request = build_load_content_request(
+        _request = build_load_content_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -1768,16 +1610,15 @@ class EndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._load_content_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1792,11 +1633,7 @@ class EndpointsOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _load_content_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/load"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_load_content(
@@ -1825,14 +1662,6 @@ class EndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1844,7 +1673,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: IO,
+        content_file_paths: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1861,18 +1690,10 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param content_file_paths: The path to the content to be loaded. Path should be a full URL,
          e.g. ‘/pictures/city.png' which loads a single file. Required.
-        :type content_file_paths: IO
+        :type content_file_paths: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1884,7 +1705,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.LoadParameters, IO],
+        content_file_paths: Union[_models.LoadParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Pre-loads a content to CDN. Available for Verizon Profiles.
@@ -1898,20 +1719,9 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param content_file_paths: The path to the content to be loaded. Path should be a full URL,
-         e.g. ‘/pictures/city.png' which loads a single file. Is either a LoadParameters type or a IO
-         type. Required.
-        :type content_file_paths: ~azure.mgmt.cdn.models.LoadParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         e.g. ‘/pictures/city.png' which loads a single file. Is either a LoadParameters type or a
+         IO[bytes] type. Required.
+        :type content_file_paths: ~azure.mgmt.cdn.models.LoadParameters or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1942,7 +1752,7 @@ class EndpointsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1951,17 +1761,13 @@ class EndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_load_content.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/load"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     def validate_custom_domain(
@@ -1989,7 +1795,6 @@ class EndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateCustomDomainOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2001,7 +1806,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: IO,
+        custom_domain_properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2017,11 +1822,10 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param custom_domain_properties: Custom domain to be validated. Required.
-        :type custom_domain_properties: IO
+        :type custom_domain_properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateCustomDomainOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2033,7 +1837,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: Union[_models.ValidateCustomDomainInput, IO],
+        custom_domain_properties: Union[_models.ValidateCustomDomainInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateCustomDomainOutput:
         """Validates the custom domain mapping to ensure it maps to the correct CDN endpoint in DNS.
@@ -2047,17 +1851,13 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param custom_domain_properties: Custom domain to be validated. Is either a
-         ValidateCustomDomainInput type or a IO type. Required.
-        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ValidateCustomDomainInput type or a IO[bytes] type. Required.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or IO[bytes]
         :return: ValidateCustomDomainOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2080,7 +1880,7 @@ class EndpointsOperations:
         else:
             _json = self._serialize.body(custom_domain_properties, "ValidateCustomDomainInput")
 
-        request = build_validate_custom_domain_request(
+        _request = build_validate_custom_domain_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -2089,16 +1889,15 @@ class EndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate_custom_domain.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2111,13 +1910,9 @@ class EndpointsOperations:
         deserialized = self._deserialize("ValidateCustomDomainOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate_custom_domain.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/validateCustomDomain"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_resource_usage(
@@ -2133,7 +1928,6 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceUsage or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.ResourceUsage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2144,7 +1938,7 @@ class EndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ResourceUsageListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2155,18 +1949,17 @@ class EndpointsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_resource_usage_request(
+                _request = build_list_resource_usage_request(
                     resource_group_name=resource_group_name,
                     profile_name=profile_name,
                     endpoint_name=endpoint_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_resource_usage.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2178,13 +1971,13 @@ class EndpointsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceUsageListResult", pipeline_response)
@@ -2194,11 +1987,11 @@ class EndpointsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2210,7 +2003,3 @@ class EndpointsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_resource_usage.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/checkResourceUsage"
-    }

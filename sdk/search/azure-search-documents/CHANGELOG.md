@@ -1,14 +1,53 @@
 # Release History
 
-## 11.6.0b3 (Unreleased)
+## 11.6.0b5 (Unreleased)
 
 ### Features Added
+
+- `SearchIndexClient`.`get_search_client` inherits the API version.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed the issue that we missed ODATA header when using Entra ID auth.
+
 ### Other Changes
+
+## 11.6.0b4 (2024-05-07)
+
+### Features Added
+
+- Added new models:
+  - `azure.search.documents.models.HybridCountAndFacetMode`
+  - `azure.search.documents.models.HybridSearch`
+  - `azure.search.documents.models.SearchScoreThreshold`
+  - `azure.search.documents.models.VectorSimilarityThreshold`
+  - `azure.search.documents.models.VectorThreshold`
+  - `azure.search.documents.models.VectorThresholdKind`
+  - `azure.search.documents.models.VectorizableImageBinaryQuery`
+  - `azure.search.documents.models.VectorizableImageUrlQuery`
+  - `azure.search.documents.indexes.models.AIServicesVisionParameters`
+  - `azure.search.documents.indexes.models.AIServicesVisionVectorizer`
+  - `azure.search.documents.indexes.models.AIStudioModelCatalogName`
+  - `azure.search.documents.indexes.models.AzureMachineLearningParameters`
+  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName`
+  - `azure.search.documents.indexes.models.VectorEncodingFormat`
+  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
+- Added `hybrid_search` support for `SearchClient.search` method.
+- Updated default API version to `2024-05-01-preview`.
+
+### Bugs Fixed
+
+- Fixed the bug that SearchClient failed when both answer count and answer threshold applied.
+
+## 11.6.0b3 (2024-04-09)
+
+### Features Added
+
+- Added `IndexerExecutionEnvironment`, `IndexingMode`, `LineEnding`, `NativeBlobSoftDeleteDeletionDetectionPolicy`, `ScalarQuantizationCompressionConfiguration`, `ScalarQuantizationParameters`, `SearchServiceCounters`, `SearchServiceLimits`, `SearchServiceStatistics`, `VectorSearchCompressionConfiguration` & `VectorSearchCompressionTargetDataType`.
+- Added `stored` in `SearchField`.
 
 ## 11.6.0b2 (2024-03-05)
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -28,8 +29,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import SubscriptionClientMixinABC, _convert_request, _format_url_section
+from .._vendor import SubscriptionClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -37,7 +42,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_subscriptions_list_locations_request(
+def build_subscriptions_list_locations_request(  # pylint: disable=name-too-long
     subscription_id: str, *, include_extended_locations: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -52,7 +57,7 @@ def build_subscriptions_list_locations_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -80,7 +85,7 @@ def build_subscriptions_get_request(subscription_id: str, **kwargs: Any) -> Http
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -110,7 +115,9 @@ def build_subscriptions_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_subscriptions_check_zone_peers_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_subscriptions_check_zone_peers_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -124,7 +131,7 @@ def build_subscriptions_check_zone_peers_request(subscription_id: str, **kwargs:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -156,7 +163,7 @@ def build_tenants_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_subscription_check_resource_name_request(**kwargs: Any) -> HttpRequest:
+def build_subscription_check_resource_name_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -196,6 +203,7 @@ class SubscriptionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_locations(
@@ -211,7 +219,6 @@ class SubscriptionsOperations:
         :param include_extended_locations: Whether to include extended locations. Default value is
          None.
         :type include_extended_locations: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Location or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.subscriptions.v2021_01_01.models.Location]
@@ -220,10 +227,10 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.LocationListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -234,16 +241,15 @@ class SubscriptionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_subscriptions_list_locations_request(
+                _request = build_subscriptions_list_locations_request(
                     subscription_id=subscription_id,
                     include_extended_locations=include_extended_locations,
                     api_version=api_version,
-                    template_url=self.list_locations.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -254,14 +260,14 @@ class SubscriptionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LocationListResult", pipeline_response)
@@ -271,11 +277,11 @@ class SubscriptionsOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -287,20 +293,17 @@ class SubscriptionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_locations.metadata = {"url": "/subscriptions/{subscriptionId}/locations"}
-
     @distributed_trace
     def get(self, subscription_id: str, **kwargs: Any) -> _models.Subscription:
         """Gets details about a specified subscription.
 
         :param subscription_id: The ID of the target subscription. Required.
         :type subscription_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subscription or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.Subscription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -311,22 +314,21 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.Subscription] = kwargs.pop("cls", None)
 
-        request = build_subscriptions_get_request(
+        _request = build_subscriptions_get_request(
             subscription_id=subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -338,17 +340,14 @@ class SubscriptionsOperations:
         deserialized = self._deserialize("Subscription", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.Subscription"]:
         """Gets all subscriptions for a tenant.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Subscription or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.subscriptions.v2021_01_01.models.Subscription]
@@ -357,10 +356,10 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.SubscriptionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -371,14 +370,13 @@ class SubscriptionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_subscriptions_list_request(
+                _request = build_subscriptions_list_request(
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -389,14 +387,14 @@ class SubscriptionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SubscriptionListResult", pipeline_response)
@@ -406,11 +404,11 @@ class SubscriptionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -421,8 +419,6 @@ class SubscriptionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions"}
 
     @overload
     def check_zone_peers(
@@ -442,7 +438,6 @@ class SubscriptionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckZonePeersResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckZonePeersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -450,18 +445,17 @@ class SubscriptionsOperations:
 
     @overload
     def check_zone_peers(
-        self, subscription_id: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, subscription_id: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckZonePeersResult:
         """Compares a subscriptions logical zone mapping.
 
         :param subscription_id: The ID of the target subscription. Required.
         :type subscription_id: str
         :param parameters: Parameters for checking zone peers. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckZonePeersResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckZonePeersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -469,25 +463,21 @@ class SubscriptionsOperations:
 
     @distributed_trace
     def check_zone_peers(
-        self, subscription_id: str, parameters: Union[_models.CheckZonePeersRequest, IO], **kwargs: Any
+        self, subscription_id: str, parameters: Union[_models.CheckZonePeersRequest, IO[bytes]], **kwargs: Any
     ) -> _models.CheckZonePeersResult:
         """Compares a subscriptions logical zone mapping.
 
         :param subscription_id: The ID of the target subscription. Required.
         :type subscription_id: str
         :param parameters: Parameters for checking zone peers. Is either a CheckZonePeersRequest type
-         or a IO type. Required.
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckZonePeersRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: CheckZonePeersResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckZonePeersResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -498,7 +488,7 @@ class SubscriptionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckZonePeersResult] = kwargs.pop("cls", None)
 
@@ -510,22 +500,21 @@ class SubscriptionsOperations:
         else:
             _json = self._serialize.body(parameters, "CheckZonePeersRequest")
 
-        request = build_subscriptions_check_zone_peers_request(
+        _request = build_subscriptions_check_zone_peers_request(
             subscription_id=subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_zone_peers.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -538,11 +527,9 @@ class SubscriptionsOperations:
         deserialized = self._deserialize("CheckZonePeersResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_zone_peers.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/checkZonePeers/"}
+        return deserialized  # type: ignore
 
 
 class TenantsOperations:
@@ -563,12 +550,12 @@ class TenantsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.TenantIdDescription"]:
         """Gets the tenants for your account.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TenantIdDescription or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.subscriptions.v2021_01_01.models.TenantIdDescription]
@@ -577,10 +564,10 @@ class TenantsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.TenantListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -591,14 +578,13 @@ class TenantsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_tenants_list_request(
+                _request = build_tenants_list_request(
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -609,14 +595,14 @@ class TenantsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("TenantListResult", pipeline_response)
@@ -626,11 +612,11 @@ class TenantsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -642,10 +628,14 @@ class TenantsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/tenants"}
-
 
 class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
+    def _api_version(self, op_name: str) -> str:  # pylint: disable=unused-argument
+        try:
+            return self._config.api_version
+        except:  # pylint: disable=bare-except
+            return ""
+
     @overload
     def check_resource_name(
         self,
@@ -666,7 +656,6 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckResourceNameResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -674,7 +663,11 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
 
     @overload
     def check_resource_name(
-        self, resource_name_definition: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_name_definition: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
@@ -683,11 +676,10 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
 
         :param resource_name_definition: Resource object with values for resource name and resource
          type. Default value is None.
-        :type resource_name_definition: IO
+        :type resource_name_definition: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckResourceNameResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -695,7 +687,7 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
 
     @distributed_trace
     def check_resource_name(
-        self, resource_name_definition: Optional[Union[_models.ResourceName, IO]] = None, **kwargs: Any
+        self, resource_name_definition: Optional[Union[_models.ResourceName, IO[bytes]]] = None, **kwargs: Any
     ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
@@ -703,18 +695,14 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type. Is either a ResourceName type or a IO type. Default value is None.
+         type. Is either a ResourceName type or a IO[bytes] type. Default value is None.
         :type resource_name_definition:
-         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName or IO[bytes]
         :return: CheckResourceNameResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -725,7 +713,9 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version("check_resource_name") or "2021-01-01")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckResourceNameResult] = kwargs.pop("cls", None)
 
@@ -740,21 +730,20 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
             else:
                 _json = None
 
-        request = build_subscription_check_resource_name_request(
+        _request = build_subscription_check_resource_name_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_resource_name.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -766,8 +755,6 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         deserialized = self._deserialize("CheckResourceNameResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_resource_name.metadata = {"url": "/providers/Microsoft.Resources/checkResourceName"}
+        return deserialized  # type: ignore

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.web import WebSiteManagementClient
 
 """
@@ -29,14 +30,15 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.diagnostics.list_site_detector_responses(
+    response = client.diagnostics.list_site_detector_responses_slot(
         resource_group_name="Sample-WestUSResourceGroup",
         site_name="SampleApp",
+        slot="staging",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/Diagnostics_ListSiteDetectorResponses.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/Diagnostics_ListSiteDetectorResponses.json
 if __name__ == "__main__":
     main()

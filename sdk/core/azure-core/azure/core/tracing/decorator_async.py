@@ -27,11 +27,14 @@
 
 import functools
 
-from typing import Awaitable, Callable, Any, TypeVar, overload, Optional
+from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from . import SpanKind as _SpanKind
 from ..settings import settings
+
+if TYPE_CHECKING:
+    from azure.core.tracing import SpanKind
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -43,28 +46,42 @@ def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> Callable[P, Aw
 
 
 @overload
-def distributed_trace_async(  # pylint:disable=function-redefined
-    **kwargs: Any,  # pylint:disable=unused-argument
+def distributed_trace_async(
+    *,
+    name_of_span: Optional[str] = None,
+    kind: Optional["SpanKind"] = None,
+    tracing_attributes: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
 ) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     pass
 
 
-def distributed_trace_async(  # pylint:disable=function-redefined
-    __func: Optional[Callable[P, Awaitable[T]]] = None, **kwargs: Any
+def distributed_trace_async(
+    __func: Optional[Callable[P, Awaitable[T]]] = None,  # pylint: disable=unused-argument
+    *,
+    name_of_span: Optional[str] = None,
+    kind: Optional["SpanKind"] = None,
+    tracing_attributes: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
 ) -> Any:
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
 
-    :param callable func: A function to decorate
+    :param callable __func: A function to decorate
     :keyword name_of_span: The span name to replace func name if necessary
     :paramtype name_of_span: str
     :keyword kind: The kind of the span. INTERNAL by default.
     :paramtype kind: ~azure.core.tracing.SpanKind
+    :keyword tracing_attributes: Attributes to add to the span.
+    :paramtype tracing_attributes: Mapping[str, Any] or None
+    :return: The decorated function
+    :rtype: Any
     """
-    name_of_span = kwargs.pop("name_of_span", None)
-    tracing_attributes = kwargs.pop("tracing_attributes", {})
-    kind = kwargs.pop("kind", _SpanKind.INTERNAL)
+    if tracing_attributes is None:
+        tracing_attributes = {}
+    if kind is None:
+        kind = _SpanKind.INTERNAL
 
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         @functools.wraps(func)

@@ -9,7 +9,7 @@ import pytest
 
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsQueryResult, LogsQueryPartialResult
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsQueryResult, LogsQueryPartialResult, LogsQueryStatus
 
 from base_testcase import AzureMonitorQueryLogsTestCase
 
@@ -28,6 +28,7 @@ class TestQueryExceptions(AzureMonitorQueryLogsTestCase):
         | summarize percentilesw(x, Weight * 100, 50)"""
         response = client.query_workspace(monitor_info['workspace_id'], query, timespan=timedelta(days=1))
         assert response.__class__ == LogsQueryPartialResult
+        assert response.status == LogsQueryStatus.PARTIAL
         assert response.partial_error is not None
         assert response.partial_data is not None
         assert response.partial_error.details is not None
@@ -46,6 +47,7 @@ class TestQueryExceptions(AzureMonitorQueryLogsTestCase):
         | summarize percentilesw(x, Weight * 100, 50)"""
         response = client.query_resource(monitor_info['metrics_resource_id'], query, timespan=timedelta(days=1))
         assert response.__class__ == LogsQueryPartialResult
+        assert response.status == LogsQueryStatus.PARTIAL
         assert response.partial_error is not None
         assert response.partial_data is not None
         assert response.partial_error.details is not None
@@ -54,9 +56,9 @@ class TestQueryExceptions(AzureMonitorQueryLogsTestCase):
 
     def test_logs_batch_query_fatal_exception(self, recorded_test, monitor_info):
         credential  = ClientSecretCredential(
-            client_id = monitor_info['client_id'],
-            client_secret = 'bad_secret',
-            tenant_id = monitor_info['tenant_id']
+            client_id = "00000000-0000-0000-0000-000000000000",
+            client_secret = "bad_secret",
+            tenant_id = "00000000-0000-0000-0000-000000000000"
         )
         client = self.get_client(LogsQueryClient, credential)
         requests = [

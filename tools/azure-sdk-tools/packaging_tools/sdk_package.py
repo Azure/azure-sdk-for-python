@@ -1,3 +1,4 @@
+import sys
 import argparse
 import json
 import logging
@@ -7,6 +8,11 @@ from subprocess import check_call
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -19,11 +25,18 @@ def main(generate_input, generate_output):
     result = {"packages": []}
     for package in data.values():
         package_name = package["packageName"]
+        prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
             try:
-                md_output = change_log_generate(package_name, last_version, package["tagIsStable"])
+                md_output = change_log_generate(
+                    package_name,
+                    last_version,
+                    package["tagIsStable"],
+                    prefolder=prefolder,
+                    is_multiapi=package["isMultiapi"],
+                )
             except:
                 md_output = "change log generation failed!!!"
         else:
@@ -37,7 +50,7 @@ def main(generate_input, generate_output):
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package
-        create_package(package_name)
+        create_package(prefolder, package_name)
         folder_name = package["path"][0]
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
@@ -46,12 +59,22 @@ def main(generate_input, generate_output):
         if "azure-mgmt-" not in package_name:
             try:
                 package_path = Path(sdk_folder, folder_name, package_name)
-                check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/"], cwd=package_path, timeout=300)
+                check_call(
+                    [
+                        "python",
+                        "-m" "pip",
+                        "install",
+                        "-r",
+                        "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/",
+                    ],
+                    cwd=package_path,
+                    timeout=300,
+                )
                 check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
                 for file in os.listdir(package_path):
-                    if "_python.json" in file:
+                    if "_python.json" in file and package_name in file:
                         package["apiViewArtifact"] = str(Path(package_path, file))
             except Exception as e:
                 _LOGGER.error(f"Fail to generate ApiView token file for {package_name}: {e}")
@@ -60,9 +83,6 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        # to distinguish with track1
-        if "azure-mgmt-" in package_name:
-            package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:
                 package["language"] = "Python"

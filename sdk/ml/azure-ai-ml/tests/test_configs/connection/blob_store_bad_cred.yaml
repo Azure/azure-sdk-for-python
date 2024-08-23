@@ -1,0 +1,10 @@
+name: test_ws_conn_blob_store
+type: azure_blob
+target: my_endpoint
+metadata:
+  four: five
+credentials:
+  type: api_key
+  api_key: "9876"
+container_name: some_container
+account_name: some_account

@@ -39,7 +39,11 @@ def collect_open_issues() -> List[IssuePackage]:
     hub = Github(os.getenv('AZURESDK_BOT_TOKEN'))
     request_repo = hub.get_repo(REQUEST_REPO)
     mgmt_label = request_repo.get_label('ManagementPlane')
-    open_issues = request_repo.get_issues(state='open', labels=[mgmt_label])
+    issue_number = os.getenv("TEST_ISSUE_NUMBER")
+    if issue_number:
+        open_issues = [request_repo.get_issue(int(issue_number))]
+    else:
+        open_issues = request_repo.get_issues(state='open', labels=[mgmt_label])
     rest_repo = hub.get_repo(REST_REPO)
     issues = [IssuePackage(issue, rest_repo) for issue in open_issues]
     _LOG.info(f'collect {len(issues)} open issues')

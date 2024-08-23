@@ -8,8 +8,10 @@
 
 from copy import deepcopy
 from typing import Any, Optional, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models as _models
@@ -43,7 +45,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2023-01-03". Note that overriding this default value may result in unsupported behavior.
+     is "2024-11-04". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -67,7 +69,24 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
             allow_source_trailing_dot=allow_source_trailing_dot,
             **kwargs
         )
-        self._client: PipelineClient = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: PipelineClient = PipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -78,7 +97,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
         self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -98,12 +117,12 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureFileStorage":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

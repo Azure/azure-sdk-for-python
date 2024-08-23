@@ -22,6 +22,7 @@ def print(*args):
 
 
 @pytest.mark.asyncio
+@pytest.mark.playback_test_only("Can't run in live pipelines, and there's no reason to.")
 async def test_create_secret_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
@@ -109,8 +110,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_example_secret_list_operations(self, client, **kwargs):
-        if not is_live():
-            set_custom_default_matcher(excluded_headers="Authorization")
         secret_client = client
         async with secret_client:
             for i in range(7):

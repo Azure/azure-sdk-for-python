@@ -38,12 +38,24 @@ def main():
         parameters={
             "dataDisksToAttach": [
                 {
+                    "caching": "ReadOnly",
+                    "deleteOption": "Delete",
+                    "diskEncryptionSet": {
+                        "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskEncryptionSets/{existing-diskEncryptionSet-name}"
+                    },
                     "diskId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/disks/vmss3176_vmss3176_0_disk2_6c4f554bdafa49baa780eb2d128ff39d",
                     "lun": 1,
+                    "writeAcceleratorEnabled": True,
                 },
                 {
+                    "caching": "ReadWrite",
+                    "deleteOption": "Detach",
+                    "diskEncryptionSet": {
+                        "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskEncryptionSets/{existing-diskEncryptionSet-name}"
+                    },
                     "diskId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/disks/vmss3176_vmss3176_2_disk3_7d5e664bdafa49baa780eb2d128ff38e",
                     "lun": 2,
+                    "writeAcceleratorEnabled": False,
                 },
             ],
             "dataDisksToDetach": [
@@ -61,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineExamples/VirtualMachine_AttachDetachDataDisks_MaximumSet_Gen.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-07-01/examples/virtualMachineExamples/VirtualMachine_AttachDetachDataDisks_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

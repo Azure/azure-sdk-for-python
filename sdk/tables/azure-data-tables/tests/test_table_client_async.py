@@ -224,7 +224,8 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
-            time.sleep(10)
+            if self.is_live:
+                time.sleep(15)
 
         async with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY

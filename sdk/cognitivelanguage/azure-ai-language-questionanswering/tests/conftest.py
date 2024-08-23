@@ -6,7 +6,11 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
+from devtools_testutils.sanitizers import (
+    add_header_regex_sanitizer,
+    add_oauth_response_sanitizer,
+    remove_batch_sanitizers
+)
 
 
 # Environment variable keys
@@ -39,6 +43,10 @@ def add_sanitizers(test_proxy, environment_variables):
     environment_variables.sanitize_batch(sanitization_mapping)
     add_oauth_response_sanitizer()
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    remove_batch_sanitizers(["AZSDK3430"])
 
 
 @pytest.fixture(scope="session")

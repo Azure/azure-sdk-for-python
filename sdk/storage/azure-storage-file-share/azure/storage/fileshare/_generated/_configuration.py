@@ -6,23 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from . import models as _models
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 VERSION = "unknown"
 
 
-class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureFileStorageConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureFileStorage.
 
     Note that all parameters used to create this instance are saved as instance
@@ -40,7 +33,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2023-01-03". Note that overriding this default value may result in unsupported behavior.
+     is "2024-11-04". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -56,8 +49,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
         allow_source_trailing_dot: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        super(AzureFileStorageConfiguration, self).__init__(**kwargs)
-        version: Literal["2023-01-03"] = kwargs.pop("version", "2023-01-03")
+        version: Literal["2024-11-04"] = kwargs.pop("version", "2024-11-04")
         file_range_write_from_url: Literal["update"] = kwargs.pop("file_range_write_from_url", "update")
 
         if url is None:
@@ -70,6 +62,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
         self.version = version
         self.file_range_write_from_url = file_range_write_from_url
         kwargs.setdefault("sdk_moniker", "azurefilestorage/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -78,7 +71,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")

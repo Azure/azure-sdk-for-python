@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,13 +18,11 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._service_operations import (
     build_get_properties_request,
     build_get_statistics_request,
@@ -32,10 +30,10 @@ from ...operations._service_operations import (
     build_set_properties_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -80,18 +78,11 @@ class ServiceOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "service". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -109,7 +100,7 @@ class ServiceOperations:
 
         _content = self._serialize.body(storage_service_properties, "StorageServiceProperties", is_xml=True)
 
-        request = build_set_properties_request(
+        _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -118,16 +109,14 @@ class ServiceOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -142,9 +131,7 @@ class ServiceOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_properties(
@@ -161,18 +148,11 @@ class ServiceOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "service". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceProperties or the result of cls(response)
         :rtype: ~azure.storage.queue.models.StorageServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -187,23 +167,21 @@ class ServiceOperations:
         comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[_models.StorageServiceProperties] = kwargs.pop("cls", None)
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -217,14 +195,12 @@ class ServiceOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize("StorageServiceProperties", pipeline_response)
+        deserialized = self._deserialize("StorageServiceProperties", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_properties.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_statistics(
@@ -242,18 +218,11 @@ class ServiceOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "service". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "stats". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceStats or the result of cls(response)
         :rtype: ~azure.storage.queue.models.StorageServiceStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -268,23 +237,21 @@ class ServiceOperations:
         comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
         cls: ClsType[_models.StorageServiceStats] = kwargs.pop("cls", None)
 
-        request = build_get_statistics_request(
+        _request = build_get_statistics_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_statistics.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -299,14 +266,12 @@ class ServiceOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("StorageServiceStats", pipeline_response)
+        deserialized = self._deserialize("StorageServiceStats", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_statistics.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_queues_segment(
@@ -349,15 +314,11 @@ class ServiceOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "list". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListQueuesSegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.queue.models.ListQueuesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -371,7 +332,7 @@ class ServiceOperations:
         comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListQueuesSegmentResponse] = kwargs.pop("cls", None)
 
-        request = build_list_queues_segment_request(
+        _request = build_list_queues_segment_request(
             url=self._config.url,
             prefix=prefix,
             marker=marker,
@@ -381,16 +342,14 @@ class ServiceOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_queues_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -405,11 +364,9 @@ class ServiceOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("ListQueuesSegmentResponse", pipeline_response)
+        deserialized = self._deserialize("ListQueuesSegmentResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_queues_segment.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore

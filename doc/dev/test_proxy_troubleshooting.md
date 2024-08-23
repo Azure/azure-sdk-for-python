@@ -144,6 +144,43 @@ To match requests for query parameter content instead of exact ordering, you can
 `ignore_query_ordering=True`. Calling this method inside the body of a test function will update the matcher for only
 that test, which is recommended.
 
+### Sanitization impacting request URL/body/headers
+
+In some cases, a value in a response body is used in the following request as part of the URL, body, or headers. If this value is sanitized, the recorded request might differ than what is expected during playback. Common culprits include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific sanitization or add another sanitizer to align with the sanitized value.
+
+#### Opt out
+
+You can opt out of sanitization for the fields that are used for your requests by calling the `remove_batch_sanitizer` method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in the `conftest.py` file, in the one of the session-scoped fixtures. Example:
+
+```python
+from devtools_testutils import remove_batch_sanitizers, test_proxy
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    ...
+    #  Remove the following body key sanitizer: AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3493"])
+```
+
+Some sanitizer IDs that are often opted out of are:
+  - `AZSDK2003`: `Location` - Header regex sanitizer
+  - `AZSDK3430`: `$..id` - Body key sanitizer
+  - `AZSDK3493`: `$..name` - Body key sanitizer
+
+However, **please be mindful when opting out of a sanitizer, and ensure that no sensitive data is being exposed**.
+
+#### Add another sanitizer
+
+Alternatively, you can add another sanitizer to align the recorded request with the expected request, modifying the URL, body, or headers as needed. Example:
+
+```python
+from devtools_testutils import add_uri_regex_sanitizer
+
+
+add_uri_regex_sanitizer(regex="(?<=https://.+/foo/bar/)(?<id>[^/?\\.]+)", group_for_replace="id", value="Sanitized")
+```
+
 ## Recordings not being produced
 
 Ensure the environment variable `AZURE_SKIP_LIVE_RECORDING` **isn't** set to "true", and that `AZURE_TEST_RUN_LIVE`
@@ -223,12 +260,18 @@ While the test proxy is being invoked during the start of a test run, you may se
 PermissionError: [Errno 13] Permission denied: '.../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy'
 ```
 
-This means that the test proxy tool was successfully installed at the location in the error message, but we don't have
+This can mean that the test proxy tool was successfully installed at the location in the error message, but we don't have
 sufficient permissions to run it with the tool startup script. We can set the correct permissions on the file by using
 `chmod`. Using the tool path that was provided in the `PermissionError` message, run the following command:
 ```
 chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 ```
+
+Alternatively, you can delete the installed tool and re-run your tests to automatically reinstall it correctly.
+
+- Open Task Manager, search for a process named "Azure.Sdk.Tools.TestProxy", and end the task if one is running.
+- Delete the `.proxy` folder at the root of your local `azure-sdk-for-python` clone.
+- Re-run your tests; the test proxy will be reinstalled and should correctly set file permissions.
 
 
 [custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
@@ -245,4 +288,5 @@ chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html
 [record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
+[test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907

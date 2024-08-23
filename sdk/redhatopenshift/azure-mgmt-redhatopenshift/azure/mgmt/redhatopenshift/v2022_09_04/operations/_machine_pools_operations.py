@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -20,16 +21,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -306,7 +309,6 @@ class MachinePoolsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MachinePool or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool]
@@ -318,7 +320,7 @@ class MachinePoolsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-04"))
         cls: ClsType[_models.MachinePoolList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -329,17 +331,15 @@ class MachinePoolsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -350,14 +350,13 @@ class MachinePoolsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("MachinePoolList", pipeline_response)
@@ -367,11 +366,11 @@ class MachinePoolsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -382,10 +381,6 @@ class MachinePoolsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openShiftCluster/{resourceName}/machinePools"
-    }
 
     @distributed_trace
     def get(
@@ -402,12 +397,11 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -421,22 +415,20 @@ class MachinePoolsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-04"))
         cls: ClsType[_models.MachinePool] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             child_resource_name=child_resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -445,16 +437,12 @@ class MachinePoolsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MachinePool", pipeline_response)
+        deserialized = self._deserialize("MachinePool", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openshiftclusters/{resourceName}/machinePool/{childResourceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -484,7 +472,6 @@ class MachinePoolsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -496,7 +483,7 @@ class MachinePoolsOperations:
         resource_group_name: str,
         resource_name: str,
         child_resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -514,11 +501,10 @@ class MachinePoolsOperations:
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
         :param parameters: The MachinePool resource. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -530,7 +516,7 @@ class MachinePoolsOperations:
         resource_group_name: str,
         resource_name: str,
         child_resource_name: str,
-        parameters: Union[_models.MachinePool, IO],
+        parameters: Union[_models.MachinePool, IO[bytes]],
         **kwargs: Any
     ) -> _models.MachinePool:
         """Creates or updates a MachinePool with the specified subscription, resource group and resource
@@ -545,18 +531,14 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :param parameters: The MachinePool resource. Is either a MachinePool type or a IO type.
+        :param parameters: The MachinePool resource. Is either a MachinePool type or a IO[bytes] type.
          Required.
-        :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool or IO[bytes]
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -579,7 +561,7 @@ class MachinePoolsOperations:
         else:
             _json = self._serialize.body(parameters, "MachinePool")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             child_resource_name=child_resource_name,
@@ -588,16 +570,14 @@ class MachinePoolsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -607,19 +587,15 @@ class MachinePoolsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("MachinePool", pipeline_response)
+            deserialized = self._deserialize("MachinePool", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("MachinePool", pipeline_response)
+            deserialized = self._deserialize("MachinePool", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openshiftclusters/{resourceName}/machinePool/{childResourceName}"
-    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -636,12 +612,11 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -655,22 +630,20 @@ class MachinePoolsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-04"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             child_resource_name=child_resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -680,11 +653,7 @@ class MachinePoolsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openshiftclusters/{resourceName}/machinePool/{childResourceName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def update(
@@ -713,7 +682,6 @@ class MachinePoolsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -725,7 +693,7 @@ class MachinePoolsOperations:
         resource_group_name: str,
         resource_name: str,
         child_resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -742,11 +710,10 @@ class MachinePoolsOperations:
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
         :param parameters: The MachinePool resource. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -758,7 +725,7 @@ class MachinePoolsOperations:
         resource_group_name: str,
         resource_name: str,
         child_resource_name: str,
-        parameters: Union[_models.MachinePoolUpdate, IO],
+        parameters: Union[_models.MachinePoolUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.MachinePool:
         """Updates a MachinePool with the specified subscription, resource group and resource name.
@@ -772,18 +739,14 @@ class MachinePoolsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the MachinePool resource. Required.
         :type child_resource_name: str
-        :param parameters: The MachinePool resource. Is either a MachinePoolUpdate type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePoolUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The MachinePool resource. Is either a MachinePoolUpdate type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePoolUpdate or IO[bytes]
         :return: MachinePool or the result of cls(response)
         :rtype: ~azure.mgmt.redhatopenshift.v2022_09_04.models.MachinePool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -806,7 +769,7 @@ class MachinePoolsOperations:
         else:
             _json = self._serialize.body(parameters, "MachinePoolUpdate")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             child_resource_name=child_resource_name,
@@ -815,16 +778,14 @@ class MachinePoolsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -833,13 +794,9 @@ class MachinePoolsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MachinePool", pipeline_response)
+        deserialized = self._deserialize("MachinePool", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openshiftclusters/{resourceName}/machinePool/{childResourceName}"
-    }
+        return deserialized  # type: ignore

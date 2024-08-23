@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Iterable, Optional, Union
+from typing import Iterable, Optional, Union, Dict, Any
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
@@ -14,6 +14,7 @@ from ..._internal import AadClientBase
 from ..._internal.pipeline import build_async_pipeline
 
 Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
+
 
 # pylint:disable=invalid-overridden-method
 class AadClient(AadClientBase):
@@ -56,7 +57,11 @@ class AadClient(AadClientBase):
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_refresh_token_on_behalf_of(  # pylint: disable=name-too-long
-        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], refresh_token: str, **kwargs
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
+        refresh_token: str,
+        **kwargs
     ) -> AccessToken:
         request = self._get_refresh_token_on_behalf_of_request(
             scopes, client_credential=client_credential, refresh_token=refresh_token, **kwargs
@@ -64,7 +69,11 @@ class AadClient(AadClientBase):
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_on_behalf_of(
-        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], user_assertion: str, **kwargs
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
+        user_assertion: str,
+        **kwargs
     ) -> AccessToken:
         request = self._get_on_behalf_of_request(
             scopes=scopes, client_credential=client_credential, user_assertion=user_assertion, **kwargs
@@ -79,6 +88,7 @@ class AadClient(AadClientBase):
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         kwargs.pop("claims", None)
+        kwargs.pop("client_secret", None)
         enable_cae = kwargs.pop("enable_cae", False)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)

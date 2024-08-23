@@ -23,9 +23,6 @@ USAGE:
     2) AZURE_STORAGE_ACCOUNT_URL - the queue service account URL
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
-    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
-    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
-    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
 """
 
 
@@ -41,10 +38,6 @@ class QueueAuthSamples(object):
     account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-
-    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
-    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
-    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     def authentication_by_connection_string(self):
         if self.connection_string is None:
@@ -76,29 +69,21 @@ class QueueAuthSamples(object):
         # Get information for the Queue Service
         properties = queue_service.get_service_properties()
 
-    def authentication_by_active_directory(self):
-        if (self.active_directory_tenant_id is None or
-            self.active_directory_application_id is None or
-            self.active_directory_application_secret is None or
-            self.account_url is None
-        ):
+    def authentication_by_oauth(self):
+        if self.account_url is None:
             print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: authentication_by_active_directory")
+                  "Test: authentication_by_oauth")
             sys.exit(1)
 
-        # [START create_queue_service_client_token]
+        # [START create_queue_service_client_oauth]
         # Get a token credential for authentication
-        from azure.identity import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_tenant_id,
-            self.active_directory_application_id,
-            self.active_directory_application_secret
-        )
+        from azure.identity import DefaultAzureCredential
+        token_credential = DefaultAzureCredential()
 
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
-        # [END create_queue_service_client_token]
+        # [END create_queue_service_client_oauth]
 
         # Get information for the Queue Service
         properties = queue_service.get_service_properties()
@@ -138,5 +123,5 @@ if __name__ == '__main__':
     sample = QueueAuthSamples()
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()
-    sample.authentication_by_active_directory()
+    sample.authentication_by_oauth()
     sample.authentication_by_shared_access_signature()

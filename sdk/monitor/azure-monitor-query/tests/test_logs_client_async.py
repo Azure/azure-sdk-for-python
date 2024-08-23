@@ -8,7 +8,7 @@ from datetime import timedelta
 import pytest
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
+from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryStatus
 from azure.monitor.query.aio import LogsQueryClient
 
 from base_testcase import AzureMonitorQueryLogsTestCase
@@ -29,6 +29,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
             response = await client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
 
             assert response is not None
+            assert response.status == LogsQueryStatus.SUCCESS
             assert response.tables is not None
 
     @pytest.mark.asyncio
@@ -46,19 +47,23 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_server_timeout(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
 
-        with pytest.raises(HttpResponseError) as e:
+        try:
             async with client:
-                await client.query_workspace(
-                    monitor_info['workspace_id'],
+                response = await client.query_workspace(
+                    monitor_info["workspace_id"],
                     "range x from 1 to 1000000000000000 step 1 | count",
                     timespan=None,
-                    server_timeout=1,
+                    server_timeout=2,
+                    retry_total=0,
                 )
-
-        assert 'Gateway timeout' in e.value.message
+        except HttpResponseError as e:
+            assert "Gateway timeout" in e.message
+        else:
+            # Response an be observed as either 504 response code from the gateway or a partial failure 200 response.
+            assert response.status == LogsQueryStatus.PARTIAL
+            assert "timed out" in str(response.partial_error)
 
     @pytest.mark.asyncio
     async def test_logs_query_batch_raises_on_no_timespan(self, monitor_info):

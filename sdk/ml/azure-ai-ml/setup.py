@@ -81,7 +81,7 @@ setup(
         "pyjwt",
         "azure-storage-blob>=12.10.0",
         "azure-storage-file-share",
-        "azure-storage-file-datalake",
+        "azure-storage-file-datalake>=12.2.0",
         "pydash>=6.0.0",
         "isodate",
         "azure-common>=1.1",
@@ -90,12 +90,12 @@ setup(
         "opencensus-ext-logging",
     ],
     extras_require={
-        # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
+        # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package
         # so user can submit @dsl.pipeline with @mldesigner.command_component inside it.
         "designer": [
             "mldesigner",
         ],
-        # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex alone with this package
+        # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex along with this package
         # so user can call data.mount() and datastore.mount() operations supported by it.
         "mount": [
             "azureml-dataprep-rslex>=2.22.0",

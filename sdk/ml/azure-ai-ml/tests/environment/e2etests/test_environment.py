@@ -89,6 +89,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_environment_create_or_update_docker_context(
         self, client: MLClient, env_name: Callable[[str], str]
     ) -> None:
@@ -218,6 +219,7 @@ class TestEnvironment(AzureRecordedTestCase):
             sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_registry_environment_create_conda_and_get(
         self, only_registry_client: MLClient, env_name: Callable[[str], str]
     ) -> None:

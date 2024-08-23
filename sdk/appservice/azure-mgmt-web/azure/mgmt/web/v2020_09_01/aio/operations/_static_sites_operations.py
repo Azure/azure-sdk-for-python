@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -20,15 +21,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._static_sites_operations import (
     build_create_or_update_static_site_build_function_app_settings_request,
     build_create_or_update_static_site_custom_domain_request,
@@ -60,6 +59,10 @@ from ...operations._static_sites_operations import (
 )
 from .._vendor import WebSiteManagementClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -106,7 +109,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSitesWorkflowPreview or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSitesWorkflowPreview
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -116,7 +118,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def preview_workflow(
         self,
         location: str,
-        static_sites_workflow_preview_request: IO,
+        static_sites_workflow_preview_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -129,11 +131,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type location: str
         :param static_sites_workflow_preview_request: A JSON representation of the
          StaticSitesWorkflowPreviewRequest properties. See example. Required.
-        :type static_sites_workflow_preview_request: IO
+        :type static_sites_workflow_preview_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSitesWorkflowPreview or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSitesWorkflowPreview
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -143,7 +144,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def preview_workflow(
         self,
         location: str,
-        static_sites_workflow_preview_request: Union[_models.StaticSitesWorkflowPreviewRequest, IO],
+        static_sites_workflow_preview_request: Union[_models.StaticSitesWorkflowPreviewRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSitesWorkflowPreview:
         """Generates a preview workflow file for the static site.
@@ -154,18 +155,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type location: str
         :param static_sites_workflow_preview_request: A JSON representation of the
          StaticSitesWorkflowPreviewRequest properties. See example. Is either a
-         StaticSitesWorkflowPreviewRequest type or a IO type. Required.
+         StaticSitesWorkflowPreviewRequest type or a IO[bytes] type. Required.
         :type static_sites_workflow_preview_request:
-         ~azure.mgmt.web.v2020_09_01.models.StaticSitesWorkflowPreviewRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2020_09_01.models.StaticSitesWorkflowPreviewRequest or IO[bytes]
         :return: StaticSitesWorkflowPreview or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSitesWorkflowPreview
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -188,23 +185,21 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(static_sites_workflow_preview_request, "StaticSitesWorkflowPreviewRequest")
 
-        request = build_preview_workflow_request(
+        _request = build_preview_workflow_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.preview_workflow.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -214,16 +209,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StaticSitesWorkflowPreview", pipeline_response)
+        deserialized = self._deserialize("StaticSitesWorkflowPreview", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    preview_workflow.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Web/locations/{location}/previewStaticSiteWorkflowFile"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.StaticSiteARMResource"]:
@@ -231,7 +222,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         Get all Static Sites for a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteARMResource or the result of
          cls(response)
         :rtype:
@@ -244,7 +234,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -255,15 +245,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -274,14 +262,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteCollection", pipeline_response)
@@ -291,11 +278,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -307,8 +294,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Web/staticSites"}
 
     @distributed_trace
     def get_static_sites_by_resource_group(
@@ -320,7 +305,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteARMResource or the result of
          cls(response)
         :rtype:
@@ -333,7 +317,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -344,16 +328,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_static_sites_by_resource_group_request(
+                _request = build_get_static_sites_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get_static_sites_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -364,14 +346,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteCollection", pipeline_response)
@@ -381,11 +362,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -397,10 +378,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_static_sites_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites"
-    }
 
     @distributed_trace_async
     async def get_static_site(
@@ -414,12 +391,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -433,21 +409,19 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteARMResource] = kwargs.pop("cls", None)
 
-        request = build_get_static_site_request(
+        _request = build_get_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -457,16 +431,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StaticSiteARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteARMResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update_static_site(
@@ -492,7 +462,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -503,7 +472,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: IO,
+        static_site_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -518,11 +487,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
          Required.
-        :type static_site_envelope: IO
+        :type static_site_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -533,7 +501,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: Union[_models.StaticSiteARMResource, IO],
+        static_site_envelope: Union[_models.StaticSiteARMResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSiteARMResource:
         """Creates a new static site in an existing resource group, or updates an existing static site.
@@ -545,17 +513,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site to create or update. Required.
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
-         Is either a StaticSiteARMResource type or a IO type. Required.
-        :type static_site_envelope: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         Is either a StaticSiteARMResource type or a IO[bytes] type. Required.
+        :type static_site_envelope: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource or
+         IO[bytes]
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -578,7 +543,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(static_site_envelope, "StaticSiteARMResource")
 
-        request = build_create_or_update_static_site_request(
+        _request = build_create_or_update_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -586,16 +551,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -605,20 +568,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StaticSiteARMResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StaticSiteARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteARMResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}"
-    }
 
     @distributed_trace_async
     async def delete_static_site(  # pylint: disable=inconsistent-return-statements
@@ -632,12 +587,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site to delete. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -651,21 +605,19 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_static_site_request(
+        _request = build_delete_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -676,11 +628,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_static_site(
@@ -706,7 +654,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -717,7 +664,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: IO,
+        static_site_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -732,11 +679,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
          Required.
-        :type static_site_envelope: IO
+        :type static_site_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -747,7 +693,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: Union[_models.StaticSitePatchResource, IO],
+        static_site_envelope: Union[_models.StaticSitePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSiteARMResource:
         """Creates a new static site in an existing resource group, or updates an existing static site.
@@ -759,17 +705,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site to create or update. Required.
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
-         Is either a StaticSitePatchResource type or a IO type. Required.
-        :type static_site_envelope: ~azure.mgmt.web.v2020_09_01.models.StaticSitePatchResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         Is either a StaticSitePatchResource type or a IO[bytes] type. Required.
+        :type static_site_envelope: ~azure.mgmt.web.v2020_09_01.models.StaticSitePatchResource or
+         IO[bytes]
         :return: StaticSiteARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -792,7 +735,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(static_site_envelope, "StaticSitePatchResource")
 
-        request = build_update_static_site_request(
+        _request = build_update_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -800,16 +743,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -819,20 +760,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StaticSiteARMResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StaticSiteARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteARMResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    update_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}"
-    }
 
     @distributed_trace
     def list_static_site_users(
@@ -848,7 +781,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param authprovider: The auth provider for the users. Required.
         :type authprovider: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteUserARMResource or the result of
          cls(response)
         :rtype:
@@ -861,7 +793,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteUserCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -872,18 +804,16 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_static_site_users_request(
+                _request = build_list_static_site_users_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     authprovider=authprovider,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_static_site_users.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -894,14 +824,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteUserCollection", pipeline_response)
@@ -911,11 +840,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -927,10 +856,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_static_site_users.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/authproviders/{authprovider}/listUsers"
-    }
 
     @distributed_trace_async
     async def delete_static_site_user(  # pylint: disable=inconsistent-return-statements
@@ -948,12 +873,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type authprovider: str
         :param userid: The user id of the user. Required.
         :type userid: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -967,23 +891,21 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_static_site_user_request(
+        _request = build_delete_static_site_user_request(
             resource_group_name=resource_group_name,
             name=name,
             authprovider=authprovider,
             userid=userid,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_static_site_user.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -994,11 +916,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_static_site_user.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/authproviders/{authprovider}/users/{userid}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_static_site_user(
@@ -1030,7 +948,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteUserARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1043,7 +960,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         authprovider: str,
         userid: str,
-        static_site_user_envelope: IO,
+        static_site_user_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1062,11 +979,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type userid: str
         :param static_site_user_envelope: A JSON representation of the StaticSiteUser properties. See
          example. Required.
-        :type static_site_user_envelope: IO
+        :type static_site_user_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteUserARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1079,7 +995,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         authprovider: str,
         userid: str,
-        static_site_user_envelope: Union[_models.StaticSiteUserARMResource, IO],
+        static_site_user_envelope: Union[_models.StaticSiteUserARMResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSiteUserARMResource:
         """Updates a user entry with the listed roles.
@@ -1095,18 +1011,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param userid: The user id of the user. Required.
         :type userid: str
         :param static_site_user_envelope: A JSON representation of the StaticSiteUser properties. See
-         example. Is either a StaticSiteUserARMResource type or a IO type. Required.
+         example. Is either a StaticSiteUserARMResource type or a IO[bytes] type. Required.
         :type static_site_user_envelope: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserARMResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: StaticSiteUserARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1129,7 +1041,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(static_site_user_envelope, "StaticSiteUserARMResource")
 
-        request = build_update_static_site_user_request(
+        _request = build_update_static_site_user_request(
             resource_group_name=resource_group_name,
             name=name,
             authprovider=authprovider,
@@ -1139,16 +1051,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_static_site_user.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1158,16 +1068,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StaticSiteUserARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteUserARMResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update_static_site_user.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/authproviders/{authprovider}/users/{userid}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_static_site_builds(
@@ -1181,7 +1087,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteBuildARMResource or the result of
          cls(response)
         :rtype:
@@ -1194,7 +1099,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteBuildCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1205,17 +1110,15 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_static_site_builds_request(
+                _request = build_get_static_site_builds_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get_static_site_builds.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1226,14 +1129,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteBuildCollection", pipeline_response)
@@ -1243,11 +1145,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1259,10 +1161,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_static_site_builds.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds"
-    }
 
     @distributed_trace_async
     async def get_static_site_build(
@@ -1278,12 +1176,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteBuildARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteBuildARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1297,22 +1194,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteBuildARMResource] = kwargs.pop("cls", None)
 
-        request = build_get_static_site_build_request(
+        _request = build_get_static_site_build_request(
             resource_group_name=resource_group_name,
             name=name,
             pr_id=pr_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_static_site_build.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1322,16 +1217,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StaticSiteBuildARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteBuildARMResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_static_site_build.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{prId}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_static_site_build(  # pylint: disable=inconsistent-return-statements
@@ -1347,12 +1238,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1366,22 +1256,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_static_site_build_request(
+        _request = build_delete_static_site_build_request(
             resource_group_name=resource_group_name,
             name=name,
             pr_id=pr_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_static_site_build.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1392,14 +1280,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_static_site_build.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{prId}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def create_or_update_static_site_build_function_app_settings(
+    async def create_or_update_static_site_build_function_app_settings(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
@@ -1424,19 +1308,18 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update_static_site_build_function_app_settings(
+    async def create_or_update_static_site_build_function_app_settings(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
         pr_id: str,
-        app_settings: IO,
+        app_settings: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1452,23 +1335,22 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
         :param app_settings: Required.
-        :type app_settings: IO
+        :type app_settings: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_or_update_static_site_build_function_app_settings(
+    async def create_or_update_static_site_build_function_app_settings(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
         pr_id: str,
-        app_settings: Union[_models.StringDictionary, IO],
+        app_settings: Union[_models.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the function app settings of a static site build.
@@ -1481,17 +1363,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
-        :param app_settings: Is either a StringDictionary type or a IO type. Required.
-        :type app_settings: ~azure.mgmt.web.v2020_09_01.models.StringDictionary or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param app_settings: Is either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.v2020_09_01.models.StringDictionary or IO[bytes]
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1514,7 +1392,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(app_settings, "StringDictionary")
 
-        request = build_create_or_update_static_site_build_function_app_settings_request(
+        _request = build_create_or_update_static_site_build_function_app_settings_request(
             resource_group_name=resource_group_name,
             name=name,
             pr_id=pr_id,
@@ -1523,16 +1401,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_static_site_build_function_app_settings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1542,20 +1418,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_static_site_build_function_app_settings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{prId}/config/functionappsettings"
-    }
 
     @distributed_trace
     def list_static_site_build_functions(
@@ -1571,7 +1439,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteFunctionOverviewARMResource or the
          result of cls(response)
         :rtype:
@@ -1584,7 +1451,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteFunctionOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1595,18 +1462,16 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_static_site_build_functions_request(
+                _request = build_list_static_site_build_functions_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     pr_id=pr_id,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_static_site_build_functions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1617,14 +1482,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteFunctionOverviewCollection", pipeline_response)
@@ -1634,11 +1498,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1651,12 +1515,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_static_site_build_functions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{prId}/functions"
-    }
-
     @distributed_trace_async
-    async def list_static_site_build_function_app_settings(
+    async def list_static_site_build_function_app_settings(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, pr_id: str, **kwargs: Any
     ) -> _models.StringDictionary:
         """Gets the application settings of a static site.
@@ -1669,12 +1529,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param pr_id: The stage site identifier. Required.
         :type pr_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1688,22 +1547,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
-        request = build_list_static_site_build_function_app_settings_request(
+        _request = build_list_static_site_build_function_app_settings_request(
             resource_group_name=resource_group_name,
             name=name,
             pr_id=pr_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_static_site_build_function_app_settings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1713,23 +1570,15 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    list_static_site_build_function_app_settings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{prId}/listFunctionAppSettings"
-    }
-
     @overload
-    async def create_or_update_static_site_function_app_settings(
+    async def create_or_update_static_site_function_app_settings(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
@@ -1751,18 +1600,17 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update_static_site_function_app_settings(
+    async def create_or_update_static_site_function_app_settings(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         name: str,
-        app_settings: IO,
+        app_settings: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1776,19 +1624,22 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param app_settings: Required.
-        :type app_settings: IO
+        :type app_settings: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_or_update_static_site_function_app_settings(
-        self, resource_group_name: str, name: str, app_settings: Union[_models.StringDictionary, IO], **kwargs: Any
+    async def create_or_update_static_site_function_app_settings(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        app_settings: Union[_models.StringDictionary, IO[bytes]],
+        **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the function app settings of a static site.
 
@@ -1798,17 +1649,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :param app_settings: Is either a StringDictionary type or a IO type. Required.
-        :type app_settings: ~azure.mgmt.web.v2020_09_01.models.StringDictionary or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param app_settings: Is either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.v2020_09_01.models.StringDictionary or IO[bytes]
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1831,7 +1678,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(app_settings, "StringDictionary")
 
-        request = build_create_or_update_static_site_function_app_settings_request(
+        _request = build_create_or_update_static_site_function_app_settings_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -1839,16 +1686,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_static_site_function_app_settings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1858,20 +1703,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_static_site_function_app_settings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/config/functionappsettings"
-    }
 
     @overload
     async def create_user_roles_invitation_link(
@@ -1897,7 +1734,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteUserInvitationResponseResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserInvitationResponseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1908,7 +1744,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_user_roles_invitation_envelope: IO,
+        static_site_user_roles_invitation_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1922,11 +1758,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_user_roles_invitation_envelope: Required.
-        :type static_site_user_roles_invitation_envelope: IO
+        :type static_site_user_roles_invitation_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteUserInvitationResponseResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserInvitationResponseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1937,7 +1772,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_user_roles_invitation_envelope: Union[_models.StaticSiteUserInvitationRequestResource, IO],
+        static_site_user_roles_invitation_envelope: Union[_models.StaticSiteUserInvitationRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSiteUserInvitationResponseResource:
         """Creates an invitation link for a user with the role.
@@ -1949,18 +1784,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_user_roles_invitation_envelope: Is either a
-         StaticSiteUserInvitationRequestResource type or a IO type. Required.
+         StaticSiteUserInvitationRequestResource type or a IO[bytes] type. Required.
         :type static_site_user_roles_invitation_envelope:
-         ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserInvitationRequestResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserInvitationRequestResource or IO[bytes]
         :return: StaticSiteUserInvitationResponseResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteUserInvitationResponseResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1985,7 +1816,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 static_site_user_roles_invitation_envelope, "StaticSiteUserInvitationRequestResource"
             )
 
-        request = build_create_user_roles_invitation_link_request(
+        _request = build_create_user_roles_invitation_link_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -1993,16 +1824,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_user_roles_invitation_link.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2012,16 +1841,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StaticSiteUserInvitationResponseResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteUserInvitationResponseResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_user_roles_invitation_link.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/createUserInvitation"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_static_site_custom_domains(
@@ -2035,7 +1860,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site resource to search in. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteCustomDomainOverviewARMResource or the
          result of cls(response)
         :rtype:
@@ -2048,7 +1872,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteCustomDomainOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2059,17 +1883,15 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_static_site_custom_domains_request(
+                _request = build_list_static_site_custom_domains_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_static_site_custom_domains.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2080,14 +1902,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteCustomDomainOverviewCollection", pipeline_response)
@@ -2097,11 +1918,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2114,12 +1935,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_static_site_custom_domains.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/customDomains"
-    }
-
     @distributed_trace_async
-    async def create_or_update_static_site_custom_domain(
+    async def create_or_update_static_site_custom_domain(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, domain_name: str, **kwargs: Any
     ) -> _models.StaticSiteCustomDomainOverviewARMResource:
         """Creates a new static site custom domain in an existing resource group and static site.
@@ -2132,12 +1949,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param domain_name: The custom domain to create. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticSiteCustomDomainOverviewARMResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StaticSiteCustomDomainOverviewARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2151,22 +1967,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteCustomDomainOverviewARMResource] = kwargs.pop("cls", None)
 
-        request = build_create_or_update_static_site_custom_domain_request(
+        _request = build_create_or_update_static_site_custom_domain_request(
             resource_group_name=resource_group_name,
             name=name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update_static_site_custom_domain.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2176,20 +1990,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StaticSiteCustomDomainOverviewARMResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StaticSiteCustomDomainOverviewARMResource", pipeline_response)
+        deserialized = self._deserialize("StaticSiteCustomDomainOverviewARMResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_static_site_custom_domain.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/customDomains/{domainName}"
-    }
 
     @distributed_trace_async
     async def delete_static_site_custom_domain(  # pylint: disable=inconsistent-return-statements
@@ -2205,12 +2011,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param domain_name: The custom domain to delete. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2224,22 +2029,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_static_site_custom_domain_request(
+        _request = build_delete_static_site_custom_domain_request(
             resource_group_name=resource_group_name,
             name=name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_static_site_custom_domain.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2250,14 +2053,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_static_site_custom_domain.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/customDomains/{domainName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def validate_custom_domain_can_be_added_to_static_site(  # pylint: disable=inconsistent-return-statements
+    async def validate_custom_domain_can_be_added_to_static_site(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, resource_group_name: str, name: str, domain_name: str, **kwargs: Any
     ) -> None:
         """Validates a particular custom domain can be added to a static site.
@@ -2270,12 +2069,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param domain_name: The custom domain to validate. Required.
         :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2289,22 +2087,20 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_validate_custom_domain_can_be_added_to_static_site_request(
+        _request = build_validate_custom_domain_can_be_added_to_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             domain_name=domain_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.validate_custom_domain_can_be_added_to_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2315,11 +2111,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    validate_custom_domain_can_be_added_to_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/customDomains/{domainName}/validate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def detach_static_site(  # pylint: disable=inconsistent-return-statements
@@ -2333,12 +2125,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site to detach. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2352,21 +2143,19 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_detach_static_site_request(
+        _request = build_detach_static_site_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.detach_static_site.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2377,11 +2166,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    detach_static_site.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/detach"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_static_site_functions(
@@ -2395,7 +2180,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticSiteFunctionOverviewARMResource or the
          result of cls(response)
         :rtype:
@@ -2408,7 +2192,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StaticSiteFunctionOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2419,17 +2203,15 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_static_site_functions_request(
+                _request = build_list_static_site_functions_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_static_site_functions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2440,14 +2222,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StaticSiteFunctionOverviewCollection", pipeline_response)
@@ -2457,11 +2238,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2473,10 +2254,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_static_site_functions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/functions"
-    }
 
     @distributed_trace_async
     async def list_static_site_function_app_settings(
@@ -2490,12 +2267,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2509,21 +2285,19 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
-        request = build_list_static_site_function_app_settings_request(
+        _request = build_list_static_site_function_app_settings_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_static_site_function_app_settings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2533,20 +2307,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    list_static_site_function_app_settings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/listFunctionAppSettings"
-    }
 
     @distributed_trace_async
     async def list_static_site_secrets(
@@ -2560,12 +2326,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StringDictionary or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_09_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2579,21 +2344,19 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-09-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
-        request = build_list_static_site_secrets_request(
+        _request = build_list_static_site_secrets_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_static_site_secrets.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2603,16 +2366,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_static_site_secrets.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/listSecrets"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def reset_static_site_api_key(  # pylint: disable=inconsistent-return-statements
@@ -2638,7 +2397,6 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2649,7 +2407,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        reset_properties_envelope: IO,
+        reset_properties_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2663,11 +2421,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param reset_properties_envelope: Required.
-        :type reset_properties_envelope: IO
+        :type reset_properties_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2678,7 +2435,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        reset_properties_envelope: Union[_models.StaticSiteResetPropertiesARMResource, IO],
+        reset_properties_envelope: Union[_models.StaticSiteResetPropertiesARMResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Resets the api key for an existing static site.
@@ -2689,19 +2446,15 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :param reset_properties_envelope: Is either a StaticSiteResetPropertiesARMResource type or a IO
-         type. Required.
+        :param reset_properties_envelope: Is either a StaticSiteResetPropertiesARMResource type or a
+         IO[bytes] type. Required.
         :type reset_properties_envelope:
-         ~azure.mgmt.web.v2020_09_01.models.StaticSiteResetPropertiesARMResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2020_09_01.models.StaticSiteResetPropertiesARMResource or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2724,7 +2477,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(reset_properties_envelope, "StaticSiteResetPropertiesARMResource")
 
-        request = build_reset_static_site_api_key_request(
+        _request = build_reset_static_site_api_key_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -2732,16 +2485,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.reset_static_site_api_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2752,8 +2503,4 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    reset_static_site_api_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/resetapikey"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -341,6 +341,12 @@ class ShareProperties(DictMixin):
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
         Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
+    :ivar bool enable_snapshot_virtual_directory_access:
+        Specifies whether the snapshot virtual directory should be accessible at the root of the share
+        mount point when NFS is enabled. If not specified, it will be accessible.
+    :ivar bool paid_bursting_enabled: This property enables paid bursting.
+    :ivar int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+    :ivar int paid_bursting_iops: The maximum IOPS the file share can support.
     """
 
     def __init__(self, **kwargs):
@@ -364,6 +370,12 @@ class ShareProperties(DictMixin):
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
+        self.enable_snapshot_virtual_directory_access = \
+            kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
+        self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
+        self.paid_bursting_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
+        self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
+
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -387,7 +399,10 @@ class ShareProperties(DictMixin):
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
             if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
-
+        props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
+        props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
+        props.paid_bursting_bandwidth_mibps = generated.properties.paid_bursting_max_bandwidth_mibps
+        props.paid_bursting_iops = generated.properties.paid_bursting_max_iops
         return props
 
 
@@ -451,6 +466,7 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
+    :keyword str client_name: Required. Name of the client machine where the share is being mounted.
     :keyword str handle_id: Required. XSMB service handle ID
     :keyword str path: Required. File or directory name including full path starting
      from share root
@@ -469,6 +485,7 @@ class Handle(DictMixin):
     """
 
     def __init__(self, **kwargs):
+        self.client_name = kwargs.get('client_name')
         self.id = kwargs.get('handle_id')
         self.path = kwargs.get('path')
         self.file_id = kwargs.get('file_id')
@@ -482,6 +499,7 @@ class Handle(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         handle = cls()
+        handle.client_name = generated.client_name
         handle.id = generated.handle_id
         handle.path = unquote(generated.path.content) if generated.path.encoded else generated.path.content
         handle.file_id = generated.file_id
@@ -621,7 +639,7 @@ class DirectoryPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(dict(str, Any))
+    :vartype current_page: list[dict[str, Any]]
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only directories whose names

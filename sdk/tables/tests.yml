@@ -7,13 +7,20 @@ extends:
       ServiceDirectory: tables
       TestTimeoutInMinutes: 180
       SupportedClouds: 'Public,UsGov,China'
+      UseFederatedAuth: true
       CloudConfig:
         Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          ServiceConnection: usgov_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
         China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          ServiceConnection: china_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureChinaMsft.json
           Location: chinanorth3
       MatrixReplace:
         - TestSamples=.*/true
@@ -24,10 +31,6 @@ extends:
         BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
         OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
         OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
-        ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
-        ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
-        ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        CONNECTION_STRING: $(python-storage-blob-connection-string)
         BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

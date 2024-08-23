@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, List, TYPE_CHECKING
+    Any, Callable, List, Optional, Union,
+    TYPE_CHECKING
 )
 from urllib.parse import parse_qs
 
@@ -41,11 +43,23 @@ class FileSharedAccessSignature(SharedAccessSignature):
         '''
         super(FileSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
-    def generate_file(self, share_name, directory_name=None, file_name=None,
-                      permission=None, expiry=None, start=None, policy_id=None,
-                      ip=None, protocol=None, cache_control=None,
-                      content_disposition=None, content_encoding=None,
-                      content_language=None, content_type=None):
+    def generate_file(
+        self, share_name,
+        directory_name=None,
+        file_name=None,
+        permission=None,
+        expiry=None,
+        start=None,
+        policy_id=None,
+        ip=None,
+        protocol=None,
+        cache_control=None,
+        content_disposition=None,
+        content_encoding=None,
+        content_language=None,
+        content_type=None,
+        sts_hook=None
+    ):
         '''
         Generates a shared access signature for the file.
         Use the returned signature with the sas_token parameter of FileService.
@@ -107,6 +121,10 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param sts_hook:
+            For debugging purposes only. If provided, the hook is called with the string to sign
+            that was used to generate the SAS.
+        :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
         '''
@@ -124,13 +142,26 @@ class FileSharedAccessSignature(SharedAccessSignature):
                                           content_type)
         sas.add_resource_signature(self.account_name, self.account_key, resource_path)
 
+        if sts_hook is not None:
+            sts_hook(sas.string_to_sign)
+
         return sas.get_token()
 
-    def generate_share(self, share_name, permission=None, expiry=None,
-                       start=None, policy_id=None, ip=None, protocol=None,
-                       cache_control=None, content_disposition=None,
-                       content_encoding=None, content_language=None,
-                       content_type=None):
+    def generate_share(
+        self, share_name,
+        permission=None,
+        expiry=None,
+        start=None,
+        policy_id=None,
+        ip=None,
+        protocol=None,
+        cache_control=None,
+        content_disposition=None,
+        content_encoding=None,
+        content_language=None,
+        content_type=None,
+        sts_hook=None
+    ):
         '''
         Generates a shared access signature for the share.
         Use the returned signature with the sas_token parameter of FileService.
@@ -187,6 +218,10 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param sts_hook:
+            For debugging purposes only. If provided, the hook is called with the string to sign
+            that was used to generate the SAS.
+        :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
         '''
@@ -198,6 +233,9 @@ class FileSharedAccessSignature(SharedAccessSignature):
                                           content_encoding, content_language,
                                           content_type)
         sas.add_resource_signature(self.account_name, self.account_key, share_name)
+
+        if sts_hook is not None:
+            sts_hook(sas.string_to_sign)
 
         return sas.get_token()
 
@@ -237,6 +275,7 @@ class _FileSharedAccessHelper(_SharedAccessHelper):
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
+        self.string_to_sign = string_to_sign
 
 
 def generate_account_sas(
@@ -249,6 +288,7 @@ def generate_account_sas(
     ip: Optional[str] = None,
     *,
     services: Union[Services, str] = Services(fileshare=True),
+    sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the file service.
@@ -286,6 +326,10 @@ def generate_account_sas(
         Will default to only this package (i.e. fileshare) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -306,21 +350,24 @@ def generate_account_sas(
         expiry=expiry,
         start=start,
         ip=ip,
+        sts_hook=sts_hook,
         **kwargs
     ) # type: ignore
 
 
 def generate_share_sas(
-        account_name,  # type: str
-        share_name,  # type: str
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+    account_name,  # type: str
+    share_name,  # type: str
+    account_key,  # type: str
+    permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    start=None,  # type: Optional[Union[datetime, str]]
+    policy_id=None,  # type: Optional[str]
+    ip=None,  # type: Optional[str]
+    *,
+    sts_hook=None,  # Optional[Callable[[str], None]]
+    **kwargs # type: Any
+):  # type: (...) -> str
     """Generates a shared access signature for a share.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
@@ -339,7 +386,7 @@ def generate_share_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ShareSasPermissions
+    :type permission: str or ~azure.storage.fileshare.ShareSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -381,6 +428,10 @@ def generate_share_sas(
         using this shared access signature.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -397,22 +448,25 @@ def generate_share_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        sts_hook=sts_hook,
         **kwargs
     )
 
 
 def generate_file_sas(
-        account_name,  # type: str
-        share_name,  # type: str
-        file_path,  # type: List[str]
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[FileSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):
+    account_name,  # type: str
+    share_name,  # type: str
+    file_path,  # type: List[str]
+    account_key,  # type: str
+    permission=None,  # type: Optional[Union[FileSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    start=None,  # type: Optional[Union[datetime, str]]
+    policy_id=None,  # type: Optional[str]
+    ip=None,  # type: Optional[str]
+    *,
+    sts_hook=None,  # type: Optional[Callable[[str], None]]
+    **kwargs # type: Any
+):
     # type: (...) -> str
     """Generates a shared access signature for a file.
 
@@ -435,7 +489,7 @@ def generate_file_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or FileSasPermissions
+    :type permission: str or ~azure.storage.fileshare.FileSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -476,6 +530,10 @@ def generate_file_sas(
         using this shared access signature.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword sts_hook:
+        For debugging purposes only. If provided, the hook is called with the string to sign
+        that was used to generate the SAS.
+    :paramtype sts_hook: Optional[Callable[[str], None]]
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -498,6 +556,7 @@ def generate_file_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        sts_hook=sts_hook,
         **kwargs
     )
 

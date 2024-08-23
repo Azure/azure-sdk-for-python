@@ -8,10 +8,10 @@
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
-        "has_lro_operations": false,
+        "has_public_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -101,8 +101,8 @@
         "credential_scopes": ["https://management.azure.com/.default"],
         "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
         "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"regular\": {\"sdkcore\": {\"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"sdkcore\": {\"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "settings": "SettingsOperations"

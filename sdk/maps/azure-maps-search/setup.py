@@ -65,10 +65,11 @@ setup(
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -82,5 +83,6 @@ setup(
         'msrest>=0.6.21',
         'azure-common~=1.1',
         'azure-mgmt-core>=1.3.0,<2.0.0',
-    ]
+    ],
+    python_requires=">=3.8",
 )

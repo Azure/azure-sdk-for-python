@@ -3,9 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (  # pylint: disable=unused-import
-    Any, Dict, Optional, Tuple, Union,
-    TYPE_CHECKING)
+from typing import Any, cast, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import quote
@@ -14,23 +12,22 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._models import (
-    ContainerEncryptionScope,
-    DelimitedJsonDialect)
 from ._generated.models import (
-    ModifiedAccessConditions,
-    SourceModifiedAccessConditions,
-    CpkScopeInfo,
+    ArrowConfiguration,
+    BlobTag,
+    BlobTags,
     ContainerCpkScopeInfo,
-    QueryFormat,
-    QuerySerialization,
+    CpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    ArrowConfiguration,
+    LeaseAccessConditions,
+    ModifiedAccessConditions,
+    QueryFormat,
     QueryFormatType,
-    BlobTag,
-    BlobTags, LeaseAccessConditions
+    QuerySerialization,
+    SourceModifiedAccessConditions
 )
+from ._models import ContainerEncryptionScope, DelimitedJsonDialect
 
 if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
@@ -57,11 +54,17 @@ _SUPPORTED_API_VERSIONS = [
     '2023-05-03',
     '2023-08-03',
     '2023-11-03',
+    '2024-05-04',
+    '2024-08-04',
+    '2024-11-04',
 ]
 
 
-def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (Dict[str, Any], str, str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+def _get_match_headers(
+    kwargs: Dict[str, Any],
+    match_param: str,
+    etag_param: str
+) -> Tuple[Optional[str], Optional[Any]]:
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -85,8 +88,7 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
-def get_access_conditions(lease):
-    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
@@ -94,8 +96,7 @@ def get_access_conditions(lease):
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
-def get_modify_conditions(kwargs):
-    # type: (Dict[str, Any]) -> ModifiedAccessConditions
+def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
     return ModifiedAccessConditions(
         if_modified_since=kwargs.pop('if_modified_since', None),
@@ -106,8 +107,7 @@ def get_modify_conditions(kwargs):
     )
 
 
-def get_source_conditions(kwargs):
-    # type: (Dict[str, Any]) -> SourceModifiedAccessConditions
+def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
     if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
     return SourceModifiedAccessConditions(
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
@@ -118,15 +118,13 @@ def get_source_conditions(kwargs):
     )
 
 
-def get_cpk_scope_info(kwargs):
-    # type: (Dict[str, Any]) -> CpkScopeInfo
+def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
     return None
 
 
-def get_container_cpk_scope_info(kwargs):
-    # type: (Dict[str, Any]) -> ContainerCpkScopeInfo
+def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
     encryption_scope = kwargs.pop('container_encryption_scope', None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
@@ -143,22 +141,19 @@ def get_container_cpk_scope_info(kwargs):
     return None
 
 
-def get_api_version(kwargs):
-    # type: (Dict[str, Any]) -> str
+def get_api_version(kwargs: Dict[str, Any]) -> str:
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
-def get_version_id(self_vid, kwargs):
-    # type: (Optional[str], Dict[str, Any]) -> Optional[str]
+def get_version_id(self_vid: Optional[str], kwargs: Dict[str, Any]) -> Optional[str]:
     if 'version_id' in kwargs:
-        return kwargs.pop('version_id')
+        return cast(str, kwargs.pop('version_id'))
     return self_vid
 
-def serialize_blob_tags_header(tags=None):
-    # type: (Optional[Dict[str, str]]) -> str
+def serialize_blob_tags_header(tags: Optional[Dict[str, str]] = None) -> Optional[str]:
     if tags is None:
         return None
 
@@ -176,33 +171,27 @@ def serialize_blob_tags_header(tags=None):
     return ''.join(components)
 
 
-def serialize_blob_tags(tags=None):
-    # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
+def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
     tag_list = []
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater):
+def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(
-            type=QueryFormatType.PARQUET,
-            parquet_text_configuration=' '
-        )
+        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=' ')  #type: ignore [arg-type]
     elif isinstance(formater, DelimitedJsonDialect):
-        serialization_settings = JsonTextConfiguration(
-            record_separator=formater.delimiter
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.json,
-            json_text_configuration=serialization_settings)
+        json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
+        qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
     elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
         try:
-            headers = formater.has_header
+            headers = formater.has_header  # type: ignore
         except AttributeError:
             headers = False
-        serialization_settings = DelimitedTextConfiguration(
+        if isinstance(formater, str):
+            raise ValueError("Unknown string value provided. Accepted values: ParquetDialect")
+        csv_serialization_settings = DelimitedTextConfiguration(
             column_separator=formater.delimiter,
             field_quote=formater.quotechar,
             record_separator=formater.lineterminator,
@@ -210,16 +199,12 @@ def serialize_query_format(formater):
             headers_present=headers
         )
         qq_format = QueryFormat(
-            type=QueryFormatType.delimited,
-            delimited_text_configuration=serialization_settings
+            type=QueryFormatType.DELIMITED,
+            delimited_text_configuration=csv_serialization_settings
         )
     elif isinstance(formater, list):
-        serialization_settings = ArrowConfiguration(
-            schema=formater
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.arrow,
-            arrow_configuration=serialization_settings)
+        arrow_serialization_settings = ArrowConfiguration(schema=formater)
+        qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
     elif not formater:
         return None
     else:

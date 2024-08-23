@@ -13,7 +13,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.6 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
@@ -92,195 +92,220 @@ Once you initialized a `MapsSearchClient` class, you can explore the methods on 
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
-Async clients and credentials should be closed when they're no longer needed. These
-objects are async context managers and define async `close` methods.
+Async clients and credentials should be closed when they're no longer needed. These objects are async context managers and define async `close` methods.
 
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Azure Maps Search tasks, including:
 
-- [Request latitude and longitude coordinates for an address](#request-latitude-and-longitude-coordinates-for-an-address)
-
-- [Search for an address or Point of Interest](#search-for-an-address-or-point-of-interest)
-
+- [Geocode an address](#geocode-an-address)
+- [Batch geocode addresses](#batch-geocode-addresses)
+- [Get polygons for a given location](#get-polygons-for-a-given-location)
 - [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
-- [Translate coordinate location into a human understandable cross street](#translate-coordinate-location-into-a-human-understandable-cross-street)
-- [Get async fuzzy search batch with param and batchid](#get-async-fuzzy-search-batch-with-param-and-batchid)
-- [Fail to get fuzzy search batch sync](#fail-to-get-fuzzy-search-batch-sync)
-- [Search inside Geometry](#search-inside-geometry)
+- [Batch request for reverse geocoding](#batch-request-for-reverse-geocoding)
 
-- [Working with exist library for Search](#working-with-exist-library-for-search)
-
-### Request latitude and longitude coordinates for an address
+### Geocode an address
 
 You can use an authenticated client to convert an address into latitude and longitude coordinates. This process is also called geocoding. In addition to returning the coordinates, the response will also return detailed address properties such as street, postal code, municipality, and country/region information.
 
 ```python
-from azure.maps.search import MapsSearchClient
+import os
 
-search_result = client.search_address("400 Broad, Seattle");
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def geocode():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
+        if result.get('features', False):
+            coordinates = result['features'][0]['geometry']['coordinates']
+            longitude = coordinates[0]
+            latitude = coordinates[1]
+
+            print(longitude, latitude)
+        else:
+            print("No results")
+
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    geocode()
 ```
 
-### Search for an address or Point of Interest
+### Batch geocode addresses
 
-You can use Fuzzy Search to search an address or a point of interest (POI). The following examples demostrate how to search for `pizza` over the scope of a specific country (`France`, in this example).
+This sample demonstrates how to perform batch search address.
 
 ```python
-from azure.maps.search import MapsSearchClient
+import os
 
-fuzzy_search_result = client.fuzzy_search(query: "pizza", country_filter: "fr" );
+from azure.core.exceptions import HttpResponseError
 
-result_address = fuzzy_search_result.results[0].address
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def geocode_batch():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_geocoding_batch({
+          "batchItems": [
+            {"query": "400 Broad St, Seattle, WA 98109"},
+            {"query": "15127 NE 24th Street, Redmond, WA 98052"},
+          ],
+        },)
+
+        if not result.get('batchItems', False):
+            print("No batchItems in geocoding")
+            return
+
+        for item in result['batchItems']:
+            if not item.get('features', False):
+                print(f"No features in item: {item}")
+                continue
+
+            coordinates = item['features'][0]['geometry']['coordinates']
+            longitude, latitude = coordinates
+            print(longitude, latitude)
+
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    geocode_batch()
+```
+
+### Get polygons for a given location
+
+This sample demonstrates how to search polygons.
+
+```python
+import os
+
+from azure.core.exceptions import HttpResponseError
+from azure.maps.search import Resolution
+from azure.maps.search import BoundaryResultType
+
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_polygon():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_polygon(
+          coordinates=[-122.204141, 47.61256],
+          result_type=BoundaryResultType.LOCALITY,
+          resolution=Resolution.SMALL,
+        )
+
+        if not result.get('geometry', False):
+            print("No geometry found")
+            return
+
+        print(result["geometry"])
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+if __name__ == '__main__':
+    get_polygon()
 ```
 
 ### Make a Reverse Address Search to translate coordinate location to street address
 
-You can translate coordinates into human readable street addresses. This process is also called reverse geocoding.
-This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
+You can translate coordinates into human-readable street addresses. This process is also called reverse geocoding. This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
 
 ```python
+import os
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def reverse_geocode():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+        if result.get('features', False):
+            props = result['features'][0].get('properties', {})
+            if props and props.get('address', False):
+                print(props['address'].get('formattedAddress', 'No formatted address found'))
+            else:
+                print("Address is None")
+        else:
+            print("No features available")
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
+
+if __name__ == '__main__':
+   reverse_geocode()
+```
+
+### Batch request for reverse geocoding
+
+This sample demonstrates how to perform reverse search by given coordinates in batch.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.maps.search import MapsSearchClient
 
-coordinates=(47.60323, -122.33028)
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-reverse_search_result = client.reverse_search_address(coordinates=coordinates);
+def reverse_geocode_batch():
+    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_reverse_geocoding_batch({
+              "batchItems": [
+                {"coordinates": [-122.349309, 47.620498]},
+                {"coordinates": [-122.138679, 47.630356]},
+              ],
+            },)
 
-result_summary = reverse_search_result.summary
-```
+        if result.get('batchItems', False):
+            for idx, item in enumerate(result['batchItems']):
+                features = item['features']
+                if features:
+                    props = features[0].get('properties', {})
+                    if props and props.get('address', False):
+                        print(
+                            props['address'].get('formattedAddress', f'No formatted address for item {idx + 1} found'))
+                    else:
+                        print(f"Address {idx + 1} is None")
+                else:
+                    print(f"No features available for item {idx + 1}")
+        else:
+            print("No batch items found")
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
-### Translate coordinate location into a human understandable cross street
 
-Translate coordinate location into a human understandable cross street by using Search Address Reverse Cross Street API. Most often, this is needed in tracking applications that receive a GPS feed from a device or asset, and wish to know where the coordinate is located.
-
-```python
-from azure.maps.search import MapsSearchClient
-
-coordinates=(47.60323, -122.33028)
-
-reverse_search_result = client.reverse_search_cross_street_address(coordinates=coordinates);
-
-result_address = reverse_search_result.results[0].address
-```
-
-### Get async fuzzy search batch with param and batchid
-
-This sample demonstrates how to perform fuzzy search by location and lat/lon with async batch method. This function is accepting both `search_queries` and `batch_id` and returning an `AsyncLRO` object. The `batch_id` here can be use to retrieve the LRO object later which last 14 days.
-
-```python
-maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-async with maps_search_client:
-    result = await maps_search_client.begin_fuzzy_search_batch(
-        search_queries=[
-            "350 5th Ave, New York, NY 10118&limit=1",
-            "400 Broad St, Seattle, WA 98109&limit=6"
-        ]
-    )
-
-batch_id = result.batch_id
-```
-
-The method `begin_fuzzy_search_batch()` also accepts `batch_id` as the parameter. The `batch_id` here can be use to retrieve the LRO object later which last 14 days.
-
-```python
-maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-async with maps_search_client:
-    result = await maps_search_client.begin_fuzzy_search_batch(
-        batch_id=batch_id
-    )
-
-result = result.response
-```
-
-### Fail to get fuzzy search batch sync
-
-This sample demonstrates how to check if there are failures in search of fuzzy_search_batch.
-
-```python
-maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-result = maps_search_client.fuzzy_search_batch(
-    search_queries=[
-        "350 5th Ave, New York, NY 10118&limit=1",
-        "400 Broad St, Seattle, WA 98109&lim"
-    ]
-)
-for item in result.items:
-    count = 0
-    if item.response.error is not None:
-        count = count+1
-        print(f"Error: {item.response.error.message}")
-print(f"There are total of {count} search queries failed.")
-```
-
-### Search inside Geometry
-
-This sample demonstrates how to perform search inside geometry by given target such as `pizza` and multiple different geometry as input with GeoJson object.
-
-```python
-maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-geo_json_obj1 = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                    [-122.143035,47.653536],
-                    [-122.187164,47.617556],
-                    [-122.114981,47.570599],
-                    [-122.132756,47.654009],
-                    [-122.143035,47.653536]
-                    ]]
-            },
-            "properties": {}
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [-122.126986,47.639754]
-            },
-            "properties": {
-                "subType": "Circle",
-                "radius": 100
-            }
-        }
-    ]
-}
-result1 = maps_search_client.search_inside_geometry(
-    query="pizza",
-    geometry=geo_json_obj1
-)
-print("Search inside geometry with standard GeoJson object as input, FeatureCollection:")
-print(result1)
-```
-
-### Working with exist library for Search
-
-This sample demonstrates how to working with other existing packages such as `shapely` to perform search inside geometry by given target such as `pizza`.
-
-```python
-maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-from shapely.geometry import Polygon
-
-geo_interface_obj = Polygon([
-    [-122.43576049804686, 37.7524152343544],
-    [-122.43301391601562, 37.70660472542312],
-    [-122.36434936523438, 37.712059855877314],
-    [-122.43576049804686, 37.7524152343544]
-])
-
-result3 = maps_search_client.search_inside_geometry(
-    query="pizza",
-    geometry=geo_interface_obj
-)
-print("Search inside geometry with Polygon from third party library `shapely` with geo_interface as result 3:")
-print(result2)
+if __name__ == '__main__':
+   reverse_geocode_batch()
 ```
 
 ## Troubleshooting
@@ -337,15 +362,11 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 
 pip install azure-maps-search --pre
 
-python samples/sample_authentication.py
-python sample/sample_fuzzy_search.py
-python samples/sample_get_point_of_interest_categories.py
-python samples/sample_reverse_search_address.py
-python samples/sample_reverse_search_cross_street_address.py
-python samples/sample_search_nearby_point_of_interest.py
-python samples/sample_search_point_of_interest_category.py
-python samples/sample_search_point_of_interest.py
-python samples/sample_search_structured_address.py
+python samples/sample_geocode.py
+python samples/sample_geocode_batch.py
+python samples/sample_get_polygon.py
+python samples/sample_reverse_geocode.py
+python samples/sample_reverse_geocode_batch.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.

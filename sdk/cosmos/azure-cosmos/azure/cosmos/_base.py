@@ -65,9 +65,9 @@ _COMMON_OPTIONS = {
 
 # Cosmos resource ID validation regex breakdown:
 # ^ Match start of string.
-# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
+# [^/\#?] Match any character that is not /\#?\n\r\t.
 # $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
@@ -291,8 +291,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             if_none_match_value = options["continuation"]
         elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
+        elif options.get("startTime"):
+            start_time = options.get("startTime")
+            headers[http_constants.HttpHeaders.IfModified_since] = start_time
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
+
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
     else:
         if options.get("continuation"):
@@ -314,6 +318,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
+    # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
+    # refreshed.
+    if resource_type != 'dbs' and options.get("containerRID"):
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     return headers
 
@@ -849,3 +858,10 @@ def _format_batch_operations(
         final_operations.append(operation)
 
     return final_operations
+
+
+def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
+        "partitionKey": properties.get("partitionKey", None)
+    }

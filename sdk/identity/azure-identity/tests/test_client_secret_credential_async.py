@@ -304,7 +304,7 @@ async def test_cache_multiple_clients():
         assert transport_b.send.call_count == 1
         assert mock_cache_loader.call_count == 2
 
-        assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+        assert len(list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))) == 2
 
 
 @pytest.mark.asyncio

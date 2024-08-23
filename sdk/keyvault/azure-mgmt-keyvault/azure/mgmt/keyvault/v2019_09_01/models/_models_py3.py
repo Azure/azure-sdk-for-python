@@ -20,7 +20,7 @@ class AccessPolicyEntry(_serialization.Model):
     """An identity that have access to the key vault. All identities in the array must use the same
     tenant ID as the key vault's tenant ID.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -365,7 +365,7 @@ class DimensionProperties(_serialization.Model):
 class IPRule(_serialization.Model):
     """A rule governing the accessibility of a vault from a specific ip address or ip range.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
      or '124.56.78.0/24' (all addresses that start with 124.56.78). Required.
@@ -548,44 +548,11 @@ class KeyAttributes(Attributes):
     :vartype recovery_level: str or ~azure.mgmt.keyvault.v2019_09_01.models.DeletionRecoveryLevel
     """
 
-    _validation = {
-        "created": {"readonly": True},
-        "updated": {"readonly": True},
-        "recovery_level": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "not_before": {"key": "nbf", "type": "int"},
-        "expires": {"key": "exp", "type": "int"},
-        "created": {"key": "created", "type": "int"},
-        "updated": {"key": "updated", "type": "int"},
-        "recovery_level": {"key": "recoveryLevel", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        not_before: Optional[int] = None,
-        expires: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword enabled: Determines whether or not the object is enabled.
-        :paramtype enabled: bool
-        :keyword not_before: Not before date in seconds since 1970-01-01T00:00:00Z.
-        :paramtype not_before: int
-        :keyword expires: Expiry date in seconds since 1970-01-01T00:00:00Z.
-        :paramtype expires: int
-        """
-        super().__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
-
 
 class KeyCreateParameters(_serialization.Model):
     """The parameters used to create a key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags that will be assigned to the key.
     :vartype tags: dict[str, str]
@@ -1431,7 +1398,7 @@ class ServiceSpecification(_serialization.Model):
 class Sku(_serialization.Model):
     """SKU details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar family: SKU family name. "A"
     :vartype family: str or ~azure.mgmt.keyvault.v2019_09_01.models.SkuFamily
@@ -1470,7 +1437,7 @@ class Vault(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the key vault resource.
     :vartype id: str
@@ -1532,7 +1499,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the access policy.
     :vartype id: str
@@ -1578,7 +1545,7 @@ class VaultAccessPolicyParameters(_serialization.Model):
 class VaultAccessPolicyProperties(_serialization.Model):
     """Properties of the vault access policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. Required.
@@ -1608,7 +1575,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The vault name. Required.
     :vartype name: str
@@ -1641,7 +1608,7 @@ class VaultCheckNameAvailabilityParameters(_serialization.Model):
 class VaultCreateOrUpdateParameters(_serialization.Model):
     """Parameters for creating or updating a vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The supported Azure location where the key vault should be created. Required.
     :vartype location: str
@@ -1887,7 +1854,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault. Required.
@@ -1896,7 +1863,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
     :ivar access_policies: An array of 0 to 1024 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. When
-     ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+     ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
      policies are required.
     :vartype access_policies: list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
     :ivar vault_uri: The URI of the vault for performing operations on keys and secrets. This
@@ -2004,7 +1971,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
         :keyword access_policies: An array of 0 to 1024 identities that have access to the key vault.
          All identities in the array must use the same tenant ID as the key vault's tenant ID. When
-         ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+         ``createMode`` is set to ``recover``\\ , access policies are not required. Otherwise, access
          policies are required.
         :paramtype access_policies: list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
         :keyword vault_uri: The URI of the vault for performing operations on keys and secrets. This
@@ -2072,7 +2039,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
 class VirtualNetworkRule(_serialization.Model):
     """A rule governing the accessibility of a vault from a specific virtual network.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
@@ -2101,7 +2068,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword id: Full resource id of a vnet subnet, such as
-         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         :keyword ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the

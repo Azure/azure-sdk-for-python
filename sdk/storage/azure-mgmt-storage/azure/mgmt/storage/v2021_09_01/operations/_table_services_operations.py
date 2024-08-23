@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,10 +29,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -175,12 +175,11 @@ class TableServicesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListTableServices or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_09_01.models.ListTableServices
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -194,21 +193,20 @@ class TableServicesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-09-01"))
         cls: ClsType[_models.ListTableServices] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -220,13 +218,9 @@ class TableServicesOperations:
         deserialized = self._deserialize("ListTableServices", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def set_service_properties(
@@ -254,11 +248,6 @@ class TableServicesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword table_service_name: The name of the Table Service within the specified storage
-         account. Table Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype table_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -269,7 +258,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -286,15 +275,10 @@ class TableServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Table service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword table_service_name: The name of the Table Service within the specified storage
-         account. Table Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype table_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -305,7 +289,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.TableServiceProperties, IO],
+        parameters: Union[_models.TableServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.TableServiceProperties:
         """Sets the properties of a storage account’s Table service, including properties for Storage
@@ -320,21 +304,13 @@ class TableServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Table service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is either a
-         TableServiceProperties type or a IO type. Required.
-        :type parameters: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties or IO
-        :keyword table_service_name: The name of the Table Service within the specified storage
-         account. Table Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype table_service_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         TableServiceProperties type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties or IO[bytes]
         :return: TableServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -358,7 +334,7 @@ class TableServicesOperations:
         else:
             _json = self._serialize.body(parameters, "TableServiceProperties")
 
-        request = build_set_service_properties_request(
+        _request = build_set_service_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -367,16 +343,15 @@ class TableServicesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.set_service_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -388,13 +363,9 @@ class TableServicesOperations:
         deserialized = self._deserialize("TableServiceProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    set_service_properties.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_service_properties(
@@ -410,16 +381,11 @@ class TableServicesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword table_service_name: The name of the Table Service within the specified storage
-         account. Table Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype table_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -434,22 +400,21 @@ class TableServicesOperations:
         table_service_name: Literal["default"] = kwargs.pop("table_service_name", "default")
         cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
-        request = build_get_service_properties_request(
+        _request = build_get_service_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             table_service_name=table_service_name,
-            template_url=self.get_service_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -461,10 +426,6 @@ class TableServicesOperations:
         deserialized = self._deserialize("TableServiceProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_service_properties.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"
-    }
+        return deserialized  # type: ignore

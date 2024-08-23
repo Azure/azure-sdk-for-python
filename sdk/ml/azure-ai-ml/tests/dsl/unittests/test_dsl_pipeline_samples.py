@@ -3,6 +3,7 @@ This file contains the comparison between dsl and curated job in
 https://github.com/Azure/azureml-previews/tree/main/previews/pipelines/samples
 The samples are copied to test_configs/dsl_pipeline_samples
 """
+
 import sys
 from pathlib import Path
 from unittest import mock

@@ -58,6 +58,11 @@ def main():
                     "adminUsername": "{your-username}",
                     "computerName": "myVM",
                 },
+                "scheduledEventsPolicy": {
+                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": True}},
+                    "userInitiatedReboot": {"automaticallyApprove": True},
+                    "userInitiatedRedeploy": {"automaticallyApprove": True},
+                },
                 "storageProfile": {
                     "diskControllerType": "NVMe",
                     "imageReference": {
@@ -80,6 +85,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineExamples/VirtualMachine_Create_WithDiskControllerType.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-07-01/examples/virtualMachineExamples/VirtualMachine_Create_WithDiskControllerType.json
 if __name__ == "__main__":
     main()

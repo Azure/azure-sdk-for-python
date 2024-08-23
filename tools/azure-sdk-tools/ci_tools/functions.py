@@ -209,10 +209,8 @@ def discover_targeted_packages(
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
 
-    # apply package-specific exclusions only if we have gotten more than one
-    if len(collected_packages) > 1:
-        if not include_inactive:
-            collected_packages = apply_inactive_filter(collected_packages)
+    if not include_inactive:
+        collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
@@ -394,18 +392,23 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     if pkg_name is None:
         logging.error("Package name cannot be empty to find sdist")
         return
+    else:
+        # ensure package name matches cananonicalized package name
+        pkg_name = pkg_name.replace("-", "[-_]")
 
-    pkg_name_format = f"{pkg_name}-{pkg_version}.tar.gz"
+    pkg_format = f"{pkg_name}-{pkg_version}.tar.gz"
 
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):
-        for filename in fnmatch.filter(filenames, pkg_name_format):
+        for filename in fnmatch.filter(filenames, pkg_format):
             packages.append(os.path.join(root, filename))
 
     packages = [os.path.relpath(w, dist_dir) for w in packages]
 
     if not packages:
-        logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
+        logging.error(
+            f"No sdist is found in directory {dist_dir} with package name format {pkg_format}."
+        )
         return
     return packages[0]
 

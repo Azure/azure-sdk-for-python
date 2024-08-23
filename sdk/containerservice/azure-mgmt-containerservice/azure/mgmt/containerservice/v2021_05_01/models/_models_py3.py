@@ -88,11 +88,11 @@ class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
     :ivar vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and used.
      If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just
      nodes. This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype vnet_subnet_id: str
     :ivar pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
      vnetSubnetID for more details). This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype pod_subnet_id: str
     :ivar max_pods: The maximum number of pods that can run on a node.
     :vartype max_pods: int
@@ -143,7 +143,7 @@ class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
      The default is false.
     :vartype enable_node_public_ip: bool
     :ivar node_public_ip_prefix_id: This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
     :vartype node_public_ip_prefix_id: str
     :ivar scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the default
      is 'Regular'. Known values are: "Spot" and "Regular".
@@ -302,11 +302,11 @@ class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
         :keyword vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and
          used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to
          just nodes. This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype vnet_subnet_id: str
         :keyword pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
          vnetSubnetID for more details). This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype pod_subnet_id: str
         :keyword max_pods: The maximum number of pods that can run on a node.
         :paramtype max_pods: int
@@ -347,11 +347,11 @@ class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
          their own dedicated public IP addresses. A common scenario is for gaming workloads, where a
          console needs to make a direct connection to a cloud virtual machine to minimize hops. For more
          information see `assigning a public IP per node
-         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.
+         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.  # pylint: disable=line-too-long
          The default is false.
         :paramtype enable_node_public_ip: bool
         :keyword node_public_ip_prefix_id: This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
         :paramtype node_public_ip_prefix_id: str
         :keyword scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the
          default is 'Regular'. Known values are: "Spot" and "Regular".
@@ -483,7 +483,7 @@ class AgentPoolAvailableVersions(_serialization.Model):
         self.agent_pool_versions = agent_pool_versions
 
 
-class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_serialization.Model):
+class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_serialization.Model):  # pylint: disable=name-too-long
     """AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem.
 
     :ivar default: Whether this version is the default agent pool version.
@@ -557,7 +557,7 @@ class AgentPoolUpgradeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the agent pool upgrade profile.
     :vartype id: str
@@ -626,7 +626,7 @@ class AgentPoolUpgradeProfile(_serialization.Model):
         self.latest_node_image_version = latest_node_image_version
 
 
-class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):
+class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):  # pylint: disable=name-too-long
     """AgentPoolUpgradeProfilePropertiesUpgradesItem.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -736,7 +736,7 @@ class CloudErrorBody(_serialization.Model):
 
 class Components1Q1Og48SchemasManagedclusterAllof1(
     _serialization.Model
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Components1Q1Og48SchemasManagedclusterAllof1.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -811,11 +811,11 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
     :vartype api_server_access_profile:
      ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterAPIServerAccessProfile
     :ivar disk_encryption_set_id: This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.  # pylint: disable=line-too-long
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+     ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
     :ivar private_link_resources: Private link resources associated with the cluster.
     :vartype private_link_resources:
      list[~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource]
@@ -973,11 +973,11 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
         :paramtype api_server_access_profile:
          ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterAPIServerAccessProfile
         :keyword disk_encryption_set_id: This is of the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.  # pylint: disable=line-too-long
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+         ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
         :keyword private_link_resources: Private link resources associated with the cluster.
         :paramtype private_link_resources:
          list[~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource]
@@ -1025,7 +1025,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(
 
 class Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties(
     _serialization.Model
-):
+):  # pylint: disable=name-too-long
     """Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1094,7 +1094,7 @@ class UserAssignedIdentity(_serialization.Model):
 
 class ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties(
     UserAssignedIdentity
-):
+):  # pylint: disable=name-too-long
     """ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties.
 
     :ivar resource_id: The resource ID of the user assigned identity.
@@ -1105,35 +1105,11 @@ class ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAd
     :vartype object_id: str
     """
 
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "object_id": {"key": "objectId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        object_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: The resource ID of the user assigned identity.
-        :paramtype resource_id: str
-        :keyword client_id: The client ID of the user assigned identity.
-        :paramtype client_id: str
-        :keyword object_id: The object ID of the user assigned identity.
-        :paramtype object_id: str
-        """
-        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
-
 
 class ContainerServiceDiagnosticsProfile(_serialization.Model):
     """Profile for diagnostics on the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
     :vartype vm_diagnostics:
@@ -1161,7 +1137,7 @@ class ContainerServiceDiagnosticsProfile(_serialization.Model):
 class ContainerServiceLinuxProfile(_serialization.Model):
     """Profile for Linux VMs in the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: The administrator username to use for Linux VMs. Required.
     :vartype admin_username: str
@@ -1197,7 +1173,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
      and 5. The default value is 1. Known values are: 1, 3, and 5.
@@ -1490,7 +1466,7 @@ class ContainerServiceNetworkProfile(_serialization.Model):
 class ContainerServiceSshConfiguration(_serialization.Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. A
      maximum of 1 key may be specified. Required.
@@ -1520,7 +1496,7 @@ class ContainerServiceSshConfiguration(_serialization.Model):
 class ContainerServiceSshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
      certificate must be in PEM format with or without headers. Required.
@@ -1550,7 +1526,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
     :vartype enabled: bool
@@ -1765,7 +1741,7 @@ class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-
      'none'. Allowed values are 'none', 'best-effort', 'restricted', and 'single-numa-node'.
     :vartype topology_manager_policy: str
     :ivar allowed_unsafe_sysctls: Allowed list of unsafe sysctls or unsafe sysctl patterns (ending
-     in ``*``\ ).
+     in ``*``\\ ).
     :vartype allowed_unsafe_sysctls: list[str]
     :ivar fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled on
      the node.
@@ -1836,7 +1812,7 @@ class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-
          'none'. Allowed values are 'none', 'best-effort', 'restricted', and 'single-numa-node'.
         :paramtype topology_manager_policy: str
         :keyword allowed_unsafe_sysctls: Allowed list of unsafe sysctls or unsafe sysctl patterns
-         (ending in ``*``\ ).
+         (ending in ``*``\\ ).
         :paramtype allowed_unsafe_sysctls: list[str]
         :keyword fail_swap_on: If set to true it will make the Kubelet fail to start if swap is enabled
          on the node.
@@ -2015,7 +1991,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2066,7 +2042,7 @@ class ManagedCluster(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar identity: The identity of the managed cluster, if configured.
     :vartype identity: ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterIdentity
@@ -2138,11 +2114,11 @@ class ManagedCluster(
     :vartype api_server_access_profile:
      ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterAPIServerAccessProfile
     :ivar disk_encryption_set_id: This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.  # pylint: disable=line-too-long
     :vartype disk_encryption_set_id: str
     :ivar identity_profile: Identities associated with the cluster.
     :vartype identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+     ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
     :ivar private_link_resources: Private link resources associated with the cluster.
     :vartype private_link_resources:
      list[~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource]
@@ -2329,11 +2305,11 @@ class ManagedCluster(
         :paramtype api_server_access_profile:
          ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterAPIServerAccessProfile
         :keyword disk_encryption_set_id: This is of the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{encryptionSetName}'.  # pylint: disable=line-too-long
         :paramtype disk_encryption_set_id: str
         :keyword identity_profile: Identities associated with the cluster.
         :paramtype identity_profile: dict[str,
-         ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
+         ~azure.mgmt.containerservice.v2021_05_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]  # pylint: disable=line-too-long
         :keyword private_link_resources: Private link resources associated with the cluster.
         :paramtype private_link_resources:
          list[~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource]
@@ -2497,7 +2473,7 @@ class ManagedClusterAccessProfile(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2554,7 +2530,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the add-on is enabled or not. Required.
     :vartype enabled: bool
@@ -2600,30 +2576,6 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     :vartype object_id: str
     """
 
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "object_id": {"key": "objectId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        object_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: The resource ID of the user assigned identity.
-        :paramtype resource_id: str
-        :keyword client_id: The client ID of the user assigned identity.
-        :paramtype client_id: str
-        :keyword object_id: The object ID of the user assigned identity.
-        :paramtype object_id: str
-        """
-        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
-
 
 class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties for the container service agent pool profile.
@@ -2655,11 +2607,11 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
     :ivar vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and used.
      If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just
      nodes. This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype vnet_subnet_id: str
     :ivar pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
      vnetSubnetID for more details). This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype pod_subnet_id: str
     :ivar max_pods: The maximum number of pods that can run on a node.
     :vartype max_pods: int
@@ -2709,7 +2661,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
      The default is false.
     :vartype enable_node_public_ip: bool
     :ivar node_public_ip_prefix_id: This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
     :vartype node_public_ip_prefix_id: str
     :ivar scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the default
      is 'Regular'. Known values are: "Spot" and "Regular".
@@ -2862,11 +2814,11 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
         :keyword vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and
          used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to
          just nodes. This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype vnet_subnet_id: str
         :keyword pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
          vnetSubnetID for more details). This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype pod_subnet_id: str
         :keyword max_pods: The maximum number of pods that can run on a node.
         :paramtype max_pods: int
@@ -2906,11 +2858,11 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
          their own dedicated public IP addresses. A common scenario is for gaming workloads, where a
          console needs to make a direct connection to a cloud virtual machine to minimize hops. For more
          information see `assigning a public IP per node
-         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.
+         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.  # pylint: disable=line-too-long
          The default is false.
         :paramtype enable_node_public_ip: bool
         :keyword node_public_ip_prefix_id: This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
         :paramtype node_public_ip_prefix_id: str
         :keyword scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the
          default is 'Regular'. Known values are: "Spot" and "Regular".
@@ -2999,7 +2951,7 @@ class ManagedClusterAgentPoolProfile(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
      range of 0 to 1000 (inclusive) for user pools and in the range of 1 to 1000 (inclusive) for
@@ -3026,11 +2978,11 @@ class ManagedClusterAgentPoolProfile(
     :ivar vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and used.
      If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just
      nodes. This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype vnet_subnet_id: str
     :ivar pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
      vnetSubnetID for more details). This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
     :vartype pod_subnet_id: str
     :ivar max_pods: The maximum number of pods that can run on a node.
     :vartype max_pods: int
@@ -3080,7 +3032,7 @@ class ManagedClusterAgentPoolProfile(
      The default is false.
     :vartype enable_node_public_ip: bool
     :ivar node_public_ip_prefix_id: This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
     :vartype node_public_ip_prefix_id: str
     :ivar scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the default
      is 'Regular'. Known values are: "Spot" and "Regular".
@@ -3238,11 +3190,11 @@ class ManagedClusterAgentPoolProfile(
         :keyword vnet_subnet_id: If this is not specified, a VNET and subnet will be generated and
          used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to
          just nodes. This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype vnet_subnet_id: str
         :keyword pod_subnet_id: If omitted, pod IPs are statically assigned on the node subnet (see
          vnetSubnetID for more details). This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.  # pylint: disable=line-too-long
         :paramtype pod_subnet_id: str
         :keyword max_pods: The maximum number of pods that can run on a node.
         :paramtype max_pods: int
@@ -3282,11 +3234,11 @@ class ManagedClusterAgentPoolProfile(
          their own dedicated public IP addresses. A common scenario is for gaming workloads, where a
          console needs to make a direct connection to a cloud virtual machine to minimize hops. For more
          information see `assigning a public IP per node
-         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.
+         <https://docs.microsoft.com/azure/aks/use-multiple-node-pools#assign-a-public-ip-per-node-for-your-node-pools>`_.  # pylint: disable=line-too-long
          The default is false.
         :paramtype enable_node_public_ip: bool
         :keyword node_public_ip_prefix_id: This is of the form:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.  # pylint: disable=line-too-long
         :paramtype node_public_ip_prefix_id: str
         :keyword scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the
          default is 'Regular'. Known values are: "Spot" and "Regular".
@@ -3519,9 +3471,9 @@ class ManagedClusterIdentity(_serialization.Model):
      "SystemAssigned", "UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.containerservice.v2021_05_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The keys must be ARM resource IDs in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.containerservice.v2021_05_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.containerservice.v2021_05_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -3557,9 +3509,9 @@ class ManagedClusterIdentity(_serialization.Model):
          "SystemAssigned", "UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.containerservice.v2021_05_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The keys must be ARM resource IDs in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.containerservice.v2021_05_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.containerservice.v2021_05_01.models.Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -3686,7 +3638,7 @@ class ManagedClusterLoadBalancerProfile(_serialization.Model):
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
 
 
-class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
+class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):  # pylint: disable=name-too-long
     """Desired managed outbound IPs for the cluster load balancer.
 
     :ivar count: The desired number of outbound IPs created/managed by Azure for the cluster load
@@ -3713,7 +3665,7 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
         self.count = count
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):  # pylint: disable=name-too-long
     """Desired outbound IP Prefix resources for the cluster load balancer.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -3737,7 +3689,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
         self.public_ip_prefixes = public_ip_prefixes
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):  # pylint: disable=name-too-long
     """Desired outbound IP resources for the cluster load balancer.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -3762,7 +3714,7 @@ class ManagedClusterPodIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the pod identity. Required.
     :vartype name: str
@@ -3831,7 +3783,7 @@ class ManagedClusterPodIdentityException(_serialization.Model):
     <https://azure.github.io/aad-pod-identity/docs/configure/application_exception/>`_ for more
     details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the pod identity exception. Required.
     :vartype name: str
@@ -3877,7 +3829,7 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
     :ivar allow_network_plugin_kubenet: Running in Kubenet is disabled by default due to the
      security related nature of AAD Pod Identity and the risks of IP spoofing. See `using Kubenet
      network plugin with AAD Pod Identity
-     <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity#using-kubenet-network-plugin-with-azure-active-directory-pod-managed-identities>`_
+     <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity#using-kubenet-network-plugin-with-azure-active-directory-pod-managed-identities>`_  # pylint: disable=line-too-long
      for more information.
     :vartype allow_network_plugin_kubenet: bool
     :ivar user_assigned_identities: The pod identities to use in the cluster.
@@ -3913,7 +3865,7 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
         :keyword allow_network_plugin_kubenet: Running in Kubenet is disabled by default due to the
          security related nature of AAD Pod Identity and the risks of IP spoofing. See `using Kubenet
          network plugin with AAD Pod Identity
-         <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity#using-kubenet-network-plugin-with-azure-active-directory-pod-managed-identities>`_
+         <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity#using-kubenet-network-plugin-with-azure-active-directory-pod-managed-identities>`_  # pylint: disable=line-too-long
          for more information.
         :paramtype allow_network_plugin_kubenet: bool
         :keyword user_assigned_identities: The pod identities to use in the cluster.
@@ -3930,7 +3882,7 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
         self.user_assigned_identity_exceptions = user_assigned_identity_exceptions
 
 
-class ManagedClusterPodIdentityProvisioningError(_serialization.Model):
+class ManagedClusterPodIdentityProvisioningError(_serialization.Model):  # pylint: disable=name-too-long
     """An error response from the pod identity provisioning.
 
     :ivar error: Details about the error.
@@ -3954,7 +3906,7 @@ class ManagedClusterPodIdentityProvisioningError(_serialization.Model):
         self.error = error
 
 
-class ManagedClusterPodIdentityProvisioningErrorBody(_serialization.Model):
+class ManagedClusterPodIdentityProvisioningErrorBody(_serialization.Model):  # pylint: disable=name-too-long
     """An error response from the pod identity provisioning.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -4008,7 +3960,7 @@ class ManagedClusterPodIdentityProvisioningErrorBody(_serialization.Model):
         self.details = details
 
 
-class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):
+class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedClusterPodIdentityProvisioningInfo.
 
     :ivar error: Pod identity assignment error (if any).
@@ -4035,7 +3987,7 @@ class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):
 class ManagedClusterPoolUpgradeProfile(_serialization.Model):
     """The list of available upgrade versions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch). Required.
     :vartype kubernetes_version: str
@@ -4089,7 +4041,7 @@ class ManagedClusterPoolUpgradeProfile(_serialization.Model):
         self.upgrades = upgrades
 
 
-class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
+class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedClusterPoolUpgradeProfileUpgradesItem.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -4117,7 +4069,9 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
         self.is_preview = is_preview
 
 
-class ManagedClusterPropertiesAutoScalerProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterPropertiesAutoScalerProfile(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups: Valid values are 'true' and 'false'.
@@ -4281,7 +4235,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
     """Information about a service principal identity for the cluster to use for manipulating Azure
     APIs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_id: The ID for the service principal. Required.
     :vartype client_id: str
@@ -4351,7 +4305,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the upgrade profile.
     :vartype id: str
@@ -4411,7 +4365,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
 class ManagedClusterWindowsProfile(_serialization.Model):
     """Profile for Windows VMs in the managed cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
      **Restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
@@ -4425,7 +4379,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
      **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
      :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
@@ -4471,7 +4425,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
          :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
          **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
          conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
+         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
          :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
@@ -4566,7 +4520,7 @@ class OSOptionProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the OS option resource.
     :vartype id: str
@@ -4609,7 +4563,7 @@ class OSOptionProfile(_serialization.Model):
 class OSOptionProperty(_serialization.Model):
     """OS option property.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar os_type: The OS type. Required.
     :vartype os_type: str
@@ -4678,7 +4632,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value:
@@ -4978,7 +4932,7 @@ class ResourceReference(_serialization.Model):
 class RunCommandRequest(_serialization.Model):
     """A run command request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar command: The command to run. Required.
     :vartype command: str

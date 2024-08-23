@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,20 +18,24 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import QuickpulseClientConfiguration
 from ._operations import QuickpulseClientOperationsMixin
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class QuickpulseClient(QuickpulseClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Quickpulse Client.
 
-    :param host: QuickPulse endpoint: https://rt.services.visualstudio.com. Default value is
-     "https://rt.services.visualstudio.com".
-    :type host: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. Default value is "2024-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, host: str = "https://rt.services.visualstudio.com", **kwargs: Any
-    ) -> None:
-        _endpoint = "{Host}"
-        self._config = QuickpulseClientConfiguration(host=host, **kwargs)
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = QuickpulseClientConfiguration(credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -77,11 +81,7 @@ class QuickpulseClient(QuickpulseClientOperationsMixin):  # pylint: disable=clie
         """
 
         request_copy = deepcopy(request)
-        path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
-        }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:

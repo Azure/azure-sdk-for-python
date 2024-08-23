@@ -1,6 +1,65 @@
 # Release History
 
-## 1.0.0b24 (Unreleased)
+## 1.0.0b29 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update instrumentation constants info
+    ([#36696](https://github.com/Azure/azure-sdk-for-python/pull/36696))
+- Refactor statsbeat utils functions
+    ([#36824](https://github.com/Azure/azure-sdk-for-python/pull/36824))
+
+## 1.0.0b28 (2024-07-29)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36481](https://github.com/Azure/azure-sdk-for-python/pull/36481))
+
+## 1.0.0b27 (2024-06-21)
+
+### Features Added
+
+- Implement redirect for live metrics
+    ([#35910](https://github.com/Azure/azure-sdk-for-python/pull/35910))
+
+### Bugs Fixed
+
+- Default missing/invalid status codes to "0" for standard metrics/trace payloads, change
+    success criteria to `False` for those invalid cases, change success criteria to status_code < 400 for
+    both client and server standard metrics
+    ([#36079](https://github.com/Azure/azure-sdk-for-python/pull/36079))
+
+## 1.0.0b26 (2024-05-29)
+
+### Bugs Fixed
+
+- Handle invalid status codes in std metric payload
+    ([#35762](https://github.com/Azure/azure-sdk-for-python/pull/35762))
+- Disable distributed tracing for live metrics client calls
+    ([#35822](https://github.com/Azure/azure-sdk-for-python/pull/35822))
+
+### Other Changes
+
+- Update live metrics to use typespec generated swagger
+    ([#34840](https://github.com/Azure/azure-sdk-for-python/pull/34840))
+- Send old and new process level live metrics
+    ([#35753](https://github.com/Azure/azure-sdk-for-python/pull/35753))
+
+## 1.0.0b25 (2024-04-19)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
+## 1.0.0b24 (2024-04-05)
 
 ### Features Added
 
@@ -18,10 +77,15 @@
 
 ### Bugs Fixed
 
+- Reduce vm metadata service timeout to 200ms
+    ([#35039](https://github.com/Azure/azure-sdk-for-python/pull/35039))
+
 ### Other Changes
 
 - Updated FastAPI sample
     ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Set up branching logic for attach function
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
 
 ## 1.0.0b23 (2024-02-28)
 

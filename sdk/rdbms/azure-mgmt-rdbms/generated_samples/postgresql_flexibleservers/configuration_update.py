@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClient
 
 """
@@ -29,7 +32,7 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.configurations.begin_update(
+    response = client.configurations.begin_put(
         resource_group_name="testrg",
         server_name="testserver",
         configuration_name="event_scheduler",
@@ -38,6 +41,7 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-06-01-preview/examples/ConfigurationUpdate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/ConfigurationUpdate.json
 if __name__ == "__main__":
     main()
+()

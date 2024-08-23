@@ -1,5 +1,7 @@
 parameters:
   ServiceDirectory: ''
+  AdditionalTestArgs: ''
+
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -17,6 +19,7 @@ steps:
   - script: |
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
   - task: PythonScript@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
@@ -32,3 +35,4 @@ steps:
         --toxenv="apistub"
         --disablecov
         --filter-type="Omit_management"
+        ${{ parameters.AdditionalTestArgs }}

@@ -11,47 +11,36 @@ import importlib
 import contextlib
 import functools
 import openai
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity import get_bearer_token_provider
 from azure.identity.aio import (
-    DefaultAzureCredential as AsyncDefaultAzureCredential,
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
+from ci_tools.variables import in_ci
+from devtools_testutils import get_credential
 
 
 # for pytest.parametrize
-GA = "2024-02-01"
-PREVIEW = "2024-03-01-preview"
+GA = "2024-06-01"
+PREVIEW = "2024-07-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
 OPENAI = "openai"
-AZURE_AD = "azuread"
+AZURE_KEY = "azure_key"
 WHISPER_AZURE = "whisper_azure"
-WHISPER_AZURE_AD = "whisper_azuread"
 TTS_OPENAI = "tts_openai"
 TTS_AZURE = "tts_azure"
-TTS_AZURE_AD = "tts_azuread"
 DALLE_AZURE = "dalle_azure"
-DALLE_AZURE_AD = "dalle_azuread"
 GPT_4_AZURE = "gpt_4_azure"
-GPT_4_AZURE_AD = "gpt_4_azuread"
 GPT_4_OPENAI = "gpt_4_openai"
 ASST_AZURE = "asst_azure"
-ASST_AZUREAD = "asst_azuread"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT = "AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT"
-ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY = "AZURE_OPENAI_NORTHCENTRALUS_KEY"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT = "AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"
-ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY = "AZURE_OPENAI_SWEDENCENTRAL_KEY"
-ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
-ENV_TENANT_ID = "AZURE_TENANT_ID"
-ENV_CLIENT_ID = "AZURE_CLIENT_ID"
-ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
-ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
@@ -72,18 +61,25 @@ ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4-1106-preview"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
+def skip_openai_test(api_type) -> bool:
+    return in_ci() and "openai" in api_type and "tests-weekly" not in os.getenv("SYSTEM_DEFINITIONNAME", "")
+
+
 @pytest.fixture
 def client(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
-    elif api_type == "azuread":
+    elif api_type == "azure_key":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
             api_version=api_version,
         )
     elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
@@ -93,25 +89,13 @@ def client(api_type, api_version):
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY),
-            api_version=api_version,
-        )
-    elif api_type in ["whisper_azuread", "tts_azuread"]:
-        client = openai.AzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
-            api_version=api_version,
-        )
-    elif api_type in ["dalle_azuread", "gpt_4_azuread", "asst_azuread"]:
-        client = openai.AzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     return client
@@ -119,16 +103,19 @@ def client(api_type, api_version):
 
 @pytest.fixture
 def client_async(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
-    elif api_type == "azuread":
+    elif api_type == "azure_key":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
             api_version=api_version,
         )
     elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
@@ -138,25 +125,13 @@ def client_async(api_type, api_version):
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY),
-            api_version=api_version,
-        )
-    elif api_type in ["whisper_azuread", "tts_azuread"]:
-        client = openai.AsyncAzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
-            api_version=api_version,
-        )
-    elif api_type in ["dalle_azuread", "gpt_4_azuread", "asst_azuread"]:
-        client = openai.AsyncAzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     return client
@@ -165,41 +140,41 @@ def client_async(api_type, api_version):
 def build_kwargs(args, api_type):
     test_feature = args[0].qualified_test_name
     if test_feature.startswith("test_audio"):
-        if api_type in ["whisper_azure", "whisper_azuread"]:
+        if api_type in ["whisper_azure"]:
             return {"model": ENV_AZURE_OPENAI_AUDIO_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_AUDIO_MODEL}
         elif api_type == "tts_openai":
             return {"model": ENV_OPENAI_TTS_MODEL}
-        elif api_type in ["tts_azure", "tts_azuread"]:
+        elif api_type in ["tts_azure"]:
             return {"model": ENV_AZURE_OPENAI_TTS_NAME}
     if test_feature.startswith("test_chat_completions") \
         or test_feature.startswith(("test_client", "test_models")):
-        if api_type in ["azure", "azuread", "asst_azure"]:
+        if api_type in ["azure", "azure_key", "asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_MODEL}
-        elif api_type in ["gpt_4_azure", "gpt_4_azuread"]:
+        elif api_type in ["gpt_4_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
         elif api_type == "gpt_4_openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
     if test_feature.startswith("test_completions"):
-        if api_type in ["azure", "azuread"]:
+        if api_type == "azure":
             return {"model": ENV_AZURE_OPENAI_COMPLETIONS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_COMPLETIONS_MODEL}
     if test_feature.startswith("test_embeddings"):
-        if api_type in ["azure", "azuread"]:
+        if api_type == "azure":
             return {"model": ENV_AZURE_OPENAI_EMBEDDINGS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_EMBEDDINGS_MODEL}
     if test_feature.startswith("test_dall_e"):
-        if api_type in ["dalle_azure", "dalle_azuread"]:
+        if api_type in ["dalle_azure"]:
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
     if test_feature.startswith("test_assistants"):
-        if api_type in ["asst_azure", "asst_azuread"]:
+        if api_type in ["asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
         elif api_type == "gpt_4_openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
@@ -219,6 +194,10 @@ def configure_async(f):
             return await f(*args, client_async=client_async, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 
@@ -234,6 +213,10 @@ def configure(f):
             return f(*args, client=client, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 

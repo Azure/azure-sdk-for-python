@@ -29,6 +29,9 @@
     "keyVaultResourceGroupName": {
         "value": ""
     },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
     "storageAccountOption": {
         "value": "new"
     },
@@ -188,8 +191,14 @@
     "enable_data_isolation": {
         "value": "false"
     },
+    "allowRoleAssignmentOnRG": {
+        "value": "true"
+    },
     "serverless_compute_settings": {
         "value": {}
+    },
+    "systemDatastoresAuthMode": {
+        "value": ""
     },
     "endpoint_resource_id": {
         "value": "null"

@@ -1,5 +1,70 @@
 # Release History
 
+## 9.0.0b4 (2024-07-23)
+
+### Features Added
+
+  - Added operation NetworkSecurityPerimeterConfigurationsOperations.begin_reconcile_for_private_link_scope
+  - Model LicenseProfile has a new parameter billing_end_date
+  - Model LicenseProfile has a new parameter error
+  - Model LicenseProfileMachineInstanceView has a new parameter billing_end_date
+  - Model LicenseProfileMachineInstanceView has a new parameter error
+  - Model OSProfileLinuxConfiguration has a new parameter enable_hotpatching
+  - Model OSProfileLinuxConfiguration has a new parameter status
+  - Model OSProfileWindowsConfiguration has a new parameter enable_hotpatching
+  - Model OSProfileWindowsConfiguration has a new parameter status
+  - Model ProductFeature has a new parameter billing_end_date
+  - Model ProductFeature has a new parameter error
+
+### Breaking Changes
+
+  - Removed operation MachineRunCommandsOperations.begin_update
+
+## 9.0.0b3 (2024-05-30)
+
+### Features Added
+
+  - Added operation MachineRunCommandsOperations.begin_update
+  - Added operation group GatewaysOperations
+  - Added operation group LicensesOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Added operation group SettingsOperations
+  - Model LicenseDetails has a new parameter volume_license_details
+
+## 9.0.0b2 (2024-04-22)
+
+### Features Added
+
+  - Added operation group MachineRunCommandsOperations
+  - Model LicenseProfile has a new parameter billing_start_date
+  - Model LicenseProfile has a new parameter disenrollment_date
+  - Model LicenseProfile has a new parameter enrollment_date
+  - Model LicenseProfile has a new parameter product_features
+  - Model LicenseProfile has a new parameter product_type
+  - Model LicenseProfile has a new parameter software_assurance_customer
+  - Model LicenseProfile has a new parameter subscription_status
+  - Model LicenseProfileMachineInstanceView has a new parameter billing_start_date
+  - Model LicenseProfileMachineInstanceView has a new parameter disenrollment_date
+  - Model LicenseProfileMachineInstanceView has a new parameter enrollment_date
+  - Model LicenseProfileMachineInstanceView has a new parameter license_channel
+  - Model LicenseProfileMachineInstanceView has a new parameter license_status
+  - Model LicenseProfileMachineInstanceView has a new parameter product_features
+  - Model LicenseProfileMachineInstanceView has a new parameter product_type
+  - Model LicenseProfileMachineInstanceView has a new parameter software_assurance_customer
+  - Model LicenseProfileMachineInstanceView has a new parameter subscription_status
+  - Model LicenseProfileUpdate has a new parameter product_features
+  - Model LicenseProfileUpdate has a new parameter product_type
+  - Model LicenseProfileUpdate has a new parameter software_assurance_customer
+  - Model LicenseProfileUpdate has a new parameter subscription_status
+  - Model Machine has a new parameter os_edition
+
+### Breaking Changes
+
+  - Removed operation group AgentVersionOperations
+  - Removed operation group HybridIdentityMetadataOperations
+  - Removed operation group LicenseProfilesOperations
+  - Removed operation group LicensesOperations
+
 ## 9.0.0b1 (2023-11-20)
 
 ### Features Added

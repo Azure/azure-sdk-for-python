@@ -29,36 +29,10 @@ extends:
     ServiceDirectory: cognitiveservices
     TestTimeoutInMinutes: 150
     Artifacts:
-    - name: azure-cognitiveservices-anomalydetector
-      safeName: azurecognitiveservicesanomalydetector
-    - name: azure-cognitiveservices-knowledge-qnamaker
-      safeName: azurecognitiveservicesknowledgeqnamaker
-    - name: azure-cognitiveservices-language-luis
-      safeName: azurecognitiveserviceslanguageluis
     - name: azure-cognitiveservices-language-spellcheck
       safeName: azurecognitiveserviceslanguagespellcheck
-    - name: azure-cognitiveservices-language-textanalytics
-      safeName: azurecognitiveserviceslanguagetextanalytics
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure-cognitiveservices-search-autosuggest
-      safeName: azurecognitiveservicessearchautosuggest
-    - name: azure-cognitiveservices-search-customimagesearch
-      safeName: azurecognitiveservicessearchcustomimagesearch
-    - name: azure-cognitiveservices-search-customsearch
-      safeName: azurecognitiveservicessearchcustomsearch
-    - name: azure-cognitiveservices-search-entitysearch
-      safeName: azurecognitiveservicessearchentitysearch
-    - name: azure-cognitiveservices-search-imagesearch
-      safeName: azurecognitiveservicessearchimagesearch
-    - name: azure-cognitiveservices-search-newssearch
-      safeName: azurecognitiveservicessearchnewssearch
-    - name: azure-cognitiveservices-search-videosearch
-      safeName: azurecognitiveservicessearchvideosearch
-    - name: azure-cognitiveservices-search-visualsearch
-      safeName: azurecognitiveservicessearchvisualsearch
-    - name: azure-cognitiveservices-search-websearch
-      safeName: azurecognitiveservicessearchwebsearch
     - name: azure-cognitiveservices-vision-computervision
       safeName: azurecognitiveservicesvisioncomputervision
     - name: azure-cognitiveservices-vision-contentmoderator

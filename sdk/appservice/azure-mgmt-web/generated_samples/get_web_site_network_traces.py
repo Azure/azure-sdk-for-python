@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.web import WebSiteManagementClient
 
 """
@@ -29,14 +30,15 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.get_network_traces(
+    response = client.web_apps.get_network_traces_slot_v2(
         resource_group_name="testrg123",
         name="SampleApp",
         operation_id="c291433b-53ad-4c49-8cae-0a293eae1c6d",
+        slot="Production",
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/GetWebSiteNetworkTraces.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/GetWebSiteNetworkTraces.json
 if __name__ == "__main__":
     main()

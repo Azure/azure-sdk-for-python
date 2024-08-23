@@ -243,7 +243,7 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATETIMEOFFSET = "datetimeoffset"
     TINYINT = "tinyint"
     SMALLINT = "smallint"
-    INT = "int"
+    INT_ENUM = "int"
     SMALLDATETIME = "smalldatetime"
     REAL = "real"
     MONEY = "money"
@@ -510,6 +510,22 @@ class FailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     SECONDARY = "Secondary"
 
 
+class FailoverModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The link failover mode - can be Manual if intended to be used for two-way failover with a
+    supported SQL Server, or None for one-way failover to Azure.
+    """
+
+    NONE = "None"
+    MANUAL = "Manual"
+
+
+class FailoverType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The failover type, can be ForcedAllowDataLoss or Planned."""
+
+    FORCED_ALLOW_DATA_LOSS = "ForcedAllowDataLoss"
+    PLANNED = "Planned"
+
+
 class FreeLimitExhaustionBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the behavior when monthly free limits are exhausted for the free database.
 
@@ -599,6 +615,13 @@ class InstancePoolLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASE_PRICE = "BasePrice"
 
 
+class InstanceRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """New role of managed instance in a distributed availability group, can be Primary or Secondary."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+
+
 class IsRetryable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets whether the error could be ignored and recommended action could be retried. Possible
     values are: Yes/No.
@@ -686,6 +709,13 @@ class LedgerDigestUploadsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class LinkRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL server side link role."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
 
 
 class LogSizeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -880,6 +910,15 @@ class PerformanceLevelUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V_CORES = "VCores"
 
 
+class Phase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation phase."""
+
+    COPYING = "Copying"
+    CATCHUP = "Catchup"
+    WAITING_FOR_CUTOVER = "WaitingForCutover"
+    CUTOVER_IN_PROGRESS = "CutoverInProgress"
+
+
 class PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The primary aggregation type defining how metric values are displayed."""
 
@@ -1009,6 +1048,21 @@ class RecommendedSensitivityLabelUpdateKind(str, Enum, metaclass=CaseInsensitive
     DISABLE = "disable"
 
 
+class ReplicaConnectedState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Link connected state."""
+
+    DISCONNECTED = "DISCONNECTED"
+    CONNECTED = "CONNECTED"
+
+
+class ReplicaSynchronizationHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Link health state."""
+
+    NOT_HEALTHY = "NOT_HEALTHY"
+    PARTIALLY_HEALTHY = "PARTIALLY_HEALTHY"
+    HEALTHY = "HEALTHY"
+
+
 class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Link type (GEO, NAMED, STANDBY)."""
 
@@ -1017,14 +1071,11 @@ class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDBY = "STANDBY"
 
 
-class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The replication mode of a distributed availability group. Parameter will be ignored during link
-    creation.
-    """
+class ReplicationModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replication mode of the link."""
 
-    ASYNC = "Async"
-    SYNC = "Sync"
     ASYNC_ENUM = "Async"
+    SYNC = "Sync"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1064,6 +1115,13 @@ class RestorePointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTINUOUS = "CONTINUOUS"
     DISCRETE = "DISCRETE"
+
+
+class RoleChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the role change, can be Planned or Forced."""
+
+    FORCED = "Forced"
+    PLANNED = "Planned"
 
 
 class RuleSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1149,6 +1207,13 @@ class SecurityEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNDEFINED = "Undefined"
     SQL_INJECTION_VULNERABILITY = "SqlInjectionVulnerability"
     SQL_INJECTION_EXPLOIT = "SqlInjectionExploit"
+
+
+class SeedingModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Database seeding mode – can be Automatic (default), or Manual for supported scenarios."""
+
+    AUTOMATIC = "Automatic"
+    MANUAL = "Manual"
 
 
 class SensitivityLabelRank(str, Enum, metaclass=CaseInsensitiveEnumMeta):

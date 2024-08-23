@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -64,7 +64,6 @@ class TriggerRunOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -120,7 +119,6 @@ class TriggerRunOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -177,7 +175,6 @@ class TriggerRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -185,16 +182,15 @@ class TriggerRunOperations:
 
     @overload
     async def query_trigger_runs_by_workspace(
-        self, filter_parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, filter_parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TriggerRunsQueryResponse:
         """Query trigger runs.
 
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,17 +198,13 @@ class TriggerRunOperations:
 
     @distributed_trace_async
     async def query_trigger_runs_by_workspace(
-        self, filter_parameters: Union[_models.RunFilterParameters, IO], **kwargs: Any
+        self, filter_parameters: Union[_models.RunFilterParameters, IO[bytes]], **kwargs: Any
     ) -> _models.TriggerRunsQueryResponse:
         """Query trigger runs.
 
         :param filter_parameters: Parameters to filter the pipeline run. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO[bytes]
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.web import WebSiteManagementClient
 
 """
@@ -29,7 +32,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.update_ftp_allowed(
+    response = client.web_apps.update_scm_allowed(
         resource_group_name="rg",
         name="testSite",
         csm_publishing_access_policies_entity={"properties": {"allow": True}},
@@ -37,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/UpdatePublishingCredentialsPolicy.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/UpdatePublishingCredentialsPolicy.json
 if __name__ == "__main__":
     main()

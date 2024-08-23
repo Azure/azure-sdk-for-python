@@ -25,7 +25,7 @@ or execute the various commands available in the toolbox.
     You can initialize a virtual environment this way:
 
     ```
-    python -m venv env # Might be "python3" or "py -3.6" depending on your Python installation
+    python -m venv env # Might be "python3" or "py -3.8" depending on your Python installation
     source env/bin/activate      # Linux shell (Bash, ZSH, etc.) only
     ./env/scripts/activate       # PowerShell only
     ./env/scripts/activate.bat   # Windows CMD only
@@ -37,7 +37,7 @@ or execute the various commands available in the toolbox.
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
-    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox<5
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install "tox<5"
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
 

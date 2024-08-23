@@ -4,12 +4,13 @@
 # license information.
 #--------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
+# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -23,7 +24,7 @@ from ..client import (
     SendClient as SendClientSync,
     Outcomes
 )
-from ..message import _MessageDelivery
+from ..message import _MessageDelivery, Message
 from ..constants import (
     MessageDeliveryState,
     SEND_DISPOSITION_ACCEPT,
@@ -243,7 +244,7 @@ class AMQPClientAsync(AMQPClientSync):
             self._external_connection = True
         if not self._connection:
             self._connection = Connection(
-                "amqps://" + self._hostname,
+                "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
                 ssl_opts={'ca_certs': self._connection_verify or certifi.where()},
                 container_id=self._name,
@@ -256,6 +257,7 @@ class AMQPClientAsync(AMQPClientSync):
                 http_proxy=self._http_proxy,
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
+                use_tls=self._use_tls,
             )
             await self._connection.open()
         if not self._session:
@@ -350,7 +352,16 @@ class AMQPClientAsync(AMQPClientSync):
             return True
         return await self._client_run_async(**kwargs)
 
-    async def mgmt_request_async(self, message, **kwargs):
+    async def mgmt_request_async(
+            self,
+            message,
+            *,
+            operation: Optional[Union[bytes, str]] = None,
+            operation_type: Optional[Union[bytes, str]] = None,
+            node: str = "$management",
+            timeout: float = 0,
+            **kwargs
+        ):
         """
         :param message: The message to send in the management request.
         :type message: ~pyamqp.message.Message
@@ -370,10 +381,6 @@ class AMQPClientAsync(AMQPClientSync):
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
-        operation = kwargs.pop("operation", None)
-        operation_type = kwargs.pop("operation_type", None)
-        node = kwargs.pop("node", "$management")
-        timeout = kwargs.pop('timeout', 0)
         async with self._mgmt_link_lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
@@ -569,8 +576,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 condition=ErrorCondition.UnknownError
             )
 
-    async def _send_message_impl_async(self, message, **kwargs):
-        timeout = kwargs.pop("timeout", 0)
+    async def _send_message_impl_async(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
         await self.open_async()
         message_delivery = _MessageDelivery(
@@ -604,11 +610,19 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
-    async def send_message_async(self, message, **kwargs):
+    async def send_message_async(self, message, *, timeout: float = 0, **kwargs):
         """
         :param ~pyamqp.message.Message message: The message to send.
+        :keyword float timeout: timeout in seconds. If set to
+         0, the client will continue to wait until the message is sent or error happens. The
+         default is 0.
         """
-        await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
+        await self._do_retryable_operation_async(
+            self._send_message_impl_async,
+            message=message,
+            timeout=timeout,
+            **kwargs
+        )
 
 
 class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
@@ -767,12 +781,17 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
-    async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
+    async def _receive_message_batch_impl_async(
+            self,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+        ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
         receiving = True
-        batch = []
+        batch: List[Message] = []
         await self.open_async()
         while len(batch) < max_batch_size:
             try:
@@ -825,7 +844,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._received_messages = queue.Queue()
         await super(ReceiveClientAsync, self).close_async()
 
-    async def receive_message_batch_async(self, **kwargs):
+    async def receive_message_batch_async( # pylint: disable=unused-argument
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+            **kwargs
+        ) -> Coroutine[Any, Any, list]:
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -844,10 +870,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
          0, the client will continue to wait until at least one message is received. The
          default is 0.
         :paramtype timeout: float
+        :returns: Retryable operation coroutine.
+        :rtype: Coroutine[Any, Any, list]
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,
-            **kwargs
+            max_batch_size=max_batch_size,
+            on_message_received=on_message_received,
+            timeout=timeout,
         )
 
     async def receive_messages_iter_async(self, timeout=None, on_message_received=None):
@@ -901,6 +931,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
@@ -911,6 +942,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
@@ -921,6 +953,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
@@ -932,6 +965,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["modified"],
         *,
         delivery_failed: Optional[bool] = None,
@@ -945,6 +979,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["received"],
         *,
         section_number: int,
@@ -953,7 +988,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ):
         ...
 
-    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+    async def settle_messages_async(
+            self,
+            delivery_id: Union[int, Tuple[int, int]],
+            delivery_tag: bytes,
+            outcome: str,
+            **kwargs
+    ):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
@@ -975,6 +1016,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
+            delivery_tag=delivery_tag,
             settled=True,
             delivery_state=state,
             batchable=batchable,

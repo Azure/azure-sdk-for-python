@@ -1,12 +1,44 @@
 # Release History
 
-## 12.15.0b1 (Unreleased)
+## 12.17.0 (Unreleased)
+
+### Features Added
+
+
+## 12.17.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.16.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.16.0b1
+
+## 12.16.0b1 (2024-06-11)
+
+### Features Added
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+
+## 12.15.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.15.0b1
+
+## 12.15.0b1 (2024-04-16)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- Added support for service version 2024-05-04.
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+- Added `upn` as an optional keyword that can be specified on APIs that return an instance of `PathProperties`, `DirectoryProperties` or
+`FileProperties`. Specifying this keyword transforms the user identity values returned in the `owner`, `group`, and `acl` fields of the
+corresponding Properties from Azure Active Directory Object IDs to User Principal Names.
 
 ### Bugs Fixed
 - Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on

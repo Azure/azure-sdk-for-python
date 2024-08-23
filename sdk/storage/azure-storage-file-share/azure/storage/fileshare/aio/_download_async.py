@@ -22,7 +22,8 @@ async def process_content(data):
         raise ValueError("Response cannot be None.")
 
     try:
-        return data.response.body()
+        await data.response.read()
+        return data.response.content
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
@@ -96,7 +97,7 @@ class _AsyncChunkIterator(object):
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
-        self._complete = (size == 0)
+        self._complete = size == 0
 
     def __len__(self):
         return self.size

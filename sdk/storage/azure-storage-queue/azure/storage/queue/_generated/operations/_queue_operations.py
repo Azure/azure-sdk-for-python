@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,19 +18,17 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -291,12 +289,11 @@ class QueueOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -309,22 +306,20 @@ class QueueOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -335,20 +330,12 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 201:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if response.status_code == 204:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -364,12 +351,11 @@ class QueueOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -382,21 +368,19 @@ class QueueOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -412,9 +396,7 @@ class QueueOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -431,15 +413,11 @@ class QueueOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -453,22 +431,20 @@ class QueueOperations:
         comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -488,9 +464,7 @@ class QueueOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -517,15 +491,11 @@ class QueueOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -539,23 +509,21 @@ class QueueOperations:
         comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -571,9 +539,7 @@ class QueueOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_access_policy(
@@ -590,15 +556,11 @@ class QueueOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -612,22 +574,20 @@ class QueueOperations:
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
         cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
-        request = build_get_access_policy_request(
+        _request = build_get_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -642,14 +602,12 @@ class QueueOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("[SignedIdentifier]", pipeline_response)
+        deserialized = self._deserialize("[SignedIdentifier]", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_access_policy.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
@@ -671,15 +629,11 @@ class QueueOperations:
         :type request_id_parameter: str
         :param queue_acl: the acls for the queue. Default value is None.
         :type queue_acl: list[~azure.storage.queue.models.SignedIdentifier]
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -702,7 +656,7 @@ class QueueOperations:
         else:
             _content = None
 
-        request = build_set_access_policy_request(
+        _request = build_set_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -710,16 +664,14 @@ class QueueOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -735,6 +687,4 @@ class QueueOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

@@ -34,7 +34,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         self.account_name = storage_account_name
         self.account_key = storage_account_key
         self.sas_token = generate_sas_token()
-        self.token_credential = self.generate_oauth_token()
+        self.token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):

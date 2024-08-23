@@ -5,21 +5,21 @@ extends:
     parameters:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
-      ToxTestEnv: optional
       MatrixFilters:
         - PythonVersion=3.11.*
+      MatrixReplace:
+        - TestSamples=.*/true
+      UseFederatedAuth: true
+      SupportedClouds: 'Public'
       EnvVars:
-        AZURE_CLIENT_ID: $(python-openai-client-id)
-        AZURE_CLIENT_SECRET: $(python-openai-client-secret)
-        AZURE_TENANT_ID: $(python-openai-tenant-id)
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
+        AZURE_OPENAI_CHAT_DEPLOYMENT: $(AOAI-CHAT-COMPLETIONS-MODEL-DEPLOYMENT)
+        AZURE_OPENAI_COMPLETIONS_DEPLOYMENT: $(AOAI-COMPLETIONS-MODEL-DEPLOYMENT)
         AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT: $(AOAI-ENDPOINT-NORTHCENTRALUS)
-        AZURE_OPENAI_NORTHCENTRALUS_KEY: $(AOAI-API-KEY-NORTHCENTRALUS)
         AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT: $(AOAI-ENDPOINT-SWEDENCENTRAL)
-        AZURE_OPENAI_SWEDENCENTRAL_KEY: $(AOAI-API-KEY-SWEDENCENTRAL)
         OPENAI_KEY: $(python-nonazure-openai-key)
         AZURE_OPENAI_SEARCH_ENDPOINT: $(COGNITIVE-SEARCH-API-ENDPOINT)
-        AZURE_OPENAI_SEARCH_KEY: $(COGNITIVE-SEARCH-API-KEY)
         AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)
         AZURE_TEST_RUN_LIVE: 'true'
+        API_VERSION_GA: '2024-06-01'

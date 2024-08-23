@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,16 +15,16 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._path_operations import (
     build_append_data_request,
     build_create_request,
@@ -40,10 +40,10 @@ from ...operations._path_operations import (
     build_update_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -194,12 +194,11 @@ class PathOperations:
          ~azure.storage.filedatalake.models.SourceModifiedAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -252,7 +251,7 @@ class PathOperations:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -290,16 +289,14 @@ class PathOperations:
             expires_on=expires_on,
             encryption_context=encryption_context,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -325,16 +322,14 @@ class PathOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def update(
         self,
         action: Union[str, _models.PathUpdateAction],
         mode: Union[str, _models.PathSetAccessControlRecursiveMode],
-        body: IO,
+        body: IO[bytes],
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         max_records: Optional[int] = None,
@@ -379,7 +374,7 @@ class PathOperations:
          and directories. Known values are: "set", "modify", and "remove". Required.
         :type mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -465,12 +460,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SetAccessControlRecursiveResponse or None or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -511,7 +505,7 @@ class PathOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
-        request = build_update_request(
+        _request = build_update_request(
             url=self._config.url,
             action=action,
             mode=mode,
@@ -543,16 +537,14 @@ class PathOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -584,7 +576,7 @@ class PathOperations:
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-            deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response)
+            deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response.http_response)
 
         if response.status_code == 202:
             response_headers["Content-MD5"] = self._deserialize("str", response.headers.get("Content-MD5"))
@@ -593,11 +585,9 @@ class PathOperations:
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    update.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def lease(  # pylint: disable=inconsistent-return-statements
@@ -650,12 +640,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -681,7 +670,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_lease_request(
+        _request = build_lease_request(
             url=self._config.url,
             x_ms_lease_action=x_ms_lease_action,
             request_id_parameter=request_id_parameter,
@@ -695,16 +684,14 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             x_ms_lease_duration=self._config.x_ms_lease_duration,
             version=self._config.version,
-            template_url=self.lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -739,9 +726,7 @@ class PathOperations:
             response_headers["x-ms-lease-time"] = self._deserialize("str", response.headers.get("x-ms-lease-time"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def read(
@@ -787,12 +772,11 @@ class PathOperations:
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -825,7 +809,7 @@ class PathOperations:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
-        request = build_read_request(
+        _request = build_read_request(
             url=self._config.url,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -840,21 +824,24 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             version=self._config.version,
-            template_url=self.read.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -893,8 +880,6 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 206:
             response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
             response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
@@ -929,14 +914,12 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    read.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -983,12 +966,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1014,7 +996,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -1026,16 +1008,14 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1071,9 +1051,7 @@ class PathOperations:
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -1120,12 +1098,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1151,7 +1128,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -1164,16 +1141,14 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             paginated=paginated,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1198,9 +1173,7 @@ class PathOperations:
             response_headers["x-ms-continuation"] = self._deserialize("str", response.headers.get("x-ms-continuation"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_access_control(  # pylint: disable=inconsistent-return-statements
@@ -1245,15 +1218,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword action: action. Default value is "setAccessControl". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1280,7 +1249,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_set_access_control_request(
+        _request = build_set_access_control_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1295,16 +1264,14 @@ class PathOperations:
             request_id_parameter=request_id_parameter,
             action=action,
             version=self._config.version,
-            template_url=self.set_access_control.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1325,9 +1292,7 @@ class PathOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_control.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_access_control_recursive(
@@ -1378,15 +1343,11 @@ class PathOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword action: action. Default value is "setAccessControlRecursive". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SetAccessControlRecursiveResponse or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1402,7 +1363,7 @@ class PathOperations:
         )
         cls: ClsType[_models.SetAccessControlRecursiveResponse] = kwargs.pop("cls", None)
 
-        request = build_set_access_control_recursive_request(
+        _request = build_set_access_control_recursive_request(
             url=self._config.url,
             mode=mode,
             timeout=timeout,
@@ -1413,16 +1374,14 @@ class PathOperations:
             request_id_parameter=request_id_parameter,
             action=action,
             version=self._config.version,
-            template_url=self.set_access_control_recursive.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1441,14 +1400,12 @@ class PathOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response)
+        deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    set_access_control_recursive.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def flush_data(  # pylint: disable=inconsistent-return-statements
@@ -1530,15 +1487,11 @@ class PathOperations:
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
-        :keyword action: action. Default value is "flush". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1585,7 +1538,7 @@ class PathOperations:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
-        request = build_flush_data_request(
+        _request = build_flush_data_request(
             url=self._config.url,
             timeout=timeout,
             position=position,
@@ -1612,16 +1565,14 @@ class PathOperations:
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             action=action,
             version=self._config.version,
-            template_url=self.flush_data.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1650,14 +1601,12 @@ class PathOperations:
         response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    flush_data.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def append_data(  # pylint: disable=inconsistent-return-statements
         self,
-        body: IO,
+        body: IO[bytes],
         position: Optional[int] = None,
         timeout: Optional[int] = None,
         content_length: Optional[int] = None,
@@ -1675,7 +1624,7 @@ class PathOperations:
         """Append data to the file.
 
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param position: This parameter allows the caller to upload data in parallel and control the
          order in which it is appended to the file.  It is required when uploading data to be appended
          to the file and when flushing previously uploaded data to the file.  The value must be the
@@ -1722,15 +1671,11 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
-        :keyword action: action. Default value is "append". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1760,7 +1705,7 @@ class PathOperations:
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
         _content = body
 
-        request = build_append_data_request(
+        _request = build_append_data_request(
             url=self._config.url,
             position=position,
             timeout=timeout,
@@ -1780,16 +1725,14 @@ class PathOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.append_data.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1820,9 +1763,7 @@ class PathOperations:
         response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    append_data.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_expiry(  # pylint: disable=inconsistent-return-statements
@@ -1849,15 +1790,11 @@ class PathOperations:
         :type request_id_parameter: str
         :param expires_on: The time to set the blob to expiry. Default value is None.
         :type expires_on: str
-        :keyword comp: comp. Default value is "expiry". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1871,7 +1808,7 @@ class PathOperations:
         comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_expiry_request(
+        _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
             timeout=timeout,
@@ -1879,16 +1816,14 @@ class PathOperations:
             expires_on=expires_on,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_expiry.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1909,9 +1844,7 @@ class PathOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_expiry.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def undelete(  # pylint: disable=inconsistent-return-statements
@@ -1935,15 +1868,11 @@ class PathOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1957,23 +1886,21 @@ class PathOperations:
         comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_undelete_request(
+        _request = build_undelete_request(
             url=self._config.url,
             timeout=timeout,
             undelete_source=undelete_source,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.undelete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1993,6 +1920,4 @@ class PathOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    undelete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

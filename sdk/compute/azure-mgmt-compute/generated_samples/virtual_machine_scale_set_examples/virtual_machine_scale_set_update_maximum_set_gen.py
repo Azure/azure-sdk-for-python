@@ -243,6 +243,7 @@ def main():
                         },
                         "osDisk": {
                             "caching": "ReadWrite",
+                            "diffDiskSettings": {"option": "Local", "placement": "CacheDisk"},
                             "diskSizeGB": 6,
                             "image": {
                                 "uri": "http://{existing-storage-account-name}.blob.core.windows.net/{existing-container-name}/myDisk.vhd"
@@ -260,11 +261,12 @@ def main():
             },
             "sku": {"capacity": 7, "name": "DSv3-Type1", "tier": "aaa"},
             "tags": {"key246": "aaaaaaaaaaaaaaaaaaaaaaaa"},
+            "zones": ["1", "2", "3"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-07-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

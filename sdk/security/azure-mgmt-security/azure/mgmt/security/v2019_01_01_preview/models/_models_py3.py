@@ -24,7 +24,7 @@ class AdditionalData(_serialization.Model):
     ContainerRegistryVulnerabilityProperties, ServerVulnerabilityProperties,
     SqlServerVulnerabilityProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assessed_resource_type: Sub-assessment resource type. Required. Known values are:
      "SqlServerVulnerability", "ContainerRegistryVulnerability", and "ServerVulnerability".
@@ -180,7 +180,7 @@ class AlertsSuppressionRulesList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule]
@@ -468,7 +468,7 @@ class AutomationAction(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AutomationActionEventHub, AutomationActionLogicApp, AutomationActionWorkspace
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      Known values are: "LogicApp", "EventHub", and "Workspace".
@@ -503,7 +503,7 @@ class AutomationActionEventHub(AutomationAction):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      Known values are: "LogicApp", "EventHub", and "Workspace".
@@ -550,7 +550,7 @@ class AutomationActionLogicApp(AutomationAction):
     """The logic app action that should be triggered. To learn more about Microsoft Defender for
     Cloud's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      Known values are: "LogicApp", "EventHub", and "Workspace".
@@ -596,7 +596,7 @@ class AutomationActionWorkspace(AutomationAction):
     solution needs to be enabled on that workspace. To learn more about Microsoft Defender for
     Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      Known values are: "LogicApp", "EventHub", and "Workspace".
@@ -629,7 +629,7 @@ class AutomationList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of security automations under the given scope. Required.
     :vartype value: list[~azure.mgmt.security.v2019_01_01_preview.models.Automation]
@@ -838,7 +838,7 @@ class ResourceDetails(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureResourceDetails, OnPremiseResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -866,7 +866,7 @@ class AzureResourceDetails(ResourceDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -941,7 +941,7 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assessed_resource_type: Sub-assessment resource type. Required. Known values are:
      "SqlServerVulnerability", "ContainerRegistryVulnerability", and "ServerVulnerability".
@@ -1090,7 +1090,7 @@ class OnPremiseResourceDetails(ResourceDetails):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OnPremiseSqlResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -1147,7 +1147,7 @@ class OnPremiseResourceDetails(ResourceDetails):
 class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
     """Details of the On Premise Sql resource that was assessed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -1304,7 +1304,7 @@ class RegulatoryComplianceAssessmentList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value:
@@ -1401,7 +1401,7 @@ class RegulatoryComplianceControlList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of regulatory compliance controls. Required.
     :vartype value:
@@ -1499,7 +1499,7 @@ class RegulatoryComplianceStandardList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value:
@@ -1683,7 +1683,7 @@ class ServerVulnerabilityProperties(AdditionalData):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assessed_resource_type: Sub-assessment resource type. Required. Known values are:
      "SqlServerVulnerability", "ContainerRegistryVulnerability", and "ServerVulnerability".
@@ -1747,7 +1747,7 @@ class SqlServerVulnerabilityProperties(AdditionalData):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assessed_resource_type: Sub-assessment resource type. Required. Known values are:
      "SqlServerVulnerability", "ContainerRegistryVulnerability", and "ServerVulnerability".
@@ -1822,7 +1822,7 @@ class SubAssessmentStatus(_serialization.Model):
 class SuppressionAlertsScope(_serialization.Model):
     """SuppressionAlertsScope.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar all_of: All the conditions inside need to be true in order to suppress the alert.
      Required.

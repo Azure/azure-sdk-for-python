@@ -1,5 +1,54 @@
 # Release History
 
+## 7.0.0 (2024-05-20)
+
+### Features Added
+
+  - Added operation HealthReportsOperations.get
+  - Added operation PricingsOperations.delete
+  - Added operation group AzureDevOpsOrgsOperations
+  - Added operation group AzureDevOpsProjectsOperations
+  - Added operation group AzureDevOpsReposOperations
+  - Added operation group DevOpsConfigurationsOperations
+  - Added operation group DevOpsOperationResultsOperations
+  - Added operation group GitHubOwnersOperations
+  - Added operation group GitHubReposOperations
+  - Added operation group GitLabGroupsOperations
+  - Added operation group GitLabProjectsOperations
+  - Added operation group GitLabSubgroupsOperations
+  - Added operation group SensitivitySettingsOperations
+  - Added operation group ServerVulnerabilityAssessmentsSettingsOperations
+  - Model AwsEnvironmentData has a new parameter scan_interval
+  - Model DefenderCspmAwsOffering has a new parameter ciem
+  - Model DefenderCspmAwsOffering has a new parameter mdc_containers_agentless_discovery_k8_s
+  - Model DefenderCspmAwsOffering has a new parameter mdc_containers_image_assessment
+  - Model DefenderCspmGcpOffering has a new parameter ciem_discovery
+  - Model DefenderCspmGcpOffering has a new parameter data_sensitivity_discovery
+  - Model DefenderCspmGcpOffering has a new parameter mdc_containers_agentless_discovery_k8_s
+  - Model DefenderCspmGcpOffering has a new parameter mdc_containers_image_assessment
+  - Model DefenderCspmGcpOffering has a new parameter vm_scanners
+  - Model DefenderForContainersAwsOffering has a new parameter mdc_containers_agentless_discovery_k8_s
+  - Model DefenderForContainersAwsOffering has a new parameter mdc_containers_image_assessment
+  - Model DefenderForContainersGcpOffering has a new parameter mdc_containers_agentless_discovery_k8_s
+  - Model DefenderForContainersGcpOffering has a new parameter mdc_containers_image_assessment
+  - Model GcpProjectEnvironmentData has a new parameter scan_interval
+  - Model HealthReport has a new parameter affected_defenders_sub_plans
+  - Model HealthReport has a new parameter report_additional_data
+  - Model Pricing has a new parameter enforce
+  - Model Pricing has a new parameter inherited
+  - Model Pricing has a new parameter inherited_from
+  - Model Pricing has a new parameter resources_coverage_status
+  - Model Status has a new parameter last_scanned_date
+  - Model Status has a new parameter reason
+  - Operation PricingsOperations.list has a new optional parameter filter
+
+### Breaking Changes
+
+  - Operation PricingsOperations.get has a new required parameter scope_id
+  - Operation PricingsOperations.list has a new required parameter scope_id
+  - Operation PricingsOperations.update has a new required parameter scope_id
+  - Removed operation group IngestionSettingsOperations
+
 ## 6.0.0 (2024-01-19)
 
 ### Features Added

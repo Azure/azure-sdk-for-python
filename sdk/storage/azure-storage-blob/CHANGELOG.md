@@ -1,10 +1,47 @@
 # Release History
 
-## 12.20.0b1 (Unreleased)
+## 12.23.0 (Unreleased)
+
+### Features Added
+
+
+## 12.23.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.22.0 (2024-08-06)
+
+### Other Changes
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.21.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.21.0b1
+- Added new `chars` keyword to the `StorageStreamDownloader.read` method to support reading an arbitrary number of
+characters from the stream rather than bytes. This can only be used when `encoding` is specified on `download_blob`
+but can help prevent decoding errors in certain scenarios.
+
+## 12.21.0b1 (2024-06-11)
+
+### Features Added
+- Added support for service version 2024-08-04.
+
+## 12.20.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.20.0b1
+
+## 12.20.0b1 (2024-04-16)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- Added support for service version 2024-05-04.
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 
@@ -13,14 +50,14 @@ tokens to be used with multiple services. By default, the SAS token service scop
 Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
-- Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
+- Fixed a typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
 - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
 - Fixed a couple of issues with `upload_blob` when using Iterators/Generators as the data input.
 
 ### Other Changes
 - Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
 `list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
-The `name_starts_with` parameter is the correct prameter to pass for filtering.
+The `name_starts_with` parameter is the correct parameter to pass for filtering.
 
 ## 12.19.1 (2024-03-05)
 

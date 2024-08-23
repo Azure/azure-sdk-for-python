@@ -30,6 +30,7 @@ from ._models_py3 import ApiOperationDisplay
 from ._models_py3 import ApiOperationListResult
 from ._models_py3 import ApiOperationPropertiesServiceSpecification
 from ._models_py3 import AscOperation
+from ._models_py3 import AscOperationErrorResponse
 from ._models_py3 import BlobNfsTarget
 from ._models_py3 import Cache
 from ._models_py3 import CacheActiveDirectorySettings
@@ -49,7 +50,12 @@ from ._models_py3 import CachesListResult
 from ._models_py3 import ClfsTarget
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import Condition
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import ImportJob
+from ._models_py3 import ImportJobUpdate
+from ._models_py3 import ImportJobsListResult
 from ._models_py3 import KeyVaultKeyReference
 from ._models_py3 import KeyVaultKeyReferenceSourceVault
 from ._models_py3 import LogSpecification
@@ -92,11 +98,14 @@ from ._storage_cache_management_client_enums import AmlFilesystemProvisioningSta
 from ._storage_cache_management_client_enums import AmlFilesystemSquashMode
 from ._storage_cache_management_client_enums import ArchiveStatusType
 from ._storage_cache_management_client_enums import CacheIdentityType
+from ._storage_cache_management_client_enums import ConflictResolutionMode
 from ._storage_cache_management_client_enums import CreatedByType
 from ._storage_cache_management_client_enums import DomainJoinedType
 from ._storage_cache_management_client_enums import FilesystemSubnetStatusType
 from ._storage_cache_management_client_enums import FirmwareStatusType
 from ._storage_cache_management_client_enums import HealthStateType
+from ._storage_cache_management_client_enums import ImportJobProvisioningStateType
+from ._storage_cache_management_client_enums import ImportStatusType
 from ._storage_cache_management_client_enums import MaintenanceDayOfWeekType
 from ._storage_cache_management_client_enums import MetricAggregationType
 from ._storage_cache_management_client_enums import NfsAccessRuleAccess
@@ -137,6 +146,7 @@ __all__ = [
     "ApiOperationListResult",
     "ApiOperationPropertiesServiceSpecification",
     "AscOperation",
+    "AscOperationErrorResponse",
     "BlobNfsTarget",
     "Cache",
     "CacheActiveDirectorySettings",
@@ -156,7 +166,12 @@ __all__ = [
     "ClfsTarget",
     "CloudErrorBody",
     "Condition",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
+    "ImportJob",
+    "ImportJobUpdate",
+    "ImportJobsListResult",
     "KeyVaultKeyReference",
     "KeyVaultKeyReferenceSourceVault",
     "LogSpecification",
@@ -198,11 +213,14 @@ __all__ = [
     "AmlFilesystemSquashMode",
     "ArchiveStatusType",
     "CacheIdentityType",
+    "ConflictResolutionMode",
     "CreatedByType",
     "DomainJoinedType",
     "FilesystemSubnetStatusType",
     "FirmwareStatusType",
     "HealthStateType",
+    "ImportJobProvisioningStateType",
+    "ImportStatusType",
     "MaintenanceDayOfWeekType",
     "MetricAggregationType",
     "NfsAccessRuleAccess",

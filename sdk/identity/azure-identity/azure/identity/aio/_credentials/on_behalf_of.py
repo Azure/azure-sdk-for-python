@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, Dict, Callable
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -25,14 +25,18 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: The service principal's client ID
+    :param str client_id: The service principal's client ID.
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
-        Either **client_secret** or **client_certificate** must be provided.
+        One of **client_secret**, **client_certificate**, or **client_assertion_func** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
-        the private key to authenticate the service principal. Either **client_secret** or **client_certificate** must
-        be provided.
+        the private key to authenticate the service principal. One of **client_secret**, **client_certificate**,
+        or **client_assertion_func** must be provided.
+    :keyword client_assertion_func: Optional. Function that returns client assertions that authenticate the
+        application to Microsoft Entra ID. This function is called each time the credential requests a token. It must
+        return a valid assertion for the target resource.
+    :paramtype client_assertion_func: Callable[[], str]
     :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
-        requesting on-behalf-of tokens
+        requesting on-behalf-of tokens.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -62,29 +66,40 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         *,
         client_certificate: Optional[bytes] = None,
         client_secret: Optional[str] = None,
+        client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[str, bytes]] = None,
         **kwargs: Any
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
 
         self._assertion = user_assertion
+        if not self._assertion:
+            raise TypeError('"user_assertion" must not be empty.')
 
-        if client_certificate:
+        if client_assertion_func:
+            if client_certificate or client_secret:
+                raise ValueError(
+                    "It is invalid to specify more than one of the following: "
+                    '"client_assertion_func", "client_certificate" or "client_secret".'
+                )
+            self._client_credential: Union[str, AadClientCertificate, Dict[str, Any]] = {
+                "client_assertion": client_assertion_func,
+            }
+        elif client_certificate:
             if client_secret:
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
-                cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
+                cert = get_client_credential(None, password, client_certificate)
             except ValueError as ex:
                 message = '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 raise ValueError(message) from ex
-            self._client_credential: Union[str, AadClientCertificate] = AadClientCertificate(
-                cert["private_key"], password=cert.get("passphrase")
-            )
+            self._client_credential = AadClientCertificate(cert["private_key"], password=cert.get("passphrase"))
         elif client_secret:
             self._client_credential = client_secret
         else:
-            raise TypeError('Either "client_certificate" or "client_secret" must be provided')
+            raise TypeError('Either "client_certificate", "client_secret", or "client_assertion_func" must be provided')
 
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)

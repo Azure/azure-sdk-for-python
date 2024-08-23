@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.selfhelp import SelfHelpMgmtClient
 
 """
@@ -28,12 +29,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.check_name_availability.post(
+    response = client.check_name_availability.check_availability(
         scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6",
     )
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/CheckNameAvailabilityForDiagnosticWhenNameIsNotAvailable.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2024-03-01-preview/examples/CheckNameAvailabilityForDiagnosticWhenNameIsNotAvailable.json
 if __name__ == "__main__":
     main()

@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.maintenance import MaintenanceManagementClient
 
 """
@@ -52,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-09-01-preview/examples/ConfigurationAssignmentsForResourceGroup_UpdateForResource.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-10-01-preview/examples/ConfigurationAssignmentsForResourceGroup_UpdateForResource.json
 if __name__ == "__main__":
     main()

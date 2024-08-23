@@ -7,6 +7,7 @@ import functools
 import pytest
 from unittest import mock
 from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import ApiVersion
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 from devtools_testutils import trim_kwargs_from_test_function
@@ -54,6 +55,13 @@ class TestSearchIndexClient:
         client = SearchIndexClient("endpoint", credential)
         search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
+
+    def test_get_search_client_inherit_api_version(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexClient("endpoint", credential, api_version=ApiVersion.V2020_06_30)
+        search_client = client.get_search_client("index")
+        assert isinstance(search_client, SearchClient)
+        assert search_client._api_version == ApiVersion.V2020_06_30
 
     def test_index_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
