@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, IO, Optional, Dict, Union, cast, overload, List, MutableMapping, TypeVar, Callable
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from .._serialization import Deserializer, Serializer
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
@@ -50,6 +51,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
 
     @overload  # type: ignore[override]
     def begin_infer_radiology_insights(
