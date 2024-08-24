@@ -23,21 +23,21 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}' was added in the current version"
+        "The client '{}' was added"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}' client method '{}' was added in the current version"
+        "The '{}' client method '{}' was added"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}' was added in the current version"
+        "The model or publicly exposed class '{}' was added"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}' method '{}' was added in the current version"
+        "The '{}' method '{}' was added"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added in the {} method"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}' had parameter '{}' added in the current version"
+        "The function '{}' had parameter '{}' added"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}' client had operation group '{}' added in the current version"
+        "The '{}' client had operation group '{}' added"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
