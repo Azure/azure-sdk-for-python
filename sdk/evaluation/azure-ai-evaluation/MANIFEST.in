@@ -1,1 +1,1 @@
-recursive-include azure/ai/evaluation/ *.prompty
+recursive-include azure/ai/evaluation *.prompty
