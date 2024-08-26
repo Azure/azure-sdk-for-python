@@ -50,5 +50,6 @@ if ($nonZeroExit) {
     exit 1
 } else {
     Write-Host "All scripts completed successfully."
+    Get-ChildItem $RepoRoot -Filter "sphinx-*.log" | ForEach-Object { Get-Content $_.FullName }
     exit 0
 }
