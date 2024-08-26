@@ -1,5 +1,328 @@
 # Release History
 
+## 8.0.0 (2024-08-18)
+
+### Features Added
+
+  - The 'AzureStackHCIClient' client had operation group 'deployment_settings' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'edge_devices' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'offers' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'publishers' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'security_settings' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'skus' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'update_runs' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'update_summaries' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'updates' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'deployment_settings' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'edge_devices' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'offers' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'publishers' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'security_settings' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'skus' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'update_runs' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'update_summaries' added in the current version
+  - The 'AzureStackHCIClient' client had operation group 'updates' added in the current version
+  - The model or publicly exposed class 'ArcSettingsOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ArcSettingsOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ArcSettingsOperations' method 'begin_initialize_disable_process' was added in the current version
+  - The 'ArcSettingsOperations' method 'consent_and_install_default_extensions' was added in the current version
+  - The model or publicly exposed class 'ClustersOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ClustersOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ClustersOperations' method 'begin_configure_remote_support' was added in the current version
+  - The 'ClustersOperations' method 'begin_extend_software_assurance_benefit' was added in the current version
+  - The 'ClustersOperations' method 'begin_trigger_log_collection' was added in the current version
+  - The model or publicly exposed class 'ExtensionsOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ExtensionsOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ExtensionsOperations' method 'begin_upgrade' was added in the current version
+  - The model or publicly exposed class 'Operations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'Operations' had property 'kwargs' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DeploymentSettingsOperations' was added in the current version
+  - The model or publicly exposed class 'EdgeDevicesOperations' was added in the current version
+  - The model or publicly exposed class 'OffersOperations' was added in the current version
+  - The model or publicly exposed class 'PublishersOperations' was added in the current version
+  - The model or publicly exposed class 'SecuritySettingsOperations' was added in the current version
+  - The model or publicly exposed class 'SkusOperations' was added in the current version
+  - The model or publicly exposed class 'UpdateRunsOperations' was added in the current version
+  - The model or publicly exposed class 'UpdateSummariesOperations' was added in the current version
+  - The model or publicly exposed class 'UpdatesOperations' was added in the current version
+  - The model or publicly exposed class 'ArcSettingsOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ArcSettingsOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ArcSettingsOperations' method 'begin_initialize_disable_process' was added in the current version
+  - The 'ArcSettingsOperations' method 'consent_and_install_default_extensions' was added in the current version
+  - The model or publicly exposed class 'ClustersOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ClustersOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ClustersOperations' method 'begin_configure_remote_support' was added in the current version
+  - The 'ClustersOperations' method 'begin_extend_software_assurance_benefit' was added in the current version
+  - The 'ClustersOperations' method 'begin_trigger_log_collection' was added in the current version
+  - The model or publicly exposed class 'ExtensionsOperations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'ExtensionsOperations' had property 'kwargs' added in the __init__ method in the current version
+  - The 'ExtensionsOperations' method 'begin_upgrade' was added in the current version
+  - The model or publicly exposed class 'Operations' had property 'args' added in the __init__ method in the current version
+  - The model or publicly exposed class 'Operations' had property 'kwargs' added in the __init__ method in the current version
+  - The model or publicly exposed class 'DeploymentSettingsOperations' was added in the current version
+  - The model or publicly exposed class 'EdgeDevicesOperations' was added in the current version
+  - The model or publicly exposed class 'OffersOperations' was added in the current version
+  - The model or publicly exposed class 'PublishersOperations' was added in the current version
+  - The model or publicly exposed class 'SecuritySettingsOperations' was added in the current version
+  - The model or publicly exposed class 'SkusOperations' was added in the current version
+  - The model or publicly exposed class 'UpdateRunsOperations' was added in the current version
+  - The model or publicly exposed class 'UpdateSummariesOperations' was added in the current version
+  - The model or publicly exposed class 'UpdatesOperations' was added in the current version
+  - The model or publicly exposed class 'ArcConnectivityProperties' had property 'service_configurations' added in the current version
+  - The model or publicly exposed class 'ArcSetting' had property 'default_extensions' added in the current version
+  - The model or publicly exposed class 'ArcSettingAggregateState' had property 'ACCEPTED' added in the current version
+  - The model or publicly exposed class 'ArcSettingAggregateState' had property 'DISABLE_IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'ArcSettingAggregateState' had property 'PROVISIONING' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'connectivity_status' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'software_assurance_properties' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'log_collection_properties' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'remote_support_properties' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'isolated_vm_attestation_configuration' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'resource_provider_object_id' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'principal_id' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'tenant_id' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'type_identity_type' added in the current version
+  - The model or publicly exposed class 'Cluster' had property 'user_assigned_identities' added in the current version
+  - The model or publicly exposed class 'ClusterNode' had property 'node_type' added in the current version
+  - The model or publicly exposed class 'ClusterNode' had property 'ehc_resource_id' added in the current version
+  - The model or publicly exposed class 'ClusterNode' had property 'os_display_version' added in the current version
+  - The model or publicly exposed class 'ClusterNode' had property 'last_licensing_timestamp' added in the current version
+  - The model or publicly exposed class 'ClusterNode' had property 'oem_activation' added in the current version
+  - The model or publicly exposed class 'ClusterPatch' had property 'principal_id' added in the current version
+  - The model or publicly exposed class 'ClusterPatch' had property 'tenant_id' added in the current version
+  - The model or publicly exposed class 'ClusterPatch' had property 'type' added in the current version
+  - The model or publicly exposed class 'ClusterPatch' had property 'user_assigned_identities' added in the current version
+  - The model or publicly exposed class 'ClusterReportedProperties' had property 'supported_capabilities' added in the current version
+  - The model or publicly exposed class 'ClusterReportedProperties' had property 'cluster_type' added in the current version
+  - The model or publicly exposed class 'ClusterReportedProperties' had property 'manufacturer' added in the current version
+  - The model or publicly exposed class 'ClusterReportedProperties' had property 'oem_activation' added in the current version
+  - The model or publicly exposed class 'Extension' had property 'managed_by' added in the current version
+  - The model or publicly exposed class 'Extension' had property 'enable_automatic_upgrade' added in the current version
+  - The model or publicly exposed class 'ExtensionAggregateState' had property 'ACCEPTED' added in the current version
+  - The model or publicly exposed class 'ExtensionAggregateState' had property 'PROVISIONING' added in the current version
+  - The model or publicly exposed class 'ExtensionAggregateState' had property 'UPGRADE_FAILED_ROLLBACK_SUCCEEDED' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'ACCEPTED' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'DISABLE_IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'PARTIALLY_CONNECTED' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'PARTIALLY_SUCCEEDED' added in the current version
+  - The model or publicly exposed class 'NodeArcState' had property 'PROVISIONING' added in the current version
+  - The model or publicly exposed class 'NodeExtensionState' had property 'ACCEPTED' added in the current version
+  - The model or publicly exposed class 'NodeExtensionState' had property 'IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'NodeExtensionState' had property 'PARTIALLY_CONNECTED' added in the current version
+  - The model or publicly exposed class 'NodeExtensionState' had property 'PARTIALLY_SUCCEEDED' added in the current version
+  - The model or publicly exposed class 'NodeExtensionState' had property 'PROVISIONING' added in the current version
+  - The model or publicly exposed class 'PerNodeExtensionState' had property 'type_handler_version' added in the current version
+  - The model or publicly exposed class 'PerNodeExtensionState' had property 'instance_view' added in the current version
+  - The model or publicly exposed class 'PerNodeState' had property 'arc_node_service_principal_object_id' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'CONNECTED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'CREATING' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'DELETED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'DELETING' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'DISABLE_IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'DISCONNECTED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'ERROR' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'MOVING' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'NOT_SPECIFIED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'PARTIALLY_CONNECTED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'PARTIALLY_SUCCEEDED' added in the current version
+  - The model or publicly exposed class 'ProvisioningState' had property 'UPDATING' added in the current version
+  - The model or publicly exposed class 'Resource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'Status' had property 'DEPLOYMENT_FAILED' added in the current version
+  - The model or publicly exposed class 'Status' had property 'DEPLOYMENT_IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'Status' had property 'DEPLOYMENT_SUCCESS' added in the current version
+  - The model or publicly exposed class 'Status' had property 'FAILED' added in the current version
+  - The model or publicly exposed class 'Status' had property 'IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'Status' had property 'NOT_SPECIFIED' added in the current version
+  - The model or publicly exposed class 'Status' had property 'SUCCEEDED' added in the current version
+  - The model or publicly exposed class 'Status' had property 'VALIDATION_FAILED' added in the current version
+  - The model or publicly exposed class 'Status' had property 'VALIDATION_IN_PROGRESS' added in the current version
+  - The model or publicly exposed class 'Status' had property 'VALIDATION_SUCCESS' added in the current version
+  - The model or publicly exposed class 'AccessLevel' was added in the current version
+  - The model or publicly exposed class 'ArcExtensionState' was added in the current version
+  - The model or publicly exposed class 'AvailabilityType' was added in the current version
+  - The model or publicly exposed class 'ClusterNodeType' was added in the current version
+  - The model or publicly exposed class 'ComplianceAssignmentType' was added in the current version
+  - The model or publicly exposed class 'ComplianceStatus' was added in the current version
+  - The model or publicly exposed class 'ConnectivityStatus' was added in the current version
+  - The model or publicly exposed class 'DefaultExtensionDetails' was added in the current version
+  - The model or publicly exposed class 'DeploymentCluster' was added in the current version
+  - The model or publicly exposed class 'DeploymentConfiguration' was added in the current version
+  - The model or publicly exposed class 'DeploymentData' was added in the current version
+  - The model or publicly exposed class 'DeploymentMode' was added in the current version
+  - The model or publicly exposed class 'DeploymentSecuritySettings' was added in the current version
+  - The model or publicly exposed class 'DeploymentSetting' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingAdapterPropertyOverrides' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingHostNetwork' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingIntents' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingListResult' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingStorageAdapterIPInfo' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingStorageNetworks' was added in the current version
+  - The model or publicly exposed class 'DeploymentSettingVirtualSwitchConfigurationOverrides' was added in the current version
+  - The model or publicly exposed class 'DeploymentStep' was added in the current version
+  - The model or publicly exposed class 'DeviceConfiguration' was added in the current version
+  - The model or publicly exposed class 'DeviceKind' was added in the current version
+  - The model or publicly exposed class 'DeviceState' was added in the current version
+  - The model or publicly exposed class 'EceActionStatus' was added in the current version
+  - The model or publicly exposed class 'EceDeploymentSecrets' was added in the current version
+  - The model or publicly exposed class 'EceReportedProperties' was added in the current version
+  - The model or publicly exposed class 'EceSecrets' was added in the current version
+  - The model or publicly exposed class 'EdgeDevice' was added in the current version
+  - The model or publicly exposed class 'EdgeDeviceListResult' was added in the current version
+  - The model or publicly exposed class 'EdgeDeviceProperties' was added in the current version
+  - The model or publicly exposed class 'ExtensionInstanceView' was added in the current version
+  - The model or publicly exposed class 'ExtensionInstanceViewStatus' was added in the current version
+  - The model or publicly exposed class 'ExtensionManagedBy' was added in the current version
+  - The model or publicly exposed class 'ExtensionPatch' was added in the current version
+  - The model or publicly exposed class 'ExtensionPatchParameters' was added in the current version
+  - The model or publicly exposed class 'ExtensionProfile' was added in the current version
+  - The model or publicly exposed class 'ExtensionUpgradeParameters' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDevice' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceAdapterPropertyOverrides' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceArcExtension' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceHostNetwork' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceIntents' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceProperties' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceStorageAdapterIPInfo' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceStorageNetworks' was added in the current version
+  - The model or publicly exposed class 'HciEdgeDeviceVirtualSwitchConfigurationOverrides' was added in the current version
+  - The model or publicly exposed class 'HciNetworkProfile' was added in the current version
+  - The model or publicly exposed class 'HciNicDetail' was added in the current version
+  - The model or publicly exposed class 'HciOsProfile' was added in the current version
+  - The model or publicly exposed class 'HciReportedProperties' was added in the current version
+  - The model or publicly exposed class 'HciValidationFailureDetail' was added in the current version
+  - The model or publicly exposed class 'HealthState' was added in the current version
+  - The model or publicly exposed class 'InfrastructureNetwork' was added in the current version
+  - The model or publicly exposed class 'IpPools' was added in the current version
+  - The model or publicly exposed class 'IsolatedVmAttestationConfiguration' was added in the current version
+  - The model or publicly exposed class 'LogCollectionError' was added in the current version
+  - The model or publicly exposed class 'LogCollectionJobType' was added in the current version
+  - The model or publicly exposed class 'LogCollectionProperties' was added in the current version
+  - The model or publicly exposed class 'LogCollectionRequest' was added in the current version
+  - The model or publicly exposed class 'LogCollectionRequestProperties' was added in the current version
+  - The model or publicly exposed class 'LogCollectionSession' was added in the current version
+  - The model or publicly exposed class 'LogCollectionStatus' was added in the current version
+  - The model or publicly exposed class 'ManagedServiceIdentityType' was added in the current version
+  - The model or publicly exposed class 'NetworkController' was added in the current version
+  - The model or publicly exposed class 'NicDetail' was added in the current version
+  - The model or publicly exposed class 'Observability' was added in the current version
+  - The model or publicly exposed class 'OemActivation' was added in the current version
+  - The model or publicly exposed class 'Offer' was added in the current version
+  - The model or publicly exposed class 'OfferList' was added in the current version
+  - The model or publicly exposed class 'OperationType' was added in the current version
+  - The model or publicly exposed class 'OptionalServices' was added in the current version
+  - The model or publicly exposed class 'PackageVersionInfo' was added in the current version
+  - The model or publicly exposed class 'PerNodeRemoteSupportSession' was added in the current version
+  - The model or publicly exposed class 'PhysicalNodes' was added in the current version
+  - The model or publicly exposed class 'PrecheckResult' was added in the current version
+  - The model or publicly exposed class 'PrecheckResultTags' was added in the current version
+  - The model or publicly exposed class 'Publisher' was added in the current version
+  - The model or publicly exposed class 'PublisherList' was added in the current version
+  - The model or publicly exposed class 'QosPolicyOverrides' was added in the current version
+  - The model or publicly exposed class 'RebootRequirement' was added in the current version
+  - The model or publicly exposed class 'RemoteSupportNodeSettings' was added in the current version
+  - The model or publicly exposed class 'RemoteSupportProperties' was added in the current version
+  - The model or publicly exposed class 'RemoteSupportRequest' was added in the current version
+  - The model or publicly exposed class 'RemoteSupportRequestProperties' was added in the current version
+  - The model or publicly exposed class 'RemoteSupportType' was added in the current version
+  - The model or publicly exposed class 'ReportedProperties' was added in the current version
+  - The model or publicly exposed class 'SbeCredentials' was added in the current version
+  - The model or publicly exposed class 'SbeDeploymentInfo' was added in the current version
+  - The model or publicly exposed class 'SbeDeploymentPackageInfo' was added in the current version
+  - The model or publicly exposed class 'SbePartnerInfo' was added in the current version
+  - The model or publicly exposed class 'SbePartnerProperties' was added in the current version
+  - The model or publicly exposed class 'ScaleUnits' was added in the current version
+  - The model or publicly exposed class 'SdnIntegration' was added in the current version
+  - The model or publicly exposed class 'SecurityComplianceStatus' was added in the current version
+  - The model or publicly exposed class 'SecuritySetting' was added in the current version
+  - The model or publicly exposed class 'SecuritySettingListResult' was added in the current version
+  - The model or publicly exposed class 'ServiceConfiguration' was added in the current version
+  - The model or publicly exposed class 'ServiceName' was added in the current version
+  - The model or publicly exposed class 'Severity' was added in the current version
+  - The model or publicly exposed class 'Sku' was added in the current version
+  - The model or publicly exposed class 'SkuList' was added in the current version
+  - The model or publicly exposed class 'SkuMappings' was added in the current version
+  - The model or publicly exposed class 'SoftwareAssuranceChangeRequest' was added in the current version
+  - The model or publicly exposed class 'SoftwareAssuranceChangeRequestProperties' was added in the current version
+  - The model or publicly exposed class 'SoftwareAssuranceIntent' was added in the current version
+  - The model or publicly exposed class 'SoftwareAssuranceProperties' was added in the current version
+  - The model or publicly exposed class 'SoftwareAssuranceStatus' was added in the current version
+  - The model or publicly exposed class 'State' was added in the current version
+  - The model or publicly exposed class 'StatusLevelTypes' was added in the current version
+  - The model or publicly exposed class 'Step' was added in the current version
+  - The model or publicly exposed class 'Storage' was added in the current version
+  - The model or publicly exposed class 'SwitchDetail' was added in the current version
+  - The model or publicly exposed class 'SwitchExtension' was added in the current version
+  - The model or publicly exposed class 'SystemData' was added in the current version
+  - The model or publicly exposed class 'Update' was added in the current version
+  - The model or publicly exposed class 'UpdateList' was added in the current version
+  - The model or publicly exposed class 'UpdatePrerequisite' was added in the current version
+  - The model or publicly exposed class 'UpdateRun' was added in the current version
+  - The model or publicly exposed class 'UpdateRunList' was added in the current version
+  - The model or publicly exposed class 'UpdateRunPropertiesState' was added in the current version
+  - The model or publicly exposed class 'UpdateSummaries' was added in the current version
+  - The model or publicly exposed class 'UpdateSummariesList' was added in the current version
+  - The model or publicly exposed class 'UpdateSummariesPropertiesState' was added in the current version
+  - The model or publicly exposed class 'UserAssignedIdentity' was added in the current version
+  - The model or publicly exposed class 'ValidateRequest' was added in the current version
+  - The model or publicly exposed class 'ValidateResponse' was added in the current version
+
+### Breaking Changes
+
+  - The publicly exposed function 'patch_sdk' was deleted or renamed in the current version
+  - The publicly exposed function 'patch_sdk' was deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ArcSettingsOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ClustersOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'ExtensionsOperations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'client' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'config' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'serializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The 'Operations' method '__init__' had its parameter 'deserializer' of kind 'positional_or_keyword' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'created_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'created_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'created_at' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'last_modified_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'last_modified_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'ArcSetting' had its instance variable 'last_modified_at' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'created_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'created_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'created_at' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'last_modified_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'last_modified_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'Cluster' had its instance variable 'last_modified_at' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'created_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'created_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'created_at' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'last_modified_by' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'last_modified_by_type' deleted or renamed in the current version
+  - The model or publicly exposed class 'Extension' had its instance variable 'last_modified_at' deleted or renamed in the current version
+
 ## 8.0.0b3 (2023-10-23)
 
 ### Features Added
