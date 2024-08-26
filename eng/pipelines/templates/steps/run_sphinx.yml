@@ -1,0 +1,14 @@
+parameters:
+  ServiceDirectory: ''
+  WheelDirectory: ''
+
+# `$(TargetingString)` is set by a prior resolution step.
+steps:
+  - pwsh: |
+      ./eng/scripts/invoke-sphinx-parallel.ps1 `
+        -TargetingString "$(TargetingString)" `
+        -RepoRoot "$(Build.Sourcesdirectory)" `
+        -ServiceDirectory "${{ parameters.ServiceDirectory }}" `
+        -WheelDirectory "${{ parameters.WheelDirectory }}"
+      Write-Host $LASTEXITCODE
+    displayName: 'Run Sphinx Environments'
