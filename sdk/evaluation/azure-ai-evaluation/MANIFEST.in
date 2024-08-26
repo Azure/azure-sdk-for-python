@@ -1,0 +1,1 @@
+recursive-include azure/ai/evaluation/ *.prompty
