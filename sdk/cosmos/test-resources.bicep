@@ -43,8 +43,8 @@ var multiRegionConfiguration = [
   }
 ]
 var locationsConfiguration = (enableMultipleRegions ? multiRegionConfiguration : singleRegionConfiguration)
-var roleDefinitionId = '24052f96-4f11-4f52-914e-942429f375c1'
-var roleAssignmentId = 'cafa0988-6f82-4d47-9f50-240091d11675'
+var roleDefinitionId = guid(baseName, 'roleDefinitionId')
+var roleAssignmentId = guid(baseName, 'roleAssignmentId') 
 var roleDefinitionName = 'ExpandedRbacActions'
 
 resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
@@ -95,9 +95,7 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   parent: cosmosAccount 
   name: guid(resourceGroup().id, roleAssignmentId, testApplicationOid) 
   properties: {
-    roleDefinitionId: resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions',
-    split('${accountName}/${roleDefinitionId}', '/')[0],
-    split('${accountName}/${roleDefinitionId}', '/')[1])
+    roleDefinitionId: accountName_roleDefinitionId.id
     principalId: testApplicationOid 
     scope: cosmosAccount.id
   }
