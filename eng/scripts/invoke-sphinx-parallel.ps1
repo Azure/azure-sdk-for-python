@@ -20,7 +20,7 @@ $pythonScript = Join-Path "$RepoRoot" "scripts" "devops_tasks" "dispatch_tox.py"
 # Create an array to hold the jobs
 $jobs = @()
 
-$packages = $TargetingString -split " "
+$packages = $TargetingString -split ","
 
 $optionalParams = ""
 
