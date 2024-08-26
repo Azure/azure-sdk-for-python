@@ -1,5 +1,43 @@
 # Release History
 
+## 2.0.0 (2024-09-22)
+
+### Features Added
+
+  - The 'WebPubSubManagementClient' client had operation group 'web_pub_sub_replicas' added in the current version
+  - The 'WebPubSubManagementClient' client had operation group 'web_pub_sub_replica_shared_private_link_resources' added in the current version
+  - The 'WebPubSubManagementClient' client had operation group 'web_pub_sub_replicas' added in the current version
+  - The 'WebPubSubManagementClient' client had operation group 'web_pub_sub_replica_shared_private_link_resources' added in the current version
+  - The 'WebPubSubOperations' method 'list_replica_skus' was added in the current version
+  - The model or publicly exposed class 'WebPubSubReplicaSharedPrivateLinkResourcesOperations' was added in the current version
+  - The model or publicly exposed class 'WebPubSubReplicasOperations' was added in the current version
+  - The 'WebPubSubOperations' method 'list_replica_skus' was added in the current version
+  - The model or publicly exposed class 'WebPubSubReplicaSharedPrivateLinkResourcesOperations' was added in the current version
+  - The model or publicly exposed class 'WebPubSubReplicasOperations' was added in the current version
+  - The model or publicly exposed class 'Resource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'WebPubSubHubProperties' had property 'web_socket_keep_alive_interval_in_seconds' added in the current version
+  - The model or publicly exposed class 'WebPubSubNetworkACLs' had property 'ip_rules' added in the current version
+  - The model or publicly exposed class 'WebPubSubResource' had property 'kind' added in the current version
+  - The model or publicly exposed class 'WebPubSubResource' had property 'region_endpoint_enabled' added in the current version
+  - The model or publicly exposed class 'WebPubSubResource' had property 'resource_stopped' added in the current version
+  - The model or publicly exposed class 'WebPubSubResource' had property 'socket_io' added in the current version
+  - The model or publicly exposed class 'IPRule' was added in the current version
+  - The model or publicly exposed class 'Replica' was added in the current version
+  - The model or publicly exposed class 'ReplicaList' was added in the current version
+  - The model or publicly exposed class 'ServiceKind' was added in the current version
+  - The model or publicly exposed class 'WebPubSubSocketIOSettings' was added in the current version
+
+### Breaking Changes
+
+  - The model or publicly exposed class 'CustomCertificate' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'CustomDomain' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnection' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'SharedPrivateLinkResource' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'TrackedResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+  - The model or publicly exposed class 'WebPubSubHub' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'WebPubSubResource' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'WebPubSubResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+
 ## 2.0.0b2 (2023-10-23)
 
 ### Features Added
