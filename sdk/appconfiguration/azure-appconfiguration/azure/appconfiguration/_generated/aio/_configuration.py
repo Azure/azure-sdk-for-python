@@ -27,7 +27,7 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -35,7 +35,7 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
     def __init__(
         self, credential: AzureKeyCredential, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-10-01")
+        api_version: str = kwargs.pop("api_version", "2023-11-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

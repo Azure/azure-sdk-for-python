@@ -271,8 +271,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
 /sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
@@ -285,15 +285,15 @@
 /sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
 
 # PRLabel: %ML-Pipelines
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230
-/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871 @kingernupur @achauhan-scc
 
 # PRLabel: %ML-Workspace
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi
@@ -522,7 +522,7 @@
 #/<NotInRepo>/          @sgellock
 
 # ServiceLabel: %Cloud Shell %Service Attention
-#/<NotInRepo>/          @maertendMSFT
+#/<NotInRepo>/          @mbifeld
 
 # ServiceLabel: %Cognitive - Custom Vision %Service Attention
 #/<NotInRepo>/          @areddish @tburns10
@@ -831,16 +831,15 @@
 ###########
 # Eng Sys
 ###########
-# TEMPORARY COMMENTING FOR PROOF-OF-CONCEPT.
-#/eng/                                                                @scbedd @weshaggard @benbp
-#/eng/common/                                                         @Azure/azure-sdk-eng
-#/.github/workflows/                                                  @Azure/azure-sdk-eng
+/eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
+/.github/workflows/                                                  @Azure/azure-sdk-eng
 
-#/tools/                                                              @scbedd @mccoyp
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
-#/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-#/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
-#/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 /pylintrc                                                            @l0lawrence

@@ -29,6 +29,9 @@
     "keyVaultResourceGroupName": {
         "value": ""
     },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
     "storageAccountOption": {
         "value": "new"
     },

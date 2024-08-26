@@ -32,7 +32,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.update_ftp_allowed(
+    response = client.web_apps.update_scm_allowed(
         resource_group_name="rg",
         name="testSite",
         csm_publishing_access_policies_entity={"properties": {"allow": True}},
