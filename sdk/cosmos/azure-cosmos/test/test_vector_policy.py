@@ -14,21 +14,12 @@ from azure.cosmos import CosmosClient, PartitionKey
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     credential = test_config.TestConfig.credential
-    is_emulator = test_config.TestConfig.is_emulator
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = CosmosClient(cls.host, cls.masterKey) if cls.is_emulator else CosmosClient(cls.host, cls.credential)
+        cls.client = CosmosClient(cls.host, cls.credential)
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
 

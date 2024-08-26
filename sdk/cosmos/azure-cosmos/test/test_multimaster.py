@@ -16,7 +16,6 @@ from azure.cosmos.http_constants import HttpHeaders
 @pytest.mark.cosmosEmulator
 class TestMultiMaster(unittest.TestCase):
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     counter = 0
     last_headers = []
@@ -38,12 +37,9 @@ class TestMultiMaster(unittest.TestCase):
 
         connectionPolicy = TestMultiMaster.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
+        client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.configs.credential,
                                             consistency_level="Session",
-                                            connection_policy=connectionPolicy) if test_config.TestConfig.is_emulator \
-            else cosmos_client.CosmosClient(TestMultiMaster.host, test_config.TestConfig.credential,
-                                            consistency_level="Session",
-                                            connectionPolicy=connectionPolicy)
+                                            connection_policy=connectionPolicy)
 
         created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 

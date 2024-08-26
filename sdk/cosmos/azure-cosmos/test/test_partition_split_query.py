@@ -45,16 +45,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
-    masterKey = configs.masterKey
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Single-partition-container-without-throughput"
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.container = cls.database.create_container(
             id=cls.TEST_CONTAINER_ID,

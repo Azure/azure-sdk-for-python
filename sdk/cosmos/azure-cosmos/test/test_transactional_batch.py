@@ -26,22 +26,13 @@ class TestTransactionalBatch(unittest.TestCase):
 
     configs = test_config.TestConfig
     host = configs.host
-    masterKey = configs.masterKey
     client: CosmosClient = None
     test_database: DatabaseProxy = None
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = CosmosClient(cls.host, cls.configs.credential)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):

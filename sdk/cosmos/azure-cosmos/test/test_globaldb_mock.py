@@ -163,9 +163,9 @@ class TestGlobalDBMock(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = True
 
         write_location_client = cosmos_client.CosmosClient(TestGlobalDBMock.write_location_host,
-                                                                               test_config.TestConfig.credential,
-                                                                               consistency_level="Session",
-                                                                               connection_policy=connection_policy)
+                                                           test_config.TestConfig.credential,
+                                                           consistency_level="Session",
+                                                           connection_policy=connection_policy)
         self.assertEqual(write_location_client.client_connection.WriteEndpoint,
                          TestGlobalDBMock.write_location_host)
 
@@ -189,6 +189,7 @@ class TestGlobalDBMock(unittest.TestCase):
 
         self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDBMock.host)
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDBMock.host)
+
 
 if __name__ == '__main__':
     unittest.main()

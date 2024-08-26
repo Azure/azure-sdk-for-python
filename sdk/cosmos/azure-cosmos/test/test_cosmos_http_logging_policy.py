@@ -51,11 +51,11 @@ class TestCosmosHttpLogger(unittest.TestCase):
         cls.logger_diagnostic = logging.getLogger("testloggerdiagnostic")
         cls.logger_diagnostic.addHandler(cls.mock_handler_diagnostic)
         cls.logger_diagnostic.setLevel(logging.DEBUG)
-        cls.client_default = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential,
+        cls.client_default = cosmos_client.CosmosClient(cls.host, cls.config.credential,
                                    consistency_level="Session",
                                    connection_policy=cls.connectionPolicy,
                                    logger=cls.logger_default)
-        cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential,
+        cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, cls.config.credential,
                                    consistency_level="Session",
                                    connection_policy=cls.connectionPolicy,
                                    logger=cls.logger_diagnostic,
@@ -70,7 +70,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[10] == 'No body was attached to the request'
+        assert messages_request[11] == 'No body was attached to the request'
         assert messages_response[0] == 'Response status: 200'
         assert 'Response headers:' in messages_response[1]
 
@@ -90,7 +90,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[12] == 'A body is sent with the request'
+        assert messages_request[13] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 201'
         assert "Elapsed time in seconds:" in elapsed_time[0]
         assert "Response headers" in messages_response[1]
@@ -108,7 +108,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[12] == 'A body is sent with the request'
+        assert messages_request[13] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 409'
         assert "Elapsed time in seconds:" in elapsed_time[0]
         assert "Response headers" in messages_response[1]

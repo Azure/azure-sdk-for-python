@@ -140,10 +140,7 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         read_location_client = cosmos_client.CosmosClient(self.read_location_host,
-                                   self.credential,
-                                   connection_policy=connection_policy) if \
-            self.configs.is_emulator else cosmos_client.CosmosClient(self.read_location_host, self.configs.credential,
-                                                                     connection_policy=connection_policy)
+                                   self.credential, connection_policy=connection_policy)
 
         document_definition = {'id': 'doc1',
                                'name': 'sample document',

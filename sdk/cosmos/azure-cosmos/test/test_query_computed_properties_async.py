@@ -19,23 +19,11 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     TEST_CONTAINER_ID = config.TEST_MULTI_PARTITION_CONTAINER_ID
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     host = config.host
-    masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    is_emulator = config.is_emulator
     credential = config.credential_async
 
-    @classmethod
-    def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey) if self.is_emulator else CosmosClient(self.host,
-                                                                                                    self.credential)
+        self.client = CosmosClient(self.host, self.credential)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):

@@ -18,7 +18,6 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
     """
 
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     configs = test_config.TestConfig
     client: cosmos_client.CosmosClient = None
@@ -29,16 +28,7 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.configs.credential)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_COLLECTION_ID)
         cls.collection_link = cls.created_container.container_link

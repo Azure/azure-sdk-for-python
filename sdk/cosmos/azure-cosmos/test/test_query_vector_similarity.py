@@ -32,23 +32,13 @@ class TestVectorSimilarityQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
-    masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Vector Similarity Container " + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.config.credential)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def setUp(self):

@@ -30,27 +30,17 @@ class TestUserConfigs(unittest.TestCase):
 
     def test_invalid_connection_retry_configuration(self):
         try:
-            if TestConfig.is_emulator:
-                cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                        consistency_level="Session", connection_retry_policy="Invalid Policy")
-            else:
-                cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
-                                           consistency_level="Session", connection_retry_policy="Invalid Policy")
+            cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
+                                       consistency_level="Session", connection_retry_policy="Invalid Policy")
         except TypeError as e:
             self.assertTrue(str(e).startswith('Unsupported retry policy'))
 
     def test_enable_endpoint_discovery(self):
-        client_false = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                  consistency_level="Session", enable_endpoint_discovery=False) if TestConfig.is_emulator \
-            else cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
+        client_false = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
                                                   consistency_level="Session", enable_endpoint_discovery=False)
-        client_default = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                    consistency_level="Session") if TestConfig.is_emulator \
-            else cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
+        client_default = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
                                                     consistency_level="Session")
-        client_true = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                 consistency_level="Session", enable_endpoint_discovery=True) if TestConfig.is_emulator \
-            else cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
+        client_true = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential,
                                                  consistency_level="Session", enable_endpoint_discovery=True)
 
         self.assertFalse(client_false.client_connection.connection_policy.EnableEndpointDiscovery)
@@ -66,8 +56,7 @@ class TestUserConfigs(unittest.TestCase):
     def test_default_account_consistency(self):
         database_id = "PythonSDKUserConfigTesters-" + str(uuid.uuid4())
         container_id = "PythonSDKTestContainer-" + str(uuid.uuid4())
-        client = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey) if TestConfig.is_emulator \
-            else cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential)
+        client = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.credential)
         database_account = client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         self.assertEqual(account_consistency_level, "Session")
@@ -94,7 +83,7 @@ class TestUserConfigs(unittest.TestCase):
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"
         eventual_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
-                                                                 credential=TestConfig.masterKey,
+                                                                 credential=TestConfig.credential,
                                                                  consistency_level=custom_level)
         database_account = eventual_consistency_client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
@@ -107,7 +96,7 @@ class TestUserConfigs(unittest.TestCase):
         # Test for failure when trying to set consistency to higher level than account level
         custom_level = "Strong"
         strong_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
-                                                               credential=TestConfig.masterKey,
+                                                               credential=TestConfig.credential,
                                                                consistency_level=custom_level)
         try:
             strong_consistency_client.create_database(database_id)

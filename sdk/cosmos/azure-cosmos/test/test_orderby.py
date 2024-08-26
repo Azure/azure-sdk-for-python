@@ -25,23 +25,13 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey) if \
-            test_config.TestConfig.is_emulator else cosmos_client.CosmosClient(cls.host,
-                                                                               test_config.TestConfig.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, test_config.TestConfig.credential)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_db.create_container(
             id='orderby_tests collection ' + str(uuid.uuid4()),
