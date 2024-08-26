@@ -133,7 +133,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logging.info("No packages collected for targeting string {args.glob_string}. Exit 0.")
+        logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
     logging.info(f"Executing prep_and_run_tox with the executable {sys.executable}.")
