@@ -215,6 +215,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         pass
 
     def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
+        _LOGGER.info("Link handle %r detaching on session %r", self.handle, self._session.name, extra=self.network_trace_params)
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
