@@ -25,31 +25,39 @@ Replace ALL existing text with a disclaimer in the following format.
 
   - If a replacement package and migration guide exist.
 
-    > # Microsoft Azure SDK for Python
-    >
-    > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-    >
-    > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+    ```md
+    # Microsoft Azure SDK for Python
+    
+    This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    
+    For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+    ```
 
   - If a migration guide will not be provided.
 
-    > # Microsoft Azure SDK for Python
-    >
-    > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    ```md
+    # Microsoft Azure SDK for Python
+    
+    This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    ```
 
   - If the service has been retired and no replacement package exists.
 
-    > # Microsoft Azure SDK for Python
-    >
-    > This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
+    ```md
+    # Microsoft Azure SDK for Python
+    
+    This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
+    ```
 
   - If the Azure service no longer exists, a new non-Azure service has replaced it, and existing customers should be directed to the new service's Rest API docs/repo.
 
-    > # Microsoft Azure SDK for Python
-    >
-    > This package is no longer being maintained. Please refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
-    >
-    > For additional support, please open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
+    ```md
+    # Microsoft Azure SDK for Python
+    
+    This package is no longer being maintained. Please refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+    
+    For additional support, please open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
+    ```
 
 ## CHANGELOG.md and _version.py
 
@@ -57,12 +65,14 @@ Replace ALL existing text with a disclaimer in the following format.
   - If the last released version was 1.2.3b1, the new version should be 1.2.4.
   - If the last released version was 1.2.3, the new version should be 1.2.4.
 - In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. No other changes/features added/breaking changes should be included for this version. For example:
-  > ## 1.2.4 (2023-03-31)
-  >
-  > ### Other Changes
-  >
-  > - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-  > - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+  ```md
+  ## 1.2.4 (2023-03-31)
+  
+  ### Other Changes
+  
+  - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+  - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+  ```
 
 ## sdk_packaging.toml
 
@@ -130,7 +140,7 @@ Check to make sure that the new version of the package has been released on PyPI
 
 - Remove the package artifact from `mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
-```
+```yml
 extends:
   parameters:
     Artifacts:
