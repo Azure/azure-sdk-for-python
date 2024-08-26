@@ -304,10 +304,10 @@ class AMQPClient(
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
-        _logger.info("Opening AMQP client %r.", self._name)
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
+        _logger.info("Opening AMQP client %r.", self._name)
         if connection:
             self._connection = connection
             self._external_connection = True

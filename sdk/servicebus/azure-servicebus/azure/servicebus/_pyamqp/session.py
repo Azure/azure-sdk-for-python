@@ -475,7 +475,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     def create_receiver_link(self, source_address, **kwargs):
         assigned_handle = self._get_next_output_handle()
-        _LOGGER.info("Session %r: Creating receiver link %r", self.name, assigned_handle, extra=self.network_trace_params)
+        _LOGGER.info("Session %r: Creating receiver link, handle: %r", self.name, assigned_handle, extra=self.network_trace_params)
         link = ReceiverLink(
             self,
             handle=assigned_handle,
@@ -490,7 +490,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     def create_sender_link(self, target_address, **kwargs):
         assigned_handle = self._get_next_output_handle()
-        _LOGGER.info("Session %r: Creating sender link %r", self.name, assigned_handle, extra=self.network_trace_params)
+        _LOGGER.info("Session %r: Creating sender link, handle: %r", self.name, assigned_handle, extra=self.network_trace_params)
         link = SenderLink(
             self,
             handle=assigned_handle,
