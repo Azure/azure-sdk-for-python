@@ -21,18 +21,18 @@ $packages = $TargetingString -split ","
 $optionalParams = ""
 
 if ($ServiceDirectory) {
-    $optionalParams += "--service=$ServiceDirectory"
+    $optionalParams += "--service $ServiceDirectory"
 }
 
 if ($WheelDirectory) {
-    $optionalParams += " --wheel_dir=$WheelDirectory"
+    $optionalParams += " -w $WheelDirectory"
 }
 
 foreach ($package in $packages) {
     $jobs += Start-Job -ScriptBlock {
         param($Pkg, $ScriptPath, $RepoRoot, $Params)
         $log = Join-Path $RepoRoot "sphinx-$Pkg.log"
-        Write-Host "& python $ScriptPath $Pkg --toxenv=sphinx $Params --disablecov 2>&1 >> $log"
+        Write-Host "& python $ScriptPath $Pkg --toxenv sphinx $Params --disablecov 2>&1 >> $log"
         & python $ScriptPath $Pkg --toxenv=sphinx $Params --disablecov 2>&1 >> $log
         return $LASTEXITCODE
     } -ArgumentList $package, $pythonScript, $RepoRoot, $optionalParams

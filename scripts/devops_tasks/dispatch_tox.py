@@ -122,6 +122,8 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     else:
         target_dir = root_dir
 
+    logging.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
+
     if args.filter_type == "None":
         args.filter_type = "Build"
         compatibility_filter = False
