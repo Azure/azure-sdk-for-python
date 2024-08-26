@@ -24,7 +24,8 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 variables:
-  ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+  - name: ComponentDetection.SourcePath
+    value: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
