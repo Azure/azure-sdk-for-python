@@ -128,7 +128,7 @@ azure-sdk-for-python/eng/common/scripts> ./Prepare-Release.ps1 -PackageName azur
 
 ## Release the Package
 
-A release here is the same as usual, triggering the release pipeline of your SDK. Note that smoke testing/mypy/pylint/sphinx/etc. checks are not needed. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
+A release here is the same as usual, triggering the release pipeline of your SDK. Note that local smoke testing and mypy/pylint/sphinx/etc. checks are not needed. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: This release DOES NOT need to be done during during release week and can be done any time.**
 
