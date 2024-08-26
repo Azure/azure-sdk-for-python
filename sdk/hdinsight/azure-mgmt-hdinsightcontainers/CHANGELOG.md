@@ -1,19 +1,12 @@
 # Release History
 
-## 1.0.0b3 (2024-08-18)
+## 1.0.0b3 (2024-08-26)
 
 ### Features Added
 
   - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_pool_upgrade_histories' added in the current version
   - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_upgrade_histories' added in the current version
   - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_libraries' added in the current version
-  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_pool_upgrade_histories' added in the current version
-  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_upgrade_histories' added in the current version
-  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_libraries' added in the current version
-  - The 'ClustersOperations' method 'begin_upgrade_manual_rollback' was added in the current version
-  - The model or publicly exposed class 'ClusterLibrariesOperations' was added in the current version
-  - The model or publicly exposed class 'ClusterPoolUpgradeHistoriesOperations' was added in the current version
-  - The model or publicly exposed class 'ClusterUpgradeHistoriesOperations' was added in the current version
   - The 'ClustersOperations' method 'begin_upgrade_manual_rollback' was added in the current version
   - The model or publicly exposed class 'ClusterLibrariesOperations' was added in the current version
   - The model or publicly exposed class 'ClusterPoolUpgradeHistoriesOperations' was added in the current version
