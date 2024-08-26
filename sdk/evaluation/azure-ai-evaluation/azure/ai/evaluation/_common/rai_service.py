@@ -23,10 +23,10 @@ except ImportError:
     from utils import get_harm_severity_level
 
 try:
-    version = importlib.metadata.version("promptflow-evals")
+    version = importlib.metadata.version("azure-ai-evaluation")
 except importlib.metadata.PackageNotFoundError:
     version = "unknown"
-USER_AGENT = "{}/{}".format("promptflow-evals", version)
+USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 
 def get_common_headers(token: str) -> Dict:

@@ -8,9 +8,9 @@ Ensure you have Python installed on your system. If not, you can download it fro
 
 ## Installation
 
-Install the `promptflow-evals` package.
+Install the `azure-ai-evaluation` package.
 
-`pip install promptflow-evals`
+`pip install azure-ai-evaluation`
 
 ## Usage
 
