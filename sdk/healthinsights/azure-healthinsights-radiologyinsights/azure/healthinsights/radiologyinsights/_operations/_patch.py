@@ -104,9 +104,8 @@ class RadiologyInsightsClient(
         self._client = GeneratedRadiologyInsightsClient(
             endpoint=_endpoint,
             credential=credential,
-            PipelineClient=PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)# type: ignore
+            PipelineClient=PipelineClient(base_url=_endpoint, policies=_policies, **kwargs) # type: ignore
         )
-        
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
@@ -134,7 +133,7 @@ class RadiologyInsightsClient(
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments) # pylint: disable=no-member
+        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments) #pylint: disable=protected-access, line-too-long
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:

@@ -111,8 +111,7 @@ class RadiologyInsightsClient(
             endpoint=_endpoint,
             credential=credential,
             AsyncPipelineClient=AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)# type: ignore
-        ) 
-
+        )
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
