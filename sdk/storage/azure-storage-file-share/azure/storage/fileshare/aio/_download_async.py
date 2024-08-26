@@ -18,7 +18,6 @@ from typing import (
 )
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-
 from .._download import _ChunkDownloader
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -34,7 +33,8 @@ async def process_content(data: Any) -> bytes:
         raise ValueError("Response cannot be None.")
 
     try:
-        return cast(bytes, data.response.body())
+        await data.response.read()
+        return cast(bytes, data.response.content)
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
