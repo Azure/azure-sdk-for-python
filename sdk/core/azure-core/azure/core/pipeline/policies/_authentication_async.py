@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import Any, Awaitable, Optional, cast, TypeVar, Union, Dict
+from typing import Any, Awaitable, Optional, cast, TypeVar, Union
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo, AsyncTokenProvider
@@ -60,18 +60,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token():
-                    if hasattr(self._credential, "get_token_info"):
-                        options: TokenRequestOptions = {"enable_cae": self._enable_cae} if self._enable_cae else {}
-                        self._token = await await_result(
-                            cast(AsyncSupportsTokenInfo, self._credential).get_token_info,
-                            *self._scopes,
-                            options=options,
-                        )
-                    else:
-                        kwargs: Dict[str, Any] = {"enable_cae": self._enable_cae} if self._enable_cae else {}
-                        self._token = await await_result(
-                            cast(AsyncTokenCredential, self._credential).get_token, *self._scopes, **kwargs
-                        )
+                    await self._request_token(*self._scopes)
         bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
         request.http_request.headers["Authorization"] = "Bearer " + bearer_token
 
@@ -84,23 +73,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        if self._enable_cae:
-            kwargs.setdefault("enable_cae", self._enable_cae)
+
         async with self._lock:
-            if hasattr(self._credential, "get_token_info"):
-                options: TokenRequestOptions = {}
-                for key in list(kwargs.keys()):
-                    if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
-                        options[key] = kwargs.pop(key)  # type: ignore[literal-required]
-                self._token = await await_result(
-                    cast(AsyncSupportsTokenInfo, self._credential).get_token_info,
-                    *scopes,
-                    options=options,
-                )
-            else:
-                self._token = await await_result(
-                    cast(AsyncTokenCredential, self._credential).get_token, *scopes, **kwargs
-                )
+            await self._request_token(*scopes, **kwargs)
         bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
         request.http_request.headers["Authorization"] = "Bearer " + bearer_token
 
@@ -186,3 +161,28 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         now = time.time()
         refresh_on = getattr(self._token, "refresh_on", None)
         return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
+
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
+        """Request a new token from the credential.
+
+        This will call the credential's appropriate method to get a token and store it in the policy.
+
+        :param str scopes: The type of access needed.
+        """
+        if self._enable_cae:
+            kwargs.setdefault("enable_cae", self._enable_cae)
+
+        if hasattr(self._credential, "get_token_info"):
+            options: TokenRequestOptions = {}
+            # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
+            for key in list(kwargs.keys()):
+                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                    options[key] = kwargs.pop(key)  # type: ignore[literal-required]
+
+            self._token = await await_result(
+                cast(AsyncSupportsTokenInfo, self._credential).get_token_info,
+                *scopes,
+                options=options,
+            )
+        else:
+            self._token = await await_result(cast(AsyncTokenCredential, self._credential).get_token, *scopes, **kwargs)

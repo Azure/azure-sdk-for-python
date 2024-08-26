@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Dict, Union, cast
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union, cast
 from azure.core.credentials import TokenCredential, SupportsTokenInfo, TokenRequestOptions, TokenProvider
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
@@ -74,6 +74,27 @@ class _BearerTokenCredentialPolicyBase:
         refresh_on = getattr(self._token, "refresh_on", None)
         return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
+    def _request_token(self, *scopes: str, **kwargs: Any) -> None:
+        """Request a new token from the credential.
+
+        This will call the credential's appropriate method to get a token and store it in the policy.
+
+        :param str scopes: The type of access needed.
+        """
+        if self._enable_cae:
+            kwargs.setdefault("enable_cae", self._enable_cae)
+
+        if hasattr(self._credential, "get_token_info"):
+            options: TokenRequestOptions = {}
+            # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
+            for key in list(kwargs.keys()):
+                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                    options[key] = kwargs.pop(key)  # type: ignore[literal-required]
+
+            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
+        else:
+            self._token = cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
+
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
@@ -96,12 +117,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            if hasattr(self._credential, "get_token_info"):
-                options: TokenRequestOptions = {"enable_cae": self._enable_cae} if self._enable_cae else {}
-                self._token = cast(SupportsTokenInfo, self._credential).get_token_info(*self._scopes, options=options)
-            else:
-                kwargs: Dict[str, Any] = {"enable_cae": self._enable_cae} if self._enable_cae else {}
-                self._token = cast(TokenCredential, self._credential).get_token(*self._scopes, **kwargs)
+            self._request_token(*self._scopes)
         bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
         self._update_headers(request.http_request.headers, bearer_token)
 
@@ -114,20 +130,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        if self._enable_cae:
-            kwargs.setdefault("enable_cae", self._enable_cae)
-
-        if hasattr(self._credential, "get_token_info"):
-            options: TokenRequestOptions = {}
-            for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
-                    options[key] = kwargs.pop(key)  # type: ignore[literal-required]
-            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(
-                *scopes,
-                options=options,
-            )
-        else:
-            self._token = cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
+        self._request_token(*scopes, **kwargs)
         bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
         self._update_headers(request.http_request.headers, bearer_token)
 
