@@ -107,7 +107,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
         parsed_url = _parse_url(account_url=account_url)
-        blob_account_url = convert_dfs_url_to_blob_url(parsed_url)
+        blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
 
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
