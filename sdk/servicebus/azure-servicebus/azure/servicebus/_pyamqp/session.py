@@ -448,7 +448,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 self._connection.listen(wait=False)
 
     def begin(self, wait=False):
-        _LOGGER.info("Session %r: Begin called", self.name, extra=self.network_trace_params)
+        _LOGGER.info("Session %r: Begin", self.name, extra=self.network_trace_params)
         self._outgoing_begin()
         self._set_state(SessionState.BEGIN_SENT)
         if wait:
@@ -460,7 +460,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     def end(self, error=None, wait=False):
         # type: (Optional[AMQPError], bool) -> None
-        _LOGGER.info("Session %r: End called", self.name, extra=self.network_trace_params)
+        _LOGGER.info("Session %r: End", self.name, extra=self.network_trace_params)
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 self._outgoing_end(error=error)

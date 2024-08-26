@@ -173,7 +173,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             )
             if is_expired:
                 _LOGGER.debug(
-                    "CBS status check: state == %r, expired == %r, refresh required == %r",
+                    "CBS is expired: state == %r, expired == %r, refresh required == %r",
                     self.auth_state,
                     is_expired,
                     is_refresh_required,
@@ -182,7 +182,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:
                 _LOGGER.debug(
-                    "CBS status check: state == %r, expired == %r, refresh required == %r",
+                    "CBS refresh required: state == %r, expired == %r, refresh required == %r",
                     self.auth_state,
                     is_expired,
                     is_refresh_required,

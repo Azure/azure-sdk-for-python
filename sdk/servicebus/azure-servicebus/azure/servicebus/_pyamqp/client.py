@@ -306,6 +306,7 @@ class AMQPClient(
         """
         # pylint: disable=protected-access
         if self._session:
+            _logger.info("AMQP client %r is already open.", self._name)
             return  # already open.
         _logger.info("Opening AMQP client %r.", self._name)
         if connection:
@@ -361,6 +362,7 @@ class AMQPClient(
         """
         self._shutdown = True
         if not self._session:
+            _logger.info("AMQP client %r is already closed.", self._name)
             return  # already closed.
         _logger.info("Closing AMQP client %r.", self._name)
         self._close_link()
