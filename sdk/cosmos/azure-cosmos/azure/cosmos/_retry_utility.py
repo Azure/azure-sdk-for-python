@@ -94,6 +94,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         start_time = time.time()
         try:
             if args:
+                request_params = args[0]
+                operation_type = request_params.get_operation_type()
+                resource_type = request_params.get_resource_type()
+
+                if resource_type == "Document" and operation_type == "Create":
+                    raise exceptions.CosmosHttpResponseError(status_code=StatusCodes.SERVICE_UNAVAILABLE)
+
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
