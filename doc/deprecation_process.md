@@ -103,6 +103,21 @@ Once the PR is approved, merge.
 
 # Step 4: Trigger a release 
 
+## Pre-Release
+
+Before releasing, you must update the DevOps release work items in the DevOps Release dashboard.
+
+- To do this, run the following in a PowerShell terminal, replacing 'mypackage' with your package:
+```pwsh
+azure-sdk-for-python> cd eng/common/scripts
+azure-sdk-for-python/eng/common/scripts> ./Prepare-Release.ps1 -PackageName azure-mypackage -ServiceDirectory mypackage -ReleaseDate MM/DD/YYYY
+```
+- When asked to `Input the new version, or press Enter to use use current project version`, press Enter.
+- You may see a `WARNING: API Review is not approved for package azure-mypackage. Release pipeline will fail if API review is not approved for a GA version release.` This can be ignored as the API Review check will not be run on `Inactive` packages.
+- Discard any automatic changes made to the CHANGELOG.md/README.md by the script.
+
+## Release the Package
+
 A release here is the same as usual, triggering the release pipeline of your SDK. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: This release DOES NOT need to be done during during release week and can be done any time.**
@@ -111,7 +126,7 @@ A release here is the same as usual, triggering the release pipeline of your SDK
 
 Check to make sure that the new version of the package has been released on PyPI.
 
-# Step 5: Create a new PR to remove package from CI
+# Step 5: Create a new PR to remove the package from CI
 
 - Remove the package artifact from `mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
 
