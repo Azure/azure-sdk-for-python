@@ -471,7 +471,6 @@ class BreakingChangesTracker:
         deleted_props = []
         for prop in components.get("properties", []):
             if isinstance(prop, jsondiff.Symbol):
-                deleted_props = []
                 if prop.label == "delete":
                     deleted_props = components["properties"][prop]
                 elif prop.label == "replace":
