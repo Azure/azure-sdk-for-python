@@ -108,7 +108,7 @@ class BreakingChangesTracker:
         checkers: List[ChangesChecker] = kwargs.get("checkers", [])
         for checker in checkers:
             if not isinstance(checker, ChangesChecker):
-                raise ValueError(f"Checker {checker} does not implement ChangesChecker protocol")
+                raise TypeError(f"Checker {checker} does not implement ChangesChecker protocol")
         self.checkers = checkers
 
     def run_checks(self) -> None:
