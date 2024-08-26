@@ -50,10 +50,9 @@ $jobs | ForEach-Object { $_ | Remove-Job }
 
 if ($nonZeroExit) {
     Write-Host "One or more scripts failed with a non-zero exit code."
+    Get-ChildItem $RepoRoot -Filter "sphinx-*.log" | ForEach-Object { Get-Content $_.FullName }
     exit 1
 } else {
     Write-Host "All scripts completed successfully."
     exit 0
 }
-
-Get-ChildItem $RepoRoot -Filter "sphinx-*.log" | ForEach-Object { Get-Content $_.FullName }
