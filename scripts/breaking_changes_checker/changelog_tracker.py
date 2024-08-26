@@ -47,19 +47,7 @@ class ChangelogTracker(BreakingChangesTracker):
     def run_checks(self) -> None:
         self.run_non_breaking_change_diff_checks()
         super().run_checks()
-        self.run_async_changelog_cleanup()
-
-    # Remove duplicate reporting of changes that apply to both sync and async package components
-    def run_async_changelog_cleanup(self) -> None:
-        # Create a list of all sync changes
-        non_aio_changes = [fa for fa in self.features_added if "aio" not in fa[2]]
-        # Remove any aio change if there is a sync change that is the same
-        for change in non_aio_changes:
-            for c in self.features_added:
-                if "aio" in c[2]:
-                    if change[1] == c[1] and change[3:] == c[3:]:
-                        self.features_added.remove(c)
-                        break
+        self.run_async_cleanup(self.features_added)
 
     def run_non_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
