@@ -239,6 +239,7 @@ class AMQPClientAsync(AMQPClientSync):
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
+        _logger.info("Opening AMQP client %r.", self._name)
         if connection:
             self._connection = connection
             self._external_connection = True
@@ -288,6 +289,7 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
+        _logger.info("Closing AMQP client %r.", self._name)
         await self._close_link_async()
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
