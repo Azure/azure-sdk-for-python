@@ -153,8 +153,15 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    # Instrumentations below this line have not been added to statsbeat report yet
     "cassandra",
     "tortoiseorm",
+    "aiohttp-server",
+    "asyncio",
+    "mysqlclient",
+    "psycopg",
+    "threading",
+    "wsgi",
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -174,6 +181,7 @@ _AUTOCOLLECTED_INSTRUMENT_NAMES = (
 
 # Temporary solution for checking which instrumentations support metric collection
 _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
+    "opentelemetry.instrumentation.asgi",
     "opentelemetry.instrumentation.django",
     "opentelemetry.instrumentation.falcon",
     "opentelemetry.instrumentation.fastapi",

@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b29 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update instrumentation constants info
+    ([#36696](https://github.com/Azure/azure-sdk-for-python/pull/36696))
+- Refactor statsbeat utils functions
+    ([#36824](https://github.com/Azure/azure-sdk-for-python/pull/36824))
+
 ## 1.0.0b28 (2024-07-29)
 
 ### Other Changes

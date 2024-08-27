@@ -172,7 +172,7 @@ class ManagedNetworkProvisionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param body: Managed Network Provisioning Options for a machine learning workspace.
         :type body: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionOptions

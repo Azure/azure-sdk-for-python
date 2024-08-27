@@ -122,6 +122,9 @@ if uamqp_installed:
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
         PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
+        # define exceptions
+        AUTHENTICATION_EXCEPTION = errors.AuthenticationException
+
         @staticmethod
         def build_message(**kwargs):
             """

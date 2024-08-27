@@ -1,9 +1,23 @@
 # Release History
 
-## 12.18.0b1 (Unreleased)
+## 12.18.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.18.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+- Added support for Entra ID authentication for all data plane file operations that were previously not enabled.
+- Added support to set `paid_bursting_enabled`, `paid_bursting_bandwidth_mibps`, and `paid_bursting_iops` for Share's
+`create_share` and `set_share_properties` APIs, and also retrieve them on the `get_share_properties` API.
+- Added `file_permission_format` to specify permission format for Share's `create_permission_for_share` and
+`get_permission_for_share` APIs; File's `create_file`, `rename_file`, and `set_http_headers` APIs; and
+Directory's `rename_directory` and `set_http_headers` APIs.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
 
 ## 12.17.0 (2024-07-18)
 

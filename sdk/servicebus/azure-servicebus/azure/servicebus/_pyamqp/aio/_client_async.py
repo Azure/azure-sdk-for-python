@@ -388,7 +388,7 @@ class AMQPClientAsync(AMQPClientSync):
                 self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
 
-        while not self.client_ready_async():
+        while not await self.client_ready_async():
             await asyncio.sleep(0.05)
 
         while not await mgmt_link.ready():
@@ -933,6 +933,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
@@ -943,6 +944,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
@@ -953,6 +955,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
@@ -964,6 +967,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["modified"],
         *,
         delivery_failed: Optional[bool] = None,
@@ -977,6 +981,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["received"],
         *,
         section_number: int,
@@ -985,7 +990,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ):
         ...
 
-    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+    async def settle_messages_async(
+            self,
+            delivery_id: Union[int, Tuple[int, int]],
+            delivery_tag: bytes,
+            outcome: str,
+            **kwargs
+    ):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
@@ -1007,6 +1018,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
+            delivery_tag=delivery_tag,
             settled=True,
             delivery_state=state,
             batchable=batchable,

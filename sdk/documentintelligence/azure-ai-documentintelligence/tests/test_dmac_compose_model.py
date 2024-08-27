@@ -9,10 +9,12 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
 from azure.ai.documentintelligence.models import (
-    BuildDocumentModelRequest,
     AzureBlobContentSource,
+    BuildDocumentModelRequest,
+    BuildDocumentClassifierRequest,
     ComposeDocumentModelRequest,
-    ComponentDocumentModelDetails,
+    ClassifierDocumentTypeDetails,
+    DocumentTypeDetails,
 )
 from testcase import DocumentIntelligenceTest
 from conftest import skip_flaky_test
@@ -28,7 +30,7 @@ class TestTrainingAsync(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_compose_model(self, client, documentintelligence_storage_container_sas_url, **kwargs):
+    def test_compose_model(self, client, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("model_id1", str(uuid.uuid4()))
@@ -39,7 +41,9 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             model_id=recorded_variables.get("model_id1"),
             description="model1",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
+            azure_blob_source=AzureBlobContentSource(
+                container_url=documentintelligence_training_data_classifier_sas_url
+            ),
         )
         poller = client.begin_build_document_model(request)
         model_1 = poller.result()
@@ -48,19 +52,42 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             model_id=recorded_variables.get("model_id2"),
             description="model2",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
+            azure_blob_source=AzureBlobContentSource(
+                container_url=documentintelligence_training_data_classifier_sas_url
+            ),
         )
         poller = client.begin_build_document_model(request)
         model_2 = poller.result()
 
+        request = BuildDocumentClassifierRequest(
+            classifier_id=classifier.classifier_id,
+            description="IRS document classifier",
+            doc_types={
+                "IRS-1040-A": ClassifierDocumentTypeDetails(
+                    azure_blob_source=AzureBlobContentSource(
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-A/train"
+                    )
+                ),
+                "IRS-1040-B": ClassifierDocumentTypeDetails(
+                    azure_blob_source=AzureBlobContentSource(
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-B/train"
+                    )
+                ),
+            },
+        )
+        poller = client.begin_build_classifier(request)
+        classifier = poller.result()
+        classifier_id = classifier.classifier_id
+
         request = ComposeDocumentModelRequest(
             model_id=recorded_variables.get("composed_id"),
+            classifier_id=classifier_id,
             description="my composed model",
             tags={"testkey": "testvalue"},
-            component_models=[
-                ComponentDocumentModelDetails(model_id=model_1.model_id),
-                ComponentDocumentModelDetails(model_id=model_2.model_id),
-            ],
+            doc_types={
+                "formA": DocumentTypeDetails(model_id=model_1.model_id),
+                "formA": DocumentTypeDetails(model_id=model_2.model_id),
+            },
         )
         poller = client.begin_compose_model(request)
         composed_model = poller.result()
