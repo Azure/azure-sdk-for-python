@@ -22,8 +22,6 @@ class TestPostgreSQLManagementOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
-        response = await self.client.operations.list(
-            api_version="2023-12-01-preview",
-        )
+        response = await self.client.operations.list()
         assert response.value
         

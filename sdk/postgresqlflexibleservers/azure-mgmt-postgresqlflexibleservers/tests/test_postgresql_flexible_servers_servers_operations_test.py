@@ -23,7 +23,6 @@ class TestPostgreSQLManagementServersOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.servers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01-preview",
         )
         result = [r for r in response]
         assert result == []
