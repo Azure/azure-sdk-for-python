@@ -1,5 +1,4 @@
 [tool.azure-sdk-build]
-analyze_dependencies = false
 mypy = false
 pyright = false
 pylint = false
