@@ -5,3 +5,4 @@
 ### Features Added
 
 - First preview
+- This package is port of `promptflow-evals`. New features will be added only to this package moving forward.
