@@ -1,10 +1,21 @@
-# Azure AI Evaluation
+# Azure AI Evaluation Client Library for Python
 
-## Introduction
+## Getting started
+
+### Install the package
+
+Install the Azure AI Evaluation library for Python with:
+
+```bash
+pip install azure-ai-evaluation
+pip install azure-identity
+```
+
+## Key concepts
 
 Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models.
 
-## Usage
+## Examples
 
 Users can create evaluator runs on the local machine as shown in the example below:
 
@@ -81,3 +92,9 @@ if __name__ == "__main__":
 
     pprint(result)
 ```
+
+## Troubleshooting
+
+## Next steps
+
+## Contributing
