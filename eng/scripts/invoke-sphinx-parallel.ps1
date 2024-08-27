@@ -19,25 +19,14 @@ $pythonScript = Join-Path "$RepoRoot" "scripts" "devops_tasks" "dispatch_tox.py"
 $jobs = @()
 $packages = $TargetingString -split ","
 
-$serviceParam = ""
-$wheelParam = ""
-
-if ($ServiceDirectory) {
-    $serviceParam = "--service=$ServiceDirectory"
-}
-
-if ($WheelDirectory) {
-    $wheelParam = " -w $WheelDirectory"
-}
-
 foreach ($package in $packages) {
     $jobs += Start-Job -ScriptBlock {
         param($Pkg, $ScriptPath, $RepoRoot, $ServiceParam, $WheelParam)
         $log = Join-Path $RepoRoot "sphinx-$Pkg.log"
-        Write-Host "& python $ScriptPath $Pkg --toxenv=sphinx $ServiceParam $WheelParam --disablecov 2>&1 >> $log"
-        & python $ScriptPath $Pkg --toxenv=sphinx $WheelParam $ServiceParam $WheelParam --disablecov 2>&1 >> $log
+        Write-Host "& python $ScriptPath $Pkg --toxenv=sphinx --service `"$ServiceParam`" -w `"$WheelParam`" --disablecov 2>&1 >> $log"
+        & python $ScriptPath $Pkg --toxenv=sphinx --service "$ServiceParam" -w "$WheelParam" --disablecov 2>&1 >> $log
         return $LASTEXITCODE
-    } -ArgumentList $package, $pythonScript, $RepoRoot, $serviceParam, $wheelParam
+    } -ArgumentList $package, $pythonScript, $RepoRoot, $ServiceDirectory, $WheelDirectory
 }
 
 $jobs | ForEach-Object { $_ | Wait-Job }
