@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -27,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import _model_base, models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import FaceClientMixinABC, FaceSessionClientMixinABC, prepare_multipart_form_data
+from .._vendor import FaceClientMixinABC, FaceSessionClientMixinABC, FileType, prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -489,7 +491,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         face_id_time_to_live: Optional[int] = None,
         **kwargs: Any,
     ) -> List[_models.FaceDetectionResult]:
-        # pylint: disable=line-too-long
         """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
         and attributes.
 
@@ -576,292 +577,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceDetectionResult
         :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "url": "str"  # URL of input image. Required.
-                }
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "faceRectangle": {
-                            "height": 0,  # The height of the rectangle, in pixels.
-                              Required.
-                            "left": 0,  # The distance from the left edge if the image to
-                              the left edge of the rectangle, in pixels. Required.
-                            "top": 0,  # The distance from the top edge if the image to
-                              the top edge of the rectangle, in pixels. Required.
-                            "width": 0  # The width of the rectangle, in pixels.
-                              Required.
-                        },
-                        "faceAttributes": {
-                            "accessories": [
-                                {
-                                    "confidence": 0.0,  # Confidence level of the
-                                      accessory type. Range between [0,1]. Required.
-                                    "type": "str"  # Type of the accessory.
-                                      Required. Known values are: "headwear", "glasses", and "mask".
-                                }
-                            ],
-                            "age": 0.0,  # Optional. Age in years.
-                            "blur": {
-                                "blurLevel": "str",  # An enum value indicating level
-                                  of blurriness. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of
-                                  blurriness ranging from 0 to 1. Required.
-                            },
-                            "exposure": {
-                                "exposureLevel": "str",  # An enum value indicating
-                                  level of exposure. Required. Known values are: "underExposure",
-                                  "goodExposure", and "overExposure".
-                                "value": 0.0  # A number indicating level of exposure
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. Required.
-                            },
-                            "facialHair": {
-                                "beard": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "moustache": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "sideburns": 0.0  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                            },
-                            "glasses": "str",  # Optional. Glasses type if any of the
-                              face. Known values are: "noGlasses", "readingGlasses", "sunglasses", and
-                              "swimmingGoggles".
-                            "hair": {
-                                "bald": 0.0,  # A number describing confidence level
-                                  of whether the person is bald. Required.
-                                "hairColor": [
-                                    {
-                                        "color": "str",  # Name of the hair
-                                          color. Required. Known values are: "unknown", "white",
-                                          "gray", "blond", "brown", "red", "black", and "other".
-                                        "confidence": 0.0  # Confidence level
-                                          of the color. Range between [0,1]. Required.
-                                    }
-                                ],
-                                "invisible": bool  # A boolean value describing
-                                  whether the hair is visible in the image. Required.
-                            },
-                            "headPose": {
-                                "pitch": 0.0,  # Value of angles. Required.
-                                "roll": 0.0,  # Value of angles. Required.
-                                "yaw": 0.0  # Value of angles. Required.
-                            },
-                            "mask": {
-                                "noseAndMouthCovered": bool,  # A boolean value
-                                  indicating whether nose and mouth are covered. Required.
-                                "type": "str"  # Type of the mask. Required. Known
-                                  values are: "faceMask", "noMask", "otherMaskOrOcclusion", and
-                                  "uncertain".
-                            },
-                            "noise": {
-                                "noiseLevel": "str",  # An enum value indicating
-                                  level of noise. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of noise
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. [0, 0.3) is low noise
-                                  level. [0.3, 0.7) is medium noise level. [0.7, 1] is high noise
-                                  level. Required.
-                            },
-                            "occlusion": {
-                                "eyeOccluded": bool,  # A boolean value indicating
-                                  whether eyes are occluded. Required.
-                                "foreheadOccluded": bool,  # A boolean value
-                                  indicating whether forehead is occluded. Required.
-                                "mouthOccluded": bool  # A boolean value indicating
-                                  whether the mouth is occluded. Required.
-                            },
-                            "qualityForRecognition": "str",  # Optional. Properties
-                              describing the overall image quality regarding whether the image being
-                              used in the detection is of sufficient quality to attempt face
-                              recognition on. Known values are: "low", "medium", and "high".
-                            "smile": 0.0  # Optional. Smile intensity, a number between
-                              [0,1].
-                        },
-                        "faceId": "str",  # Optional. Unique faceId of the detected face,
-                          created by detection API and it will expire 24 hours after the detection
-                          call. To return this, it requires 'returnFaceId' parameter to be true.
-                        "faceLandmarks": {
-                            "eyeLeftBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            }
-                        },
-                        "recognitionModel": "str"  # Optional. The 'recognitionModel'
-                          associated with this faceId. This is only returned when
-                          'returnRecognitionModel' is explicitly set as true. Known values are:
-                          "recognition_01", "recognition_02", "recognition_03", and "recognition_04".
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -917,7 +632,10 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -946,7 +664,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         face_id_time_to_live: Optional[int] = None,
         **kwargs: Any,
     ) -> List[_models.FaceDetectionResult]:
-        # pylint: disable=line-too-long
         """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
         and attributes.
 
@@ -1031,287 +748,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceDetectionResult
         :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "faceRectangle": {
-                            "height": 0,  # The height of the rectangle, in pixels.
-                              Required.
-                            "left": 0,  # The distance from the left edge if the image to
-                              the left edge of the rectangle, in pixels. Required.
-                            "top": 0,  # The distance from the top edge if the image to
-                              the top edge of the rectangle, in pixels. Required.
-                            "width": 0  # The width of the rectangle, in pixels.
-                              Required.
-                        },
-                        "faceAttributes": {
-                            "accessories": [
-                                {
-                                    "confidence": 0.0,  # Confidence level of the
-                                      accessory type. Range between [0,1]. Required.
-                                    "type": "str"  # Type of the accessory.
-                                      Required. Known values are: "headwear", "glasses", and "mask".
-                                }
-                            ],
-                            "age": 0.0,  # Optional. Age in years.
-                            "blur": {
-                                "blurLevel": "str",  # An enum value indicating level
-                                  of blurriness. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of
-                                  blurriness ranging from 0 to 1. Required.
-                            },
-                            "exposure": {
-                                "exposureLevel": "str",  # An enum value indicating
-                                  level of exposure. Required. Known values are: "underExposure",
-                                  "goodExposure", and "overExposure".
-                                "value": 0.0  # A number indicating level of exposure
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. Required.
-                            },
-                            "facialHair": {
-                                "beard": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "moustache": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "sideburns": 0.0  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                            },
-                            "glasses": "str",  # Optional. Glasses type if any of the
-                              face. Known values are: "noGlasses", "readingGlasses", "sunglasses", and
-                              "swimmingGoggles".
-                            "hair": {
-                                "bald": 0.0,  # A number describing confidence level
-                                  of whether the person is bald. Required.
-                                "hairColor": [
-                                    {
-                                        "color": "str",  # Name of the hair
-                                          color. Required. Known values are: "unknown", "white",
-                                          "gray", "blond", "brown", "red", "black", and "other".
-                                        "confidence": 0.0  # Confidence level
-                                          of the color. Range between [0,1]. Required.
-                                    }
-                                ],
-                                "invisible": bool  # A boolean value describing
-                                  whether the hair is visible in the image. Required.
-                            },
-                            "headPose": {
-                                "pitch": 0.0,  # Value of angles. Required.
-                                "roll": 0.0,  # Value of angles. Required.
-                                "yaw": 0.0  # Value of angles. Required.
-                            },
-                            "mask": {
-                                "noseAndMouthCovered": bool,  # A boolean value
-                                  indicating whether nose and mouth are covered. Required.
-                                "type": "str"  # Type of the mask. Required. Known
-                                  values are: "faceMask", "noMask", "otherMaskOrOcclusion", and
-                                  "uncertain".
-                            },
-                            "noise": {
-                                "noiseLevel": "str",  # An enum value indicating
-                                  level of noise. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of noise
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. [0, 0.3) is low noise
-                                  level. [0.3, 0.7) is medium noise level. [0.7, 1] is high noise
-                                  level. Required.
-                            },
-                            "occlusion": {
-                                "eyeOccluded": bool,  # A boolean value indicating
-                                  whether eyes are occluded. Required.
-                                "foreheadOccluded": bool,  # A boolean value
-                                  indicating whether forehead is occluded. Required.
-                                "mouthOccluded": bool  # A boolean value indicating
-                                  whether the mouth is occluded. Required.
-                            },
-                            "qualityForRecognition": "str",  # Optional. Properties
-                              describing the overall image quality regarding whether the image being
-                              used in the detection is of sufficient quality to attempt face
-                              recognition on. Known values are: "low", "medium", and "high".
-                            "smile": 0.0  # Optional. Smile intensity, a number between
-                              [0,1].
-                        },
-                        "faceId": "str",  # Optional. Unique faceId of the detected face,
-                          created by detection API and it will expire 24 hours after the detection
-                          call. To return this, it requires 'returnFaceId' parameter to be true.
-                        "faceLandmarks": {
-                            "eyeLeftBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            }
-                        },
-                        "recognitionModel": "str"  # Optional. The 'recognitionModel'
-                          associated with this faceId. This is only returned when
-                          'returnRecognitionModel' is explicitly set as true. Known values are:
-                          "recognition_01", "recognition_02", "recognition_03", and "recognition_04".
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1357,7 +793,10 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1376,7 +815,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     def find_similar(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.FaceFindSimilarResult]:
-        # pylint: disable=line-too-long
         """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
         array contains the faces created by Detect.
 
@@ -1401,40 +839,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceFindSimilarResult
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceId": "str",  # faceId of the query face. User needs to call "Detect"
-                      first to get a valid faceId. Note that this faceId is not persisted and will
-                      expire 24 hours after the detection call. Required.
-                    "faceIds": [
-                        "str"  # An array of candidate faceIds. All of them are created by
-                          "Detect" and the faceIds will expire 24 hours after the detection call. The
-                          number of faceIds is limited to 1000. Required.
-                    ],
-                    "maxNumOfCandidatesReturned": 0,  # Optional. The number of top similar faces
-                      returned. The valid range is [1, 1000]. Default value is 20.
-                    "mode": "str"  # Optional. Similar face searching mode. It can be
-                      'matchPerson' or 'matchFace'. Default value is 'matchPerson'. Known values are:
-                      "matchPerson" and "matchFace".
-                }
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "confidence": 0.0,  # Confidence value of the candidate. The higher
-                          confidence, the more similar. Range between [0,1]. Required.
-                        "faceId": "str",  # Optional. faceId of candidate face when find by
-                          faceIds. faceId is created by "Detect" and will expire 24 hours after the
-                          detection call.
-                        "persistedFaceId": "str"  # Optional. persistedFaceId of candidate
-                          face when find by faceListId or largeFaceListId. persistedFaceId in face
-                          list/large face list is persisted and will not expire.
-                    }
-                ]
         """
 
     @overload
@@ -1448,7 +852,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         mode: Optional[Union[str, _models.FindSimilarMatchMode]] = None,
         **kwargs: Any,
     ) -> List[_models.FaceFindSimilarResult]:
-        # pylint: disable=line-too-long
         """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
         array contains the faces created by Detect.
 
@@ -1485,30 +888,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceFindSimilarResult
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "confidence": 0.0,  # Confidence value of the candidate. The higher
-                          confidence, the more similar. Range between [0,1]. Required.
-                        "faceId": "str",  # Optional. faceId of candidate face when find by
-                          faceIds. faceId is created by "Detect" and will expire 24 hours after the
-                          detection call.
-                        "persistedFaceId": "str"  # Optional. persistedFaceId of candidate
-                          face when find by faceListId or largeFaceListId. persistedFaceId in face
-                          list/large face list is persisted and will not expire.
-                    }
-                ]
         """
 
     @overload
     def find_similar(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.FaceFindSimilarResult]:
-        # pylint: disable=line-too-long
         """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
         array contains the faces created by Detect.
 
@@ -1533,23 +918,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceFindSimilarResult
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "confidence": 0.0,  # Confidence value of the candidate. The higher
-                          confidence, the more similar. Range between [0,1]. Required.
-                        "faceId": "str",  # Optional. faceId of candidate face when find by
-                          faceIds. faceId is created by "Detect" and will expire 24 hours after the
-                          detection call.
-                        "persistedFaceId": "str"  # Optional. persistedFaceId of candidate
-                          face when find by faceListId or largeFaceListId. persistedFaceId in face
-                          list/large face list is persisted and will not expire.
-                    }
-                ]
         """
 
     @distributed_trace
@@ -1563,7 +931,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         mode: Optional[Union[str, _models.FindSimilarMatchMode]] = None,
         **kwargs: Any,
     ) -> List[_models.FaceFindSimilarResult]:
-        # pylint: disable=line-too-long
         """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
         array contains the faces created by Detect.
 
@@ -1599,40 +966,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: list of FaceFindSimilarResult
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceId": "str",  # faceId of the query face. User needs to call "Detect"
-                      first to get a valid faceId. Note that this faceId is not persisted and will
-                      expire 24 hours after the detection call. Required.
-                    "faceIds": [
-                        "str"  # An array of candidate faceIds. All of them are created by
-                          "Detect" and the faceIds will expire 24 hours after the detection call. The
-                          number of faceIds is limited to 1000. Required.
-                    ],
-                    "maxNumOfCandidatesReturned": 0,  # Optional. The number of top similar faces
-                      returned. The valid range is [1, 1000]. Default value is 20.
-                    "mode": "str"  # Optional. Similar face searching mode. It can be
-                      'matchPerson' or 'matchFace'. Default value is 'matchPerson'. Known values are:
-                      "matchPerson" and "matchFace".
-                }
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "confidence": 0.0,  # Confidence value of the candidate. The higher
-                          confidence, the more similar. Range between [0,1]. Required.
-                        "faceId": "str",  # Optional. faceId of candidate face when find by
-                          faceIds. faceId is created by "Detect" and will expire 24 hours after the
-                          detection call.
-                        "persistedFaceId": "str"  # Optional. persistedFaceId of candidate
-                          face when find by faceListId or largeFaceListId. persistedFaceId in face
-                          list/large face list is persisted and will not expire.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1654,9 +987,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
             if face_ids is _Unset:
                 raise TypeError("missing required argument: face_ids")
             body = {
-                "faceid": face_id,
-                "faceids": face_ids,
-                "maxnumofcandidatesreturned": max_num_of_candidates_returned,
+                "faceId": face_id,
+                "faceIds": face_ids,
+                "maxNumOfCandidatesReturned": max_num_of_candidates_returned,
                 "mode": mode,
             }
             body = {k: v for k, v in body.items() if v is not None}
@@ -1688,7 +1021,10 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1707,7 +1043,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     def verify_face_to_face(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
-        # pylint: disable=line-too-long
         """Verify whether two faces belong to a same person.
 
         ..
@@ -1731,33 +1066,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceId1": "str",  # The faceId of one face, come from "Detect". Required.
-                    "faceId2": "str"  # The faceId of another face, come from "Detect". Required.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "confidence": 0.0,  # A number indicates the similarity confidence of whether
-                      two faces belong to the same person, or whether the face belongs to the person.
-                      By default, isIdentical is set to True if similarity confidence is greater than
-                      or equal to 0.5. This is useful for advanced users to override 'isIdentical' and
-                      fine-tune the result on their own data. Required.
-                    "isIdentical": bool  # True if the two faces belong to the same person or the
-                      face belongs to the person, otherwise false. Required.
-                }
         """
 
     @overload
     def verify_face_to_face(
         self, *, face_id1: str, face_id2: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
-        # pylint: disable=line-too-long
         """Verify whether two faces belong to a same person.
 
         ..
@@ -1783,27 +1097,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "confidence": 0.0,  # A number indicates the similarity confidence of whether
-                      two faces belong to the same person, or whether the face belongs to the person.
-                      By default, isIdentical is set to True if similarity confidence is greater than
-                      or equal to 0.5. This is useful for advanced users to override 'isIdentical' and
-                      fine-tune the result on their own data. Required.
-                    "isIdentical": bool  # True if the two faces belong to the same person or the
-                      face belongs to the person, otherwise false. Required.
-                }
         """
 
     @overload
     def verify_face_to_face(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
-        # pylint: disable=line-too-long
         """Verify whether two faces belong to a same person.
 
         ..
@@ -1827,27 +1126,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "confidence": 0.0,  # A number indicates the similarity confidence of whether
-                      two faces belong to the same person, or whether the face belongs to the person.
-                      By default, isIdentical is set to True if similarity confidence is greater than
-                      or equal to 0.5. This is useful for advanced users to override 'isIdentical' and
-                      fine-tune the result on their own data. Required.
-                    "isIdentical": bool  # True if the two faces belong to the same person or the
-                      face belongs to the person, otherwise false. Required.
-                }
         """
 
     @distributed_trace
     def verify_face_to_face(
         self, body: Union[JSON, IO[bytes]] = _Unset, *, face_id1: str = _Unset, face_id2: str = _Unset, **kwargs: Any
     ) -> _models.FaceVerificationResult:
-        # pylint: disable=line-too-long
         """Verify whether two faces belong to a same person.
 
         ..
@@ -1872,26 +1156,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceId1": "str",  # The faceId of one face, come from "Detect". Required.
-                    "faceId2": "str"  # The faceId of another face, come from "Detect". Required.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "confidence": 0.0,  # A number indicates the similarity confidence of whether
-                      two faces belong to the same person, or whether the face belongs to the person.
-                      By default, isIdentical is set to True if similarity confidence is greater than
-                      or equal to 0.5. This is useful for advanced users to override 'isIdentical' and
-                      fine-tune the result on their own data. Required.
-                    "isIdentical": bool  # True if the two faces belong to the same person or the
-                      face belongs to the person, otherwise false. Required.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1912,7 +1176,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 raise TypeError("missing required argument: face_id1")
             if face_id2 is _Unset:
                 raise TypeError("missing required argument: face_id2")
-            body = {"faceid1": face_id1, "faceid2": face_id2}
+            body = {"faceId1": face_id1, "faceId2": face_id2}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1942,7 +1206,10 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1959,7 +1226,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def group(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.FaceGroupingResult:
-        # pylint: disable=line-too-long
         """Divide candidate faces into groups based on face similarity.
 
         >
@@ -1985,38 +1251,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceGroupingResult. The FaceGroupingResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceGroupingResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceIds": [
-                        "str"  # Array of candidate faceIds created by "Detect". The maximum
-                          is 1000 faces. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "groups": [
-                        [
-                            "str"  # A partition of the original faces based on face
-                              similarity. Groups are ranked by number of faces. Required.
-                        ]
-                    ],
-                    "messyGroup": [
-                        "str"  # Face ids array of faces that cannot find any similar faces
-                          from original faces. Required.
-                    ]
-                }
         """
 
     @overload
     def group(
         self, *, face_ids: List[str], content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceGroupingResult:
-        # pylint: disable=line-too-long
         """Divide candidate faces into groups based on face similarity.
 
         >
@@ -2043,30 +1283,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceGroupingResult. The FaceGroupingResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceGroupingResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "groups": [
-                        [
-                            "str"  # A partition of the original faces based on face
-                              similarity. Groups are ranked by number of faces. Required.
-                        ]
-                    ],
-                    "messyGroup": [
-                        "str"  # Face ids array of faces that cannot find any similar faces
-                          from original faces. Required.
-                    ]
-                }
         """
 
     @overload
     def group(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceGroupingResult:
-        # pylint: disable=line-too-long
         """Divide candidate faces into groups based on face similarity.
 
         >
@@ -2092,30 +1314,12 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceGroupingResult. The FaceGroupingResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceGroupingResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "groups": [
-                        [
-                            "str"  # A partition of the original faces based on face
-                              similarity. Groups are ranked by number of faces. Required.
-                        ]
-                    ],
-                    "messyGroup": [
-                        "str"  # Face ids array of faces that cannot find any similar faces
-                          from original faces. Required.
-                    ]
-                }
         """
 
     @distributed_trace
     def group(
         self, body: Union[JSON, IO[bytes]] = _Unset, *, face_ids: List[str] = _Unset, **kwargs: Any
     ) -> _models.FaceGroupingResult:
-        # pylint: disable=line-too-long
         """Divide candidate faces into groups based on face similarity.
 
         >
@@ -2141,31 +1345,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :return: FaceGroupingResult. The FaceGroupingResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.FaceGroupingResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "faceIds": [
-                        "str"  # Array of candidate faceIds created by "Detect". The maximum
-                          is 1000 faces. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "groups": [
-                        [
-                            "str"  # A partition of the original faces based on face
-                              similarity. Groups are ranked by number of faces. Required.
-                        ]
-                    ],
-                    "messyGroup": [
-                        "str"  # Face ids array of faces that cannot find any similar faces
-                          from original faces. Required.
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -2184,7 +1363,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         if body is _Unset:
             if face_ids is _Unset:
                 raise TypeError("missing required argument: face_ids")
-            body = {"faceids": face_ids}
+            body = {"faceIds": face_ids}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -2214,7 +1393,10 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2234,81 +1416,8 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @overload
     def create_liveness_session(
-        self, body: _models.CreateLivenessSessionContent, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessSessionResult:
-        # pylint: disable=line-too-long
-        """Create a new detect liveness session.
-
-        A session is best for client device scenarios where developers want to authorize a client
-        device to perform only a liveness detection without granting full access to their resource.
-        Created sessions have a limited life span and only authorize clients to perform the desired
-        action before access is expired.
-
-        Permissions includes...
-        >
-        *
-
-
-        * Ability to call /detectLiveness/singleModal for up to 3 retries.
-        * A token lifetime of 10 minutes.
-
-        ..
-
-           [!NOTE]
-           Client access can be revoked by deleting the session using the Delete Liveness Session
-        operation. To retrieve a result, use the Get Liveness Session. To audit the individual requests
-        that a client has made to your resource, use the List Liveness Session Audit Entries.
-
-        :param body: Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessSessionContent
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. Known values are: "Passive" and "PassiveActive".
-                    "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
-                      last for. Range is 60 to 86400 seconds. Default value is 600.
-                    "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
-                      device. This is to provide rate limiting and anti-hammering. If
-                      'deviceCorrelationIdSetInClient' is true in this request, this
-                      'deviceCorrelationId' must be null.
-                    "deviceCorrelationIdSetInClient": bool,  # Optional. Whether or not to allow
-                      client to set their own 'deviceCorrelationId' via the Vision SDK. Default is
-                      false, and 'deviceCorrelationId' must be set in this request body.
-                    "sendResultsToClient": bool  # Optional. Whether or not to allow a '200 -
-                      Success' response body to be sent to the client, which may be undesirable for
-                      security reasons. Default is false, clients will receive a '204 - NoContent'
-                      empty body response. Regardless of selection, calling Session GetResult will
-                      always contain a response body enabling business logic to be implemented.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str"  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                }
-        """
-
-    @overload
-    def create_liveness_session(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateLivenessSessionResult:
-        # pylint: disable=line-too-long
         """Create a new detect liveness session.
 
         A session is best for client device scenarios where developers want to authorize a client
@@ -2340,27 +1449,75 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
          MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-        Example:
-            .. code-block:: python
+    @overload
+    def create_liveness_session(
+        self,
+        *,
+        liveness_operation_mode: Union[str, _models.LivenessOperationMode],
+        content_type: str = "application/json",
+        send_results_to_client: Optional[bool] = None,
+        device_correlation_id_set_in_client: Optional[bool] = None,
+        device_correlation_id: Optional[str] = None,
+        auth_token_time_to_live_in_seconds: Optional[int] = None,
+        **kwargs: Any,
+    ) -> _models.CreateLivenessSessionResult:
+        """Create a new detect liveness session.
 
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str"  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                }
+        A session is best for client device scenarios where developers want to authorize a client
+        device to perform only a liveness detection without granting full access to their resource.
+        Created sessions have a limited life span and only authorize clients to perform the desired
+        action before access is expired.
+
+        Permissions includes...
+        >
+        *
+
+
+        * Ability to call /detectLiveness/singleModal for up to 3 retries.
+        * A token lifetime of 10 minutes.
+
+        ..
+
+           [!NOTE]
+           Client access can be revoked by deleting the session using the Delete Liveness Session
+        operation. To retrieve a result, use the Get Liveness Session. To audit the individual requests
+        that a client has made to your resource, use the List Liveness Session Audit Entries.
+
+        :keyword liveness_operation_mode: Type of liveness mode the client should follow. Known values
+         are: "Passive" and "PassiveActive". Required.
+        :paramtype liveness_operation_mode: str or ~azure.ai.vision.face.models.LivenessOperationMode
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword send_results_to_client: Whether or not to allow a '200 - Success' response body to be
+         sent to the client, which may be undesirable for security reasons. Default is false, clients
+         will receive a '204 - NoContent' empty body response. Regardless of selection, calling Session
+         GetResult will always contain a response body enabling business logic to be implemented.
+         Default value is None.
+        :paramtype send_results_to_client: bool
+        :keyword device_correlation_id_set_in_client: Whether or not to allow client to set their own
+         'deviceCorrelationId' via the Vision SDK. Default is false, and 'deviceCorrelationId' must be
+         set in this request body. Default value is None.
+        :paramtype device_correlation_id_set_in_client: bool
+        :keyword device_correlation_id: Unique Guid per each end-user device. This is to provide rate
+         limiting and anti-hammering. If 'deviceCorrelationIdSetInClient' is true in this request, this
+         'deviceCorrelationId' must be null. Default value is None.
+        :paramtype device_correlation_id: str
+        :keyword auth_token_time_to_live_in_seconds: Seconds the session should last for. Range is 60
+         to 86400 seconds. Default value is 600. Default value is None.
+        :paramtype auth_token_time_to_live_in_seconds: int
+        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_liveness_session(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateLivenessSessionResult:
-        # pylint: disable=line-too-long
         """Create a new detect liveness session.
 
         A session is best for client device scenarios where developers want to authorize a client
@@ -2392,27 +1549,20 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
          MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str"  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                }
         """
 
     @distributed_trace
     def create_liveness_session(
-        self, body: Union[_models.CreateLivenessSessionContent, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        liveness_operation_mode: Union[str, _models.LivenessOperationMode] = _Unset,
+        send_results_to_client: Optional[bool] = None,
+        device_correlation_id_set_in_client: Optional[bool] = None,
+        device_correlation_id: Optional[str] = None,
+        auth_token_time_to_live_in_seconds: Optional[int] = None,
+        **kwargs: Any,
     ) -> _models.CreateLivenessSessionResult:
-        # pylint: disable=line-too-long
         """Create a new detect liveness session.
 
         A session is best for client device scenarios where developers want to authorize a client
@@ -2435,47 +1585,32 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         operation. To retrieve a result, use the Get Liveness Session. To audit the individual requests
         that a client has made to your resource, use the List Liveness Session Audit Entries.
 
-        :param body: Is one of the following types: CreateLivenessSessionContent, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessSessionContent or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword liveness_operation_mode: Type of liveness mode the client should follow. Known values
+         are: "Passive" and "PassiveActive". Required.
+        :paramtype liveness_operation_mode: str or ~azure.ai.vision.face.models.LivenessOperationMode
+        :keyword send_results_to_client: Whether or not to allow a '200 - Success' response body to be
+         sent to the client, which may be undesirable for security reasons. Default is false, clients
+         will receive a '204 - NoContent' empty body response. Regardless of selection, calling Session
+         GetResult will always contain a response body enabling business logic to be implemented.
+         Default value is None.
+        :paramtype send_results_to_client: bool
+        :keyword device_correlation_id_set_in_client: Whether or not to allow client to set their own
+         'deviceCorrelationId' via the Vision SDK. Default is false, and 'deviceCorrelationId' must be
+         set in this request body. Default value is None.
+        :paramtype device_correlation_id_set_in_client: bool
+        :keyword device_correlation_id: Unique Guid per each end-user device. This is to provide rate
+         limiting and anti-hammering. If 'deviceCorrelationIdSetInClient' is true in this request, this
+         'deviceCorrelationId' must be null. Default value is None.
+        :paramtype device_correlation_id: str
+        :keyword auth_token_time_to_live_in_seconds: Seconds the session should last for. Range is 60
+         to 86400 seconds. Default value is 600. Default value is None.
+        :paramtype auth_token_time_to_live_in_seconds: int
         :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
          MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. Known values are: "Passive" and "PassiveActive".
-                    "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
-                      last for. Range is 60 to 86400 seconds. Default value is 600.
-                    "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
-                      device. This is to provide rate limiting and anti-hammering. If
-                      'deviceCorrelationIdSetInClient' is true in this request, this
-                      'deviceCorrelationId' must be null.
-                    "deviceCorrelationIdSetInClient": bool,  # Optional. Whether or not to allow
-                      client to set their own 'deviceCorrelationId' via the Vision SDK. Default is
-                      false, and 'deviceCorrelationId' must be set in this request body.
-                    "sendResultsToClient": bool  # Optional. Whether or not to allow a '200 -
-                      Success' response body to be sent to the client, which may be undesirable for
-                      security reasons. Default is false, clients will receive a '204 - NoContent'
-                      empty body response. Regardless of selection, calling Session GetResult will
-                      always contain a response body enabling business logic to be implemented.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str"  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -2491,6 +1626,17 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CreateLivenessSessionResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if liveness_operation_mode is _Unset:
+                raise TypeError("missing required argument: liveness_operation_mode")
+            body = {
+                "authTokenTimeToLiveInSeconds": auth_token_time_to_live_in_seconds,
+                "deviceCorrelationId": device_correlation_id,
+                "deviceCorrelationIdSetInClient": device_correlation_id_set_in_client,
+                "livenessOperationMode": liveness_operation_mode,
+                "sendResultsToClient": send_results_to_client,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -2519,7 +1665,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2586,8 +1735,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2597,7 +1744,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @distributed_trace
     def get_liveness_session_result(self, session_id: str, **kwargs: Any) -> _models.LivenessSession:
-        # pylint: disable=line-too-long
         """Get session result of detectLiveness/singleModal call.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -2605,121 +1751,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :return: LivenessSession. The LivenessSession is compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # DateTime when this session was
-                      created. Required.
-                    "id": "str",  # The unique ID to reference this session. Required.
-                    "sessionExpired": bool,  # Whether or not the session is expired. Required.
-                    "status": "str",  # The current status of the session. Required. Known values
-                      are: "NotStarted", "Started", and "ResultAvailable".
-                    "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
-                      last for. Range is 60 to 86400 seconds. Default value is 600.
-                    "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
-                      device. This is to provide rate limiting and anti-hammering. If
-                      'deviceCorrelationIdSetInClient' is true in this request, this
-                      'deviceCorrelationId' must be null.
-                    "result": {
-                        "clientRequestId": "str",  # The unique clientRequestId that is sent
-                          by the client in the 'client-request-id' header. Required.
-                        "digest": "str",  # The server calculated digest for this request. If
-                          the client reported digest differs from the server calculated digest, then
-                          the message integrity between the client and service has been compromised and
-                          the result should not be trusted. For more information, see how to guides on
-                          how to leverage this value to secure your end-to-end solution. Required.
-                        "id": 0,  # The unique id to refer to this audit request. Use this id
-                          with the 'start' query parameter to continue on to the next page of audit
-                          results. Required.
-                        "receivedDateTime": "2020-02-20 00:00:00",  # The UTC DateTime that
-                          the request was received. Required.
-                        "request": {
-                            "contentType": "str",  # The content type of the request.
-                              Required.
-                            "method": "str",  # The HTTP method of the request (i.e.,
-                              GET, POST, DELETE). Required.
-                            "url": "str",  # The relative URL and query of the liveness
-                              request. Required.
-                            "contentLength": 0,  # Optional. The length of the request
-                              body in bytes.
-                            "userAgent": "str"  # Optional. The user agent used to submit
-                              the request.
-                        },
-                        "requestId": "str",  # The unique requestId that is returned by the
-                          service to the client in the 'apim-request-id' header. Required.
-                        "response": {
-                            "body": {
-                                "livenessDecision": "str",  # Optional. The liveness
-                                  classification for the target face. Known values are: "uncertain",
-                                  "realface", and "spoofface".
-                                "modelVersionUsed": "str",  # Optional. The model
-                                  version used for liveness classification. Known values are:
-                                  "2020-02-15-preview.01", "2021-11-12-preview.03",
-                                  "2022-10-15-preview.04", and "2023-03-02-preview.05".
-                                "target": {
-                                    "faceRectangle": {
-                                        "height": 0,  # The height of the
-                                          rectangle, in pixels. Required.
-                                        "left": 0,  # The distance from the
-                                          left edge if the image to the left edge of the rectangle, in
-                                          pixels. Required.
-                                        "top": 0,  # The distance from the
-                                          top edge if the image to the top edge of the rectangle, in
-                                          pixels. Required.
-                                        "width": 0  # The width of the
-                                          rectangle, in pixels. Required.
-                                    },
-                                    "fileName": "str",  # The file name which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required.
-                                    "imageType": "str",  # The image type which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required. Known values are: "Color", "Infrared", and
-                                      "Depth".
-                                    "timeOffsetWithinFile": 0  # The time offset
-                                      within the file of the frame which contains the face rectangle
-                                      where the liveness classification was made on. Required.
-                                },
-                                "verifyResult": {
-                                    "isIdentical": bool,  # Whether the target
-                                      liveness face and comparison image face match. Required.
-                                    "matchConfidence": 0.0,  # The target face
-                                      liveness face and comparison image face verification confidence.
-                                      Required.
-                                    "verifyImage": {
-                                        "faceRectangle": {
-                                            "height": 0,  # The height of
-                                              the rectangle, in pixels. Required.
-                                            "left": 0,  # The distance
-                                              from the left edge if the image to the left edge of the
-                                              rectangle, in pixels. Required.
-                                            "top": 0,  # The distance
-                                              from the top edge if the image to the top edge of the
-                                              rectangle, in pixels. Required.
-                                            "width": 0  # The width of
-                                              the rectangle, in pixels. Required.
-                                        },
-                                        "qualityForRecognition": "str"  #
-                                          Quality of face image for recognition. Required. Known values
-                                          are: "low", "medium", and "high".
-                                    }
-                                }
-                            },
-                            "latencyInMilliseconds": 0,  # The server measured latency
-                              for this request in milliseconds. Required.
-                            "statusCode": 0  # The HTTP status code returned to the
-                              client. Required.
-                        },
-                        "sessionId": "str"  # The unique sessionId of the created session. It
-                          will expire 48 hours after it was created or may be deleted sooner using the
-                          corresponding session DELETE operation. Required.
-                    },
-                    "sessionStartDateTime": "2020-02-20 00:00:00"  # Optional. DateTime when this
-                      session was started by the client.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -2754,7 +1785,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2773,7 +1807,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     def get_liveness_sessions(
         self, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> List[_models.LivenessSessionItem]:
-        # pylint: disable=line-too-long
         """Lists sessions for /detectLiveness/SingleModal.
 
         List sessions from the last sessionId greater than the 'start'.
@@ -2789,28 +1822,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :return: list of LivenessSessionItem
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "createdDateTime": "2020-02-20 00:00:00",  # DateTime when this
-                          session was created. Required.
-                        "id": "str",  # The unique ID to reference this session. Required.
-                        "sessionExpired": bool,  # Whether or not the session is expired.
-                          Required.
-                        "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session
-                          should last for. Range is 60 to 86400 seconds. Default value is 600.
-                        "deviceCorrelationId": "str",  # Optional. Unique Guid per each
-                          end-user device. This is to provide rate limiting and anti-hammering. If
-                          'deviceCorrelationIdSetInClient' is true in this request, this
-                          'deviceCorrelationId' must be null.
-                        "sessionStartDateTime": "2020-02-20 00:00:00"  # Optional. DateTime
-                          when this session was started by the client.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -2846,7 +1857,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2865,7 +1879,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     def get_liveness_session_audit_entries(
         self, session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> List[_models.LivenessSessionAuditEntry]:
-        # pylint: disable=line-too-long
         """Gets session requests and response body for the session.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -2879,107 +1892,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :return: list of LivenessSessionAuditEntry
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "clientRequestId": "str",  # The unique clientRequestId that is sent
-                          by the client in the 'client-request-id' header. Required.
-                        "digest": "str",  # The server calculated digest for this request. If
-                          the client reported digest differs from the server calculated digest, then
-                          the message integrity between the client and service has been compromised and
-                          the result should not be trusted. For more information, see how to guides on
-                          how to leverage this value to secure your end-to-end solution. Required.
-                        "id": 0,  # The unique id to refer to this audit request. Use this id
-                          with the 'start' query parameter to continue on to the next page of audit
-                          results. Required.
-                        "receivedDateTime": "2020-02-20 00:00:00",  # The UTC DateTime that
-                          the request was received. Required.
-                        "request": {
-                            "contentType": "str",  # The content type of the request.
-                              Required.
-                            "method": "str",  # The HTTP method of the request (i.e.,
-                              GET, POST, DELETE). Required.
-                            "url": "str",  # The relative URL and query of the liveness
-                              request. Required.
-                            "contentLength": 0,  # Optional. The length of the request
-                              body in bytes.
-                            "userAgent": "str"  # Optional. The user agent used to submit
-                              the request.
-                        },
-                        "requestId": "str",  # The unique requestId that is returned by the
-                          service to the client in the 'apim-request-id' header. Required.
-                        "response": {
-                            "body": {
-                                "livenessDecision": "str",  # Optional. The liveness
-                                  classification for the target face. Known values are: "uncertain",
-                                  "realface", and "spoofface".
-                                "modelVersionUsed": "str",  # Optional. The model
-                                  version used for liveness classification. Known values are:
-                                  "2020-02-15-preview.01", "2021-11-12-preview.03",
-                                  "2022-10-15-preview.04", and "2023-03-02-preview.05".
-                                "target": {
-                                    "faceRectangle": {
-                                        "height": 0,  # The height of the
-                                          rectangle, in pixels. Required.
-                                        "left": 0,  # The distance from the
-                                          left edge if the image to the left edge of the rectangle, in
-                                          pixels. Required.
-                                        "top": 0,  # The distance from the
-                                          top edge if the image to the top edge of the rectangle, in
-                                          pixels. Required.
-                                        "width": 0  # The width of the
-                                          rectangle, in pixels. Required.
-                                    },
-                                    "fileName": "str",  # The file name which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required.
-                                    "imageType": "str",  # The image type which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required. Known values are: "Color", "Infrared", and
-                                      "Depth".
-                                    "timeOffsetWithinFile": 0  # The time offset
-                                      within the file of the frame which contains the face rectangle
-                                      where the liveness classification was made on. Required.
-                                },
-                                "verifyResult": {
-                                    "isIdentical": bool,  # Whether the target
-                                      liveness face and comparison image face match. Required.
-                                    "matchConfidence": 0.0,  # The target face
-                                      liveness face and comparison image face verification confidence.
-                                      Required.
-                                    "verifyImage": {
-                                        "faceRectangle": {
-                                            "height": 0,  # The height of
-                                              the rectangle, in pixels. Required.
-                                            "left": 0,  # The distance
-                                              from the left edge if the image to the left edge of the
-                                              rectangle, in pixels. Required.
-                                            "top": 0,  # The distance
-                                              from the top edge if the image to the top edge of the
-                                              rectangle, in pixels. Required.
-                                            "width": 0  # The width of
-                                              the rectangle, in pixels. Required.
-                                        },
-                                        "qualityForRecognition": "str"  #
-                                          Quality of face image for recognition. Required. Known values
-                                          are: "low", "medium", and "high".
-                                    }
-                                }
-                            },
-                            "latencyInMilliseconds": 0,  # The server measured latency
-                              for this request in milliseconds. Required.
-                            "statusCode": 0  # The HTTP status code returned to the
-                              client. Required.
-                        },
-                        "sessionId": "str"  # The unique sessionId of the created session. It
-                          will expire 48 hours after it was created or may be deleted sooner using the
-                          corresponding session DELETE operation. Required.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3016,7 +1928,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3033,11 +1948,19 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @overload
     def _create_liveness_with_verify_session(
-        self, body: _models.CreateLivenessSessionContent, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateLivenessWithVerifySessionResult: ...
     @overload
     def _create_liveness_with_verify_session(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        *,
+        liveness_operation_mode: Union[str, _models.LivenessOperationMode],
+        content_type: str = "application/json",
+        send_results_to_client: Optional[bool] = None,
+        device_correlation_id_set_in_client: Optional[bool] = None,
+        device_correlation_id: Optional[str] = None,
+        auth_token_time_to_live_in_seconds: Optional[int] = None,
+        **kwargs: Any,
     ) -> _models.CreateLivenessWithVerifySessionResult: ...
     @overload
     def _create_liveness_with_verify_session(
@@ -3046,9 +1969,16 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @distributed_trace
     def _create_liveness_with_verify_session(
-        self, body: Union[_models.CreateLivenessSessionContent, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        liveness_operation_mode: Union[str, _models.LivenessOperationMode] = _Unset,
+        send_results_to_client: Optional[bool] = None,
+        device_correlation_id_set_in_client: Optional[bool] = None,
+        device_correlation_id: Optional[str] = None,
+        auth_token_time_to_live_in_seconds: Optional[int] = None,
+        **kwargs: Any,
     ) -> _models.CreateLivenessWithVerifySessionResult:
-        # pylint: disable=line-too-long
         """Create a new liveness session with verify. Client device submits VerifyImage during the
         /detectLivenessWithVerify/singleModal call.
 
@@ -3088,61 +2018,32 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
            Extra measures should be taken to validate that the client is sending the expected
         VerifyImage.
 
-        :param body: Is one of the following types: CreateLivenessSessionContent, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessSessionContent or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword liveness_operation_mode: Type of liveness mode the client should follow. Known values
+         are: "Passive" and "PassiveActive". Required.
+        :paramtype liveness_operation_mode: str or ~azure.ai.vision.face.models.LivenessOperationMode
+        :keyword send_results_to_client: Whether or not to allow a '200 - Success' response body to be
+         sent to the client, which may be undesirable for security reasons. Default is false, clients
+         will receive a '204 - NoContent' empty body response. Regardless of selection, calling Session
+         GetResult will always contain a response body enabling business logic to be implemented.
+         Default value is None.
+        :paramtype send_results_to_client: bool
+        :keyword device_correlation_id_set_in_client: Whether or not to allow client to set their own
+         'deviceCorrelationId' via the Vision SDK. Default is false, and 'deviceCorrelationId' must be
+         set in this request body. Default value is None.
+        :paramtype device_correlation_id_set_in_client: bool
+        :keyword device_correlation_id: Unique Guid per each end-user device. This is to provide rate
+         limiting and anti-hammering. If 'deviceCorrelationIdSetInClient' is true in this request, this
+         'deviceCorrelationId' must be null. Default value is None.
+        :paramtype device_correlation_id: str
+        :keyword auth_token_time_to_live_in_seconds: Seconds the session should last for. Range is 60
+         to 86400 seconds. Default value is 600. Default value is None.
+        :paramtype auth_token_time_to_live_in_seconds: int
         :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
          compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. Known values are: "Passive" and "PassiveActive".
-                    "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
-                      last for. Range is 60 to 86400 seconds. Default value is 600.
-                    "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
-                      device. This is to provide rate limiting and anti-hammering. If
-                      'deviceCorrelationIdSetInClient' is true in this request, this
-                      'deviceCorrelationId' must be null.
-                    "deviceCorrelationIdSetInClient": bool,  # Optional. Whether or not to allow
-                      client to set their own 'deviceCorrelationId' via the Vision SDK. Default is
-                      false, and 'deviceCorrelationId' must be set in this request body.
-                    "sendResultsToClient": bool  # Optional. Whether or not to allow a '200 -
-                      Success' response body to be sent to the client, which may be undesirable for
-                      security reasons. Default is false, clients will receive a '204 - NoContent'
-                      empty body response. Regardless of selection, calling Session GetResult will
-                      always contain a response body enabling business logic to be implemented.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str",  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                    "verifyImage": {
-                        "faceRectangle": {
-                            "height": 0,  # The height of the rectangle, in pixels.
-                              Required.
-                            "left": 0,  # The distance from the left edge if the image to
-                              the left edge of the rectangle, in pixels. Required.
-                            "top": 0,  # The distance from the top edge if the image to
-                              the top edge of the rectangle, in pixels. Required.
-                            "width": 0  # The width of the rectangle, in pixels.
-                              Required.
-                        },
-                        "qualityForRecognition": "str"  # Quality of face image for
-                          recognition. Required. Known values are: "low", "medium", and "high".
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3158,6 +2059,17 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CreateLivenessWithVerifySessionResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if liveness_operation_mode is _Unset:
+                raise TypeError("missing required argument: liveness_operation_mode")
+            body = {
+                "authTokenTimeToLiveInSeconds": auth_token_time_to_live_in_seconds,
+                "deviceCorrelationId": device_correlation_id,
+                "deviceCorrelationIdSetInClient": device_correlation_id_set_in_client,
+                "livenessOperationMode": liveness_operation_mode,
+                "sendResultsToClient": send_results_to_client,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3186,7 +2098,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3202,19 +2117,23 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=protected-access,name-too-long
-        self, body: _models._models.CreateLivenessWithVerifySessionContent, **kwargs: Any
+    def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
+        self, body: JSON, **kwargs: Any
     ) -> _models.CreateLivenessWithVerifySessionResult: ...
     @overload
     def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
-        self, body: JSON, **kwargs: Any
+        self, *, parameters: _models._models.CreateLivenessSessionContent, verify_image: FileType, **kwargs: Any
     ) -> _models.CreateLivenessWithVerifySessionResult: ...
 
     @distributed_trace
     def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
-        self, body: Union[_models._models.CreateLivenessWithVerifySessionContent, JSON], **kwargs: Any
+        self,
+        body: JSON = _Unset,
+        *,
+        parameters: _models._models.CreateLivenessSessionContent = _Unset,
+        verify_image: FileType = _Unset,
+        **kwargs: Any,
     ) -> _models.CreateLivenessWithVerifySessionResult:
-        # pylint: disable=line-too-long
         """Create a new liveness session with verify. Provide the verify image during session creation.
 
         A session is best for client device scenarios where developers want to authorize a client
@@ -3246,64 +2165,17 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         Recommended Option: VerifyImage is provided during session creation.
 
-        :param body: Is either a CreateLivenessWithVerifySessionContent type or a JSON type. Required.
-        :type body: ~azure.ai.vision.face.models._models.CreateLivenessWithVerifySessionContent or JSON
+        :param body: Is one of the following types: JSON Required.
+        :type body: JSON
+        :keyword parameters: The parameters for creating session. Required.
+        :paramtype parameters: ~azure.ai.vision.face.models._models.CreateLivenessSessionContent
+        :keyword verify_image: The image stream for verify. Content-Disposition header field for this
+         part must have filename. Required.
+        :paramtype verify_image: ~azure.ai.vision.face._vendor.FileType
         :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
          compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "Parameters": {
-                        "livenessOperationMode": "str",  # Type of liveness mode the client
-                          should follow. Required. Known values are: "Passive" and "PassiveActive".
-                        "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session
-                          should last for. Range is 60 to 86400 seconds. Default value is 600.
-                        "deviceCorrelationId": "str",  # Optional. Unique Guid per each
-                          end-user device. This is to provide rate limiting and anti-hammering. If
-                          'deviceCorrelationIdSetInClient' is true in this request, this
-                          'deviceCorrelationId' must be null.
-                        "deviceCorrelationIdSetInClient": bool,  # Optional. Whether or not
-                          to allow client to set their own 'deviceCorrelationId' via the Vision SDK.
-                          Default is false, and 'deviceCorrelationId' must be set in this request body.
-                        "sendResultsToClient": bool  # Optional. Whether or not to allow a
-                          '200 - Success' response body to be sent to the client, which may be
-                          undesirable for security reasons. Default is false, clients will receive a
-                          '204 - NoContent' empty body response. Regardless of selection, calling
-                          Session GetResult will always contain a response body enabling business logic
-                          to be implemented.
-                    },
-                    "VerifyImage": filetype
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "authToken": "str",  # Bearer token to provide authentication for the Vision
-                      SDK running on a client application. This Bearer token has limited permissions to
-                      perform only the required action and expires after the TTL time. It is also
-                      auditable. Required.
-                    "sessionId": "str",  # The unique session ID of the created session. It will
-                      expire 48 hours after it was created or may be deleted sooner using the
-                      corresponding Session DELETE operation. Required.
-                    "verifyImage": {
-                        "faceRectangle": {
-                            "height": 0,  # The height of the rectangle, in pixels.
-                              Required.
-                            "left": 0,  # The distance from the left edge if the image to
-                              the left edge of the rectangle, in pixels. Required.
-                            "top": 0,  # The distance from the top edge if the image to
-                              the top edge of the rectangle, in pixels. Required.
-                            "width": 0  # The width of the rectangle, in pixels.
-                              Required.
-                        },
-                        "qualityForRecognition": "str"  # Quality of face image for
-                          recognition. Required. Known values are: "low", "medium", and "high".
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3318,6 +2190,13 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         cls: ClsType[_models.CreateLivenessWithVerifySessionResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if parameters is _Unset:
+                raise TypeError("missing required argument: parameters")
+            if verify_image is _Unset:
+                raise TypeError("missing required argument: verify_image")
+            body = {"Parameters": parameters, "VerifyImage": verify_image}
+            body = {k: v for k, v in body.items() if v is not None}
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["VerifyImage"]
         _data_fields: List[str] = ["Parameters"]
@@ -3344,7 +2223,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3411,8 +2293,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3424,7 +2304,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     def get_liveness_with_verify_session_result(
         self, session_id: str, **kwargs: Any
     ) -> _models.LivenessWithVerifySession:
-        # pylint: disable=line-too-long
         """Get session result of detectLivenessWithVerify/singleModal call.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -3433,121 +2312,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
          MutableMapping
         :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # DateTime when this session was
-                      created. Required.
-                    "id": "str",  # The unique ID to reference this session. Required.
-                    "sessionExpired": bool,  # Whether or not the session is expired. Required.
-                    "status": "str",  # The current status of the session. Required. Known values
-                      are: "NotStarted", "Started", and "ResultAvailable".
-                    "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
-                      last for. Range is 60 to 86400 seconds. Default value is 600.
-                    "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
-                      device. This is to provide rate limiting and anti-hammering. If
-                      'deviceCorrelationIdSetInClient' is true in this request, this
-                      'deviceCorrelationId' must be null.
-                    "result": {
-                        "clientRequestId": "str",  # The unique clientRequestId that is sent
-                          by the client in the 'client-request-id' header. Required.
-                        "digest": "str",  # The server calculated digest for this request. If
-                          the client reported digest differs from the server calculated digest, then
-                          the message integrity between the client and service has been compromised and
-                          the result should not be trusted. For more information, see how to guides on
-                          how to leverage this value to secure your end-to-end solution. Required.
-                        "id": 0,  # The unique id to refer to this audit request. Use this id
-                          with the 'start' query parameter to continue on to the next page of audit
-                          results. Required.
-                        "receivedDateTime": "2020-02-20 00:00:00",  # The UTC DateTime that
-                          the request was received. Required.
-                        "request": {
-                            "contentType": "str",  # The content type of the request.
-                              Required.
-                            "method": "str",  # The HTTP method of the request (i.e.,
-                              GET, POST, DELETE). Required.
-                            "url": "str",  # The relative URL and query of the liveness
-                              request. Required.
-                            "contentLength": 0,  # Optional. The length of the request
-                              body in bytes.
-                            "userAgent": "str"  # Optional. The user agent used to submit
-                              the request.
-                        },
-                        "requestId": "str",  # The unique requestId that is returned by the
-                          service to the client in the 'apim-request-id' header. Required.
-                        "response": {
-                            "body": {
-                                "livenessDecision": "str",  # Optional. The liveness
-                                  classification for the target face. Known values are: "uncertain",
-                                  "realface", and "spoofface".
-                                "modelVersionUsed": "str",  # Optional. The model
-                                  version used for liveness classification. Known values are:
-                                  "2020-02-15-preview.01", "2021-11-12-preview.03",
-                                  "2022-10-15-preview.04", and "2023-03-02-preview.05".
-                                "target": {
-                                    "faceRectangle": {
-                                        "height": 0,  # The height of the
-                                          rectangle, in pixels. Required.
-                                        "left": 0,  # The distance from the
-                                          left edge if the image to the left edge of the rectangle, in
-                                          pixels. Required.
-                                        "top": 0,  # The distance from the
-                                          top edge if the image to the top edge of the rectangle, in
-                                          pixels. Required.
-                                        "width": 0  # The width of the
-                                          rectangle, in pixels. Required.
-                                    },
-                                    "fileName": "str",  # The file name which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required.
-                                    "imageType": "str",  # The image type which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required. Known values are: "Color", "Infrared", and
-                                      "Depth".
-                                    "timeOffsetWithinFile": 0  # The time offset
-                                      within the file of the frame which contains the face rectangle
-                                      where the liveness classification was made on. Required.
-                                },
-                                "verifyResult": {
-                                    "isIdentical": bool,  # Whether the target
-                                      liveness face and comparison image face match. Required.
-                                    "matchConfidence": 0.0,  # The target face
-                                      liveness face and comparison image face verification confidence.
-                                      Required.
-                                    "verifyImage": {
-                                        "faceRectangle": {
-                                            "height": 0,  # The height of
-                                              the rectangle, in pixels. Required.
-                                            "left": 0,  # The distance
-                                              from the left edge if the image to the left edge of the
-                                              rectangle, in pixels. Required.
-                                            "top": 0,  # The distance
-                                              from the top edge if the image to the top edge of the
-                                              rectangle, in pixels. Required.
-                                            "width": 0  # The width of
-                                              the rectangle, in pixels. Required.
-                                        },
-                                        "qualityForRecognition": "str"  #
-                                          Quality of face image for recognition. Required. Known values
-                                          are: "low", "medium", and "high".
-                                    }
-                                }
-                            },
-                            "latencyInMilliseconds": 0,  # The server measured latency
-                              for this request in milliseconds. Required.
-                            "statusCode": 0  # The HTTP status code returned to the
-                              client. Required.
-                        },
-                        "sessionId": "str"  # The unique sessionId of the created session. It
-                          will expire 48 hours after it was created or may be deleted sooner using the
-                          corresponding session DELETE operation. Required.
-                    },
-                    "sessionStartDateTime": "2020-02-20 00:00:00"  # Optional. DateTime when this
-                      session was started by the client.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3582,7 +2346,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3601,7 +2368,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     def get_liveness_with_verify_sessions(
         self, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> List[_models.LivenessSessionItem]:
-        # pylint: disable=line-too-long
         """Lists sessions for /detectLivenessWithVerify/SingleModal.
 
         List sessions from the last sessionId greater than the "start".
@@ -3617,28 +2383,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :return: list of LivenessSessionItem
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "createdDateTime": "2020-02-20 00:00:00",  # DateTime when this
-                          session was created. Required.
-                        "id": "str",  # The unique ID to reference this session. Required.
-                        "sessionExpired": bool,  # Whether or not the session is expired.
-                          Required.
-                        "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session
-                          should last for. Range is 60 to 86400 seconds. Default value is 600.
-                        "deviceCorrelationId": "str",  # Optional. Unique Guid per each
-                          end-user device. This is to provide rate limiting and anti-hammering. If
-                          'deviceCorrelationIdSetInClient' is true in this request, this
-                          'deviceCorrelationId' must be null.
-                        "sessionStartDateTime": "2020-02-20 00:00:00"  # Optional. DateTime
-                          when this session was started by the client.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3674,7 +2418,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3693,7 +2440,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     def get_liveness_with_verify_session_audit_entries(  # pylint: disable=name-too-long
         self, session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> List[_models.LivenessSessionAuditEntry]:
-        # pylint: disable=line-too-long
         """Gets session requests and response body for the session.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -3707,107 +2453,6 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :return: list of LivenessSessionAuditEntry
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "clientRequestId": "str",  # The unique clientRequestId that is sent
-                          by the client in the 'client-request-id' header. Required.
-                        "digest": "str",  # The server calculated digest for this request. If
-                          the client reported digest differs from the server calculated digest, then
-                          the message integrity between the client and service has been compromised and
-                          the result should not be trusted. For more information, see how to guides on
-                          how to leverage this value to secure your end-to-end solution. Required.
-                        "id": 0,  # The unique id to refer to this audit request. Use this id
-                          with the 'start' query parameter to continue on to the next page of audit
-                          results. Required.
-                        "receivedDateTime": "2020-02-20 00:00:00",  # The UTC DateTime that
-                          the request was received. Required.
-                        "request": {
-                            "contentType": "str",  # The content type of the request.
-                              Required.
-                            "method": "str",  # The HTTP method of the request (i.e.,
-                              GET, POST, DELETE). Required.
-                            "url": "str",  # The relative URL and query of the liveness
-                              request. Required.
-                            "contentLength": 0,  # Optional. The length of the request
-                              body in bytes.
-                            "userAgent": "str"  # Optional. The user agent used to submit
-                              the request.
-                        },
-                        "requestId": "str",  # The unique requestId that is returned by the
-                          service to the client in the 'apim-request-id' header. Required.
-                        "response": {
-                            "body": {
-                                "livenessDecision": "str",  # Optional. The liveness
-                                  classification for the target face. Known values are: "uncertain",
-                                  "realface", and "spoofface".
-                                "modelVersionUsed": "str",  # Optional. The model
-                                  version used for liveness classification. Known values are:
-                                  "2020-02-15-preview.01", "2021-11-12-preview.03",
-                                  "2022-10-15-preview.04", and "2023-03-02-preview.05".
-                                "target": {
-                                    "faceRectangle": {
-                                        "height": 0,  # The height of the
-                                          rectangle, in pixels. Required.
-                                        "left": 0,  # The distance from the
-                                          left edge if the image to the left edge of the rectangle, in
-                                          pixels. Required.
-                                        "top": 0,  # The distance from the
-                                          top edge if the image to the top edge of the rectangle, in
-                                          pixels. Required.
-                                        "width": 0  # The width of the
-                                          rectangle, in pixels. Required.
-                                    },
-                                    "fileName": "str",  # The file name which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required.
-                                    "imageType": "str",  # The image type which
-                                      contains the face rectangle where the liveness classification was
-                                      made on. Required. Known values are: "Color", "Infrared", and
-                                      "Depth".
-                                    "timeOffsetWithinFile": 0  # The time offset
-                                      within the file of the frame which contains the face rectangle
-                                      where the liveness classification was made on. Required.
-                                },
-                                "verifyResult": {
-                                    "isIdentical": bool,  # Whether the target
-                                      liveness face and comparison image face match. Required.
-                                    "matchConfidence": 0.0,  # The target face
-                                      liveness face and comparison image face verification confidence.
-                                      Required.
-                                    "verifyImage": {
-                                        "faceRectangle": {
-                                            "height": 0,  # The height of
-                                              the rectangle, in pixels. Required.
-                                            "left": 0,  # The distance
-                                              from the left edge if the image to the left edge of the
-                                              rectangle, in pixels. Required.
-                                            "top": 0,  # The distance
-                                              from the top edge if the image to the top edge of the
-                                              rectangle, in pixels. Required.
-                                            "width": 0  # The width of
-                                              the rectangle, in pixels. Required.
-                                        },
-                                        "qualityForRecognition": "str"  #
-                                          Quality of face image for recognition. Required. Known values
-                                          are: "low", "medium", and "high".
-                                    }
-                                }
-                            },
-                            "latencyInMilliseconds": 0,  # The server measured latency
-                              for this request in milliseconds. Required.
-                            "statusCode": 0  # The HTTP status code returned to the
-                              client. Required.
-                        },
-                        "sessionId": "str"  # The unique sessionId of the created session. It
-                          will expire 48 hours after it was created or may be deleted sooner using the
-                          corresponding session DELETE operation. Required.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -3844,7 +2489,10 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)

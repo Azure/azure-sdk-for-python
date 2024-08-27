@@ -192,27 +192,25 @@ class HairColorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The model version used for liveness classification."""
 
-    V2020_02_15_PREVIEW_01 = "2020-02-15-preview.01"
-    V2021_11_12_PREVIEW_03 = "2021-11-12-preview.03"
     V2022_10_15_PREVIEW_04 = "2022-10-15-preview.04"
-    V2023_03_02_PREVIEW_05 = "2023-03-02-preview.05"
+    V2023_12_20_PREVIEW_06 = "2023-12-20-preview.06"
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The liveness operation mode to drive the client’s end-user experience."""
+    """The liveness operation mode to drive the client's end-user experience."""
 
     PASSIVE = "Passive"
     """Utilizes a passive liveness technique that requires no additional actions from the user.
     Requires normal indoor lighting and high screen brightness for optimal performance. And thus,
     this mode has a narrow operational envelope and will not be suitable for scenarios that
-    requires the end-user’s to be in bright lighting conditions. Note: this is the only supported
+    requires the end-user's to be in bright lighting conditions. Note: this is the only supported
     mode for the Mobile (iOS and Android) solution."""
     PASSIVE_ACTIVE = "PassiveActive"
     """This mode utilizes a hybrid passive or active liveness technique that necessitates user
     cooperation. It is optimized to require active motion only under suboptimal lighting
     conditions. Unlike the passive mode, this mode has no lighting restrictions, and thus offering
     a broader operational envelope. This mode is preferable on Web based solutions due to the lack
-    of automatic screen brightness control available on browsers which hinders the Passive mode’s
+    of automatic screen brightness control available on browsers which hinders the Passive mode's
     operational envelope on Web based solutions."""
 
 
@@ -240,6 +238,19 @@ class NoiseLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High noise level."""
 
 
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of long running operation."""
+
+    NOT_STARTED = "notStarted"
+    """The operation is not started."""
+    RUNNING = "running"
+    """The operation is still running."""
+    SUCCEEDED = "succeeded"
+    """The operation is succeeded."""
+    FAILED = "failed"
+    """The operation is failed."""
+
+
 class QualityForRecognition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates quality of image for recognition."""
 
@@ -256,3 +267,5 @@ class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     V1_1_PREVIEW_1 = "v1.1-preview.1"
     """v1.1-preview.1"""
+    V1_2_PREVIEW_1 = "v1.2-preview.1"
+    """v1.2-preview.1"""
