@@ -32,7 +32,7 @@ steps:
         $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.tar.gz"
         Write-Host "Artifacts found:"
         $artifacts = $packages | ForEach-Object {
-          if ($_.Name -match "([a-zA-Z\-\_]+)\-(.*).tar.gz") {
+          if ($_.Name -match "([a-zA-Z\-_]+)\-(.*).tar.gz") {
             Write-Host "$($matches[1]): $($matches[2])"
             return @{ "name" = $matches[1].ToString().Replace("_", "-"); "version" = $matches[2] }
           }
