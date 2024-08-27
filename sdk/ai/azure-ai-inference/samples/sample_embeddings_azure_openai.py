@@ -53,7 +53,8 @@ def sample_embeddings_azure_openai():
 
         client = EmbeddingsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(key),
+            credential=AzureKeyCredential(""),  # Pass in an empty value.
+            headers={"api-key": key},
             api_version="2024-06-01",  # AOAI api-version. Update as needed.
         )
 

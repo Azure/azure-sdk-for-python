@@ -151,13 +151,15 @@ class ModelClientTestBase(AzureRecordedTestCase):
         endpoint = kwargs.pop("azure_openai_chat_endpoint")
         if key_auth:
             key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
-            credential = AzureKeyCredential(key)
+            headers = {"api-key": key}
+            credential = AzureKeyCredential("")
             credential_scopes: list[str] = []
         else:
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
             credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
+            headers = {}
         api_version = "2024-06-01"
-        return endpoint, credential, credential_scopes, api_version
+        return endpoint, credential, credential_scopes, headers, api_version
 
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
@@ -198,13 +200,14 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_aoai_chat_client(
         self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
     ) -> sdk.ChatCompletionsClient:
-        endpoint, credential, credential_scopes, api_version = self._load_aoai_chat_credentials(
+        endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
             key_auth=key_auth, bad_key=bad_key, **kwargs
         )
         return sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
             credential_scopes=credential_scopes,
+            headers=headers,
             api_version=api_version,
             logging_enable=LOGGING_ENABLED,
         )
@@ -212,13 +215,14 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_async_aoai_chat_client(
         self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
     ) -> async_sdk.ChatCompletionsClient:
-        endpoint, credential, credential_scopes, api_version = self._load_aoai_chat_credentials(
+        endpoint, credential, credential_scopes, headers, api_version = self._load_aoai_chat_credentials(
             key_auth=True, bad_key=bad_key, **kwargs
         )
         return async_sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
             credential_scopes=credential_scopes,
+            headers=headers,
             api_version=api_version,
             logging_enable=LOGGING_ENABLED,
         )
@@ -254,7 +258,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
         assert " Python/" in headers["User-Agent"]
         assert headers["Authorization"] == "Bearer key-value"
-        assert headers["api-key"] == "key-value"
         assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD
 
     def _validate_chat_completions_json_request_payload(self) -> None:
@@ -269,7 +272,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
         assert " Python/" in headers["User-Agent"]
         assert headers["Authorization"] == "Bearer key-value"
-        assert headers["api-key"] == "key-value"
         assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD
 
     @staticmethod

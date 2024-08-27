@@ -230,10 +230,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         model_extras: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self._model_info: Optional[_models.ModelInfo] = None
 
@@ -251,16 +247,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._seed = seed
         self._model = model
         self._model_extras = model_extras
-
-        # For AzureKeyCredential, _client.py is going to add an authentication_policy that results in the
-        # "Authorization: Bearer <api_key>" header, to support Serverless API (aka MaaS) endpoints and
-        # Managed Compute (aka MaaP) endpoints. We are also adding "api-key: <api-key>" header, to support
-        # Azure OpenAI service, so the application does not need to explicitly set this header.
-        if isinstance(credential, AzureKeyCredential):
-            headers = kwargs.pop("headers", {})
-            if "api-key" not in headers:
-                headers["api-key"] = credential.key
-            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -730,10 +716,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         model_extras: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self._model_info: Optional[_models.ModelInfo] = None
 
@@ -744,16 +726,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
-
-        # For AzureKeyCredential, _client.py is going to add an authentication_policy that results in the
-        # "Authorization: Bearer <api_key>" header, to support Serverless API (aka MaaS) endpoints and
-        # Managed Compute (aka MaaP) endpoints. We are also adding "api-key: <api-key>" header, to support
-        # Azure OpenAI service, so the application does not need to explicitly set this header.
-        if isinstance(credential, AzureKeyCredential):
-            headers = kwargs.pop("headers", {})
-            if "api-key" not in headers:
-                headers["api-key"] = credential.key
-            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -1027,10 +999,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         model_extras: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self._model_info: Optional[_models.ModelInfo] = None
 
@@ -1041,16 +1009,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
-
-        # For AzureKeyCredential, _client.py is going to add an authentication_policy that results in the
-        # "Authorization: Bearer <api_key>" header, to support Serverless API (aka MaaS) endpoints and
-        # Managed Compute (aka MaaP) endpoints. We are also adding "api-key: <api-key>" header, to support
-        # Azure OpenAI service, so the application does not need to explicitly set this header.
-        if isinstance(credential, AzureKeyCredential):
-            headers = kwargs.pop("headers", {})
-            if "api-key" not in headers:
-                headers["api-key"] = credential.key
-            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
