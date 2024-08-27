@@ -378,7 +378,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/                                           @GrahamMThomas @danielszaniszlo
+/sdk/healthdataaiservices/                                           @GrahamMThomas
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
