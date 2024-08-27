@@ -103,3 +103,4 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
 
 
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
+output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey

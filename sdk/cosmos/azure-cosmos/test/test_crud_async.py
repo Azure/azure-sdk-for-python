@@ -52,10 +52,12 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
+    masterKey = configs.masterKey
     credential = configs.credential_async
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     database_for_test: DatabaseProxy = None
+    database_for_test_master_key: DatabaseProxy = None
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -71,8 +73,11 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert inst.status_code == status_code
 
     async def asyncSetUp(self):
+
         self.client = CosmosClient(self.host, self.credential)
+        self.client_master_key = CosmosClient(self.host, self.masterKey)
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
+        self.database_for_test_master_key = self.client_master_key.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def tearDown(self):
         await self.client.close()
@@ -433,7 +438,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.database_for_test.delete_container(created_collection.id)
 
     async def test_partitioned_collection_permissions_async(self):
-        created_db = self.database_for_test
+        created_db = self.database_for_test_master_key
 
         collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
@@ -924,7 +929,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         # Should do User CRUD operations successfully.
         # create database
-        db = self.database_for_test
+        db = self.database_for_test_master_key
         # list users
         users = [user async for user in db.list_users()]
         before_create_count = len(users)
@@ -967,7 +972,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_user_upsert_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.database_for_test_master_key
 
         # read users and check count
         users = [user async for user in db.list_users()]
@@ -1020,7 +1025,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_permission_crud_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.database_for_test_master_key
         # create user
         user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
@@ -1066,7 +1071,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_permission_upsert_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.database_for_test_master_key
 
         # create user
         user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
@@ -1147,7 +1152,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
             """
             # create database
-            db = self.database_for_test
+            db = self.database_for_test_master_key
             # create collection
             collection = await db.create_container(
                 id='test_authorization' + str(uuid.uuid4()),
@@ -1185,9 +1190,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 'db': db,
                 'coll': collection,
                 'doc': document,
-                'user': user,
-                'permissionOnColl': permission_on_coll,
-                'permissionOnDoc': permission_on_doc,
+                # 'user': user,
+                # 'permissionOnColl': permission_on_coll,
+                # 'permissionOnDoc': permission_on_doc,
             }
             return entities
 
@@ -1199,7 +1204,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == StatusCodes.UNAUTHORIZED
 
         async with CosmosClient(TestCRUDOperationsAsync.host,
-                                TestCRUDOperationsAsync.credential) as client:
+                                TestCRUDOperationsAsync.masterKey) as client:
             # setup entities
             entities = await __setup_entities()
             resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
@@ -2100,7 +2105,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_resource_with_dictionary_and_object_async(self):
 
-        created_db = self.database_for_test
+        created_db = self.database_for_test_master_key
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
