@@ -19,7 +19,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      python -m pip install pip==24.0
+      python -m pip install pip==20.0.2
       pip --version
     displayName: pip --version
 
