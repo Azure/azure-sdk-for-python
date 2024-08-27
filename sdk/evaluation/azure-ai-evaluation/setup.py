@@ -85,4 +85,7 @@ setup(
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
     },
+    package_data={
+        "pytyped": ["py.typed"],
+    },
 )
