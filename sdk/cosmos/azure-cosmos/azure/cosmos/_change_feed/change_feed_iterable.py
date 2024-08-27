@@ -27,7 +27,7 @@ from azure.core.paging import PageIterator
 
 from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV1, ChangeFeedState
-from azure.cosmos._utils import is_base64_encoded, is_key_exists_and_not_none
+from azure.cosmos._utils import is_base64_encoded
 
 
 class ChangeFeedIterable(PageIterator):
@@ -60,7 +60,7 @@ class ChangeFeedIterable(PageIterator):
         self._collection_link = collection_link
         self._change_feed_fetcher = None
 
-        if not is_key_exists_and_not_none(self._options, "changeFeedStateContext"):
+        if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
 
         change_feed_state_context = self._options.pop("changeFeedStateContext")
@@ -140,11 +140,11 @@ class ChangeFeedIterable(PageIterator):
 
     def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
 
-        if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
+        if change_feed_state_context.get("continuationPkRangeId"):
             # if continuation token is in v1 format, throw exception if feed_range is set
-            if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+            if change_feed_state_context.get("feedRange"):
                 raise ValueError("feed_range and continuation are incompatible")
-        elif is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
+        elif change_feed_state_context.get("continuationFeedRange"):
             # if continuation token is in v2 format, since the token itself contains the full change feed state
             # so we will ignore other parameters (including incompatible parameters) if they passed in
             pass

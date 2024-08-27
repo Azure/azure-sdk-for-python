@@ -38,7 +38,6 @@ from azure.cosmos._change_feed.feed_range_composite_continuation_token import Fe
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
-from azure.cosmos._utils import is_key_exists_and_not_none
 from azure.cosmos.exceptions import CosmosFeedRangeGoneError
 from azure.cosmos.partition_key import _Empty, _Undefined
 
@@ -74,11 +73,11 @@ class ChangeFeedState(ABC):
             container_rid: str,
             change_feed_state_context: Dict[str, Any]):
 
-        if (is_key_exists_and_not_none(change_feed_state_context, "partitionKeyRangeId")
-                or is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId")):
+        if (change_feed_state_context.get("partitionKeyRangeId")
+                or change_feed_state_context.get("continuationPkRangeId")):
             return ChangeFeedStateV1.from_json(container_link, container_rid, change_feed_state_context)
 
-        if is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
+        if change_feed_state_context.get("continuationFeedRange"):
             # get changeFeedState from continuation
             continuation_json_str = base64.b64decode(change_feed_state_context["continuationFeedRange"]).decode(
                 'utf-8')
@@ -376,12 +375,12 @@ class ChangeFeedStateV2(ChangeFeedState):
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
         feed_range: Optional[FeedRange] = None
-        if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+        if change_feed_state_context.get("feedRange"):
             feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
             feed_range_json = json.loads(feed_range_str)
             feed_range = FeedRangeEpk(Range.ParseFromDict(feed_range_json))
-        elif is_key_exists_and_not_none(change_feed_state_context, "partitionKey"):
-            if is_key_exists_and_not_none(change_feed_state_context, "partitionKeyFeedRange"):
+        elif change_feed_state_context.get("partitionKey"):
+            if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
                     FeedRangePartitionKey(
                         change_feed_state_context["partitionKey"],

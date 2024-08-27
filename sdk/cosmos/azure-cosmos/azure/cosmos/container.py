@@ -41,7 +41,6 @@ from ._base import (
 from ._cosmos_client_connection import CosmosClientConnection
 from ._routing import routing_range
 from ._routing.routing_range import Range
-from ._utils import is_key_exists_and_not_none
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -414,13 +413,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         # pylint: disable=too-many-statements
-        if is_key_exists_and_not_none(kwargs, "priority"):
+        if kwargs.get("priority"):
             kwargs['priority'] = kwargs['priority']
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
         # Back compatibility with deprecation warnings for partition_key_range_id
-        if (args and args[0] is not None) or is_key_exists_and_not_none(kwargs, "partition_key_range_id"):
+        if (args and args[0] is not None) or kwargs.get("partition_key_range_id"):
             warnings.warn(
                 "partition_key_range_id is deprecated. Please pass in feed_range instead.",
                 DeprecationWarning
@@ -432,7 +431,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 change_feed_state_context['partitionKeyRangeId'] = args[0]
 
         # Back compatibility with deprecation warnings for is_start_from_beginning
-        if (len(args) >= 2 and args[1] is not None) or is_key_exists_and_not_none(kwargs, "is_start_from_beginning"):
+        if (len(args) >= 2 and args[1] is not None) or kwargs.get("is_start_from_beginning"):
             warnings.warn(
                 "is_start_from_beginning is deprecated. Please pass in start_time instead.",
                 DeprecationWarning
@@ -447,7 +446,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 change_feed_state_context["startTime"] = "Beginning"
 
         # parse start_time
-        if is_key_exists_and_not_none(kwargs, "start_time"):
+        if kwargs.get("start_time"):
             if change_feed_state_context.get("startTime") is not None:
                 raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
 
@@ -458,25 +457,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["startTime"] = start_time
 
         # parse continuation token
-        if len(args) >= 3 and args[2] is not None or is_key_exists_and_not_none(feed_options, "continuation"):
+        if len(args) >= 3 and args[2] is not None or feed_options.get("continuation"):
             try:
                 continuation = feed_options.pop('continuation')
             except KeyError:
                 continuation = args[2]
             change_feed_state_context["continuation"] = continuation
 
-        if len(args) >= 4 and args[3] is not None or is_key_exists_and_not_none(kwargs, "max_item_count"):
+        if len(args) >= 4 and args[3] is not None or kwargs.get("max_item_count"):
             try:
                 feed_options["maxItemCount"] = kwargs.pop('max_item_count')
             except KeyError:
                 feed_options["maxItemCount"] = args[3]
 
-        if is_key_exists_and_not_none(kwargs, "partition_key"):
+        if kwargs.get("partition_key"):
             change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop('partition_key'))
             change_feed_state_context["partitionKeyFeedRange"] =\
                 self._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
 
-        if is_key_exists_and_not_none(kwargs, "feed_range"):
+        if kwargs.get("feed_range"):
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
         container_properties = self._get_properties()

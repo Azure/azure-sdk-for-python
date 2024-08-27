@@ -28,7 +28,8 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.cosmos import PartitionKey
 from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateV1
-from azure.cosmos._utils import is_base64_encoded, is_key_exists_and_not_none
+from azure.cosmos._utils import is_base64_encoded
+
 
 # pylint: disable=protected-access
 
@@ -63,7 +64,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         self._collection_link = collection_link
         self._change_feed_fetcher = None
 
-        if not is_key_exists_and_not_none(self._options, "changeFeedStateContext"):
+        if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
 
         change_feed_state_context = self._options.pop("changeFeedStateContext")
@@ -119,7 +120,7 @@ class ChangeFeedIterable(AsyncPageIterator):
     async def _initialize_change_feed_fetcher(self):
         change_feed_state_context = self._options.pop("changeFeedStateContext")
         conn_properties = await self._options.pop("containerProperties")
-        if is_key_exists_and_not_none(change_feed_state_context, "partitionKey"):
+        if change_feed_state_context.get("partitionKey"):
             change_feed_state_context["partitionKey"] = await change_feed_state_context.pop("partitionKey")
             pk_properties = conn_properties.get("partitionKey")
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
@@ -147,11 +148,11 @@ class ChangeFeedIterable(AsyncPageIterator):
 
     def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
 
-        if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
+        if change_feed_state_context.get("continuationPkRangeId"):
             # if continuation token is in v1 format, throw exception if feed_range is set
-            if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+            if change_feed_state_context.get("feedRange"):
                 raise ValueError("feed_range and continuation are incompatible")
-        elif is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
+        elif change_feed_state_context.get("continuationFeedRange"):
             # if continuation token is in v2 format, since the token itself contains the full change feed state
             # so we will ignore other parameters (including incompatible parameters) if they passed in
             pass

@@ -30,8 +30,6 @@ from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRa
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
-from azure.cosmos._utils import is_key_exists_and_not_none
-
 
 class FeedRangeCompositeContinuation(object):
     _version_property_name = "v"
@@ -90,9 +88,9 @@ class FeedRangeCompositeContinuation(object):
 
         # parsing feed range
         feed_range: Optional[FeedRange] = None
-        if is_key_exists_and_not_none(data, FeedRangeEpk.type_property_name):
+        if data.get(FeedRangeEpk.type_property_name):
             feed_range = FeedRangeEpk.from_json(data)
-        elif is_key_exists_and_not_none(data, FeedRangePartitionKey.type_property_name):
+        elif data.get(FeedRangePartitionKey.type_property_name):
             feed_range = FeedRangePartitionKey.from_json(data, continuation[0].feed_range)
         else:
             raise ValueError("Invalid feed range composite continuation token [Missing feed range scope]")
