@@ -248,7 +248,7 @@ class _ConfigurationClientWrapper:
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
                 feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
-                    feature_flag_selectors, True, **kwargs
+                    feature_flag_selectors, True, headers=headers, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
         return False, None, None, {}
