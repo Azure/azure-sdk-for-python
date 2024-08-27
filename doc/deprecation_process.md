@@ -168,7 +168,7 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
 
 ## Update MS Learn docs
 
-- Clone the [azure-sdk](https://github.com/Azure/azure-sdk) repo, if you haven't already.
+- Create your own fork of the [azure-sdk](https://github.com/Azure/azure-sdk) repo and clone it, if you haven't already.
 - Create a branch in your local copy of the repo: `> git checkout -b python/azure-mypackage_deprecation`
 - Open the `_data/releases/latest/python-packages.csv` file.
   - If using Visual Studio Code, the `Edit CSV` extension may be helpful for editing the file.
