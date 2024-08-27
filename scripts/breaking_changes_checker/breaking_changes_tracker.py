@@ -94,10 +94,10 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "The '{}' client had operation group '{}' deleted or renamed in the current version"
 
-    def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
+    def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
         self.current = current
-        self.diff = diff
+        self.diff = jsondiff.diff(stable, current)
         self.breaking_changes = []
         self.package_name = package_name
         self.module_name = None

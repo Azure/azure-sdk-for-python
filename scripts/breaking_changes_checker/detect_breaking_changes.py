@@ -437,11 +437,10 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = json.load(fd)
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
+
     checker = BreakingChangesTracker(
         stable,
         current,
-        diff, # TODO in preparation for generic trackers, the diff can be created during init
         package_name,
         checkers = [
             MethodOverloadsChecker(),
