@@ -8,17 +8,11 @@
 import jsondiff
 import re
 from enum import Enum
-from typing import Any, Dict, List, Union, Optional, NamedTuple
+from typing import Any, Dict, List, Union
 from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+from _models import ChangesChecker, Suppression
 
-
-class Suppression(NamedTuple):
-    change_type: str
-    module: str
-    class_name: Optional[str] = None
-    function_name: Optional[str] = None
-    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
@@ -111,6 +105,11 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        checkers: List[ChangesChecker] = kwargs.get("checkers", [])
+        for checker in checkers:
+            if not isinstance(checker, ChangesChecker):
+                raise TypeError(f"Checker {checker} does not implement ChangesChecker protocol")
+        self.checkers = checkers
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
@@ -128,6 +127,8 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
+        for checker in self.checkers:
+            self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
