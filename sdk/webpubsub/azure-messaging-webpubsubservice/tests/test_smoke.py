@@ -7,7 +7,7 @@
 import pytest
 import json
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
-from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
+from azure.messaging.webpubsubservice._operations._operations import build_web_pub_sub_service_send_to_all_request
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from devtools_testutils import recorded_by_proxy
 
@@ -31,7 +31,7 @@ class TestWebpubsubSmoke(WebpubsubTest):
     @recorded_by_proxy
     def test_webpubsub_send_request(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, hub='hub')
-        request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_web_pub_sub_service_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
         response = client.send_request(request)
         assert response.status_code == 202
 

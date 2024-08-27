@@ -68,6 +68,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_secret: Optional[str] = None,
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[str, bytes]] = None,
         **kwargs: Any
     ) -> None:
         super().__init__()
@@ -90,7 +91,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             if client_secret:
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
-                cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
+                cert = get_client_credential(None, password, client_certificate)
             except ValueError as ex:
                 message = '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 raise ValueError(message) from ex

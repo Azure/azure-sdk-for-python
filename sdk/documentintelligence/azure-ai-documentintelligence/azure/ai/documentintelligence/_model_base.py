@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, arguments-differ, signature-differs, broad-except
 
+import copy
 import calendar
 import decimal
 import functools
@@ -13,7 +14,6 @@ import sys
 import logging
 import base64
 import re
-import copy
 import typing
 import enum
 import email.utils
@@ -339,7 +339,7 @@ _UNSET = object()
 
 class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=unsubscriptable-object
     def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
-        self._data = copy.deepcopy(data)
+        self._data = data
 
     def __contains__(self, key: typing.Any) -> bool:
         return key in self._data
@@ -378,16 +378,13 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
             return default
 
     @typing.overload
-    def pop(self, key: str) -> typing.Any:
-        ...
+    def pop(self, key: str) -> typing.Any: ...
 
     @typing.overload
-    def pop(self, key: str, default: _T) -> _T:
-        ...
+    def pop(self, key: str, default: _T) -> _T: ...
 
     @typing.overload
-    def pop(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def pop(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -404,12 +401,10 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
         self._data.update(*args, **kwargs)
 
     @typing.overload
-    def setdefault(self, key: str, default: None = None) -> None:
-        ...
+    def setdefault(self, key: str, default: None = None) -> None: ...
 
     @typing.overload
-    def setdefault(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def setdefault(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -481,6 +476,9 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
 
 class Model(_MyMutableMapping):
     _is_model = True
+    # label whether current class's _attr_to_rest_field has been calculated
+    # could not see _attr_to_rest_field directly because subclass inherits it from parent class
+    _calculated: typing.Set[str] = set()
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         class_name = self.__class__.__name__
@@ -513,24 +511,27 @@ class Model(_MyMutableMapping):
         return Model(self.__dict__)
 
     def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=unused-argument
-        # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        mros = cls.__mro__[:-3][::-1]  # ignore model, dict, and object parents, and reverse the mro order
-        attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
-            k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
-        }
-        annotations = {
-            k: v
-            for mro_class in mros
-            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
-            for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
-        }
-        for attr, rf in attr_to_rest_field.items():
-            rf._module = cls.__module__
-            if not rf._type:
-                rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
-            if not rf._rest_name_input:
-                rf._rest_name_input = attr
-        cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+        if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+            # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
+            # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
+            mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
+            attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
+                k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            }
+            annotations = {
+                k: v
+                for mro_class in mros
+                if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
+                for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
+            }
+            for attr, rf in attr_to_rest_field.items():
+                rf._module = cls.__module__
+                if not rf._type:
+                    rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
+                if not rf._rest_name_input:
+                    rf._rest_name_input = attr
+            cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+            cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)  # pylint: disable=no-value-for-parameter
 
@@ -568,6 +569,7 @@ class Model(_MyMutableMapping):
         """
 
         result = {}
+        readonly_props = []
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
@@ -592,6 +594,64 @@ class Model(_MyMutableMapping):
         if isinstance(v, dict):
             return {dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
         return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
+
+
+def _deserialize_model(model_deserializer: typing.Optional[typing.Callable], obj):
+    if _is_model(obj):
+        return obj
+    return _deserialize(model_deserializer, obj)
+
+
+def _deserialize_with_optional(if_obj_deserializer: typing.Optional[typing.Callable], obj):
+    if obj is None:
+        return obj
+    return _deserialize_with_callable(if_obj_deserializer, obj)
+
+
+def _deserialize_with_union(deserializers, obj):
+    for deserializer in deserializers:
+        try:
+            return _deserialize(deserializer, obj)
+        except DeserializationError:
+            pass
+    raise DeserializationError()
+
+
+def _deserialize_dict(
+    value_deserializer: typing.Optional[typing.Callable],
+    module: typing.Optional[str],
+    obj: typing.Dict[typing.Any, typing.Any],
+):
+    if obj is None:
+        return obj
+    return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
+
+
+def _deserialize_multiple_sequence(
+    entry_deserializers: typing.List[typing.Optional[typing.Callable]],
+    module: typing.Optional[str],
+    obj,
+):
+    if obj is None:
+        return obj
+    return type(obj)(_deserialize(deserializer, entry, module) for entry, deserializer in zip(obj, entry_deserializers))
+
+
+def _deserialize_sequence(
+    deserializer: typing.Optional[typing.Callable],
+    module: typing.Optional[str],
+    obj,
+):
+    if obj is None:
+        return obj
+    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
+
+
+def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.Any]:
+    return sorted(
+        types,
+        key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
+    )
 
 
 def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
@@ -621,11 +681,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
             if rf:
                 rf._is_model = True
 
-            def _deserialize_model(model_deserializer: typing.Optional[typing.Callable], obj):
-                if _is_model(obj):
-                    return obj
-                return _deserialize(model_deserializer, obj)
-
             return functools.partial(_deserialize_model, annotation)  # pyright: ignore
     except Exception:
         pass
@@ -640,35 +695,26 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     # is it optional?
     try:
         if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
-            if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
-            )
+            if len(annotation.__args__) <= 2:  # pyright: ignore
+                if_obj_deserializer = _get_deserialize_callable_from_annotation(
+                    next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
+                )
 
-            def _deserialize_with_optional(if_obj_deserializer: typing.Optional[typing.Callable], obj):
-                if obj is None:
-                    return obj
-                return _deserialize_with_callable(if_obj_deserializer, obj)
-
-            return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+                return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+            # the type is Optional[Union[...]], we need to remove the None type from the Union
+            annotation_copy = copy.copy(annotation)
+            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != type(None)]  # pyright: ignore
+            return _get_deserialize_callable_from_annotation(annotation_copy, module, rf)
     except AttributeError:
         pass
 
+    # is it union?
     if getattr(annotation, "__origin__", None) is typing.Union:
         # initial ordering is we make `string` the last deserialization option, because it is often them most generic
         deserializers = [
             _get_deserialize_callable_from_annotation(arg, module, rf)
-            for arg in sorted(
-                annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
-            )
+            for arg in _sorted_annotations(annotation.__args__)  # pyright: ignore
         ]
-
-        def _deserialize_with_union(deserializers, obj):
-            for deserializer in deserializers:
-                try:
-                    return _deserialize(deserializer, obj)
-                except DeserializationError:
-                    pass
-            raise DeserializationError()
 
         return functools.partial(_deserialize_with_union, deserializers)
 
@@ -678,17 +724,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
                 annotation.__args__[1], module, rf  # pyright: ignore
             )
 
-            def _deserialize_dict(
-                value_deserializer: typing.Optional[typing.Callable],
-                obj: typing.Dict[typing.Any, typing.Any],
-            ):
-                if obj is None:
-                    return obj
-                return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
-
             return functools.partial(
                 _deserialize_dict,
                 value_deserializer,
+                module,
             )
     except (AttributeError, IndexError):
         pass
@@ -696,35 +735,16 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         if annotation._name in ["List", "Set", "Tuple", "Sequence"]:  # pyright: ignore
             if len(annotation.__args__) > 1:  # pyright: ignore
 
-                def _deserialize_multiple_sequence(
-                    entry_deserializers: typing.List[typing.Optional[typing.Callable]],
-                    obj,
-                ):
-                    if obj is None:
-                        return obj
-                    return type(obj)(
-                        _deserialize(deserializer, entry, module)
-                        for entry, deserializer in zip(obj, entry_deserializers)
-                    )
-
                 entry_deserializers = [
                     _get_deserialize_callable_from_annotation(dt, module, rf)
                     for dt in annotation.__args__  # pyright: ignore
                 ]
-                return functools.partial(_deserialize_multiple_sequence, entry_deserializers)
+                return functools.partial(_deserialize_multiple_sequence, entry_deserializers, module)
             deserializer = _get_deserialize_callable_from_annotation(
                 annotation.__args__[0], module, rf  # pyright: ignore
             )
 
-            def _deserialize_sequence(
-                deserializer: typing.Optional[typing.Callable],
-                obj,
-            ):
-                if obj is None:
-                    return obj
-                return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
-
-            return functools.partial(_deserialize_sequence, deserializer)
+            return functools.partial(_deserialize_sequence, deserializer, module)
     except (TypeError, IndexError, AttributeError, SyntaxError):
         pass
 
@@ -870,5 +890,6 @@ def rest_discriminator(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
+    visibility: typing.Optional[typing.List[str]] = None,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, is_discriminator=True)
+    return _RestField(name=name, type=type, is_discriminator=True, visibility=visibility)

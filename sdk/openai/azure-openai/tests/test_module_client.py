@@ -7,8 +7,7 @@ import os
 import pytest
 import pathlib
 import openai
-from azure.identity import DefaultAzureCredential
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 from conftest import (
     configure,
     ENV_AZURE_OPENAI_ENDPOINT,
@@ -63,7 +62,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
             os.environ["OPENAI_API_TYPE"] = "azure"
 
             try:
@@ -114,7 +113,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
+            openai.azure_ad_token = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
@@ -137,7 +136,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.azure_ad_token_provider = get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
@@ -159,7 +158,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.azure_ad_token_provider = get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = LATEST
 
             messages = [
@@ -187,7 +186,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.azure_ad_token_provider = get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = LATEST
 
             embedding = openai.embeddings.create(input="hello world", model=ENV_AZURE_OPENAI_EMBEDDINGS_NAME)
@@ -206,7 +205,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.azure_ad_token_provider = get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = LATEST
 
             models = openai.models.list()
@@ -222,7 +221,7 @@ class TestModuleClient(AzureRecordedTestCase):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.azure_ad_token_provider = get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = LATEST
 
             result = openai.audio.transcriptions.create(

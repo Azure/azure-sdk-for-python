@@ -1,9 +1,22 @@
 # Release History
 
-## 12.22.0 (Unreleased)
+## 12.23.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.23.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.22.0 (2024-08-06)
+
+### Other Changes
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
 
 ## 12.21.0 (2024-07-18)
 

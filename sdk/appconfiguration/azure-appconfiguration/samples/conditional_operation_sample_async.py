@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: conditional_operation_async_sample.py
+FILE: conditional_operation_sample_async.py
 
 DESCRIPTION:
-    This sample demos conditional set/get/delete operations for app configuration
+    This sample demos how to conditional set/get/delete configuration settings asynchronously.
 
-USAGE: python conditional_operation_async_sample.py
+USAGE: python conditional_operation_sample_async.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
@@ -23,13 +23,12 @@ from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting
 
 
 async def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
-    # Create app config client
+    # Create an app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
     # Unconditional set
@@ -42,13 +41,13 @@ async def main():
     first_get = await client.get_configuration_setting(key="MyKey")
     if first_get is None:
         return print("Error, unconditional set failed.")
-    print_configuration_setting(first_get)
+    print(first_get)
 
     # Conditional get, expect to return None because it is not modified
     second_get = await client.get_configuration_setting(
         key="MyKey", etag=first_get.etag, match_condition=MatchConditions.IfModified
     )
-    print_configuration_setting(second_get)
+    print(second_get)
 
     # Conditional set
     first_get.value = "new value"

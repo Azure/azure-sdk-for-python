@@ -92,7 +92,9 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $pkgId = $pkgId.Replace("_","-")
   $docsReadMeName = $pkgId -replace "^azure-" , ""
+
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"

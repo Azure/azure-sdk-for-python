@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import Any, cast, Optional, TypeVar
+from types import TracebackType
+from typing import Any, cast, Optional, TypeVar, Type
 
 from azure.core.credentials import AccessToken
 from . import AsyncContextManager
@@ -34,9 +35,14 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
             await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         if self._client:
-            await self._client.__aexit__(*args)
+            await self._client.__aexit__(exc_type, exc_value, traceback)
 
     async def close(self) -> None:
         await self.__aexit__()
