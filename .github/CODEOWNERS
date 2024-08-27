@@ -564,25 +564,25 @@
 #/<NotInRepo>/          @ms-premp @qiaozha
 
 # ServiceLabel: %Compute %Service Attention
-#/<NotInRepo>/          @Drewm3 @avirishuv @vaibhav-agar @amjads1
+#/<NotInRepo>/          @Drewm3 @TravisCragg_MSFT @GabstaMSFT @Kanik09 @sandeepraichura
 
 # ServiceLabel: %Compute - Extensions %Service Attention
-#/<NotInRepo>/          @Drewm3 @amjads1
+#/<NotInRepo>/          @Drewm3 @amjads1 @GabstaMSFT
 
 # ServiceLabel: %Compute - Images %Service Attention
-#/<NotInRepo>/          @Drewm3 @vaibhav-agar
+#/<NotInRepo>/          @Drewm3 @sandeepraichura
 
 # ServiceLabel: %Compute - Managed Disks %Service Attention
-#/<NotInRepo>/          @Drewm3 @vaibhav-agar
+#/<NotInRepo>/          @Drewm3 @ushnaarshadkhan
 
 # ServiceLabel: %Compute - RDFE %Service Attention
-#/<NotInRepo>/          @Drewm3 @avirishuv
+#/<NotInRepo>/          @Drewm3 @TravisCragg_MSFT
 
 # ServiceLabel: %Compute - VM %Service Attention
-#/<NotInRepo>/          @Drewm3 @avirishuv
+#/<NotInRepo>/          @Drewm3 @TravisCragg_MSFT
 
 # ServiceLabel: %Compute - VMSS %Service Attention
-#/<NotInRepo>/          @Drewm3 @avirishuv
+#/<NotInRepo>/          @Drewm3 @Kanik09
 
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
