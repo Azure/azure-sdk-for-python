@@ -65,9 +65,8 @@ setup(
     ),
     python_requires=">=3.8",
     install_requires=[
-        # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "promptflow-devkit<2.0.0,>=1.15.0",
-        "promptflow-core<2.0.0,>=1.15.0",
+        "promptflow-devkit>=1.15.0",
+        "promptflow-core>=1.15.0",
         "aiohttp_retry>=2.8.3",
         "websocket-client>=1.2.0",
         "jsonpath_ng>=1.5.0",
