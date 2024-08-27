@@ -93,7 +93,7 @@ A synchronous client supports synchronous inference methods, meaning they will b
 To create an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```bash
-    pip install aiohttp
+pip install aiohttp
 ```
 
 and update the code above to import `asyncio`, and import `ChatCompletionsClient` from the `azure.ai.inference.aio` namespace instead of `azure.ai.inference`. For example:
