@@ -530,16 +530,16 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
+            headers = _get_headers(
+                kwargs.pop("headers", {}),
+                "Watch",
+                self._replica_client_manager.get_client_count() - 1,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+            )
             for client in active_clients:
                 try:
-                    headers = _get_headers(
-                        kwargs.pop("headers", {}),
-                        "Watch",
-                        self._replica_client_manager.get_client_count() - 1,
-                        self._feature_flag_enabled,
-                        self._feature_filter_usage,
-                        self._uses_key_vault,
-                    )
                     if self._refresh_on:
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers, **kwargs

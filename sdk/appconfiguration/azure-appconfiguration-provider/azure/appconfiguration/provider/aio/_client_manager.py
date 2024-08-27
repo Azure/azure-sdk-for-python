@@ -6,6 +6,7 @@
 from logging import getLogger
 import json
 import time
+import threading
 import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
@@ -16,11 +17,11 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
-    AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
 )
-from ._models import SettingSelector
-from ._constants import (
+from azure.appconfiguration.aio import AzureAppConfigurationClient
+from .._models import SettingSelector
+from .._constants import (
     FEATURE_FLAG_PREFIX,
     PERCENTAGE_FILTER_NAMES,
     TIME_WINDOW_FILTER_NAMES,
@@ -30,7 +31,7 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._discovery import find_auto_failover_endpoints
+from .._discovery import find_auto_failover_endpoints
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
@@ -105,7 +106,7 @@ class _ConfigurationClientWrapper:
             ),
         )
 
-    def _check_configuration_setting(
+    async def _check_configuration_setting(
         self, key: str, label: str, etag: Optional[str], headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
@@ -120,7 +121,7 @@ class _ConfigurationClientWrapper:
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
-            updated_sentinel = self._client.get_configuration_setting(  # type: ignore
+            updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
             if updated_sentinel is not None:
@@ -141,7 +142,7 @@ class _ConfigurationClientWrapper:
         return False, None
 
     @distributed_trace
-    def load_configuration_settings(
+    async def load_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], **kwargs
     ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
         configuration_settings = []
@@ -150,7 +151,7 @@ class _ConfigurationClientWrapper:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
-            for config in configurations:
+            async for config in configurations:
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
@@ -164,7 +165,7 @@ class _ConfigurationClientWrapper:
         return configuration_settings, sentinel_keys
 
     @distributed_trace
-    def load_feature_flags(
+    async def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
     ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str], Dict[str, bool]]:
         feature_flag_sentinel_keys = {}
@@ -176,7 +177,7 @@ class _ConfigurationClientWrapper:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
-            for feature_flag in feature_flags:
+            async for feature_flag in feature_flags:
                 loaded_feature_flags.append(json.loads(feature_flag.value))
 
                 if feature_flag_refresh_enabled:
@@ -194,7 +195,7 @@ class _ConfigurationClientWrapper:
         return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
 
     @distributed_trace
-    def refresh_configuration_settings(
+    async def refresh_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Dict[Tuple[str, str], str], List[Any]]:
         """
@@ -211,7 +212,7 @@ class _ConfigurationClientWrapper:
         need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
         for (key, label), etag in updated_sentinel_keys.items():
-            changed, updated_sentinel = self._check_configuration_setting(
+            changed, updated_sentinel = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed:
@@ -220,12 +221,12 @@ class _ConfigurationClientWrapper:
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
-            configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
+            configuration_settings, sentinel_keys = await self.load_configuration_settings(selects, refresh_on, **kwargs)
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
     @distributed_trace
-    def refresh_feature_flags(
+    async def refresh_feature_flags(
         self,
         refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
@@ -245,7 +246,7 @@ class _ConfigurationClientWrapper:
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
-            changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
+            changed = await self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
                 feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
                     feature_flag_selectors, True, headers=headers, **kwargs
@@ -254,7 +255,7 @@ class _ConfigurationClientWrapper:
         return False, None, None, {}
 
     @distributed_trace
-    def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
+    async def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
         """
         Gets a configuration setting from the replica client.
 
@@ -263,7 +264,7 @@ class _ConfigurationClientWrapper:
         :return: The configuration setting
         :rtype: ConfigurationSetting
         """
-        return self._client.get_configuration_setting(key=key, label=label, **kwargs)
+        return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
     def is_active(self) -> bool:
         """
@@ -274,18 +275,18 @@ class _ConfigurationClientWrapper:
         """
         return self.backoff_end_time <= (time.time() * 1000)
 
-    def close(self) -> None:
+    async def close(self) -> None:
         """
         Closes the connection to Azure App Configuration.
         """
-        self._client.close()
+        await self._client.close()
 
-    def __enter__(self):
-        self._client.__enter__()
+    async def __enter__(self):
+        await self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    async def __exit__(self, *args):
+        await self._client.__exit__(*args)
 
 
 class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
@@ -315,7 +316,8 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
 
-        self._setup_failove_endpoints()
+        threading.Thread(target=self._setup_failove_endpoints).start()
+
         if connection_string and endpoint:
             self._replica_clients.append(
                 _ConfigurationClientWrapper.from_connection_string(
@@ -337,7 +339,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             return
         if self._next_update_time > time.time():
             return
-        self._setup_failove_endpoints()
+        threading.Thread(target=self._setup_failove_endpoints).start()
 
     def _setup_failove_endpoints(self):
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
@@ -423,7 +425,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
         )
 
-    def __eq__(self, other):
+    async def __eq__(self, other):
         if len(self._replica_clients) != len(other._replica_clients):
             return False
         for i in range(len(self._replica_clients)):  # pylint:disable=consider-using-enumerate
@@ -431,15 +433,15 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                 return False
         return True
 
-    def close(self):
+    async def close(self):
         for client in self._replica_clients:
-            client.close()
+            await client.close()
 
-    def __enter__(self):
+    async def __enter__(self):
         for client in self._replica_clients:
-            client.__enter__()
+            await client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    async def __exit__(self, *args):
         for client in self._replica_clients:
-            client.__exit__(*args)
+            await client.__exit__(*args)
