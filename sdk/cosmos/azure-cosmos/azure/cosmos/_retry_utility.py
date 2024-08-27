@@ -94,12 +94,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         start_time = time.time()
         try:
             if args:
-                request_params = args[0]
-                operation_type = request_params.get_operation_type()
-                resource_type = request_params.get_resource_type()
-
-                if resource_type == "Document" and operation_type == "Create":
-                    raise exceptions.CosmosHttpResponseError(status_code=StatusCodes.SERVICE_UNAVAILABLE)
 
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
@@ -168,7 +162,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
+            # elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
+            elif e.status_code in [StatusCodes.REQUEST_TIMEOUT, StatusCodes.SERVICE_UNAVAILABLE]:
                 retry_policy = timeout_failover_retry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the

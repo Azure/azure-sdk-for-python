@@ -701,9 +701,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
-        request_options["operationTypeForTest"] = "Create"
-        request_options["resourceTypeForTest"] = "Document"
-
         return self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
 
