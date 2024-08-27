@@ -64,6 +64,7 @@ class ReceiverLink(Link):
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
+            _LOGGER.debug("Current Link Credit: %r", self.current_link_credit, extra=self.network_trace_params)
         if self.received_delivery_id is not None:
             self._first_frame = frame
         if not self.received_delivery_id and not self._received_payload:
