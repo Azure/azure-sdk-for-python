@@ -83,7 +83,8 @@ client = ChatCompletionsClient(
 # For Azure OpenAI endpoint
 client = ChatCompletionsClient(
     endpoint=endpoint,  # Of the form https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
-    credential=AzureKeyCredential("key"),
+    credential=AzureKeyCredential(""),  # Pass in an empty value.
+    headers={"api-key": key},
     api_version="2024-06-01",  # AOAI api-version. Update as needed.
 )
 ```
