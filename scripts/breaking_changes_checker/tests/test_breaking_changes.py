@@ -11,6 +11,7 @@ import jsondiff
 import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
+from breaking_changes_checker.checkers.method_overloads_checker import MethodOverloadsChecker
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -23,27 +24,27 @@ def format_breaking_changes(breaking_changes):
     return formatted
 
 EXPECTED = [
-    "(RemovedOrRenamedInstanceAttribute): The model or publicly exposed class 'azure.storage.queue.Metrics' had its instance variable 'retention_policy' deleted or renamed in the current version",
-    "(RemovedOrRenamedInstanceAttribute): The client 'azure.storage.queue.QueueClient' had its instance variable 'queue_name' deleted or renamed in the current version",
-    "(ChangedParameterKind): The class 'azure.storage.queue.QueueClient' method 'from_queue_url' had its parameter 'credential' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
-    "(AddedPositionalParam): The 'azure.storage.queue.QueueClient' method 'get_queue_access_policy' had a 'positional_or_keyword' parameter 'queue_name' inserted in the current version",
-    "(RemovedOrRenamedPositionalParam): The 'azure.storage.queue.QueueClient' method 'set_queue_access_policy' had its parameter 'signed_identifiers' of kind 'positional_or_keyword' deleted or renamed in the current version",
-    "(ChangedParameterDefaultValue): The class 'azure.storage.queue.QueueClient' method 'set_queue_metadata' had its parameter 'metadata' default value changed from 'None' to ''",
-    "(RemovedOrRenamedClassMethod): The 'azure.storage.queue.QueueSasPermissions' method 'from_string' was deleted or renamed in the current version",
-    "(RemovedFunctionKwargs): The class 'azure.storage.queue.QueueServiceClient' method 'set_service_properties' changed from accepting keyword arguments to not accepting them in the current version",
-    "(RemovedOrRenamedClientMethod): The 'azure.storage.queue.QueueServiceClient' client method 'get_service_properties' was deleted or renamed in the current version",
-    "(RemovedOrRenamedEnumValue): The 'azure.storage.queue.StorageErrorCode' enum had its value 'queue_not_found' deleted or renamed in the current version",
-    "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.storage.queue.QueueMessage' was deleted or renamed in the current version",
-    "(ChangedParameterDefaultValue): The publicly exposed function 'azure.storage.queue.generate_queue_sas' had its parameter 'permission' default value changed from 'None' to ''",
-    "(ChangedParameterKind): The function 'azure.storage.queue.generate_queue_sas' had its parameter 'ip' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
-    "(AddedPositionalParam): The function 'azure.storage.queue.generate_queue_sas' had a 'positional_or_keyword' parameter 'conn_str' inserted in the current version",
-    "(RemovedOrRenamedPositionalParam): The function 'azure.storage.queue.generate_queue_sas' had its parameter 'account_name' of kind 'positional_or_keyword' deleted or renamed in the current version",
-    "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'azure.storage.queue.generate_account_sas' was deleted or renamed in the current version",
-    "(ChangedParameterKind): The class 'azure.storage.queue.aio.QueueClient' method 'from_queue_url' had its parameter 'credential' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
-    "(RemovedParameterDefaultValue): The class 'azure.storage.queue.aio.QueueClient' method 'update_message' had default value 'None' removed from its parameter 'pop_receipt' in the current version",
-    "(ChangedFunctionKind): The class 'azure.storage.queue.aio.QueueServiceClient' method 'get_service_stats' changed from 'asynchronous' to 'synchronous' in the current version.",
-    "(ChangedParameterOrdering): The class 'azure.storage.queue.QueueClient' method 'from_connection_string' had its parameters re-ordered from '['conn_str', 'queue_name', 'credential', 'kwargs']' to '['queue_name', 'conn_str', 'credential', 'kwargs']' in the current version",
-    "(ChangedParameterOrdering): The class 'azure.storage.queue.aio.QueueClient' method 'from_connection_string' had its parameters re-ordered from '['conn_str', 'queue_name', 'credential', 'kwargs']' to '['queue_name', 'conn_str', 'credential', 'kwargs']' in the current version",
+    "(RemovedOrRenamedInstanceAttribute): The model or publicly exposed class 'Metrics' had its instance variable 'retention_policy' deleted or renamed in the current version",
+    "(RemovedOrRenamedInstanceAttribute): The client 'QueueClient' had its instance variable 'queue_name' deleted or renamed in the current version",
+    "(ChangedParameterKind): The class 'QueueClient' method 'from_queue_url' had its parameter 'credential' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
+    "(AddedPositionalParam): The 'QueueClient' method 'get_queue_access_policy' had a 'positional_or_keyword' parameter 'queue_name' inserted in the current version",
+    "(RemovedOrRenamedPositionalParam): The 'QueueClient' method 'set_queue_access_policy' had its parameter 'signed_identifiers' of kind 'positional_or_keyword' deleted or renamed in the current version",
+    "(ChangedParameterDefaultValue): The class 'QueueClient' method 'set_queue_metadata' had its parameter 'metadata' default value changed from 'None' to ''",
+    "(RemovedOrRenamedClassMethod): The 'QueueSasPermissions' method 'from_string' was deleted or renamed in the current version",
+    "(RemovedFunctionKwargs): The class 'QueueServiceClient' method 'set_service_properties' changed from accepting keyword arguments to not accepting them in the current version",
+    "(RemovedOrRenamedClientMethod): The 'QueueServiceClient' client method 'get_service_properties' was deleted or renamed in the current version",
+    "(RemovedOrRenamedEnumValue): The 'StorageErrorCode' enum had its value 'queue_not_found' deleted or renamed in the current version",
+    "(RemovedOrRenamedClass): The model or publicly exposed class 'QueueMessage' was deleted or renamed in the current version",
+    "(ChangedParameterDefaultValue): The publicly exposed function 'generate_queue_sas' had its parameter 'permission' default value changed from 'None' to ''",
+    "(ChangedParameterKind): The function 'generate_queue_sas' had its parameter 'ip' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
+    "(AddedPositionalParam): The function 'generate_queue_sas' had a 'positional_or_keyword' parameter 'conn_str' inserted in the current version",
+    "(RemovedOrRenamedPositionalParam): The function 'generate_queue_sas' had its parameter 'account_name' of kind 'positional_or_keyword' deleted or renamed in the current version",
+    "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'generate_account_sas' was deleted or renamed in the current version",
+    "(ChangedParameterKind): The class 'QueueClient' method 'from_queue_url' had its parameter 'credential' changed from 'positional_or_keyword' to 'keyword_only' in the current version",
+    "(RemovedParameterDefaultValue): The class 'QueueClient' method 'update_message' had default value 'None' removed from its parameter 'pop_receipt' in the current version",
+    "(ChangedFunctionKind): The class 'QueueServiceClient' method 'get_service_stats' changed from 'asynchronous' to 'synchronous' in the current version.",
+    "(ChangedParameterOrdering): The class 'QueueClient' method 'from_connection_string' had its parameters re-ordered from '['conn_str', 'queue_name', 'credential', 'kwargs']' to '['queue_name', 'conn_str', 'credential', 'kwargs']' in the current version",
+    "(ChangedParameterOrdering): The class 'QueueClient' method 'from_connection_string' had its parameters re-ordered from '['conn_str', 'queue_name', 'credential', 'kwargs']' to '['queue_name', 'conn_str', 'credential', 'kwargs']' in the current version",
 ]
 
 
@@ -183,10 +184,10 @@ def test_replace_all_params():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedPositionalParam): The 'azure.ai.formrecognizer.class_name' method 'one' had its parameter 'testing' of kind 'positional_or_keyword' deleted or renamed in the current version",
-        "(RemovedOrRenamedPositionalParam): The 'azure.ai.formrecognizer.class_name' method 'two' had its parameter 'testing2' of kind 'positional_or_keyword' deleted or renamed in the current version",
-        "(RemovedOrRenamedPositionalParam): The function 'azure.ai.formrecognizer.my_function_name' had its parameter 'testing' of kind 'positional_or_keyword' deleted or renamed in the current version",
-        "(RemovedOrRenamedPositionalParam): The function 'azure.ai.formrecognizer.my_function_name' had its parameter 'testing2' of kind 'positional_or_keyword' deleted or renamed in the current version"
+        "(RemovedOrRenamedPositionalParam): The 'class_name' method 'one' had its parameter 'testing' of kind 'positional_or_keyword' deleted or renamed in the current version",
+        "(RemovedOrRenamedPositionalParam): The 'class_name' method 'two' had its parameter 'testing2' of kind 'positional_or_keyword' deleted or renamed in the current version",
+        "(RemovedOrRenamedPositionalParam): The function 'my_function_name' had its parameter 'testing' of kind 'positional_or_keyword' deleted or renamed in the current version",
+        "(RemovedOrRenamedPositionalParam): The function 'my_function_name' had its parameter 'testing2' of kind 'positional_or_keyword' deleted or renamed in the current version"
     ]
 
     diff = jsondiff.diff(stable, current)
@@ -271,10 +272,10 @@ def test_replace_all_functions():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedClassMethod): The 'azure.ai.formrecognizer.class_name' method 'one' was deleted or renamed in the current version",
-        "(RemovedOrRenamedClassMethod): The 'azure.ai.formrecognizer.class_name' method 'two' was deleted or renamed in the current version",
-        "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name' was deleted or renamed in the current version",
-        "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'azure.ai.formrecognizer.my_function_name2' was deleted or renamed in the current version"
+        "(RemovedOrRenamedClassMethod): The 'class_name' method 'one' was deleted or renamed in the current version",
+        "(RemovedOrRenamedClassMethod): The 'class_name' method 'two' was deleted or renamed in the current version",
+        "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'my_function_name' was deleted or renamed in the current version",
+        "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'my_function_name2' was deleted or renamed in the current version"
     ]
 
     diff = jsondiff.diff(stable, current)
@@ -347,8 +348,8 @@ def test_replace_all_classes():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.ai.formrecognizer.class_name' was deleted or renamed in the current version",
-        "(RemovedOrRenamedClass): The model or publicly exposed class 'azure.ai.formrecognizer.class_name2' was deleted or renamed in the current version"
+        "(RemovedOrRenamedClass): The model or publicly exposed class 'class_name' was deleted or renamed in the current version",
+        "(RemovedOrRenamedClass): The model or publicly exposed class 'class_name2' was deleted or renamed in the current version"
     ]
 
     diff = jsondiff.diff(stable, current)
@@ -433,7 +434,7 @@ def test_removed_operation_group():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedOperationGroup): The 'azure.contoso.ContosoClient' client had operation group 'foo' deleted or renamed in the current version"
+        "(RemovedOrRenamedOperationGroup): The 'ContosoClient' client had operation group 'foo' deleted or renamed in the current version"
     ]
 
     diff = jsondiff.diff(stable, current)
@@ -445,6 +446,7 @@ def test_removed_operation_group():
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
+
 
 def test_async_breaking_changes_cleanup():
     breaking_changes = [
@@ -462,3 +464,129 @@ def test_async_breaking_changes_cleanup():
     assert len(bct.breaking_changes) == 2
     assert bct.breaking_changes[0] == ("Message", "RemovedOrRenamedClassMethod", "azure.contoso.operations", "Foo", "foo")
     assert bct.breaking_changes[1] == ("Message", "ChangedParameterOrdering", "azure.contoso", "FooClient", "from_connection_string")
+
+
+def test_removed_overload():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "Test",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": "TestResult"
+                                },
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "foo": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "class_name": {
+                    "methods": {
+                        "one": {
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": [
+                                {
+                                    "parameters": {
+                                        "testing": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
+                                    },
+                                    "is_async": True,
+                                    "return_type": None
+                                }
+                            ]
+                        },
+                        "two": {
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": True,
+                            "overloads": []
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(RemovedMethodOverload): class_name.one had an overload `def one(testing: Test) -> TestResult` removed",
+        "(RemovedMethodOverload): class_name.two had all overloads removed"
+    ]
+
+    diff = jsondiff.diff(stable, current)
+    bc = BreakingChangesTracker(stable, current, diff, "azure-contoso", checkers=[MethodOverloadsChecker()])
+    bc.run_checks()
+
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg

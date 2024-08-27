@@ -8,17 +8,11 @@
 import jsondiff
 import re
 from enum import Enum
-from typing import Any, Dict, List, Union, Optional, NamedTuple
+from typing import Any, Dict, List, Union
 from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+from _models import ChangesChecker, Suppression
 
-
-class Suppression(NamedTuple):
-    change_type: str
-    module: str
-    class_name: Optional[str] = None
-    function_name: Optional[str] = None
-    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
@@ -111,6 +105,11 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        checkers: List[ChangesChecker] = kwargs.get("checkers", [])
+        for checker in checkers:
+            if not isinstance(checker, ChangesChecker):
+                raise TypeError(f"Checker {checker} does not implement ChangesChecker protocol")
+        self.checkers = checkers
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
@@ -141,6 +140,8 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
+        for checker in self.checkers:
+            self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
@@ -481,46 +482,47 @@ class BreakingChangesTracker:
                     )
 
     def check_class_instance_attribute_removed_or_renamed(self, components: Dict) -> None:
+        deleted_props = []
         for prop in components.get("properties", []):
             if isinstance(prop, jsondiff.Symbol):
-                deleted_props = []
                 if prop.label == "delete":
                     deleted_props = components["properties"][prop]
                 elif prop.label == "replace":
                     deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
 
-                for property in deleted_props:
-                    bc = None
-                    if self.class_name.endswith("Client"):
-                        property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
-                        if property_type is not None and property_type.lower().endswith("operations"):
-                            bc = (
-                                self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
-                                BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
-                                self.module_name, self.class_name, property
-                            )
-                        else:
-                            bc = (
-                                self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                                BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                                self.module_name, self.class_name, property
-                            )
-                    elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
-                        if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
-                            and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
-                            bc = (
-                                self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
-                                BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
-                                self.module_name, self.class_name, property
-                            )
-                    else:
+        for property in deleted_props:
+            bc = None
+            if self.class_name.endswith("Client"):
+                property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+                # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
+                if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
                         bc = (
-                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                            self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
                             self.module_name, self.class_name, property
                         )
-                    if bc:
-                        self.breaking_changes.append(bc)
+                else:
+                    bc = (
+                        self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                        self.module_name, self.class_name, property
+                    )
+            elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
+                if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
+                    and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
+                    bc = (
+                        self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
+                        self.module_name, self.class_name, property
+                    )
+            else:
+                bc = (
+                    self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
+                    BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                    self.module_name, self.class_name, property
+                )
+            if bc:
+                self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self.class_name, jsondiff.Symbol):
@@ -638,8 +640,11 @@ class BreakingChangesTracker:
 
         formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
-            # Extract the message and the change type, skip the module name
-            msg, bc_type, _, *args = bc
+            msg, bc_type, module_name, *args = bc
+            if bc_type == BreakingChangeType.REMOVED_OR_RENAMED_MODULE:
+                # For module-level changes, the module name is the first argument
+                formatted += f"({bc_type}): " + msg.format(module_name) + "\n"
+                continue
             # For simple breaking changes reporting, prepend the change code to the message
             msg = f"({bc_type}): " + msg + "\n"
             formatted += msg.format(*args)
