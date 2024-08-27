@@ -168,6 +168,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             self._initial_content_position = self._inner_stream.tell()
         except (AttributeError, UnsupportedOperation, OSError):
             self._initial_content_position = None
+        super().__init__()
 
     @property
     def _message_header_length(self) -> int:
@@ -206,6 +207,10 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
     def __len__(self):
         return self.message_length
+
+    def close(self) -> None:
+        self._inner_stream.close()
+        super().close()
 
     def readable(self) -> bool:
         return True
@@ -304,6 +309,9 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         return position
 
     def read(self, size: int = -1) -> bytes:
+        if self.closed:
+            raise ValueError("Stream is closed")
+
         if size == 0:
             return b''
         if size < 0:

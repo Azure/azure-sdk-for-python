@@ -19,7 +19,14 @@ from .import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
 from .streams import IterStreamer, StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64, calculate_md5, ChecksumAlgorithm, combine_crc64, get_crc64_bytes
+from .validation import (
+    calculate_crc64,
+    calculate_md5,
+    ChecksumAlgorithm,
+    combine_crc64,
+    get_crc64_bytes,
+    SM_HEADER_V1_CRC64
+)
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -372,11 +379,22 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
+            structured_type, structured_length = None, None
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                structured_type = SM_HEADER_V1_CRC64
+                structured_length = len(block_stream)
+                block_stream = StructuredMessageEncodeStream(
+                    block_stream,
+                    len(block_stream),
+                    StructuredMessageProperties.CRC64)
+
             block_id = f'BlockId{(index//self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
                 block_stream,
+                structured_body_type=structured_type,
+                structured_content_length=structured_length,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options

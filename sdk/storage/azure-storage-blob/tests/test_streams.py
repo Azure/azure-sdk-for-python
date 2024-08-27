@@ -96,6 +96,19 @@ def _build_structured_message(
 
 
 class TestStructuredMessageEncodeStream:
+    def test_close(self):
+        inner = BytesIO()
+        stream = StructuredMessageEncodeStream(inner, 0, StructuredMessageProperties.NONE)
+        assert not stream.closed
+        assert not inner.closed
+
+        stream.close()
+        assert stream.closed
+        assert inner.closed
+
+        with pytest.raises(ValueError):
+            stream.read(0)
+
     def test_read_past_end(self):
         data = os.urandom(10)
         inner_stream = BytesIO(data)

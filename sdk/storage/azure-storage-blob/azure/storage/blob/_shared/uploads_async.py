@@ -16,8 +16,9 @@ from typing import AsyncGenerator, Tuple
 from .import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
+from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
 from .uploads import ChunkInfo, SubStream
-from .validation import calculate_crc64, ChecksumAlgorithm, combine_crc64
+from .validation import calculate_crc64, ChecksumAlgorithm, combine_crc64, SM_HEADER_V1_CRC64
 
 
 async def _async_parallel_uploads(uploader, pending, running):
@@ -315,11 +316,22 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
+            structured_type, structured_length = None, None
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                structured_type = SM_HEADER_V1_CRC64
+                structured_length = len(block_stream)
+                block_stream = StructuredMessageEncodeStream(
+                    block_stream,
+                    len(block_stream),
+                    StructuredMessageProperties.CRC64)
+
             block_id = f'BlockId{(index//self.chunk_size):05}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
                 block_stream,
+                structured_body_type=structured_type,
+                structured_content_length=structured_length,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options)
