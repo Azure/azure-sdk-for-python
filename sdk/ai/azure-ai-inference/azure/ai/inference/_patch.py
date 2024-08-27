@@ -15,6 +15,9 @@ Why do we patch auto-generated code?
 5. Add support for chat completion streaming (ChatCompletionsClient client only)
 6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py).
+8. Add HTTP request header "api-key: <key>" when the client is constructed with `credential` of type
+   AzureKeyCredential (all clients), so it will work against AOAI endpoints as well as MaaS/MaaP endpoints.
+   This means two headers are sent simultaneously ("Authorization: Bear <key>" and "api-key: <key>").
 
 """
 import json
