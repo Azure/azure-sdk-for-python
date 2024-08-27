@@ -138,6 +138,8 @@ async def on_event_received(process_monitor, partition_context, event):
             process_monitor.cpu_usage_percent,
             process_monitor.memory_usage_percent
         )
+        LOGGER.info("Sleep for 20 seconds to mimic processing time")
+        await asyncio.sleep(20)
         await partition_context.update_checkpoint(event)
 
 

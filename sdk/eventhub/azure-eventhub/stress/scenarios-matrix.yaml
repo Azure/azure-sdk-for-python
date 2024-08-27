@@ -1,3 +1,7 @@
+displayNames:
+  # this makes it so these don't show up in the scenario names,
+  # since they're just clutter.
+  image: ""
 matrix:
   image:
     - Dockerfile
