@@ -3,8 +3,9 @@ displayNames:
   # since they're just clutter.
   image: ""
 matrix:
-  image:
-    - Dockerfile
+  images:
+    py:
+      image: Dockerfile
   scenarios:
     queue:
       testTarget: queue
