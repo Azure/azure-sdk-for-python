@@ -79,10 +79,120 @@ class FindSimilarFaces:
             for r in find_similar_result1:
                 self.logger.info(f"{beautify_json(r.as_dict())}")
 
+    async def find_similar_from_large_face_list(self):
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.vision.face.aio import FaceAdministrationClient, FaceClient
+        from azure.ai.vision.face.models import (
+            FaceDetectionModel,
+            FaceRecognitionModel,
+            FindSimilarMatchMode,
+        )
+
+        async with FaceAdministrationClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        ) as face_admin_client, FaceClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        ) as face_client:
+
+            large_face_list_id = "lfl01"
+            # Prepare a LargeFaceList which contains several faces.
+            self.logger.info(f"Create a LargeFaceList, id = {large_face_list_id}")
+            await face_admin_client.large_face_list.create(
+                large_face_list_id,
+                name="List of Face",
+                user_data="Large Face List for Test",
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+            )
+
+            # Add faces into the largeFaceList
+            self.logger.info(f"Add faces into the LargeFaceList {large_face_list_id}")
+            await face_admin_client.large_face_list.add_face(
+                large_face_list_id,
+                helpers.read_file_content(
+                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)
+                ),
+                detection_model=FaceDetectionModel.DETECTION_02,
+                user_data="Lady1-1",
+            )
+            await face_admin_client.large_face_list.add_face(
+                large_face_list_id,
+                helpers.read_file_content(
+                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)
+                ),
+                detection_model=FaceDetectionModel.DETECTION_02,
+                user_data="Lady1-2",
+            )
+            await face_admin_client.large_face_list.add_face(
+                large_face_list_id,
+                helpers.read_file_content(
+                    helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_1)
+                ),
+                detection_model=FaceDetectionModel.DETECTION_02,
+                user_data="Lady2-1",
+            )
+            await face_admin_client.large_face_list.add_face(
+                large_face_list_id,
+                helpers.read_file_content(
+                    helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_2)
+                ),
+                detection_model=FaceDetectionModel.DETECTION_02,
+                user_data="Lady2-2",
+            )
+            await face_admin_client.large_face_list.add_face(
+                large_face_list_id,
+                helpers.read_file_content(
+                    helpers.get_image_path(TestImages.IMAGE_FAMILY_3_LADY_1)
+                ),
+                detection_model=FaceDetectionModel.DETECTION_02,
+                user_data="Lady3-1",
+            )
+
+            # The LargeFaceList should be trained to make it ready for find similar operation.
+            self.logger.info(
+                f"Train the LargeFaceList {large_face_list_id}, and wait until the operation completes."
+            )
+            poller = await face_admin_client.large_face_list.begin_train(
+                large_face_list_id, polling_interval=30
+            )
+            await poller.wait()  # Keep polling until the "Train" operation completes.
+
+            # Detect face from 'IMAGE_FINDSIMILAR'
+            find_similar_file_path = helpers.get_image_path(
+                TestImages.IMAGE_FINDSIMILAR
+            )
+            detect_result = await face_client.detect(
+                helpers.read_file_content(find_similar_file_path),
+                detection_model=FaceDetectionModel.DETECTION_03,
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                return_face_id=True,
+            )
+
+            assert len(detect_result) == 1
+            face_id = str(detect_result[0].face_id)
+            self.logger.info(
+                f"Detect 1 face from the file '{find_similar_file_path}': {face_id}"
+            )
+
+            # Call Find Similar
+            find_similar_result = await face_client.find_similar_from_large_face_list(
+                face_id=face_id,
+                large_face_list_id=large_face_list_id,
+                max_num_of_candidates_returned=3,
+                mode=FindSimilarMatchMode.MATCH_FACE,
+            )
+            self.logger.info("Find Similar with matchFace mode:")
+            for r in find_similar_result:
+                self.logger.info(f"{beautify_json(r.as_dict())}")
+
+            # Clean up: Remove the LargeFaceList
+            self.logger.info(f"Remove the LargeFaceList {large_face_list_id}")
+            await face_admin_client.large_face_list.delete(large_face_list_id)
+
 
 async def main():
     sample = FindSimilarFaces()
     await sample.find_similar_from_face_ids()
+    await sample.find_similar_from_large_face_list()
 
 
 if __name__ == "__main__":
