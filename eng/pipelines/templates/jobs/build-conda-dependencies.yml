@@ -121,9 +121,9 @@ jobs:
 
     - script: sudo ls /Applications/
       displayName: 'List All apps'
-      
-    - script: sudo xcode-select --switch /Applications/Xcode_11.7.0.app
-      displayName: 'Select Xcode 11.7.0'
+
+    - script: sudo xcode-select --switch /Applications/Xcode_13.3.1.app
+      displayName: 'Select Xcode_13.3.1.app'
 
     - bash: |
           echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"

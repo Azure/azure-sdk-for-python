@@ -48,6 +48,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool send_certificate_chain: If True when **client_certificate** is provided, the credential will send
+        the public certificate chain in the x5c header of each token request's JWT. This is required for Subject
+        Name/Issuer (SNI) authentication. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
         to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
         This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
@@ -78,6 +81,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         client_secret: Optional[str] = None,
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[bytes, str]] = None,
+        send_certificate_chain: bool = False,
         **kwargs: Any
     ) -> None:
         self._assertion = user_assertion
@@ -98,7 +103,10 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
                 credential = get_client_credential(
-                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
+                    certificate_path=None,
+                    password=password,
+                    certificate_data=client_certificate,
+                    send_certificate_chain=send_certificate_chain,
                 )
             except ValueError as ex:
                 # client_certificate isn't a valid cert.

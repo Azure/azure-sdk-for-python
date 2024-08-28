@@ -1,5 +1,13 @@
 # Release History
 
+## 0.3.1 (2024-08-13)
+
+### Other Changes
+
+- This package is no longer being maintained. Use the [azure-ai-language-questionanswering](https://pypi.org/project/azure-ai-language-questionanswering/) package instead.
+
+- For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/azure-ai-language-questionanswering).
+
 ## 0.3.0 (2020-11-07)
 
 **Features**

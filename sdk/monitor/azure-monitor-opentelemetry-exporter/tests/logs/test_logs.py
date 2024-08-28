@@ -8,7 +8,11 @@ from unittest import mock
 from functools import partial
 
 # pylint: disable=import-error
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.semconv.attributes.exception_attributes import (
+    EXCEPTION_MESSAGE,
+    EXCEPTION_STACKTRACE,
+    EXCEPTION_TYPE,
+)
 from opentelemetry.sdk import _logs
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
@@ -136,9 +140,9 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute",
-                    SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
-                    SpanAttributes.EXCEPTION_MESSAGE: "division by zero",
-                    SpanAttributes.EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
+                    EXCEPTION_TYPE: "ZeroDivisionError",
+                    EXCEPTION_MESSAGE: "division by zero",
+                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
                 },
             ),
             InstrumentationScope("test_name"),
@@ -157,9 +161,9 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute",
-                    SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
-                    SpanAttributes.EXCEPTION_MESSAGE: "division by zero",
-                    SpanAttributes.EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
+                    EXCEPTION_TYPE: "ZeroDivisionError",
+                    EXCEPTION_MESSAGE: "division by zero",
+                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
                 },
             ),
             InstrumentationScope("test_name"),
@@ -178,9 +182,9 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute",
-                    SpanAttributes.EXCEPTION_TYPE: "",
-                    SpanAttributes.EXCEPTION_MESSAGE: "",
-                    SpanAttributes.EXCEPTION_STACKTRACE: ""
+                    EXCEPTION_TYPE: "",
+                    EXCEPTION_MESSAGE: "",
+                    EXCEPTION_STACKTRACE: ""
                 },
             ),
             InstrumentationScope("test_name"),
@@ -199,9 +203,9 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute",
-                    SpanAttributes.EXCEPTION_TYPE: "",
-                    SpanAttributes.EXCEPTION_MESSAGE: "",
-                    SpanAttributes.EXCEPTION_STACKTRACE: ""
+                    EXCEPTION_TYPE: "",
+                    EXCEPTION_MESSAGE: "",
+                    EXCEPTION_STACKTRACE: ""
                 },
             ),
             InstrumentationScope("test_name"),

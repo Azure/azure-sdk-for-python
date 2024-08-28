@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.2.1 (2024-08-13)
+
+### Bugs Fixed
+- Fix endpoint parsing issues
+
+## 1.2.0 (2024-08-08)
+
+### Features Added
+- Change API version to `2024-01-01`
+- Added a `webpubsub_client_access` option to specify the type of client access when generating token. This is used to generate token and client connection URL for a specific client endpoint type
+- Added operations `add_connections_to_groups` and `remove_connections_from_groups`
 
 ## 1.1.0 (2024-04-24)
 

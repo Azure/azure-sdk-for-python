@@ -279,3 +279,26 @@ def test_client_assertion_func_with_client_certificate():
             user_assertion="assertion",
         )
     assert "It is invalid to specify more than one of the following" in str(ex.value)
+
+
+def test_client_certificate_with_params():
+    """Ensure keyword arguments are passed to get_client_credential when client_certificate is provided"""
+    expected_send_certificate_chain = True
+
+    cert_path = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
+    cert_password = "password"
+    with open(cert_path, "rb") as f:
+        cert_bytes = f.read()
+
+    credential = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_certificate=cert_bytes,
+        password=cert_password,
+        send_certificate_chain=expected_send_certificate_chain,
+        user_assertion="assertion",
+    )
+
+    assert "passphrase" in credential._client_credential
+    assert credential._client_credential["passphrase"] == cert_password.encode("utf-8")
+    assert "public_certificate" in credential._client_credential
