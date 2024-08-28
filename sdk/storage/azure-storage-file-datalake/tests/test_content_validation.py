@@ -72,10 +72,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
-        response = file.upload_data(data, overwrite=True, validate_content=a, raw_request_hook=assert_method)
+        file.upload_data(data, overwrite=True, validate_content=a, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = file.download_file()
+        assert content.read() == data
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -91,15 +92,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
-        response = file.upload_data(
-            data,
-            overwrite=True,
-            validate_content=a,
-            chunk_size=1024,
-            raw_request_hook=assert_method)
+        file.upload_data(data, overwrite=True, validate_content=a, chunk_size=1024, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = file.download_file()
+        assert content.read() == data
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content

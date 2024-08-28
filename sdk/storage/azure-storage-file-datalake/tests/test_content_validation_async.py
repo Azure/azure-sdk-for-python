@@ -58,7 +58,8 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
         response = await file.upload_data(data, overwrite=True, validate_content=a, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = await file.download_file()
+        assert await content.read() == data
         await self._teardown()
 
     @DataLakePreparer()
@@ -75,15 +76,11 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
         assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
-        response = await file.upload_data(
-            data,
-            overwrite=True,
-            validate_content=a,
-            chunk_size=1024,
-            raw_request_hook=assert_method)
+        await file.upload_data(data, overwrite=True, validate_content=a, chunk_size=1024, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = await file.download_file()
+        assert await content.read() == data
         await self._teardown()
 
     @DataLakePreparer()
