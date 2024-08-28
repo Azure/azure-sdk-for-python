@@ -34,6 +34,8 @@ Several Azure Face Python SDK samples are available to you in the SDK's GitHub r
     * From a faceId array
     * From a large face list
 
+* [sample_verify_and_identify_from_large_person_group.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_verify_and_identify_from_large_person_group.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_verify_and_identify_from_large_person_group_async.py)) - Examples for verifying and identifying faces from a large person group.
+
 ## Prerequisites
 * Python 3.8 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an [Face APIs account](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity)
