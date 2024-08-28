@@ -137,7 +137,9 @@ class EmailClient(object):
                               attachment. Required.
                             "contentType": "str",  # MIME type of the content being
                               attached. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "contentId": "str"  # Optional. Unique identifier (CID) to
+                              reference an inline attachment.
                         }
                     ],
                     "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user
