@@ -1,7 +1,3 @@
-parameters:
-  PythonVersion: ''
-
-
 jobs:
   - job: 'Generate_Health_Status_Report'
     displayName: 'Generate Health Status Report'
@@ -12,7 +8,7 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/use-python-version.yml
       parameters:
-        versionSpec: '${{ parameters.PythonVersion }}'
+        versionSpec: '3.11'
 
     - template: /eng/pipelines/templates/steps/use-venv.yml
       parameters:
