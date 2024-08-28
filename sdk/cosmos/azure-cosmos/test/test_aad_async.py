@@ -92,7 +92,7 @@ class TestAAD(unittest.TestCase):
     container: ContainerProxy = None
     configs = test_config.TestConfig
     host = configs.host
-    credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
+    credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
 
     @classmethod
     async def setUpClass(cls):
