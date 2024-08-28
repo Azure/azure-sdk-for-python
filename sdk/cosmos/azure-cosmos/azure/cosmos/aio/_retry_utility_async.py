@@ -161,7 +161,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
+            elif e.status_code in [StatusCodes.REQUEST_TIMEOUT, StatusCodes.SERVICE_UNAVAILABLE]:
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
