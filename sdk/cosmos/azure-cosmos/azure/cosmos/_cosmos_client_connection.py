@@ -3025,9 +3025,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 partition_key_range_id
             )
 
-            change_feed_state = options.get("changeFeedState", None)
-            if change_feed_state and isinstance(change_feed_state, ChangeFeedState):
-                change_feed_state.populate_request_headers(self._routing_map_provider, headers)
+            if options.get("changeFeedState") is not None:
+                options.pop("changeFeedState").populate_request_headers(self._routing_map_provider, headers)
 
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers

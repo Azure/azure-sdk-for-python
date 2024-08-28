@@ -39,8 +39,7 @@ from ._base import (
     _set_properties_cache
 )
 from ._cosmos_client_connection import CosmosClientConnection
-from ._routing import routing_range
-from ._routing.routing_range import Range
+from ._routing.routing_range import Range, partition_key_range_to_range_string
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -133,7 +132,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_epk_range_for_partition_key(
             self,
-            partition_key_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> Range: # pylint: disable=line-too-long
+            partition_key_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> Range: # pylint: disable=line-too-long
         container_properties = self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
@@ -497,9 +496,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = args[3]
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop('partition_key'))
+            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.get('partition_key'))
             change_feed_state_context["partitionKeyFeedRange"] =\
-                self._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
+                self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
@@ -644,9 +643,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     def __is_prefix_partitionkey(
-        self,
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> bool: # pylint: disable=line-too-long
-
+        self, partition_key: PartitionKeyType) -> bool:
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
@@ -1333,5 +1330,4 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
-                for partitionKeyRange in partition_key_ranges]
+        return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]

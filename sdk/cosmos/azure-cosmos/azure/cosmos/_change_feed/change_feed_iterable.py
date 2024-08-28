@@ -27,7 +27,6 @@ from azure.core.paging import PageIterator
 
 from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
-from azure.cosmos._utils import is_base64_encoded
 
 
 class ChangeFeedIterable(PageIterator):
@@ -75,10 +74,10 @@ class ChangeFeedIterable(PageIterator):
         # v2 version: the continuation token will be base64 encoded composition token
         # which includes full change feed state
         if continuation is not None:
-            if is_base64_encoded(continuation):
-                change_feed_state_context["continuationFeedRange"] = continuation
-            else:
+            if continuation.isdigit() or continuation.strip('\'"').isdigit():
                 change_feed_state_context["continuationPkRangeId"] = continuation
+            else:
+                change_feed_state_context["continuationFeedRange"] = continuation
 
         self._validate_change_feed_state_context(change_feed_state_context)
         self._options["changeFeedStateContext"] = change_feed_state_context

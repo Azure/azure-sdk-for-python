@@ -69,13 +69,3 @@ def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
         return result
     except (json.JSONDecodeError, ValueError):
         return {}
-
-
-def is_base64_encoded(data: str) -> bool:
-    if data is None:
-        return False
-    try:
-        base64.b64decode(data, validate=True).decode('utf-8')
-        return True
-    except (json.JSONDecodeError, ValueError):
-        return False

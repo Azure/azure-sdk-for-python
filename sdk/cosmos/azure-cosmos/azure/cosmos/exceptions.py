@@ -135,20 +135,6 @@ class CosmosClientTimeoutError(AzureError):
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
-
-class CosmosFeedRangeGoneError(CosmosHttpResponseError):
-    """An HTTP error response with status code 410."""
-    def __init__(self, message=None, response=None, **kwargs):
-        """
-        :param int sub_status_code: HTTP response sub code.
-        """
-
-        self.sub_status = SubStatusCodes.PARTITION_KEY_RANGE_GONE
-        self.http_error_message = message
-        formatted_message = "Status code: %d Sub-status: %d\n%s" % (StatusCodes.GONE, self.sub_status, str(message))
-        super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
-        self.status_code = StatusCodes.GONE
-
 def _partition_range_is_gone(e):
     if (e.status_code == http_constants.StatusCodes.GONE
             and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):

@@ -41,14 +41,13 @@ from .._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from .._routing import routing_range
-from .._routing.routing_range import Range
+from .._routing.routing_range import Range, partition_key_range_to_range_string
 from ..offer import ThroughputProperties
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined
+    _Undefined, PartitionKey
 )
 
 __all__ = ("ContainerProxy",)
@@ -135,6 +134,16 @@ class ContainerProxy:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
+
+    async def _get_epk_range_for_partition_key(
+        self,
+        partition_key_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> Range: # pylint: disable=line-too-long
+
+        container_properties = await self._get_properties()
+        partition_key_definition = container_properties["partitionKey"]
+        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+
+        return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
     @distributed_trace_async
     async def read(
@@ -646,7 +655,9 @@ class ContainerProxy:
             feed_options["maxItemCount"] = kwargs.pop('max_item_count')
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop("partition_key"))
+            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.get("partition_key"))
+            change_feed_state_context["partitionKeyFeedRange"] = \
+                self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
@@ -1252,5 +1263,4 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
-                for partitionKeyRange in partition_key_ranges]
+        return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]

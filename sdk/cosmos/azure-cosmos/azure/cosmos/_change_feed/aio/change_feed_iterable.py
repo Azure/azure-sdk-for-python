@@ -21,14 +21,13 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any, Optional, Callable, Coroutine, Tuple, List, AsyncIterator
+from collections.abc import Awaitable
+from typing import Dict, Any, Optional, Callable, Tuple, List, AsyncIterator
 
 from azure.core.async_paging import AsyncPageIterator
 
-from azure.cosmos import PartitionKey
 from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
-from azure.cosmos._utils import is_base64_encoded
 
 
 # pylint: disable=protected-access
@@ -43,7 +42,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         self,
         client,
         options: Dict[str, Any],
-        fetch_function=Optional[Callable[[Dict[str, Any]], Coroutine[Tuple[List[Dict[str, Any]], Dict[str, Any]]]]],
+        fetch_function=Optional[Callable[[Dict[str, Any]], Awaitable[Tuple[List[Dict[str, Any]], Dict[str, Any]]]]],
         collection_link=Optional[str],
         continuation_token=Optional[str],
     ) -> None:
@@ -79,10 +78,10 @@ class ChangeFeedIterable(AsyncPageIterator):
         # v2 version: the continuation token will be base64 encoded composition token
         # which includes full change feed state
         if continuation is not None:
-            if is_base64_encoded(continuation):
-                change_feed_state_context["continuationFeedRange"] = continuation
-            else:
+            if continuation.isdigit() or continuation.strip('\'"').isdigit():
                 change_feed_state_context["continuationPkRangeId"] = continuation
+            else:
+                change_feed_state_context["continuationFeedRange"] = continuation
 
         self._validate_change_feed_state_context(change_feed_state_context)
         self._options["changeFeedStateContext"] = change_feed_state_context
@@ -118,16 +117,14 @@ class ChangeFeedIterable(AsyncPageIterator):
         conn_properties = await self._options.pop("containerProperties")
         if change_feed_state_context.get("partitionKey"):
             change_feed_state_context["partitionKey"] = await change_feed_state_context.pop("partitionKey")
-            pk_properties = conn_properties.get("partitionKey")
-            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             change_feed_state_context["partitionKeyFeedRange"] =\
-                partition_key_definition._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
+                await change_feed_state_context.pop("partitionKeyFeedRange")
 
         change_feed_state =\
             ChangeFeedState.from_json(self._collection_link, conn_properties["_rid"], change_feed_state_context)
         self._options["changeFeedState"] = change_feed_state
 
-        if change_feed_state.version != ChangeFeedStateVersion.V1:
+        if change_feed_state.version == ChangeFeedStateVersion.V1:
             self._change_feed_fetcher = ChangeFeedFetcherV1(
                 self._client,
                 self._collection_link,
