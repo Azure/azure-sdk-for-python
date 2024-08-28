@@ -142,7 +142,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_not_called()
 
@@ -153,7 +153,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         mock_client.return_value = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_called_once_with("https://fake.endpoint2", "fake-credential", "", 0, 0)
@@ -164,7 +164,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No new auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
@@ -176,7 +176,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
         mock_client.return_value = MockClient("https://fake.endpoint3", "", "fake-credential", 0, 0)
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 3
         mock_client.assert_called_once_with("https://fake.endpoint3", "fake-credential", "", 0, 0)
@@ -187,7 +187,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # A replica no longer exists
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint3"]
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
@@ -231,7 +231,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_not_called()
 
@@ -244,7 +244,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             "https://fake.endpoint2", "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0
         )
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_called_once_with(
@@ -257,7 +257,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No new auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
@@ -271,7 +271,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             "https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", None, 0, 0
         )
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 3
         mock_client.assert_called_once_with(
@@ -284,7 +284,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # A replica no longer exists
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint3"]
         manager._next_update_time = 0
-        manager._setup_failove_endpoints()
+        manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()

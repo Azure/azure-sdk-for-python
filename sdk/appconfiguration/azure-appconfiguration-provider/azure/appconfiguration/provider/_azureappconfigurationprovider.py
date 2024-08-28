@@ -231,9 +231,9 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         kwargs.pop("headers", {}),
         "Startup",
         provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        kwargs.pop("uses_feature_flags", False),
-        kwargs.pop("feature_filters_used", {}),
-        uses_key_vault,
+        provider._feature_flag_enabled,  # pylint:disable=protected-access
+        provider._feature_filter_usage,  # pylint:disable=protected-access
+        provider._uses_key_vault,  # pylint:disable=protected-access
     )
 
     try:
@@ -522,8 +522,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         success = False
         need_refresh = False
         error_message = """
-                        Failed to refresh configuration settings. No Azure App Configuration stores successfully
-                        refreshed.
+                        Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
         try:
