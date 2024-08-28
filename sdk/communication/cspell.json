@@ -2,9 +2,9 @@
     "version": "0.2",
     "ignoreWords": [
         "orgid",
-		"dtmf",
-		"Dtmf",
-		"DTMF",
+        "dtmf",
+        "Dtmf",
+        "DTMF",
         "pstn",
         "PSTN",
         "unmuted",
@@ -18,7 +18,8 @@
         "deserializers",
         "ctxt",
         "wday",
-		"unhold",
-        "Unhold"
+        "unhold",
+        "Unhold",
+        "myinlineimage"
     ]
 }
