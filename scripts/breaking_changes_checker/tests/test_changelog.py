@@ -7,7 +7,6 @@
 
 import os
 import json
-import jsondiff
 import pytest
 from breaking_changes_checker.changelog_tracker import ChangelogTracker
 from breaking_changes_checker.detect_breaking_changes import main
@@ -18,9 +17,8 @@ def test_changelog_flag():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) > 0
@@ -59,8 +57,7 @@ def test_new_class_property_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -136,8 +133,7 @@ def test_new_class_property_added_init():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -208,8 +204,7 @@ def test_new_class_property_added_init_only():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -297,8 +292,7 @@ def test_new_class_method_parameter_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -356,8 +350,7 @@ def test_added_operation_group():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-contoso", changelog=True)
+    bc = ChangelogTracker(stable, current, "azure-contoso")
     bc.run_checks()
 
     assert len(bc.features_added) == 2

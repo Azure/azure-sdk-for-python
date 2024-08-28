@@ -7,7 +7,6 @@
 
 import os
 import json
-import jsondiff
 import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
@@ -53,9 +52,8 @@ def test_multiple_checkers():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "test_current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -70,7 +68,6 @@ def test_ignore_checks():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "test_current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
     ignore = {
         "azure-storage-queue": [
@@ -79,7 +76,7 @@ def test_ignore_checks():
         ]
     }
 
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue", ignore=ignore)
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -94,7 +91,6 @@ def test_ignore_with_wildcard_checks():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "test_current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
     ignore = {
         "azure-storage-queue": [
@@ -103,7 +99,7 @@ def test_ignore_with_wildcard_checks():
         ]
     }
 
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue", ignore=ignore)
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -190,8 +186,7 @@ def test_replace_all_params():
         "(RemovedOrRenamedPositionalParam): The function 'my_function_name' had its parameter 'testing2' of kind 'positional_or_keyword' deleted or renamed in the current version"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -278,8 +273,7 @@ def test_replace_all_functions():
         "(RemovedOrRenamedModuleLevelFunction): The publicly exposed function 'my_function_name2' was deleted or renamed in the current version"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -352,8 +346,7 @@ def test_replace_all_classes():
         "(RemovedOrRenamedClass): The model or publicly exposed class 'class_name2' was deleted or renamed in the current version"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -380,8 +373,7 @@ def test_replace_all_modules():
         "(RemovedOrRenamedModule): The 'azure.ai.formrecognizer.aio' module was deleted or renamed in the current version"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -437,8 +429,7 @@ def test_removed_operation_group():
         "(RemovedOrRenamedOperationGroup): The 'ContosoClient' client had operation group 'foo' deleted or renamed in the current version"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
+    bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
     changes = bc.report_changes()
@@ -562,8 +553,7 @@ def test_removed_overload():
         "(RemovedMethodOverload): class_name.two had all overloads removed"
     ]
 
-    diff = jsondiff.diff(stable, current)
-    bc = BreakingChangesTracker(stable, current, diff, "azure-contoso", checkers=[MethodOverloadsChecker()])
+    bc = BreakingChangesTracker(stable, current, "azure-contoso", checkers=[MethodOverloadsChecker()])
     bc.run_checks()
 
     changes = bc.report_changes()
