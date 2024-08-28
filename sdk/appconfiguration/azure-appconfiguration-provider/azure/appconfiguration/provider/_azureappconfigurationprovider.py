@@ -50,14 +50,13 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._client_manager import ConfigurationClientWrapper, ConfigurationClientManager
-from ._discovery import find_auto_failover_endpoints
+from ._client_manager import ConfigurationClientManager
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]
 _T = TypeVar("_T")
 logger = logging.getLogger(__name__)
 
@@ -315,7 +314,8 @@ def _buildprovider(
     # pylint:disable=protected-access
     if connection_string:
         endpoint = connection_string.split(";")[0].split("=")[1]
-    provider = AzureAppConfigurationProvider(endpoint, **kwargs)
+    if not endpoint:
+        raise ValueError("No endpoint specified.")
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
     replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
@@ -325,39 +325,27 @@ def _buildprovider(
     else:
         user_agent = USER_AGENT
 
-    clients = []
-    if connection_string and endpoint:
-        clients.append(
-            ConfigurationClientWrapper.from_connection_string(
-                endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
-            clients.append(
-                ConfigurationClientWrapper.from_connection_string(
-                    failover_endpoint, failover_connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    if endpoint and credential:
-        clients.append(
-            ConfigurationClientWrapper.from_credential(
-                endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            clients.append(
-                ConfigurationClientWrapper.from_credential(
-                    endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+    interval: int = kwargs.get("refresh_interval", 30)
+    if interval < 1:
+        raise ValueError("Refresh interval must be greater than or equal to 1 second.")
+
+    min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
+    max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+    replica_client_manager = ConfigurationClientManager(
+        connection_string,
+        endpoint,
+        credential,
+        user_agent,
+        retry_total,
+        retry_backoff_max,
+        replica_discovery_enabled,
+        min_backoff,
+        max_backoff,
+        **kwargs
+    )
+    provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
+    return provider
 
 
 def _resolve_keyvault_reference(
@@ -487,16 +475,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, **kwargs) -> None:
+    def __init__(self, endpoint, replica_client_manager, **kwargs) -> None:
         self._origin_endpoint = endpoint
-
-        interval: int = kwargs.get("refresh_interval", 30)
-        if interval < 1:
-            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-
-        min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
-        max_backoff: int = 600 if 600 <= interval else interval
-        self._replica_client_manager = ConfigurationClientManager(min_backoff, max_backoff)
+        self._replica_client_manager = replica_client_manager
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -546,6 +527,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         try:
+            self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
             for client in active_clients:
@@ -582,9 +564,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             self._feature_filter_usage,
                             self._uses_key_vault,
                         )
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags = client.refresh_feature_flags(
-                            self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
+                            client.refresh_feature_flags(
+                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                            )
                         )
+                        self._feature_filter_usage = filters_used
 
                         if need_refresh or need_ff_refresh:
                             self._dict[FEATURE_MANAGEMENT_KEY] = {}
@@ -622,9 +607,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(
+                    feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
                     )
+                    self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys

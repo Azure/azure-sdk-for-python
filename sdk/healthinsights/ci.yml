@@ -33,5 +33,3 @@ extends:
 
     - name: azure-healthinsights-radiologyinsights
       safeName: azurehealthinsightsradiologyinsights
-      skipVerifyChangeLog: true
-
