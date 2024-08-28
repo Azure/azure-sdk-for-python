@@ -1190,9 +1190,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 'db': db,
                 'coll': collection,
                 'doc': document,
-                # 'user': user,
-                # 'permissionOnColl': permission_on_coll,
-                # 'permissionOnDoc': permission_on_doc,
+                'user': user,
+                'permissionOnColl': permission_on_coll,
+                'permissionOnDoc': permission_on_doc,
             }
             return entities
 
@@ -1704,7 +1704,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
         start_time = time.time()
         try:
-            async with CosmosClient("https://localhost:9999", TestCRUDOperationsAsync.credential,
+            async with CosmosClient("https://localhost:9999", TestCRUDOperationsAsync.masterKey,
                                     retry_total=retries, retry_connect=retries, retry_read=retries,
                                     retry_backoff_max=0.3, retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async initialization')
@@ -1718,7 +1718,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         try:
             async with CosmosClient(
                     "https://localhost:9999",
-                    TestCRUDOperationsAsync.credential,
+                    TestCRUDOperationsAsync.masterKey,
                     retry_total=retries,
                     retry_read=retries,
                     retry_connect=retries,
