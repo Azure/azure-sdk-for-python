@@ -5,12 +5,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from copy import deepcopy
 from enum import Enum
-import re
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 import jsondiff
-from breaking_changes_tracker import BreakingChangesTracker, Suppression
+from breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
