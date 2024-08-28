@@ -15,7 +15,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import FaceClientConfiguration, FaceServiceClientConfiguration, FaceSessionClientConfiguration
+from ._configuration import (
+    FaceAdministrationClientConfiguration,
+    FaceClientConfiguration,
+    FaceSessionClientConfiguration,
+)
 from ._serialization import Deserializer, Serializer
 from .operations import (
     FaceClientOperationsMixin,
@@ -31,8 +35,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class FaceServiceClient:  # pylint: disable=client-accepts-api-version-keyword
-    """FaceServiceClient.
+class FaceAdministrationClient:  # pylint: disable=client-accepts-api-version-keyword
+    """FaceAdministrationClient.
 
     :ivar face_list: FaceListOperations operations
     :vartype face_list: azure.ai.vision.face.operations.FaceListOperations
@@ -58,7 +62,7 @@ class FaceServiceClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}/face/{apiVersion}"
-        self._config = FaceServiceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = FaceAdministrationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

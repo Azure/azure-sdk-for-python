@@ -120,6 +120,19 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm has classified the target face as a spoof."""
 
 
+class FaceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of long running operation."""
+
+    NOT_STARTED = "notStarted"
+    """The operation is not started."""
+    RUNNING = "running"
+    """The operation is still running."""
+    SUCCEEDED = "succeeded"
+    """The operation is succeeded."""
+    FAILED = "failed"
+    """The operation is failed."""
+
+
 class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The recognition model for the face."""
 
@@ -236,19 +249,6 @@ class NoiseLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Medium noise level."""
     HIGH = "high"
     """High noise level."""
-
-
-class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of long running operation."""
-
-    NOT_STARTED = "notStarted"
-    """The operation is not started."""
-    RUNNING = "running"
-    """The operation is still running."""
-    SUCCEEDED = "succeeded"
-    """The operation is succeeded."""
-    FAILED = "failed"
-    """The operation is failed."""
 
 
 class QualityForRecognition(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -298,9 +298,11 @@ class FaceSessionClient(FaceSessionClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if verify_image is not None:
-            request_body = _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access
-                parameters=body,
-                verify_image=("verify-image", verify_image),
+            request_body = (
+                _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access
+                    parameters=body,
+                    verify_image=("verify-image", verify_image),
+                )
             )
             return super()._create_liveness_with_verify_session_with_verify_image(request_body, **kwargs)
 

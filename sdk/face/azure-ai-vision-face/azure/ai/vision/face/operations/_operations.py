@@ -2011,7 +2011,7 @@ class FaceListOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceServiceClient`'s
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
         :attr:`face_list` attribute.
     """
 
@@ -2932,7 +2932,7 @@ class LargeFaceListOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceServiceClient`'s
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
         :attr:`large_face_list` attribute.
     """
 
@@ -3485,7 +3485,7 @@ class LargeFaceListOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_training_status(self, large_face_list_id: str, **kwargs: Any) -> _models.TrainingResult:
+    def get_training_status(self, large_face_list_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
         """Please refer to
         https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-training-status
         for more details.
@@ -3493,8 +3493,8 @@ class LargeFaceListOperations:
         :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
          maximum length is 64. Required.
         :type large_face_list_id: str
-        :return: TrainingResult. The TrainingResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.TrainingResult
+        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -3508,7 +3508,7 @@ class LargeFaceListOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TrainingResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
 
         _request = build_large_face_list_get_training_status_request(
             large_face_list_id=large_face_list_id,
@@ -3541,7 +3541,7 @@ class LargeFaceListOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TrainingResult, response.json())
+            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4361,7 +4361,7 @@ class PersonGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceServiceClient`'s
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
         :attr:`person_group` attribute.
     """
 
@@ -4902,15 +4902,15 @@ class PersonGroupOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_training_status(self, person_group_id: str, **kwargs: Any) -> _models.TrainingResult:
+    def get_training_status(self, person_group_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
         """Please refer to
         https://learn.microsoft.com/rest/api/face/person-group-operations/get-person-group-training-status
         for more details.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
-        :return: TrainingResult. The TrainingResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.TrainingResult
+        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -4924,7 +4924,7 @@ class PersonGroupOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TrainingResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
 
         _request = build_person_group_get_training_status_request(
             person_group_id=person_group_id,
@@ -4957,7 +4957,7 @@ class PersonGroupOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TrainingResult, response.json())
+            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6268,7 +6268,7 @@ class LargePersonGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceServiceClient`'s
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
         :attr:`large_person_group` attribute.
     """
 
@@ -6811,7 +6811,7 @@ class LargePersonGroupOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_training_status(self, large_person_group_id: str, **kwargs: Any) -> _models.TrainingResult:
+    def get_training_status(self, large_person_group_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
         """To check Large Person Group training status completed or still ongoing. Large Person Group
         training is an asynchronous operation triggered by "Train Large Person Group" API.
 
@@ -6821,8 +6821,8 @@ class LargePersonGroupOperations:
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
-        :return: TrainingResult. The TrainingResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.TrainingResult
+        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -6836,7 +6836,7 @@ class LargePersonGroupOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TrainingResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
 
         _request = build_large_person_group_get_training_status_request(
             large_person_group_id=large_person_group_id,
@@ -6869,7 +6869,7 @@ class LargePersonGroupOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TrainingResult, response.json())
+            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9352,7 +9352,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     @overload
     def identify_from_person_group(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Person Group.
 
@@ -9365,8 +9365,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9380,7 +9380,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         max_num_of_candidates_returned: Optional[int] = None,
         confidence_threshold: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Person Group.
 
@@ -9406,15 +9406,15 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
          precision on their scenario data. Note there is no guarantee of this threshold value working on
          other data and after algorithm updates. Default value is None.
         :paramtype confidence_threshold: float
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def identify_from_person_group(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Person Group.
 
@@ -9427,8 +9427,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9442,7 +9442,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         max_num_of_candidates_returned: Optional[int] = None,
         confidence_threshold: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Person Group.
 
@@ -9467,8 +9467,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
          precision on their scenario data. Note there is no guarantee of this threshold value working on
          other data and after algorithm updates. Default value is None.
         :paramtype confidence_threshold: float
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -9483,7 +9483,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.IdentificationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.FaceIdentificationResult]] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if face_ids is _Unset:
@@ -9536,7 +9536,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.IdentificationResult], response.json())
+            deserialized = _deserialize(List[_models.FaceIdentificationResult], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9546,7 +9546,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     @overload
     def identify_from_large_person_group(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Large Person Group.
 
@@ -9559,8 +9559,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9574,7 +9574,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         max_num_of_candidates_returned: Optional[int] = None,
         confidence_threshold: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Large Person Group.
 
@@ -9600,15 +9600,15 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
          precision on their scenario data. Note there is no guarantee of this threshold value working on
          other data and after algorithm updates. Default value is None.
         :paramtype confidence_threshold: float
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def identify_from_large_person_group(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Large Person Group.
 
@@ -9621,8 +9621,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9636,7 +9636,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         max_num_of_candidates_returned: Optional[int] = None,
         confidence_threshold: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[_models.IdentificationResult]:
+    ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Large Person Group.
 
@@ -9661,8 +9661,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
          precision on their scenario data. Note there is no guarantee of this threshold value working on
          other data and after algorithm updates. Default value is None.
         :paramtype confidence_threshold: float
-        :return: list of IdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.IdentificationResult]
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -9677,7 +9677,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.IdentificationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.FaceIdentificationResult]] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if face_ids is _Unset:
@@ -9730,7 +9730,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.IdentificationResult], response.json())
+            deserialized = _deserialize(List[_models.FaceIdentificationResult], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

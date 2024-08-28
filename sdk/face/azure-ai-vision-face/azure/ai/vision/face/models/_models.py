@@ -861,6 +861,80 @@ class FaceGroupingResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class FaceIdentificationCandidate(_model_base.Model):
+    """Candidate for identify call.
+
+
+    :ivar person_id: personId of candidate person. Required.
+    :vartype person_id: str
+    :ivar confidence: Confidence value of the candidate. The higher confidence, the more similar.
+     Range between [0,1]. Required.
+    :vartype confidence: float
+    """
+
+    person_id: str = rest_field(name="personId")
+    """personId of candidate person. Required."""
+    confidence: float = rest_field()
+    """Confidence value of the candidate. The higher confidence, the more similar. Range between
+     [0,1]. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        person_id: str,
+        confidence: float,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class FaceIdentificationResult(_model_base.Model):
+    """Identify result.
+
+
+    :ivar face_id: faceId of the query face. Required.
+    :vartype face_id: str
+    :ivar candidates: Identified person candidates for that face (ranked by confidence). Array size
+     should be no larger than input maxNumOfCandidatesReturned. If no person is identified, will
+     return an empty array. Required.
+    :vartype candidates: list[~azure.ai.vision.face.models.FaceIdentificationCandidate]
+    """
+
+    face_id: str = rest_field(name="faceId")
+    """faceId of the query face. Required."""
+    candidates: List["_models.FaceIdentificationCandidate"] = rest_field()
+    """Identified person candidates for that face (ranked by confidence). Array size should be no
+     larger than input maxNumOfCandidatesReturned. If no person is identified, will return an empty
+     array. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        face_id: str,
+        candidates: List["_models.FaceIdentificationCandidate"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class FaceLandmarks(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """A collection of 27-point face landmarks pointing to the important positions of face components.
 
@@ -1207,6 +1281,68 @@ class FaceRectangle(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class FaceTrainingResult(_model_base.Model):
+    """Training result of a container.
+
+
+    :ivar status: Training status of the container. Required. Known values are: "notStarted",
+     "running", "succeeded", and "failed".
+    :vartype status: str or ~azure.ai.vision.face.models.FaceOperationStatus
+    :ivar created_date_time: A combined UTC date and time string that describes the created time of
+     the person group, large person group or large face list. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: A combined UTC date and time string that describes the last modify
+     time of the person group, large person group or large face list, could be null value when the
+     group is not successfully trained. Required.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar last_successful_training_date_time: A combined UTC date and time string that describes
+     the last successful training time of the person group, large person group or large face list.
+     Required.
+    :vartype last_successful_training_date_time: ~datetime.datetime
+    :ivar message: Show failure message when training failed (omitted when training succeed).
+    :vartype message: str
+    """
+
+    status: Union[str, "_models.FaceOperationStatus"] = rest_field()
+    """Training status of the container. Required. Known values are: \"notStarted\", \"running\",
+     \"succeeded\", and \"failed\"."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """A combined UTC date and time string that describes the created time of the person group, large
+     person group or large face list. Required."""
+    last_action_date_time: datetime.datetime = rest_field(name="lastActionDateTime", format="rfc3339")
+    """A combined UTC date and time string that describes the last modify time of the person group,
+     large person group or large face list, could be null value when the group is not successfully
+     trained. Required."""
+    last_successful_training_date_time: datetime.datetime = rest_field(
+        name="lastSuccessfulTrainingDateTime", format="rfc3339"
+    )
+    """A combined UTC date and time string that describes the last successful training time of the
+     person group, large person group or large face list. Required."""
+    message: Optional[str] = rest_field()
+    """Show failure message when training failed (omitted when training succeed)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.FaceOperationStatus"],
+        created_date_time: datetime.datetime,
+        last_action_date_time: datetime.datetime,
+        last_successful_training_date_time: datetime.datetime,
+        message: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class FaceVerificationResult(_model_base.Model):
     """Verify result.
 
@@ -1396,80 +1532,6 @@ class HeadPose(_model_base.Model):
         pitch: float,
         roll: float,
         yaw: float,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class IdentificationCandidate(_model_base.Model):
-    """Candidate for identify call.
-
-
-    :ivar person_id: personId of candidate person. Required.
-    :vartype person_id: str
-    :ivar confidence: Confidence value of the candidate. The higher confidence, the more similar.
-     Range between [0,1]. Required.
-    :vartype confidence: float
-    """
-
-    person_id: str = rest_field(name="personId")
-    """personId of candidate person. Required."""
-    confidence: float = rest_field()
-    """Confidence value of the candidate. The higher confidence, the more similar. Range between
-     [0,1]. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        person_id: str,
-        confidence: float,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class IdentificationResult(_model_base.Model):
-    """Identify result.
-
-
-    :ivar face_id: faceId of the query face. Required.
-    :vartype face_id: str
-    :ivar candidates: Identified person candidates for that face (ranked by confidence). Array size
-     should be no larger than input maxNumOfCandidatesReturned. If no person is identified, will
-     return an empty array. Required.
-    :vartype candidates: list[~azure.ai.vision.face.models.IdentificationCandidate]
-    """
-
-    face_id: str = rest_field(name="faceId")
-    """faceId of the query face. Required."""
-    candidates: List["_models.IdentificationCandidate"] = rest_field()
-    """Identified person candidates for that face (ranked by confidence). Array size should be no
-     larger than input maxNumOfCandidatesReturned. If no person is identified, will return an empty
-     array. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        face_id: str,
-        candidates: List["_models.IdentificationCandidate"],
     ): ...
 
     @overload
@@ -2436,68 +2498,6 @@ class PersonGroupPersonFace(_model_base.Model):
         self,
         *,
         user_data: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class TrainingResult(_model_base.Model):
-    """Training result of a container.
-
-
-    :ivar status: Training status of the container. Required. Known values are: "notStarted",
-     "running", "succeeded", and "failed".
-    :vartype status: str or ~azure.ai.vision.face.models.OperationStatus
-    :ivar created_date_time: A combined UTC date and time string that describes the created time of
-     the person group, large person group or large face list. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: A combined UTC date and time string that describes the last modify
-     time of the person group, large person group or large face list, could be null value when the
-     group is not successfully trained. Required.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar last_successful_training_date_time: A combined UTC date and time string that describes
-     the last successful training time of the person group, large person group or large face list.
-     Required.
-    :vartype last_successful_training_date_time: ~datetime.datetime
-    :ivar message: Show failure message when training failed (omitted when training succeed).
-    :vartype message: str
-    """
-
-    status: Union[str, "_models.OperationStatus"] = rest_field()
-    """Training status of the container. Required. Known values are: \"notStarted\", \"running\",
-     \"succeeded\", and \"failed\"."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """A combined UTC date and time string that describes the created time of the person group, large
-     person group or large face list. Required."""
-    last_action_date_time: datetime.datetime = rest_field(name="lastActionDateTime", format="rfc3339")
-    """A combined UTC date and time string that describes the last modify time of the person group,
-     large person group or large face list, could be null value when the group is not successfully
-     trained. Required."""
-    last_successful_training_date_time: datetime.datetime = rest_field(
-        name="lastSuccessfulTrainingDateTime", format="rfc3339"
-    )
-    """A combined UTC date and time string that describes the last successful training time of the
-     person group, large person group or large face list. Required."""
-    message: Optional[str] = rest_field()
-    """Show failure message when training failed (omitted when training succeed)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_action_date_time: datetime.datetime,
-        last_successful_training_date_time: datetime.datetime,
-        message: Optional[str] = None,
     ): ...
 
     @overload

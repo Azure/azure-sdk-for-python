@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FaceServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for FaceServiceClient.
+class FaceAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for FaceAdministrationClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

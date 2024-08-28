@@ -23,18 +23,19 @@ from ._models import FaceError
 from ._models import FaceErrorResponse
 from ._models import FaceFindSimilarResult
 from ._models import FaceGroupingResult
+from ._models import FaceIdentificationCandidate
+from ._models import FaceIdentificationResult
 from ._models import FaceLandmarks
 from ._models import FaceList
 from ._models import FaceListFace
 from ._models import FaceListItem
 from ._models import FaceRectangle
+from ._models import FaceTrainingResult
 from ._models import FaceVerificationResult
 from ._models import FacialHair
 from ._models import HairColor
 from ._models import HairProperties
 from ._models import HeadPose
-from ._models import IdentificationCandidate
-from ._models import IdentificationResult
 from ._models import LandmarkCoordinate
 from ._models import LargeFaceList
 from ._models import LargeFaceListFace
@@ -55,7 +56,6 @@ from ._models import OcclusionProperties
 from ._models import PersonGroup
 from ._models import PersonGroupPerson
 from ._models import PersonGroupPersonFace
-from ._models import TrainingResult
 
 from ._enums import AccessoryType
 from ._enums import BlurLevel
@@ -64,6 +64,7 @@ from ._enums import FaceAttributeType
 from ._enums import FaceDetectionModel
 from ._enums import FaceImageType
 from ._enums import FaceLivenessDecision
+from ._enums import FaceOperationStatus
 from ._enums import FaceRecognitionModel
 from ._enums import FaceSessionStatus
 from ._enums import FindSimilarMatchMode
@@ -73,7 +74,6 @@ from ._enums import LivenessModel
 from ._enums import LivenessOperationMode
 from ._enums import MaskType
 from ._enums import NoiseLevel
-from ._enums import OperationStatus
 from ._enums import QualityForRecognition
 from ._enums import Versions
 
@@ -105,18 +105,19 @@ __all__ = [
     "FaceErrorResponse",
     "FaceFindSimilarResult",
     "FaceGroupingResult",
+    "FaceIdentificationCandidate",
+    "FaceIdentificationResult",
     "FaceLandmarks",
     "FaceList",
     "FaceListFace",
     "FaceListItem",
     "FaceRectangle",
+    "FaceTrainingResult",
     "FaceVerificationResult",
     "FacialHair",
     "HairColor",
     "HairProperties",
     "HeadPose",
-    "IdentificationCandidate",
-    "IdentificationResult",
     "LandmarkCoordinate",
     "LargeFaceList",
     "LargeFaceListFace",
@@ -137,7 +138,6 @@ __all__ = [
     "PersonGroup",
     "PersonGroupPerson",
     "PersonGroupPersonFace",
-    "TrainingResult",
     "AccessoryType",
     "BlurLevel",
     "ExposureLevel",
@@ -145,6 +145,7 @@ __all__ = [
     "FaceDetectionModel",
     "FaceImageType",
     "FaceLivenessDecision",
+    "FaceOperationStatus",
     "FaceRecognitionModel",
     "FaceSessionStatus",
     "FindSimilarMatchMode",
@@ -154,7 +155,6 @@ __all__ = [
     "LivenessOperationMode",
     "MaskType",
     "NoiseLevel",
-    "OperationStatus",
     "QualityForRecognition",
     "Versions",
 ]
