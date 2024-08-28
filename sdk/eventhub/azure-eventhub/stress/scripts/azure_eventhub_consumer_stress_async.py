@@ -126,7 +126,7 @@ async def on_event_received(process_monitor, partition_context, event):
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
-        LOGGER.info("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
+        LOGGER.error("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
                     partition_context.partition_id,
                     recv_cnt_map[partition_context.partition_id],
                     total_time_elapsed,
@@ -138,7 +138,7 @@ async def on_event_received(process_monitor, partition_context, event):
             process_monitor.cpu_usage_percent,
             process_monitor.memory_usage_percent
         )
-        LOGGER.info("Sleep for 20 seconds to mimic processing time")
+        LOGGER.error("Sleep for 20 seconds to mimic processing time")
         await asyncio.sleep(20)
         await partition_context.update_checkpoint(event)
 
@@ -152,7 +152,7 @@ async def on_event_batch_received(process_monitor, partition_context, event_batc
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
-        LOGGER.info("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
+        LOGGER.error("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
                     partition_context.partition_id,
                     recv_cnt_map[partition_context.partition_id],
                     total_time_elapsed,
@@ -165,6 +165,8 @@ async def on_event_batch_received(process_monitor, partition_context, event_batc
             process_monitor.cpu_usage_percent,
             process_monitor.memory_usage_percent
         )
+        LOGGER.error("Sleep for 20 seconds to mimic processing time")
+        await asyncio.sleep(20)
         await partition_context.update_checkpoint()
 
 
