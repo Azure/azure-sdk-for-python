@@ -590,7 +590,7 @@ class BreakingChangesTracker:
                 return False
         return True
 
-    def get_reportable_changes(self, ignore_changes: Dict, changes_list: Dict) -> List:
+    def get_reportable_changes(self, ignore_changes: Dict, changes_list: List) -> List:
         ignored = []
         # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
