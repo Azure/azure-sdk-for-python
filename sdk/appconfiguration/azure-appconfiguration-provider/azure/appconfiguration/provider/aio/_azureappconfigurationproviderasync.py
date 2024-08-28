@@ -401,8 +401,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             for client in active_clients:
                 try:
                     if self._refresh_on:
-                        need_refresh, self._refresh_on, configuration_settings = await client.refresh_configuration_settings(
-                            self._selects, self._refresh_on, headers, **kwargs
+                        need_refresh, self._refresh_on, configuration_settings = (
+                            await client.refresh_configuration_settings(
+                                self._selects, self._refresh_on, headers, **kwargs
+                            )
                         )
                         configuration_settings_processed = {}
                         for config in configuration_settings:
@@ -441,7 +443,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     return
                 raise exception
             if self._on_refresh_success:
-                self._on_refresh_success()
+                await self._on_refresh_success()
         finally:
             self._refresh_lock.release()
 
@@ -470,7 +472,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if not etag:
                         try:
                             headers = kwargs.get("headers", {})
-                            sentinel = await client.get_configuration_setting(key, label, headers=headers)  # type:ignore
+                            sentinel = await client.get_configuration_setting(
+                                key, label, headers=headers
+                            )  # type:ignore
                             self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:

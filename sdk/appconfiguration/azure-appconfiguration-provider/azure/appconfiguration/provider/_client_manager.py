@@ -315,13 +315,13 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
 
-        self._setup_failove_endpoints()
         if connection_string and endpoint:
             self._replica_clients.append(
                 _ConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
+            self._setup_failove_endpoints()
             return
         if endpoint and credential:
             self._replica_clients.append(
@@ -329,6 +329,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
+            self._setup_failove_endpoints()
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 

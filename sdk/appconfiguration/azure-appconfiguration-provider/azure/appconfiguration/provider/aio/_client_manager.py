@@ -9,12 +9,11 @@ import time
 import threading
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
+from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
@@ -33,6 +32,9 @@ from .._constants import (
 )
 from .._discovery import find_auto_failover_endpoints
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
@@ -49,7 +51,7 @@ class _ConfigurationClientWrapper:
     def from_credential(
         cls,
         endpoint: str,
-        credential: TokenCredential,
+        credential: "AsyncTokenCredential",
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
@@ -60,7 +62,7 @@ class _ConfigurationClientWrapper:
         requests.
 
         :param str endpoint: The endpoint of the App Configuration store
-        :param TokenCredential credential: The credential to use for authentication
+        :param AsyncTokenCredential credential: The credential to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
@@ -179,6 +181,10 @@ class _ConfigurationClientWrapper:
             )
             async for feature_flag in feature_flags:
                 loaded_feature_flags.append(json.loads(feature_flag.value))
+                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
+                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
+                    # mistake, so we should ignore it.
+                    continue
 
                 if feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
@@ -221,7 +227,9 @@ class _ConfigurationClientWrapper:
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
-            configuration_settings, sentinel_keys = await self.load_configuration_settings(selects, refresh_on, **kwargs)
+            configuration_settings, sentinel_keys = await self.load_configuration_settings(
+                selects, refresh_on, **kwargs
+            )
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
@@ -246,9 +254,11 @@ class _ConfigurationClientWrapper:
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
-            changed = await self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
+            changed = await self._check_configuration_setting(
+                key=key, label=label, etag=etag, headers=headers, **kwargs
+            )
             if changed:
-                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
+                feature_flags, feature_flag_sentinel_keys, filters_used = await self.load_feature_flags(
                     feature_flag_selectors, True, headers=headers, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
@@ -281,12 +291,12 @@ class _ConfigurationClientWrapper:
         """
         await self._client.close()
 
-    async def __enter__(self):
-        await self._client.__enter__()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
 
-    async def __exit__(self, *args):
-        await self._client.__exit__(*args)
+    async def __aexit__(self, *args):
+        await self._client.__aexit__(*args)
 
 
 class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
@@ -294,7 +304,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self,
         connection_string: Optional[str],
         endpoint: str,
-        credential: Optional["TokenCredential"],
+        credential: Optional["AsyncTokenCredential"],
         user_agent: str,
         retry_total,
         retry_backoff_max,
@@ -316,14 +326,13 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
 
-        threading.Thread(target=self._setup_failove_endpoints).start()
-
         if connection_string and endpoint:
             self._replica_clients.append(
                 _ConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
+            threading.Thread(target=self._setup_failove_endpoints).start()
             return
         if endpoint and credential:
             self._replica_clients.append(
@@ -331,6 +340,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
+            threading.Thread(target=self._setup_failove_endpoints).start()
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
@@ -425,7 +435,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
         )
 
-    async def __eq__(self, other):
+    def __eq__(self, other):
         if len(self._replica_clients) != len(other._replica_clients):
             return False
         for i in range(len(self._replica_clients)):  # pylint:disable=consider-using-enumerate
@@ -437,11 +447,11 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         for client in self._replica_clients:
             await client.close()
 
-    async def __enter__(self):
+    async def __aenter__(self):
         for client in self._replica_clients:
-            await client.__enter__()
+            await client.__aenter__()
         return self
 
-    async def __exit__(self, *args):
+    async def __aexit__(self, *args):
         for client in self._replica_clients:
-            await client.__exit__(*args)
+            await client.__aexit__(*args)
