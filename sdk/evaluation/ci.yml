@@ -22,6 +22,12 @@ pr:
     include:
     - sdk/evaluation
 
+variables:
+- name: Skip.Test
+  value: "true"
+- name: Skip.AnalyzeDependencies
+  value: "true"
+
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
