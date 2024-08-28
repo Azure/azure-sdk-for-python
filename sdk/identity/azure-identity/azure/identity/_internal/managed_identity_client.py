@@ -82,8 +82,10 @@ class ManagedIdentityClientBase(abc.ABC):
 
     def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
-        for token in tokens:
+        for token in self._cache.search(
+            TokenCache.CredentialType.ACCESS_TOKEN,
+            target=[resource],
+        ):
             expires_on = int(token["expires_on"])
             if expires_on > time.time():
                 return AccessToken(token["secret"], expires_on)

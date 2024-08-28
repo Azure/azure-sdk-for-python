@@ -2669,8 +2669,8 @@ class TestCRUDOperations(unittest.TestCase):
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                 if HttpHeaders.PartitionKey in args[4].headers else '')
+        if HttpHeaders.PartitionKey in args[4].headers:
+            self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey])
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 

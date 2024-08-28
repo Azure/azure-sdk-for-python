@@ -9,6 +9,7 @@ from enum import Enum
 from typing import Any, Dict, List, Union
 import jsondiff
 from breaking_changes_tracker import BreakingChangesTracker
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
@@ -22,21 +23,21 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}.{}' was added in the current version"
+        "The client '{}' was added in the current version"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}.{}' client method '{}' was added in the current version"
+        "The '{}' client method '{}' was added in the current version"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}.{}' was added in the current version"
+        "The model or publicly exposed class '{}' was added in the current version"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}.{}' method '{}' was added in the current version"
+        "The '{}' method '{}' was added in the current version"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the {} method in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}.{}' had parameter '{}' added in the current version"
+        "The function '{}' had parameter '{}' added in the current version"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the current version"
+        "The model or publicly exposed class '{}' had property '{}' added in the current version"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}.{}' client had operation group '{}' added in the current version"
+        "The '{}' client had operation group '{}' added in the current version"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -154,12 +155,16 @@ class ChangelogTracker(BreakingChangesTracker):
                 )
 
     def report_changes(self) -> None:
+        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        self.get_reportable_breaking_changes(ignore_changes)
+
         # Code borrowed and modified from the previous change log tool
         def _build_md(content: list, title: str, buffer: list):
             buffer.append(title)
             buffer.append("")
             for _, bc in enumerate(content):
-                msg, _, *args = bc
+                # Extract the message, skip the change type and the module name
+                msg, _, _,*args = bc
                 buffer.append("  - " + msg.format(*args))
             buffer.append("")
             return buffer
@@ -170,4 +175,6 @@ class ChangelogTracker(BreakingChangesTracker):
         if self.breaking_changes:
             _build_md(self.breaking_changes, "### Breaking Changes", buffer)
         content =  "\n".join(buffer).strip()
+
+        content = "===== changelog start =====\n" + content + "\n===== changelog end =====\n"
         return content
