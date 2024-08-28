@@ -33,7 +33,7 @@ class EmailClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2023-03-31".
+        Default value is "2024-07-01-preview".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
