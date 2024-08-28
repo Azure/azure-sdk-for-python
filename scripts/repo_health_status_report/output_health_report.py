@@ -38,8 +38,11 @@ github = Github(auth=auth)
 # repo = github.get_repo("Azure/azure-sdk-for-python")
 
 # Azure DevOps
-DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
-token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+if not in_ci():
+    DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
+    token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+else:
+    token = os.getenv("System.AccessToken") or os.getenv("SYSTEM_ACCESSTOKEN")
 AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 DEVOPS_TASK_STATUS = typing.Literal[
     "abandoned",
