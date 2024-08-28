@@ -376,15 +376,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise RuntimeError("Connection lost during settle operation.") from e
         except TimeoutError as te:
             raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
-        except MessageLockLostError as mle:
-            raise mle
-        except SessionLockLostError as sle:
-            raise sle
         except AMQPException as ae:
+            from ..._common.constants import ERROR_CODE_SESSION_LOCK_LOST, ERROR_CODE_MESSAGE_LOCK_LOST
             if (
                 ae.condition == ErrorCondition.IllegalState
             ):
                 raise RuntimeError("Link error occurred during settle operation.") from ae
+            if (
+                ae.condition == ERROR_CODE_SESSION_LOCK_LOST
+            ):
+                raise SessionLockLostError() from ae
+            if (
+                ae.condition == ERROR_CODE_MESSAGE_LOCK_LOST
+            ):
+                raise MessageLockLostError() from ae
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
         raise ValueError(
