@@ -73,8 +73,7 @@ class FaceAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     sufficient quality to attempt face recognition on. The value is an informal rating of low,
     medium, or high. Only 'high' quality images are recommended for person enrollment and quality
     at or above 'medium' is recommended for identification scenarios. The attribute is only
-    available when using any combinations of detection models detection_01 or detection_03, and
-    recognition models recognition_03 or recognition_04."""
+    available when using recognition models recognition_03 or recognition_04."""
     AGE = "age"
     """Age in years."""
     SMILE = "smile"
@@ -119,19 +118,6 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm has classified the target face as real."""
     SPOOF_FACE = "spoofface"
     """The algorithm has classified the target face as a spoof."""
-
-
-class FaceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of long running operation."""
-
-    NOT_STARTED = "notStarted"
-    """The operation is not started."""
-    RUNNING = "running"
-    """The operation is still running."""
-    SUCCEEDED = "succeeded"
-    """The operation is succeeded."""
-    FAILED = "failed"
-    """The operation is failed."""
 
 
 class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

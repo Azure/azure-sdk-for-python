@@ -119,11 +119,13 @@ from ._models_py3 import AzureSqlSink
 from ._models_py3 import AzureSqlSource
 from ._models_py3 import AzureSqlTableDataset
 from ._models_py3 import AzureStorageLinkedService
+from ._models_py3 import AzureStorageLinkedServiceTypeProperties
 from ._models_py3 import AzureSynapseArtifactsLinkedService
 from ._models_py3 import AzureTableDataset
 from ._models_py3 import AzureTableSink
 from ._models_py3 import AzureTableSource
 from ._models_py3 import AzureTableStorageLinkedService
+from ._models_py3 import AzureTableStorageLinkedServiceTypeProperties
 from ._models_py3 import BigDataPoolParametrizationReference
 from ._models_py3 import BinaryDataset
 from ._models_py3 import BinaryReadSettings
@@ -153,6 +155,7 @@ from ._models_py3 import ConcurLinkedService
 from ._models_py3 import ConcurObjectDataset
 from ._models_py3 import ConcurSource
 from ._models_py3 import ConnectionStateProperties
+from ._models_py3 import ContinuationSettingsReference
 from ._models_py3 import ControlActivity
 from ._models_py3 import CopyActivity
 from ._models_py3 import CopyActivityLogSettings
@@ -417,7 +420,6 @@ from ._models_py3 import MagentoLinkedService
 from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
 from ._models_py3 import ManagedIdentityCredential
-from ._models_py3 import ManagedIdentityCredentialResource
 from ._models_py3 import ManagedIntegrationRuntime
 from ._models_py3 import ManagedIntegrationRuntimeError
 from ._models_py3 import ManagedIntegrationRuntimeNode
@@ -653,7 +655,6 @@ from ._models_py3 import ServiceNowV2LinkedService
 from ._models_py3 import ServiceNowV2ObjectDataset
 from ._models_py3 import ServiceNowV2Source
 from ._models_py3 import ServicePrincipalCredential
-from ._models_py3 import ServicePrincipalCredentialResource
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
 from ._models_py3 import SftpReadSettings
@@ -1039,11 +1040,13 @@ __all__ = [
     "AzureSqlSource",
     "AzureSqlTableDataset",
     "AzureStorageLinkedService",
+    "AzureStorageLinkedServiceTypeProperties",
     "AzureSynapseArtifactsLinkedService",
     "AzureTableDataset",
     "AzureTableSink",
     "AzureTableSource",
     "AzureTableStorageLinkedService",
+    "AzureTableStorageLinkedServiceTypeProperties",
     "BigDataPoolParametrizationReference",
     "BinaryDataset",
     "BinaryReadSettings",
@@ -1073,6 +1076,7 @@ __all__ = [
     "ConcurObjectDataset",
     "ConcurSource",
     "ConnectionStateProperties",
+    "ContinuationSettingsReference",
     "ControlActivity",
     "CopyActivity",
     "CopyActivityLogSettings",
@@ -1337,7 +1341,6 @@ __all__ = [
     "MagentoObjectDataset",
     "MagentoSource",
     "ManagedIdentityCredential",
-    "ManagedIdentityCredentialResource",
     "ManagedIntegrationRuntime",
     "ManagedIntegrationRuntimeError",
     "ManagedIntegrationRuntimeNode",
@@ -1573,7 +1576,6 @@ __all__ = [
     "ServiceNowV2ObjectDataset",
     "ServiceNowV2Source",
     "ServicePrincipalCredential",
-    "ServicePrincipalCredentialResource",
     "SetVariableActivity",
     "SftpLocation",
     "SftpReadSettings",

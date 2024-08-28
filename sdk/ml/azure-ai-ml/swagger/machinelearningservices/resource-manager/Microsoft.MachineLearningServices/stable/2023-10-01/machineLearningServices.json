@@ -2580,6 +2580,10 @@
       "type": "object",
       "description": "The parameters for updating the properties of a machine learning workspace.",
       "properties": {
+        "systemDatastoresAuthMode": {
+          "description": "The auth mode used for accessing the system datastores of the workspace.",
+          "type": "string"
+        },
         "description": {
           "description": "The description of this workspace.",
           "type": "string"
@@ -2599,6 +2603,10 @@
         "primaryUserAssignedIdentity": {
           "description": "The user assigned identity resource id that represents the workspace identity.",
           "type": "string"
+        },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
         },
         "serverlessComputeSettings": {
           "description": "Settings for serverless compute created in the workspace",

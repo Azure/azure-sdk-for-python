@@ -134,7 +134,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A dictionary containing file service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
@@ -189,7 +189,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -239,7 +239,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.ShareProperties]
 
@@ -294,7 +294,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
 
@@ -336,7 +336,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -363,6 +363,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         set in the delete retention policy.
 
         .. versionadded:: 12.2.0
+
             This operation was introduced in API version '2019-12-12'.
 
         :param str deleted_share_name:
@@ -374,7 +375,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: A ShareClient for the undeleted Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
         """

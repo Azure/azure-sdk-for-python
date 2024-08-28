@@ -41,6 +41,8 @@ from ._models_py3 import HttpsServerCertificate
 from ._models_py3 import IdentityAndTagsObject
 from ._models_py3 import Installation
 from ._models_py3 import InterfaceProperties
+from ._models_py3 import Ipv4Route
+from ._models_py3 import Ipv4RouteNextHop
 from ._models_py3 import KeyVaultKey
 from ._models_py3 import LocalDiagnosticsAccessConfiguration
 from ._models_py3 import ManagedServiceIdentity
@@ -75,17 +77,21 @@ from ._models_py3 import PublicLandMobileNetwork
 from ._models_py3 import PublicLandMobileNetworkHomeNetworkPublicKeys
 from ._models_py3 import QosPolicy
 from ._models_py3 import Resource
+from ._models_py3 import RoutingInfoListResult
+from ._models_py3 import RoutingInfoModel
 from ._models_py3 import Service
 from ._models_py3 import ServiceDataFlowTemplate
 from ._models_py3 import ServiceListResult
 from ._models_py3 import ServiceResourceId
 from ._models_py3 import SignalingConfiguration
 from ._models_py3 import Sim
+from ._models_py3 import SimClone
 from ._models_py3 import SimDeleteList
 from ._models_py3 import SimGroup
 from ._models_py3 import SimGroupListResult
 from ._models_py3 import SimGroupResourceId
 from ._models_py3 import SimListResult
+from ._models_py3 import SimMove
 from ._models_py3 import SimNameAndEncryptedProperties
 from ._models_py3 import SimNameAndProperties
 from ._models_py3 import SimPolicy
@@ -116,6 +122,8 @@ from ._models_py3 import UeQOSFlow
 from ._models_py3 import UeSessionInfo4G
 from ._models_py3 import UeSessionInfo5G
 from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import UserConsentConfiguration
+from ._models_py3 import UserPlaneDataRoutesItem
 
 from ._mobile_network_management_client_enums import AuthenticationType
 from ._mobile_network_management_client_enums import BillingSku
@@ -129,6 +137,7 @@ from ._mobile_network_management_client_enums import InstallationReason
 from ._mobile_network_management_client_enums import InstallationState
 from ._mobile_network_management_client_enums import ManagedServiceIdentityType
 from ._mobile_network_management_client_enums import NaptEnabled
+from ._mobile_network_management_client_enums import NasEncryptionType
 from ._mobile_network_management_client_enums import ObsoleteVersion
 from ._mobile_network_management_client_enums import PacketCaptureStatus
 from ._mobile_network_management_client_enums import PdnType
@@ -188,6 +197,8 @@ __all__ = [
     "IdentityAndTagsObject",
     "Installation",
     "InterfaceProperties",
+    "Ipv4Route",
+    "Ipv4RouteNextHop",
     "KeyVaultKey",
     "LocalDiagnosticsAccessConfiguration",
     "ManagedServiceIdentity",
@@ -222,17 +233,21 @@ __all__ = [
     "PublicLandMobileNetworkHomeNetworkPublicKeys",
     "QosPolicy",
     "Resource",
+    "RoutingInfoListResult",
+    "RoutingInfoModel",
     "Service",
     "ServiceDataFlowTemplate",
     "ServiceListResult",
     "ServiceResourceId",
     "SignalingConfiguration",
     "Sim",
+    "SimClone",
     "SimDeleteList",
     "SimGroup",
     "SimGroupListResult",
     "SimGroupResourceId",
     "SimListResult",
+    "SimMove",
     "SimNameAndEncryptedProperties",
     "SimNameAndProperties",
     "SimPolicy",
@@ -263,6 +278,8 @@ __all__ = [
     "UeSessionInfo4G",
     "UeSessionInfo5G",
     "UserAssignedIdentity",
+    "UserConsentConfiguration",
+    "UserPlaneDataRoutesItem",
     "AuthenticationType",
     "BillingSku",
     "CertificateProvisioningState",
@@ -275,6 +292,7 @@ __all__ = [
     "InstallationState",
     "ManagedServiceIdentityType",
     "NaptEnabled",
+    "NasEncryptionType",
     "ObsoleteVersion",
     "PacketCaptureStatus",
     "PdnType",

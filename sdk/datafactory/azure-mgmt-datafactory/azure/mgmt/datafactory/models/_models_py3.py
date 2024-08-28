@@ -511,6 +511,8 @@ class LinkedService(_serialization.Model):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -528,6 +530,7 @@ class LinkedService(_serialization.Model):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -664,6 +667,7 @@ class LinkedService(_serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -674,6 +678,8 @@ class LinkedService(_serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -686,6 +692,7 @@ class LinkedService(_serialization.Model):
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type: Optional[str] = None
+        self.version = version
         self.connect_via = connect_via
         self.description = description
         self.parameters = parameters
@@ -702,6 +709,8 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -750,6 +759,7 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -774,6 +784,7 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         seller_id: JSON,
         access_key_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -790,6 +801,8 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -829,6 +842,7 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -1603,6 +1617,8 @@ class AmazonRdsForOracleLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -1629,6 +1645,7 @@ class AmazonRdsForOracleLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -1643,6 +1660,7 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -1655,6 +1673,8 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -1674,6 +1694,7 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -1986,6 +2007,8 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -2099,6 +2122,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -2137,6 +2161,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -2172,6 +2197,8 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -2280,6 +2307,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -3115,6 +3143,8 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -3151,6 +3181,7 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -3169,6 +3200,7 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
         server: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -3183,6 +3215,8 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -3211,6 +3245,7 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -3469,6 +3504,8 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -3503,6 +3540,7 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -3518,6 +3556,7 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -3533,6 +3572,8 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -3561,6 +3602,7 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -4130,6 +4172,8 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -4165,6 +4209,7 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -4181,6 +4226,7 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -4197,6 +4243,8 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -4226,6 +4274,7 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -4686,6 +4735,8 @@ class AppFiguresLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -4713,6 +4764,7 @@ class AppFiguresLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -4729,6 +4781,7 @@ class AppFiguresLinkedService(LinkedService):
         password: "_models.SecretBase",
         client_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -4739,6 +4792,8 @@ class AppFiguresLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -4757,6 +4812,7 @@ class AppFiguresLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -4802,6 +4858,8 @@ class AsanaLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -4825,6 +4883,7 @@ class AsanaLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -4838,6 +4897,7 @@ class AsanaLinkedService(LinkedService):
         *,
         api_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -4849,6 +4909,8 @@ class AsanaLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -4865,6 +4927,7 @@ class AsanaLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -5650,6 +5713,8 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -5689,6 +5754,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -5710,6 +5776,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         pool_name: JSON,
         linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -5723,6 +5790,8 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -5752,6 +5821,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -6059,6 +6129,8 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -6115,6 +6187,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -6137,6 +6210,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -6159,6 +6233,8 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -6209,6 +6285,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -6826,6 +6903,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -6886,6 +6965,7 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -6910,6 +6990,7 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -6934,6 +7015,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -6988,6 +7071,7 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -7618,6 +7702,8 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -7654,6 +7740,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -7671,6 +7758,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         *,
         domain: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -7686,6 +7774,8 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -7715,6 +7805,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -7942,6 +8033,8 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -8026,6 +8119,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -8056,6 +8150,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         *,
         domain: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -8084,6 +8179,8 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -8161,6 +8258,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -8463,6 +8561,8 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -8500,6 +8600,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -8518,6 +8619,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         endpoint: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -8532,6 +8634,8 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -8561,6 +8665,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -8922,6 +9027,8 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -8965,6 +9072,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -8985,6 +9093,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
         account_name: JSON,
         tenant: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -9001,6 +9110,8 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -9036,6 +9147,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -9192,6 +9304,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -9240,6 +9354,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -9261,6 +9376,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         *,
         data_lake_store_uri: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -9280,6 +9396,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -9321,6 +9439,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -9843,6 +9962,8 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -9877,6 +9998,11 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
+    :ivar service_endpoint: File service endpoint of the Azure File Storage resource. It is
+     mutually exclusive with connectionString, sasUri property.
+    :vartype service_endpoint: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -9886,6 +10012,7 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -9900,12 +10027,15 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         "file_share": {"key": "typeProperties.fileShare", "type": "object"},
         "snapshot": {"key": "typeProperties.snapshot", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "service_endpoint": {"key": "typeProperties.serviceEndpoint", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -9920,12 +10050,16 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         file_share: Optional[JSON] = None,
         snapshot: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
+        service_endpoint: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -9960,9 +10094,15 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
+        :keyword service_endpoint: File service endpoint of the Azure File Storage resource. It is
+         mutually exclusive with connectionString, sasUri property.
+        :paramtype service_endpoint: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -9980,6 +10120,8 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         self.file_share = file_share
         self.snapshot = snapshot
         self.encrypted_credential = encrypted_credential
+        self.service_endpoint = service_endpoint
+        self.credential = credential
 
 
 class AzureFileStorageLocation(DatasetLocation):
@@ -10410,6 +10552,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -10445,6 +10589,7 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -10462,6 +10607,7 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         *,
         function_app_url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -10477,6 +10623,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -10505,6 +10653,7 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -10530,6 +10679,8 @@ class AzureKeyVaultLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -10553,6 +10704,7 @@ class AzureKeyVaultLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -10566,6 +10718,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         *,
         base_url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -10577,6 +10730,8 @@ class AzureKeyVaultLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -10593,6 +10748,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -10697,6 +10853,8 @@ class AzureMariaDBLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -10722,6 +10880,7 @@ class AzureMariaDBLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -10735,6 +10894,7 @@ class AzureMariaDBLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -10748,6 +10908,8 @@ class AzureMariaDBLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -10767,6 +10929,7 @@ class AzureMariaDBLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -11320,6 +11483,8 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -11363,6 +11528,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -11383,6 +11549,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         ml_endpoint: JSON,
         api_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -11399,6 +11566,8 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -11434,6 +11603,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -11461,6 +11631,8 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -11506,6 +11678,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -11527,6 +11700,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         resource_group_name: JSON,
         ml_workspace_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -11542,6 +11716,8 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -11578,6 +11754,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -11783,6 +11960,8 @@ class AzureMySqlLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -11809,6 +11988,7 @@ class AzureMySqlLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -11823,6 +12003,7 @@ class AzureMySqlLinkedService(LinkedService):
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -11835,6 +12016,8 @@ class AzureMySqlLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -11854,6 +12037,7 @@ class AzureMySqlLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -12191,6 +12375,8 @@ class AzurePostgreSqlLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -12216,6 +12402,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -12229,6 +12416,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -12242,6 +12430,8 @@ class AzurePostgreSqlLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -12261,6 +12451,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -12911,6 +13102,8 @@ class AzureSearchLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -12937,6 +13130,7 @@ class AzureSearchLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -12951,6 +13145,7 @@ class AzureSearchLinkedService(LinkedService):
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -12963,6 +13158,8 @@ class AzureSearchLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -12982,6 +13179,7 @@ class AzureSearchLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -13004,6 +13202,8 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -13142,6 +13342,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -13187,6 +13388,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -13229,6 +13431,8 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -13362,6 +13566,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -13774,6 +13979,8 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -13910,6 +14117,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -13951,6 +14159,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -13992,6 +14201,8 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -14122,6 +14333,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -14647,6 +14859,8 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -14785,6 +14999,7 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -14830,6 +15045,7 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -14872,6 +15088,8 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -15005,6 +15223,7 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -15991,6 +16210,8 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -16021,6 +16242,7 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -16036,6 +16258,7 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -16051,6 +16274,8 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -16075,6 +16300,7 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -16082,6 +16308,65 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
             **kwargs
         )
         self.type: str = "AzureStorage"
+        self.connection_string = connection_string
+        self.account_key = account_key
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
+        self.encrypted_credential = encrypted_credential
+
+
+class AzureStorageLinkedServiceTypeProperties(_serialization.Model):
+    """Azure Storage linked service properties.
+
+    :ivar connection_string: The connection string. It is mutually exclusive with sasUri property.
+     Type: string, SecureString or AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar account_key: The Azure key vault secret reference of accountKey in connection string.
+    :vartype account_key: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
+     connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
+    :vartype sas_uri: JSON
+    :ivar sas_token: The Azure key vault secret reference of sasToken in sas uri.
+    :vartype sas_token: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _attribute_map = {
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "account_key": {"key": "accountKey", "type": "AzureKeyVaultSecretReference"},
+        "sas_uri": {"key": "sasUri", "type": "object"},
+        "sas_token": {"key": "sasToken", "type": "AzureKeyVaultSecretReference"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        connection_string: Optional[JSON] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        sas_uri: Optional[JSON] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword connection_string: The connection string. It is mutually exclusive with sasUri
+         property. Type: string, SecureString or AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword account_key: The Azure key vault secret reference of accountKey in connection string.
+        :paramtype account_key: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
+         connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
+        :paramtype sas_uri: JSON
+        :keyword sas_token: The Azure key vault secret reference of sasToken in sas uri.
+        :paramtype sas_token: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(**kwargs)
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -16099,6 +16384,8 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -16127,6 +16414,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -16141,6 +16429,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         *,
         endpoint: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -16153,6 +16442,8 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -16174,6 +16465,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -16541,6 +16833,8 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -16562,6 +16856,11 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
+    :ivar service_endpoint: Table service endpoint of the Azure Table Storage resource. It is
+     mutually exclusive with connectionString, sasUri property.
+    :vartype service_endpoint: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -16571,6 +16870,7 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -16580,12 +16880,15 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
         "sas_uri": {"key": "typeProperties.sasUri", "type": "object"},
         "sas_token": {"key": "typeProperties.sasToken", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "service_endpoint": {"key": "typeProperties.serviceEndpoint", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -16595,12 +16898,16 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
         sas_uri: Optional[JSON] = None,
         sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
+        service_endpoint: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -16622,9 +16929,15 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
+        :keyword service_endpoint: Table service endpoint of the Azure Table Storage resource. It is
+         mutually exclusive with connectionString, sasUri property.
+        :paramtype service_endpoint: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -16637,6 +16950,87 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
         self.sas_uri = sas_uri
         self.sas_token = sas_token
         self.encrypted_credential = encrypted_credential
+        self.service_endpoint = service_endpoint
+        self.credential = credential
+
+
+class AzureTableStorageLinkedServiceTypeProperties(
+    AzureStorageLinkedServiceTypeProperties
+):  # pylint: disable=name-too-long
+    """Azure Table Storage linked service properties.
+
+    :ivar connection_string: The connection string. It is mutually exclusive with sasUri property.
+     Type: string, SecureString or AzureKeyVaultSecretReference.
+    :vartype connection_string: JSON
+    :ivar account_key: The Azure key vault secret reference of accountKey in connection string.
+    :vartype account_key: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
+     connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
+    :vartype sas_uri: JSON
+    :ivar sas_token: The Azure key vault secret reference of sasToken in sas uri.
+    :vartype sas_token: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar service_endpoint: Table service endpoint of the Azure Table Storage resource. It is
+     mutually exclusive with connectionString, sasUri property.
+    :vartype service_endpoint: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    """
+
+    _attribute_map = {
+        "connection_string": {"key": "connectionString", "type": "object"},
+        "account_key": {"key": "accountKey", "type": "AzureKeyVaultSecretReference"},
+        "sas_uri": {"key": "sasUri", "type": "object"},
+        "sas_token": {"key": "sasToken", "type": "AzureKeyVaultSecretReference"},
+        "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
+        "service_endpoint": {"key": "serviceEndpoint", "type": "object"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
+    }
+
+    def __init__(
+        self,
+        *,
+        connection_string: Optional[JSON] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        sas_uri: Optional[JSON] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        encrypted_credential: Optional[str] = None,
+        service_endpoint: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword connection_string: The connection string. It is mutually exclusive with sasUri
+         property. Type: string, SecureString or AzureKeyVaultSecretReference.
+        :paramtype connection_string: JSON
+        :keyword account_key: The Azure key vault secret reference of accountKey in connection string.
+        :paramtype account_key: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
+         connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
+        :paramtype sas_uri: JSON
+        :keyword sas_token: The Azure key vault secret reference of sasToken in sas uri.
+        :paramtype sas_token: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword service_endpoint: Table service endpoint of the Azure Table Storage resource. It is
+         mutually exclusive with connectionString, sasUri property.
+        :paramtype service_endpoint: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        """
+        super().__init__(
+            connection_string=connection_string,
+            account_key=account_key,
+            sas_uri=sas_uri,
+            sas_token=sas_token,
+            encrypted_credential=encrypted_credential,
+            **kwargs
+        )
+        self.service_endpoint = service_endpoint
+        self.credential = credential
 
 
 class BigDataPoolParametrizationReference(_serialization.Model):
@@ -17666,6 +18060,8 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -17700,6 +18096,7 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -17717,6 +18114,7 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -17732,6 +18130,8 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -17760,6 +18160,7 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -18537,6 +18938,8 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -18569,9 +18972,13 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
     :vartype organization_name: JSON
     :ivar authentication_type: The authentication type to connect to Common Data Service for Apps
      server. 'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario.
-     'AADServicePrincipal' for Server-To-Server authentication in online scenario. Type: string (or
-     Expression with resultType string). Required.
+     'AADServicePrincipal' for Server-To-Server authentication in online scenario, 'Active
+     Directory' for Dynamics on-premises with IFD. Type: string (or Expression with resultType
+     string). Required.
     :vartype authentication_type: JSON
+    :ivar domain: The Active Directory domain that will verify user credentials. Type: string (or
+     Expression with resultType string).
+    :vartype domain: JSON
     :ivar username: User name to access the Common Data Service for Apps instance. Type: string (or
      Expression with resultType string).
     :vartype username: JSON
@@ -18604,6 +19011,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -18614,6 +19022,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         "service_uri": {"key": "typeProperties.serviceUri", "type": "object"},
         "organization_name": {"key": "typeProperties.organizationName", "type": "object"},
         "authentication_type": {"key": "typeProperties.authenticationType", "type": "object"},
+        "domain": {"key": "typeProperties.domain", "type": "object"},
         "username": {"key": "typeProperties.username", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
@@ -18628,6 +19037,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         deployment_type: JSON,
         authentication_type: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -18636,6 +19046,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
         organization_name: Optional[JSON] = None,
+        domain: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[JSON] = None,
@@ -18648,6 +19059,8 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -18680,9 +19093,13 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         :paramtype organization_name: JSON
         :keyword authentication_type: The authentication type to connect to Common Data Service for
          Apps server. 'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario.
-         'AADServicePrincipal' for Server-To-Server authentication in online scenario. Type: string (or
-         Expression with resultType string). Required.
+         'AADServicePrincipal' for Server-To-Server authentication in online scenario, 'Active
+         Directory' for Dynamics on-premises with IFD. Type: string (or Expression with resultType
+         string). Required.
         :paramtype authentication_type: JSON
+        :keyword domain: The Active Directory domain that will verify user credentials. Type: string
+         (or Expression with resultType string).
+        :paramtype domain: JSON
         :keyword username: User name to access the Common Data Service for Apps instance. Type: string
          (or Expression with resultType string).
         :paramtype username: JSON
@@ -18707,6 +19124,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -18720,6 +19138,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         self.service_uri = service_uri
         self.organization_name = organization_name
         self.authentication_type = authentication_type
+        self.domain = domain
         self.username = username
         self.password = password
         self.service_principal_id = service_principal_id
@@ -19034,6 +19453,8 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -19076,6 +19497,7 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -19096,6 +19518,7 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         client_id: JSON,
         username: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -19112,6 +19535,8 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -19146,6 +19571,7 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -19398,6 +19824,45 @@ class ConnectionStateProperties(_serialization.Model):
         self.actions_required = None
         self.description = None
         self.status = None
+
+
+class ContinuationSettingsReference(_serialization.Model):
+    """Continuation settings for execute data flow activity.
+
+    :ivar continuation_ttl_in_minutes: Continuation TTL in minutes.
+    :vartype continuation_ttl_in_minutes: JSON
+    :ivar idle_condition: Idle condition.
+    :vartype idle_condition: JSON
+    :ivar customized_checkpoint_key: Customized checkpoint key.
+    :vartype customized_checkpoint_key: JSON
+    """
+
+    _attribute_map = {
+        "continuation_ttl_in_minutes": {"key": "continuationTtlInMinutes", "type": "object"},
+        "idle_condition": {"key": "idleCondition", "type": "object"},
+        "customized_checkpoint_key": {"key": "customizedCheckpointKey", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        continuation_ttl_in_minutes: Optional[JSON] = None,
+        idle_condition: Optional[JSON] = None,
+        customized_checkpoint_key: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword continuation_ttl_in_minutes: Continuation TTL in minutes.
+        :paramtype continuation_ttl_in_minutes: JSON
+        :keyword idle_condition: Idle condition.
+        :paramtype idle_condition: JSON
+        :keyword customized_checkpoint_key: Customized checkpoint key.
+        :paramtype customized_checkpoint_key: JSON
+        """
+        super().__init__(**kwargs)
+        self.continuation_ttl_in_minutes = continuation_ttl_in_minutes
+        self.idle_condition = idle_condition
+        self.customized_checkpoint_key = customized_checkpoint_key
 
 
 class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
@@ -19773,6 +20238,8 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -19829,6 +20296,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -19851,6 +20319,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -19873,6 +20342,8 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -19924,6 +20395,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -20060,6 +20532,8 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -20089,6 +20563,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -20104,6 +20579,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         connection_string: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -20115,6 +20591,8 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -20136,6 +20614,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -20711,6 +21190,8 @@ class CouchbaseLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -20736,6 +21217,7 @@ class CouchbaseLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -20749,6 +21231,7 @@ class CouchbaseLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -20762,6 +21245,8 @@ class CouchbaseLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -20781,6 +21266,7 @@ class CouchbaseLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -21645,6 +22131,8 @@ class CustomDataSourceLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -21665,6 +22153,7 @@ class CustomDataSourceLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -21677,6 +22166,7 @@ class CustomDataSourceLinkedService(LinkedService):
         *,
         type_properties: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -21687,6 +22177,8 @@ class CustomDataSourceLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -21700,6 +22192,7 @@ class CustomDataSourceLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -23594,6 +24087,8 @@ class DataworldLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -23617,6 +24112,7 @@ class DataworldLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -23630,6 +24126,7 @@ class DataworldLinkedService(LinkedService):
         *,
         api_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -23641,6 +24138,8 @@ class DataworldLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -23657,6 +24156,7 @@ class DataworldLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -23678,6 +24178,8 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -23724,6 +24226,7 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -23743,6 +24246,7 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -23762,6 +24266,8 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -23802,6 +24308,7 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -25151,6 +25658,8 @@ class DrillLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -25176,6 +25685,7 @@ class DrillLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -25189,6 +25699,7 @@ class DrillLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -25202,6 +25713,8 @@ class DrillLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -25221,6 +25734,7 @@ class DrillLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -25538,6 +26052,8 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -25580,6 +26096,7 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -25601,6 +26118,7 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
         tenant: JSON,
         aad_resource_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -25612,6 +26130,8 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -25643,6 +26163,7 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -25992,6 +26513,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -26020,9 +26543,12 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :vartype organization_name: JSON
     :ivar authentication_type: The authentication type to connect to Dynamics CRM server.
      'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario, 'AADServicePrincipal'
-     for Server-To-Server authentication in online scenario. Type: string (or Expression with
-     resultType string). Required.
+     for Server-To-Server authentication in online scenario, 'Active Directory' for Dynamics
+     on-premises with IFD. Type: string (or Expression with resultType string). Required.
     :vartype authentication_type: JSON
+    :ivar domain: The Active Directory domain that will verify user credentials. Type: string (or
+     Expression with resultType string).
+    :vartype domain: JSON
     :ivar username: User name to access the Dynamics CRM instance. Type: string (or Expression with
      resultType string).
     :vartype username: JSON
@@ -26041,6 +26567,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
      servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
      be AzureKeyVaultSecretReference.
     :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -26055,6 +26583,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -26065,11 +26594,13 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "service_uri": {"key": "typeProperties.serviceUri", "type": "object"},
         "organization_name": {"key": "typeProperties.organizationName", "type": "object"},
         "authentication_type": {"key": "typeProperties.authenticationType", "type": "object"},
+        "domain": {"key": "typeProperties.domain", "type": "object"},
         "username": {"key": "typeProperties.username", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
@@ -26079,6 +26610,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         deployment_type: JSON,
         authentication_type: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -26087,11 +26619,13 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
         organization_name: Optional[JSON] = None,
+        domain: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -26099,6 +26633,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -26128,9 +26664,12 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :paramtype organization_name: JSON
         :keyword authentication_type: The authentication type to connect to Dynamics CRM server.
          'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario, 'AADServicePrincipal'
-         for Server-To-Server authentication in online scenario. Type: string (or Expression with
-         resultType string). Required.
+         for Server-To-Server authentication in online scenario, 'Active Directory' for Dynamics
+         on-premises with IFD. Type: string (or Expression with resultType string). Required.
         :paramtype authentication_type: JSON
+        :keyword domain: The Active Directory domain that will verify user credentials. Type: string
+         (or Expression with resultType string).
+        :paramtype domain: JSON
         :keyword username: User name to access the Dynamics CRM instance. Type: string (or Expression
          with resultType string).
         :paramtype username: JSON
@@ -26149,12 +26688,15 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
          servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
          be AzureKeyVaultSecretReference.
         :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -26168,11 +26710,13 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.service_uri = service_uri
         self.organization_name = organization_name
         self.authentication_type = authentication_type
+        self.domain = domain
         self.username = username
         self.password = password
         self.service_principal_id = service_principal_id
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
+        self.credential = credential
         self.encrypted_credential = encrypted_credential
 
 
@@ -26504,6 +27048,8 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -26532,9 +27078,12 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype organization_name: JSON
     :ivar authentication_type: The authentication type to connect to Dynamics server. 'Office365'
      for online scenario, 'Ifd' for on-premises with Ifd scenario, 'AADServicePrincipal' for
-     Server-To-Server authentication in online scenario. Type: string (or Expression with resultType
-     string). Required.
+     Server-To-Server authentication in online scenario, 'Active Directory' for Dynamics on-premises
+     with IFD. Type: string (or Expression with resultType string). Required.
     :vartype authentication_type: JSON
+    :ivar domain: The Active Directory domain that will verify user credentials. Type: string (or
+     Expression with resultType string).
+    :vartype domain: JSON
     :ivar username: User name to access the Dynamics instance. Type: string (or Expression with
      resultType string).
     :vartype username: JSON
@@ -26569,6 +27118,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -26579,6 +27129,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         "service_uri": {"key": "typeProperties.serviceUri", "type": "object"},
         "organization_name": {"key": "typeProperties.organizationName", "type": "object"},
         "authentication_type": {"key": "typeProperties.authenticationType", "type": "object"},
+        "domain": {"key": "typeProperties.domain", "type": "object"},
         "username": {"key": "typeProperties.username", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
@@ -26594,6 +27145,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         deployment_type: JSON,
         authentication_type: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -26602,6 +27154,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
         organization_name: Optional[JSON] = None,
+        domain: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[JSON] = None,
@@ -26615,6 +27168,8 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -26643,9 +27198,12 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :paramtype organization_name: JSON
         :keyword authentication_type: The authentication type to connect to Dynamics server.
          'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario, 'AADServicePrincipal'
-         for Server-To-Server authentication in online scenario. Type: string (or Expression with
-         resultType string). Required.
+         for Server-To-Server authentication in online scenario, 'Active Directory' for Dynamics
+         on-premises with IFD. Type: string (or Expression with resultType string). Required.
         :paramtype authentication_type: JSON
+        :keyword domain: The Active Directory domain that will verify user credentials. Type: string
+         (or Expression with resultType string).
+        :paramtype domain: JSON
         :keyword username: User name to access the Dynamics instance. Type: string (or Expression with
          resultType string).
         :paramtype username: JSON
@@ -26672,6 +27230,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -26685,6 +27244,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self.service_uri = service_uri
         self.organization_name = organization_name
         self.authentication_type = authentication_type
+        self.domain = domain
         self.username = username
         self.password = password
         self.service_principal_id = service_principal_id
@@ -26918,6 +27478,8 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -26957,6 +27519,7 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -26976,6 +27539,7 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         endpoint: JSON,
         username: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -26991,6 +27555,8 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -27022,6 +27588,7 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -27654,6 +28221,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
     :vartype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
     :ivar integration_runtime: The integration runtime reference.
     :vartype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar continuation_settings: Continuation settings for execute data flow activity.
+    :vartype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
     :ivar compute: Compute properties for data flow activity.
     :vartype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
     :ivar trace_level: Trace level setting used for data flow monitoring output. Supported values
@@ -27691,6 +28260,10 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         "data_flow": {"key": "typeProperties.dataFlow", "type": "DataFlowReference"},
         "staging": {"key": "typeProperties.staging", "type": "DataFlowStagingInfo"},
         "integration_runtime": {"key": "typeProperties.integrationRuntime", "type": "IntegrationRuntimeReference"},
+        "continuation_settings": {
+            "key": "typeProperties.continuationSettings",
+            "type": "ContinuationSettingsReference",
+        },
         "compute": {"key": "typeProperties.compute", "type": "ExecuteDataFlowActivityTypePropertiesCompute"},
         "trace_level": {"key": "typeProperties.traceLevel", "type": "object"},
         "continue_on_error": {"key": "typeProperties.continueOnError", "type": "object"},
@@ -27713,6 +28286,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         policy: Optional["_models.ActivityPolicy"] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        continuation_settings: Optional["_models.ContinuationSettingsReference"] = None,
         compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[JSON] = None,
         continue_on_error: Optional[JSON] = None,
@@ -27749,6 +28323,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         :paramtype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
         :keyword integration_runtime: The integration runtime reference.
         :paramtype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword continuation_settings: Continuation settings for execute data flow activity.
+        :paramtype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
         :keyword compute: Compute properties for data flow activity.
         :paramtype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
         :keyword trace_level: Trace level setting used for data flow monitoring output. Supported
@@ -27781,6 +28357,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
+        self.continuation_settings = continuation_settings
         self.compute = compute
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
@@ -27799,6 +28376,8 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
     :vartype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
     :ivar integration_runtime: The integration runtime reference.
     :vartype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar continuation_settings: Continuation settings for execute data flow activity.
+    :vartype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
     :ivar compute: Compute properties for data flow activity.
     :vartype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
     :ivar trace_level: Trace level setting used for data flow monitoring output. Supported values
@@ -27824,6 +28403,7 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         "data_flow": {"key": "dataFlow", "type": "DataFlowReference"},
         "staging": {"key": "staging", "type": "DataFlowStagingInfo"},
         "integration_runtime": {"key": "integrationRuntime", "type": "IntegrationRuntimeReference"},
+        "continuation_settings": {"key": "continuationSettings", "type": "ContinuationSettingsReference"},
         "compute": {"key": "compute", "type": "ExecuteDataFlowActivityTypePropertiesCompute"},
         "trace_level": {"key": "traceLevel", "type": "object"},
         "continue_on_error": {"key": "continueOnError", "type": "object"},
@@ -27837,6 +28417,7 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         data_flow: "_models.DataFlowReference",
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        continuation_settings: Optional["_models.ContinuationSettingsReference"] = None,
         compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[JSON] = None,
         continue_on_error: Optional[JSON] = None,
@@ -27851,6 +28432,8 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         :paramtype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
         :keyword integration_runtime: The integration runtime reference.
         :paramtype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword continuation_settings: Continuation settings for execute data flow activity.
+        :paramtype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
         :keyword compute: Compute properties for data flow activity.
         :paramtype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
         :keyword trace_level: Trace level setting used for data flow monitoring output. Supported
@@ -27871,6 +28454,7 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
+        self.continuation_settings = continuation_settings
         self.compute = compute
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
@@ -28068,7 +28652,9 @@ class ExecutePipelineActivityPolicy(_serialization.Model):
         self.secure_input = secure_input
 
 
-class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypeProperties):
+class ExecutePowerQueryActivityTypeProperties(
+    ExecuteDataFlowActivityTypeProperties
+):  # pylint: disable=too-many-instance-attributes
     """Execute power query data flow activity properties.
 
     All required parameters must be populated in order to send to server.
@@ -28079,6 +28665,8 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
     :vartype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
     :ivar integration_runtime: The integration runtime reference.
     :vartype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar continuation_settings: Continuation settings for execute data flow activity.
+    :vartype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
     :ivar compute: Compute properties for data flow activity.
     :vartype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
     :ivar trace_level: Trace level setting used for data flow monitoring output. Supported values
@@ -28109,6 +28697,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         "data_flow": {"key": "dataFlow", "type": "DataFlowReference"},
         "staging": {"key": "staging", "type": "DataFlowStagingInfo"},
         "integration_runtime": {"key": "integrationRuntime", "type": "IntegrationRuntimeReference"},
+        "continuation_settings": {"key": "continuationSettings", "type": "ContinuationSettingsReference"},
         "compute": {"key": "compute", "type": "ExecuteDataFlowActivityTypePropertiesCompute"},
         "trace_level": {"key": "traceLevel", "type": "object"},
         "continue_on_error": {"key": "continueOnError", "type": "object"},
@@ -28124,6 +28713,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         data_flow: "_models.DataFlowReference",
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        continuation_settings: Optional["_models.ContinuationSettingsReference"] = None,
         compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[JSON] = None,
         continue_on_error: Optional[JSON] = None,
@@ -28140,6 +28730,8 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         :paramtype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
         :keyword integration_runtime: The integration runtime reference.
         :paramtype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword continuation_settings: Continuation settings for execute data flow activity.
+        :paramtype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
         :keyword compute: Compute properties for data flow activity.
         :paramtype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
         :keyword trace_level: Trace level setting used for data flow monitoring output. Supported
@@ -28165,6 +28757,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
             data_flow=data_flow,
             staging=staging,
             integration_runtime=integration_runtime,
+            continuation_settings=continuation_settings,
             compute=compute,
             trace_level=trace_level,
             continue_on_error=continue_on_error,
@@ -28417,6 +29010,8 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
     :vartype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
     :ivar integration_runtime: The integration runtime reference.
     :vartype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar continuation_settings: Continuation settings for execute data flow activity.
+    :vartype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
     :ivar compute: Compute properties for data flow activity.
     :vartype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
     :ivar trace_level: Trace level setting used for data flow monitoring output. Supported values
@@ -28458,6 +29053,10 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
         "data_flow": {"key": "typeProperties.dataFlow", "type": "DataFlowReference"},
         "staging": {"key": "typeProperties.staging", "type": "DataFlowStagingInfo"},
         "integration_runtime": {"key": "typeProperties.integrationRuntime", "type": "IntegrationRuntimeReference"},
+        "continuation_settings": {
+            "key": "typeProperties.continuationSettings",
+            "type": "ContinuationSettingsReference",
+        },
         "compute": {"key": "typeProperties.compute", "type": "ExecuteDataFlowActivityTypePropertiesCompute"},
         "trace_level": {"key": "typeProperties.traceLevel", "type": "object"},
         "continue_on_error": {"key": "typeProperties.continueOnError", "type": "object"},
@@ -28481,6 +29080,7 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
         policy: Optional["_models.ActivityPolicy"] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        continuation_settings: Optional["_models.ContinuationSettingsReference"] = None,
         compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[JSON] = None,
         continue_on_error: Optional[JSON] = None,
@@ -28517,6 +29117,8 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
         :paramtype staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
         :keyword integration_runtime: The integration runtime reference.
         :paramtype integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword continuation_settings: Continuation settings for execute data flow activity.
+        :paramtype continuation_settings: ~azure.mgmt.datafactory.models.ContinuationSettingsReference
         :keyword compute: Compute properties for data flow activity.
         :paramtype compute: ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
         :keyword trace_level: Trace level setting used for data flow monitoring output. Supported
@@ -28553,6 +29155,7 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
+        self.continuation_settings = continuation_settings
         self.compute = compute
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
@@ -28710,12 +29313,12 @@ class ExpressionV2(_serialization.Model):
     """Nested representation of a complex expression.
 
     :ivar type: Type of expressions supported by the system. Type: string. Known values are:
-     "Constant", "Field", "Unary", and "Binary".
+     "Constant", "Field", "Unary", "Binary", and "NAry".
     :vartype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
     :ivar value: Value for Constant/Field Type: string.
     :vartype value: str
-    :ivar operator: Expression operator value Type: string.
-    :vartype operator: str
+    :ivar operators: Expression operator value Type: list of strings.
+    :vartype operators: list[str]
     :ivar operands: List of nested expressions.
     :vartype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
     """
@@ -28723,7 +29326,7 @@ class ExpressionV2(_serialization.Model):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "value": {"key": "value", "type": "str"},
-        "operator": {"key": "operator", "type": "str"},
+        "operators": {"key": "operators", "type": "[str]"},
         "operands": {"key": "operands", "type": "[ExpressionV2]"},
     }
 
@@ -28732,25 +29335,25 @@ class ExpressionV2(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ExpressionV2Type"]] = None,
         value: Optional[str] = None,
-        operator: Optional[str] = None,
+        operators: Optional[List[str]] = None,
         operands: Optional[List["_models.ExpressionV2"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword type: Type of expressions supported by the system. Type: string. Known values are:
-         "Constant", "Field", "Unary", and "Binary".
+         "Constant", "Field", "Unary", "Binary", and "NAry".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
         :keyword value: Value for Constant/Field Type: string.
         :paramtype value: str
-        :keyword operator: Expression operator value Type: string.
-        :paramtype operator: str
+        :keyword operators: Expression operator value Type: list of strings.
+        :paramtype operators: list[str]
         :keyword operands: List of nested expressions.
         :paramtype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
         """
         super().__init__(**kwargs)
         self.type = type
         self.value = value
-        self.operator = operator
+        self.operators = operators
         self.operands = operands
 
 
@@ -29476,7 +30079,7 @@ class FailActivity(ControlActivity):
         self.error_code = error_code
 
 
-class FileServerLinkedService(LinkedService):
+class FileServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """File system linked service.
 
     All required parameters must be populated in order to send to server.
@@ -29486,6 +30089,8 @@ class FileServerLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -29515,6 +30120,7 @@ class FileServerLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -29530,6 +30136,7 @@ class FileServerLinkedService(LinkedService):
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -29543,6 +30150,8 @@ class FileServerLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -29565,6 +30174,7 @@ class FileServerLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -30659,6 +31269,8 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -30701,6 +31313,7 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -30723,6 +31336,7 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -30740,6 +31354,8 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -30775,6 +31391,7 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -31212,7 +31829,7 @@ class GlobalParameterSpecification(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
-     "Float", "Bool", and "Array".
+     "Float", "Bool", "Array", and "Int".
     :vartype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
     :ivar value: Value of parameter. Required.
     :vartype value: JSON
@@ -31231,7 +31848,7 @@ class GlobalParameterSpecification(_serialization.Model):
     def __init__(self, *, type: Union[str, "_models.GlobalParameterType"], value: JSON, **kwargs: Any) -> None:
         """
         :keyword type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
-         "Float", "Bool", and "Array".
+         "Float", "Bool", "Array", and "Int".
         :paramtype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
         :keyword value: Value of parameter. Required.
         :paramtype value: JSON
@@ -31251,6 +31868,8 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -31326,6 +31945,7 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -31352,6 +31972,7 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -31378,6 +31999,8 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -31448,6 +32071,7 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -31687,6 +32311,8 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -31749,6 +32375,7 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -31773,6 +32400,7 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
         project: JSON,
         authentication_type: Union[str, "_models.GoogleBigQueryAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -31793,6 +32421,8 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -31847,6 +32477,7 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -32102,6 +32733,8 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -32143,6 +32776,7 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -32162,6 +32796,7 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
         project_id: JSON,
         authentication_type: Union[str, "_models.GoogleBigQueryV2AuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -32177,6 +32812,8 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -32210,6 +32847,7 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -32441,7 +33079,7 @@ class GoogleBigQueryV2Source(TabularSource):
         self.query = query
 
 
-class GoogleCloudStorageLinkedService(LinkedService):
+class GoogleCloudStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Google Cloud Storage.
 
     All required parameters must be populated in order to send to server.
@@ -32451,6 +33089,8 @@ class GoogleCloudStorageLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -32482,6 +33122,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -32496,6 +33137,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -32510,6 +33152,8 @@ class GoogleCloudStorageLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -32535,6 +33179,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -32779,6 +33424,8 @@ class GoogleSheetsLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -32802,6 +33449,7 @@ class GoogleSheetsLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -32815,6 +33463,7 @@ class GoogleSheetsLinkedService(LinkedService):
         *,
         api_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -32826,6 +33475,8 @@ class GoogleSheetsLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -32842,6 +33493,7 @@ class GoogleSheetsLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -32863,6 +33515,8 @@ class GreenplumLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -32888,6 +33542,7 @@ class GreenplumLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -32901,6 +33556,7 @@ class GreenplumLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -32914,6 +33570,8 @@ class GreenplumLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -32933,6 +33591,7 @@ class GreenplumLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -33178,6 +33837,8 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -33228,6 +33889,7 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -33251,6 +33913,7 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         host: JSON,
         authentication_type: Union[str, "_models.HBaseAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -33270,6 +33933,8 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -33313,6 +33978,7 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -33547,6 +34213,8 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -33579,6 +34247,7 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -33595,6 +34264,7 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -33609,6 +34279,8 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -33634,6 +34306,7 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -34111,6 +34784,8 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -34151,6 +34826,7 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -34173,6 +34849,7 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         *,
         cluster_uri: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -34190,6 +34867,8 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -34223,6 +34902,7 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -34412,6 +35092,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -34428,9 +35110,9 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
      are no other active jobs in the cluster. The minimum value is 5 mins. Type: string (or
      Expression with resultType string). Required.
     :vartype time_to_live: JSON
-    :ivar version: Version of the HDInsight cluster.  Type: string (or Expression with resultType
-     string). Required.
-    :vartype version: JSON
+    :ivar version_type_properties_version: Version of the HDInsight cluster.  Type: string (or
+     Expression with resultType string). Required.
+    :vartype version_type_properties_version: JSON
     :ivar linked_service_name: Azure Storage linked service to be used by the on-demand cluster for
      storing and processing data. Required.
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -34525,7 +35207,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         "type": {"required": True},
         "cluster_size": {"required": True},
         "time_to_live": {"required": True},
-        "version": {"required": True},
+        "version_type_properties_version": {"required": True},
         "linked_service_name": {"required": True},
         "host_subscription_id": {"required": True},
         "tenant": {"required": True},
@@ -34535,13 +35217,14 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "cluster_size": {"key": "typeProperties.clusterSize", "type": "object"},
         "time_to_live": {"key": "typeProperties.timeToLive", "type": "object"},
-        "version": {"key": "typeProperties.version", "type": "object"},
+        "version_type_properties_version": {"key": "typeProperties.version", "type": "object"},
         "linked_service_name": {"key": "typeProperties.linkedServiceName", "type": "LinkedServiceReference"},
         "host_subscription_id": {"key": "typeProperties.hostSubscriptionId", "type": "object"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
@@ -34586,12 +35269,13 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         *,
         cluster_size: JSON,
         time_to_live: JSON,
-        version: JSON,
+        version_type_properties_version: JSON,
         linked_service_name: "_models.LinkedServiceReference",
         host_subscription_id: JSON,
         tenant: JSON,
         cluster_resource_group: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -34629,6 +35313,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -34645,9 +35331,9 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
          are no other active jobs in the cluster. The minimum value is 5 mins. Type: string (or
          Expression with resultType string). Required.
         :paramtype time_to_live: JSON
-        :keyword version: Version of the HDInsight cluster.  Type: string (or Expression with
-         resultType string). Required.
-        :paramtype version: JSON
+        :keyword version_type_properties_version: Version of the HDInsight cluster.  Type: string (or
+         Expression with resultType string). Required.
+        :paramtype version_type_properties_version: JSON
         :keyword linked_service_name: Azure Storage linked service to be used by the on-demand cluster
          for storing and processing data. Required.
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -34740,6 +35426,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -34749,7 +35436,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         self.type: str = "HDInsightOnDemand"
         self.cluster_size = cluster_size
         self.time_to_live = time_to_live
-        self.version = version
+        self.version_type_properties_version = version_type_properties_version
         self.linked_service_name = linked_service_name
         self.host_subscription_id = host_subscription_id
         self.service_principal_id = service_principal_id
@@ -35307,6 +35994,8 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -35376,6 +36065,7 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -35399,12 +36089,13 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         host: JSON,
         authentication_type: Union[str, "_models.HiveAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -35430,6 +36121,8 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -35491,6 +36184,7 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -35901,6 +36595,8 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -35950,6 +36646,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -35973,6 +36670,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -35991,6 +36689,8 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -36033,6 +36733,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -36314,6 +37015,8 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -36355,6 +37058,7 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -36374,6 +37078,7 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         *,
         client_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -36391,6 +37096,8 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -36425,6 +37132,7 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -36776,6 +37484,8 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -36827,6 +37537,7 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -36850,6 +37561,7 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         host: JSON,
         authentication_type: Union[str, "_models.ImpalaAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -36869,6 +37581,8 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -36913,6 +37627,7 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -37166,6 +37881,8 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -37203,6 +37920,7 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -37220,6 +37938,7 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -37235,6 +37954,8 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -37265,6 +37986,7 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -38819,6 +39541,8 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -38861,6 +39585,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -38881,6 +39606,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         host: JSON,
         username: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -38897,6 +39623,8 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -38932,6 +39660,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -39687,6 +40416,8 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -39732,6 +40463,7 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -39750,6 +40482,7 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -39768,6 +40501,8 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -39807,6 +40542,7 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -40018,7 +40754,7 @@ class LakeHouseReadSettings(StoreReadSettings):  # pylint: disable=too-many-inst
         self.modified_datetime_end = modified_datetime_end
 
 
-class LakeHouseTableDataset(Dataset):
+class LakeHouseTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric LakeHouse Table.
 
     All required parameters must be populated in order to send to server.
@@ -40045,6 +40781,9 @@ class LakeHouseTableDataset(Dataset):
     :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar schema_type_properties_schema: The schema name of Microsoft Fabric LakeHouse Table. Type:
+     string (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
     :ivar table: The name of Microsoft Fabric LakeHouse Table. Type: string (or Expression with
      resultType string).
     :vartype table: JSON
@@ -40065,6 +40804,7 @@ class LakeHouseTableDataset(Dataset):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "folder": {"key": "folder", "type": "DatasetFolder"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
         "table": {"key": "typeProperties.table", "type": "object"},
     }
 
@@ -40079,6 +40819,7 @@ class LakeHouseTableDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -40103,6 +40844,9 @@ class LakeHouseTableDataset(Dataset):
         :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
          the root level.
         :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword schema_type_properties_schema: The schema name of Microsoft Fabric LakeHouse Table.
+         Type: string (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
         :keyword table: The name of Microsoft Fabric LakeHouse Table. Type: string (or Expression with
          resultType string).
         :paramtype table: JSON
@@ -40119,6 +40863,7 @@ class LakeHouseTableDataset(Dataset):
             **kwargs
         )
         self.type: str = "LakeHouseTable"
+        self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
 
@@ -41038,6 +41783,8 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -41073,6 +41820,7 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -41090,6 +41838,7 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -41105,6 +41854,8 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -41133,6 +41884,7 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -41407,50 +42159,6 @@ class ManagedIdentityCredential(Credential):
         )
         self.type: str = "ManagedIdentity"
         self.resource_id = resource_id
-
-
-class ManagedIdentityCredentialResource(CredentialResource):
-    """Credential resource type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :ivar properties: Managed Identity Credential properties. Required.
-    :vartype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "properties": {"key": "properties", "type": "ManagedIdentityCredential"},
-    }
-
-    def __init__(self, *, properties: "_models.ManagedIdentityCredential", **kwargs: Any) -> None:
-        """
-        :keyword properties: Managed Identity Credential properties. Required.
-        :paramtype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
 
 
 class ManagedIntegrationRuntime(IntegrationRuntime):
@@ -42627,6 +43335,8 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -42664,6 +43374,7 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -42682,6 +43393,7 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -42700,6 +43412,8 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -42731,6 +43445,7 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -42962,6 +43677,8 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -43000,6 +43717,7 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -43019,6 +43737,7 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         endpoint: JSON,
         client_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -43034,6 +43753,8 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -43065,6 +43786,7 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -43321,6 +44043,8 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -43358,6 +44082,7 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -43375,6 +44100,7 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -43390,6 +44116,8 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -43420,6 +44148,7 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -43847,6 +44576,8 @@ class MongoDbAtlasLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -43876,6 +44607,7 @@ class MongoDbAtlasLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -43891,6 +44623,7 @@ class MongoDbAtlasLinkedService(LinkedService):
         connection_string: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -43902,6 +44635,8 @@ class MongoDbAtlasLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -43923,6 +44658,7 @@ class MongoDbAtlasLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -44347,6 +45083,8 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -44395,6 +45133,7 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -44417,6 +45156,7 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         server: JSON,
         database_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -44435,6 +45175,8 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -44477,6 +45219,7 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -44704,6 +45447,8 @@ class MongoDbV2LinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -44730,6 +45475,7 @@ class MongoDbV2LinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -44744,6 +45490,7 @@ class MongoDbV2LinkedService(LinkedService):
         connection_string: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -44754,6 +45501,8 @@ class MongoDbV2LinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -44772,6 +45521,7 @@ class MongoDbV2LinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -45021,6 +45771,8 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -45064,6 +45816,7 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -45084,6 +45837,7 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -45104,6 +45858,8 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -45141,6 +45897,7 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -45372,6 +46129,8 @@ class NetezzaLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -45397,6 +46156,7 @@ class NetezzaLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -45410,6 +46170,7 @@ class NetezzaLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -45423,6 +46184,8 @@ class NetezzaLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -45442,6 +46205,7 @@ class NetezzaLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -45749,7 +46513,8 @@ class NotebookParameter(_serialization.Model):
 
     :ivar value: Notebook parameter value. Type: string (or Expression with resultType string).
     :vartype value: JSON
-    :ivar type: Notebook parameter type. Known values are: "string", "int", "float", and "bool".
+    :ivar type: Notebook parameter type. Known values are: "string", "int", "float", "bool", and
+     "int".
     :vartype type: str or ~azure.mgmt.datafactory.models.NotebookParameterType
     """
 
@@ -45768,7 +46533,8 @@ class NotebookParameter(_serialization.Model):
         """
         :keyword value: Notebook parameter value. Type: string (or Expression with resultType string).
         :paramtype value: JSON
-        :keyword type: Notebook parameter type. Known values are: "string", "int", "float", and "bool".
+        :keyword type: Notebook parameter type. Known values are: "string", "int", "float", "bool", and
+         "int".
         :paramtype type: str or ~azure.mgmt.datafactory.models.NotebookParameterType
         """
         super().__init__(**kwargs)
@@ -45786,6 +46552,8 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -45850,6 +46618,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -45881,6 +46650,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -45906,6 +46676,8 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -45963,6 +46735,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -46204,6 +46977,8 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -46240,6 +47015,7 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -46257,6 +47033,7 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -46272,6 +47049,8 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -46301,6 +47080,7 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -46744,6 +47524,8 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -46779,6 +47561,7 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -46798,6 +47581,7 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
         service_principal_id: JSON,
         service_principal_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -46809,6 +47593,8 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -46834,6 +47620,7 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -47327,7 +48114,7 @@ class OperationServiceSpecification(_serialization.Model):
         self.metric_specifications = metric_specifications
 
 
-class OracleCloudStorageLinkedService(LinkedService):
+class OracleCloudStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Oracle Cloud Storage.
 
     All required parameters must be populated in order to send to server.
@@ -47337,6 +48124,8 @@ class OracleCloudStorageLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -47368,6 +48157,7 @@ class OracleCloudStorageLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -47382,6 +48172,7 @@ class OracleCloudStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -47396,6 +48187,8 @@ class OracleCloudStorageLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -47421,6 +48214,7 @@ class OracleCloudStorageLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -47665,6 +48459,8 @@ class OracleLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -47691,6 +48487,7 @@ class OracleLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -47705,6 +48502,7 @@ class OracleLinkedService(LinkedService):
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -47717,6 +48515,8 @@ class OracleLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -47736,6 +48536,7 @@ class OracleLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -47814,6 +48615,8 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -47855,6 +48658,7 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -47875,6 +48679,7 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
         username: JSON,
         password: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -47889,6 +48694,8 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -47921,6 +48728,7 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -48958,7 +49766,7 @@ class ParameterSpecification(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
-     "Bool", "Array", and "SecureString".
+     "Bool", "Array", "SecureString", and "Int".
     :vartype type: str or ~azure.mgmt.datafactory.models.ParameterType
     :ivar default_value: Default value of parameter.
     :vartype default_value: JSON
@@ -48978,7 +49786,7 @@ class ParameterSpecification(_serialization.Model):
     ) -> None:
         """
         :keyword type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
-         "Bool", "Array", and "SecureString".
+         "Bool", "Array", "SecureString", and "Int".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ParameterType
         :keyword default_value: Default value of parameter.
         :paramtype default_value: JSON
@@ -49463,6 +50271,8 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -49501,6 +50311,7 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -49520,6 +50331,7 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         host: JSON,
         client_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -49535,6 +50347,8 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -49565,6 +50379,7 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -49795,6 +50610,8 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -49851,6 +50668,7 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -49875,6 +50693,7 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         host: JSON,
         authentication_type: Union[str, "_models.PhoenixAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -49895,6 +50714,8 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -49943,6 +50764,7 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -50752,6 +51574,8 @@ class PostgreSqlLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -50778,6 +51602,7 @@ class PostgreSqlLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -50792,6 +51617,7 @@ class PostgreSqlLinkedService(LinkedService):
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -50804,6 +51630,8 @@ class PostgreSqlLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -50823,6 +51651,7 @@ class PostgreSqlLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -51065,6 +51894,8 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -51135,6 +51966,7 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -51168,6 +52000,7 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         database: JSON,
         ssl_mode: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -51193,6 +52026,8 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -51255,6 +52090,7 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -51693,6 +52529,8 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -51752,6 +52590,7 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -51780,6 +52619,7 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         catalog: JSON,
         authentication_type: Union[str, "_models.PrestoAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -51800,6 +52640,8 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -51850,6 +52692,7 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -52478,6 +53321,8 @@ class QuickbaseLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -52505,6 +53350,7 @@ class QuickbaseLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -52520,6 +53366,7 @@ class QuickbaseLinkedService(LinkedService):
         url: JSON,
         user_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -52531,6 +53378,8 @@ class QuickbaseLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -52550,6 +53399,7 @@ class QuickbaseLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -52572,6 +53422,8 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -52610,6 +53462,7 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -52629,6 +53482,7 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -52648,6 +53502,8 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -52680,6 +53536,7 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -53454,6 +54311,8 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -53495,6 +54354,7 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -53514,6 +54374,7 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         endpoint: JSON,
         client_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -53529,6 +54390,8 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -53562,6 +54425,7 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -53928,6 +54792,8 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -53992,6 +54858,18 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :ivar scope: The scope of the access required. It describes what kind of access will be
      requested. Type: string (or Expression with resultType string).
     :vartype scope: JSON
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_embedded_cert: Specify the base64 encoded certificate of your
+     application registered in Azure Active Directory. Type: string (or Expression with resultType
+     string).
+    :vartype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_embedded_cert_password: Specify the password of your certificate if
+     your certificate has a password and you are using AadServicePrincipal authentication. Type:
+     string (or Expression with resultType string).
+    :vartype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
@@ -54003,6 +54881,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -54028,6 +54907,12 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "token_endpoint": {"key": "typeProperties.tokenEndpoint", "type": "object"},
         "resource": {"key": "typeProperties.resource", "type": "object"},
         "scope": {"key": "typeProperties.scope", "type": "object"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_embedded_cert": {"key": "typeProperties.servicePrincipalEmbeddedCert", "type": "SecretBase"},
+        "service_principal_embedded_cert_password": {
+            "key": "typeProperties.servicePrincipalEmbeddedCertPassword",
+            "type": "SecretBase",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -54036,6 +54921,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         url: JSON,
         authentication_type: Union[str, "_models.RestServiceAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -54056,12 +54942,17 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         token_endpoint: Optional[JSON] = None,
         resource: Optional[JSON] = None,
         scope: Optional[JSON] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
+        service_principal_embedded_cert_password: Optional["_models.SecretBase"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -54126,9 +55017,22 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword scope: The scope of the access required. It describes what kind of access will be
          requested. Type: string (or Expression with resultType string).
         :paramtype scope: JSON
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_embedded_cert: Specify the base64 encoded certificate of your
+         application registered in Azure Active Directory. Type: string (or Expression with resultType
+         string).
+        :paramtype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_embedded_cert_password: Specify the password of your certificate if
+         your certificate has a password and you are using AadServicePrincipal authentication. Type:
+         string (or Expression with resultType string).
+        :paramtype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -54154,6 +55058,9 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.token_endpoint = token_endpoint
         self.resource = resource
         self.scope = scope
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_embedded_cert = service_principal_embedded_cert
+        self.service_principal_embedded_cert_password = service_principal_embedded_cert_password
 
 
 class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
@@ -54551,7 +55458,7 @@ class RunQueryFilter(_serialization.Model):
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
     :vartype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
     :ivar operator: Operator to be used for filter. Required. Known values are: "Equals",
-     "NotEquals", "In", and "NotIn".
+     "NotEquals", "In", "NotIn", and "In".
     :vartype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
     :ivar values: List of filter values. Required.
     :vartype values: list[str]
@@ -54586,7 +55493,7 @@ class RunQueryFilter(_serialization.Model):
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
         :paramtype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
         :keyword operator: Operator to be used for filter. Required. Known values are: "Equals",
-         "NotEquals", "In", and "NotIn".
+         "NotEquals", "In", "NotIn", and "In".
         :paramtype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
         :keyword values: List of filter values. Required.
         :paramtype values: list[str]
@@ -54656,6 +55563,8 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -54691,6 +55600,7 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -54707,6 +55617,7 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -54723,6 +55634,8 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -54752,6 +55665,7 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -54777,6 +55691,8 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -54817,6 +55733,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -54834,6 +55751,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -54851,6 +55769,8 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -54885,6 +55805,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -55219,6 +56140,8 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -55257,6 +56180,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -55274,6 +56198,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -55291,6 +56216,8 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -55323,6 +56250,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -55682,6 +56610,8 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -55718,6 +56648,7 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -55734,6 +56665,7 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -55750,6 +56682,8 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -55780,6 +56714,7 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -56059,8 +56994,16 @@ class SalesforceServiceCloudV2Source(CopySource):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: JSON
-    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :ivar soql_query: Deprecating, please use 'query' property instead. Type: string (or Expression
+     with resultType string).
     :vartype soql_query: JSON
+    :ivar query: You can only use Salesforce Object Query Language (SOQL) query with limitations.
+     For SOQL limitations, see this article:
+     https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+     If query is not specified, all the data of the Salesforce object specified in
+     ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+     resultType string).
+    :vartype query: JSON
     :ivar include_deleted_objects: This property control whether query result contains Deleted
      objects. Default is false. Type: boolean (or Expression with resultType boolean).
     :vartype include_deleted_objects: JSON
@@ -56081,6 +57024,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
     }
@@ -56094,6 +57038,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         soql_query: Optional[JSON] = None,
+        query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         **kwargs: Any
@@ -56114,8 +57059,16 @@ class SalesforceServiceCloudV2Source(CopySource):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: JSON
-        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :keyword soql_query: Deprecating, please use 'query' property instead. Type: string (or
+         Expression with resultType string).
         :paramtype soql_query: JSON
+        :keyword query: You can only use Salesforce Object Query Language (SOQL) query with
+         limitations. For SOQL limitations, see this article:
+         https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+         If query is not specified, all the data of the Salesforce object specified in
+         ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+         resultType string).
+        :paramtype query: JSON
         :keyword include_deleted_objects: This property control whether query result contains Deleted
          objects. Default is false. Type: boolean (or Expression with resultType boolean).
         :paramtype include_deleted_objects: JSON
@@ -56133,6 +57086,7 @@ class SalesforceServiceCloudV2Source(CopySource):
         )
         self.type: str = "SalesforceServiceCloudV2Source"
         self.soql_query = soql_query
+        self.query = query
         self.include_deleted_objects = include_deleted_objects
         self.additional_columns = additional_columns
 
@@ -56385,6 +57339,8 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -56421,6 +57377,7 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -56437,6 +57394,7 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -56453,6 +57411,8 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -56483,6 +57443,7 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -56740,7 +57701,7 @@ class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attribute
         self.ignore_null_values = ignore_null_values
 
 
-class SalesforceV2Source(TabularSource):
+class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce V2 source.
 
     All required parameters must be populated in order to send to server.
@@ -56768,8 +57729,16 @@ class SalesforceV2Source(TabularSource):
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
-    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :ivar soql_query: Deprecating, please use 'query' property instead. Type: string (or Expression
+     with resultType string).
     :vartype soql_query: JSON
+    :ivar query: You can only use Salesforce Object Query Language (SOQL) query with limitations.
+     For SOQL limitations, see this article:
+     https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+     If query is not specified, all the data of the Salesforce object specified in
+     ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+     resultType string).
+    :vartype query: JSON
     :ivar include_deleted_objects: This property control whether query result contains Deleted
      objects. Default is false. Type: boolean (or Expression with resultType boolean).
     :vartype include_deleted_objects: JSON
@@ -56789,6 +57758,7 @@ class SalesforceV2Source(TabularSource):
         "query_timeout": {"key": "queryTimeout", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
     }
 
@@ -56803,6 +57773,7 @@ class SalesforceV2Source(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         soql_query: Optional[JSON] = None,
+        query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -56828,8 +57799,16 @@ class SalesforceV2Source(TabularSource):
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
-        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :keyword soql_query: Deprecating, please use 'query' property instead. Type: string (or
+         Expression with resultType string).
         :paramtype soql_query: JSON
+        :keyword query: You can only use Salesforce Object Query Language (SOQL) query with
+         limitations. For SOQL limitations, see this article:
+         https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/queries.htm#SOQL%20Considerations.
+         If query is not specified, all the data of the Salesforce object specified in
+         ObjectApiName/reportId in dataset will be retrieved. Type: string (or Expression with
+         resultType string).
+        :paramtype query: JSON
         :keyword include_deleted_objects: This property control whether query result contains Deleted
          objects. Default is false. Type: boolean (or Expression with resultType boolean).
         :paramtype include_deleted_objects: JSON
@@ -56846,6 +57825,7 @@ class SalesforceV2Source(TabularSource):
         )
         self.type: str = "SalesforceV2Source"
         self.soql_query = soql_query
+        self.query = query
         self.include_deleted_objects = include_deleted_objects
 
 
@@ -56954,6 +57934,8 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -56991,6 +57973,7 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -57010,6 +57993,7 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         system_number: JSON,
         client_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -57023,6 +58007,8 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -57051,6 +58037,7 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -57166,7 +58153,7 @@ class SapBwSource(TabularSource):
         self.query = query
 
 
-class SapCloudForCustomerLinkedService(LinkedService):
+class SapCloudForCustomerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for SAP Cloud for Customer.
 
     All required parameters must be populated in order to send to server.
@@ -57176,6 +58163,8 @@ class SapCloudForCustomerLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -57207,6 +58196,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -57222,6 +58212,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -57235,6 +58226,8 @@ class SapCloudForCustomerLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -57259,6 +58252,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -57609,7 +58603,7 @@ class SapCloudForCustomerSource(TabularSource):
         self.http_request_timeout = http_request_timeout
 
 
-class SapEccLinkedService(LinkedService):
+class SapEccLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for SAP ERP Central Component(SAP ECC).
 
     All required parameters must be populated in order to send to server.
@@ -57619,6 +58613,8 @@ class SapEccLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -57650,6 +58646,7 @@ class SapEccLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -57665,6 +58662,7 @@ class SapEccLinkedService(LinkedService):
         *,
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -57678,6 +58676,8 @@ class SapEccLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -57702,6 +58702,7 @@ class SapEccLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -57945,6 +58946,8 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -57979,6 +58982,7 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -57995,6 +58999,7 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -58011,6 +59016,8 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -58039,6 +59046,7 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -58324,6 +59332,8 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -58396,6 +59406,7 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -58424,6 +59435,7 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -58452,6 +59464,8 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -58518,6 +59532,7 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -58799,6 +59814,8 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -58850,6 +59867,7 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -58871,6 +59889,7 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -58892,6 +59911,8 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -58938,6 +59959,7 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -59226,6 +60248,8 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -59292,6 +60316,7 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -59318,6 +60343,7 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -59344,6 +60370,8 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -59404,6 +60432,7 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -60698,6 +61727,8 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -60747,6 +61778,7 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -60769,6 +61801,7 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
         endpoint: JSON,
         authentication_type: Union[str, "_models.ServiceNowAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -60787,6 +61820,8 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -60828,6 +61863,7 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -61061,6 +62097,8 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -61102,6 +62140,7 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -61122,6 +62161,7 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         endpoint: JSON,
         authentication_type: Union[str, "_models.ServiceNowV2AuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -61138,6 +62178,8 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -61171,6 +62213,7 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -61459,50 +62502,6 @@ class ServicePrincipalCredential(Credential):
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
-
-
-class ServicePrincipalCredentialResource(CredentialResource):
-    """Credential resource type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :ivar properties: Service Principal Credential properties. Required.
-    :vartype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "properties": {"key": "properties", "type": "ServicePrincipalCredential"},
-    }
-
-    def __init__(self, *, properties: "_models.ServicePrincipalCredential", **kwargs: Any) -> None:
-        """
-        :keyword properties: Service Principal Credential properties. Required.
-        :paramtype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
 
 
 class SetVariableActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
@@ -61834,6 +62833,8 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -61888,6 +62889,7 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -61910,6 +62912,7 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -61930,6 +62933,8 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -61977,6 +62982,7 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -62100,6 +63106,8 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -62121,8 +63129,20 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
      string (or Expression with resultType string). Required.
     :vartype service_principal_id: JSON
     :ivar service_principal_key: The client secret of your application registered in Azure Active
-     Directory. Type: string (or Expression with resultType string). Required.
+     Directory. Type: string (or Expression with resultType string).
     :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_embedded_cert: Specify the base64 encoded certificate of your
+     application registered in Azure Active Directory. Type: string (or Expression with resultType
+     string).
+    :vartype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_embedded_cert_password: Specify the password of your certificate if
+     your certificate has a password and you are using AadServicePrincipal authentication. Type:
+     string (or Expression with resultType string).
+    :vartype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -62133,12 +63153,12 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         "site_url": {"required": True},
         "tenant_id": {"required": True},
         "service_principal_id": {"required": True},
-        "service_principal_key": {"required": True},
     }
 
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -62147,6 +63167,12 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         "tenant_id": {"key": "typeProperties.tenantId", "type": "object"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_embedded_cert": {"key": "typeProperties.servicePrincipalEmbeddedCert", "type": "SecretBase"},
+        "service_principal_embedded_cert_password": {
+            "key": "typeProperties.servicePrincipalEmbeddedCertPassword",
+            "type": "SecretBase",
+        },
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
@@ -62156,12 +63182,16 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         site_url: JSON,
         tenant_id: JSON,
         service_principal_id: JSON,
-        service_principal_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
+        service_principal_embedded_cert_password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -62169,6 +63199,8 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -62190,14 +63222,27 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
          Type: string (or Expression with resultType string). Required.
         :paramtype service_principal_id: JSON
         :keyword service_principal_key: The client secret of your application registered in Azure
-         Active Directory. Type: string (or Expression with resultType string). Required.
+         Active Directory. Type: string (or Expression with resultType string).
         :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_embedded_cert: Specify the base64 encoded certificate of your
+         application registered in Azure Active Directory. Type: string (or Expression with resultType
+         string).
+        :paramtype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_embedded_cert_password: Specify the password of your certificate if
+         your certificate has a password and you are using AadServicePrincipal authentication. Type:
+         string (or Expression with resultType string).
+        :paramtype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -62209,6 +63254,9 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         self.tenant_id = tenant_id
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_embedded_cert = service_principal_embedded_cert
+        self.service_principal_embedded_cert_password = service_principal_embedded_cert_password
         self.encrypted_credential = encrypted_credential
 
 
@@ -62421,6 +63469,8 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -62457,6 +63507,7 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -62474,6 +63525,7 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         *,
         host: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -62489,6 +63541,8 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -62518,6 +63572,7 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -62779,6 +63834,8 @@ class SmartsheetLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -62802,6 +63859,7 @@ class SmartsheetLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -62815,6 +63873,7 @@ class SmartsheetLinkedService(LinkedService):
         *,
         api_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -62826,6 +63885,8 @@ class SmartsheetLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -62842,6 +63903,7 @@ class SmartsheetLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -62986,6 +64048,9 @@ class SnowflakeExportCopyCommand(ExportSettings):
      object). Example: "additionalFormatOptions": { "OVERWRITE": "TRUE", "MAX_FILE_SIZE": "'FALSE'"
      }.
     :vartype additional_format_options: dict[str, JSON]
+    :ivar storage_integration: The name of the snowflake storage integration to use for the copy
+     operation. Type: string (or Expression with resultType string).
+    :vartype storage_integration: JSON
     """
 
     _validation = {
@@ -62997,6 +64062,7 @@ class SnowflakeExportCopyCommand(ExportSettings):
         "type": {"key": "type", "type": "str"},
         "additional_copy_options": {"key": "additionalCopyOptions", "type": "{object}"},
         "additional_format_options": {"key": "additionalFormatOptions", "type": "{object}"},
+        "storage_integration": {"key": "storageIntegration", "type": "object"},
     }
 
     def __init__(
@@ -63005,6 +64071,7 @@ class SnowflakeExportCopyCommand(ExportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         additional_copy_options: Optional[Dict[str, JSON]] = None,
         additional_format_options: Optional[Dict[str, JSON]] = None,
+        storage_integration: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -63021,11 +64088,15 @@ class SnowflakeExportCopyCommand(ExportSettings):
          object). Example: "additionalFormatOptions": { "OVERWRITE": "TRUE", "MAX_FILE_SIZE": "'FALSE'"
          }.
         :paramtype additional_format_options: dict[str, JSON]
+        :keyword storage_integration: The name of the snowflake storage integration to use for the copy
+         operation. Type: string (or Expression with resultType string).
+        :paramtype storage_integration: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
         self.type: str = "SnowflakeExportCopyCommand"
         self.additional_copy_options = additional_copy_options
         self.additional_format_options = additional_format_options
+        self.storage_integration = storage_integration
 
 
 class SnowflakeImportCopyCommand(ImportSettings):
@@ -63048,6 +64119,9 @@ class SnowflakeImportCopyCommand(ImportSettings):
      object). Example: "additionalFormatOptions": { "FORCE": "TRUE", "LOAD_UNCERTAIN_FILES":
      "'FALSE'" }.
     :vartype additional_format_options: dict[str, JSON]
+    :ivar storage_integration: The name of the snowflake storage integration to use for the copy
+     operation. Type: string (or Expression with resultType string).
+    :vartype storage_integration: JSON
     """
 
     _validation = {
@@ -63059,6 +64133,7 @@ class SnowflakeImportCopyCommand(ImportSettings):
         "type": {"key": "type", "type": "str"},
         "additional_copy_options": {"key": "additionalCopyOptions", "type": "{object}"},
         "additional_format_options": {"key": "additionalFormatOptions", "type": "{object}"},
+        "storage_integration": {"key": "storageIntegration", "type": "object"},
     }
 
     def __init__(
@@ -63067,6 +64142,7 @@ class SnowflakeImportCopyCommand(ImportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         additional_copy_options: Optional[Dict[str, JSON]] = None,
         additional_format_options: Optional[Dict[str, JSON]] = None,
+        storage_integration: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -63083,11 +64159,15 @@ class SnowflakeImportCopyCommand(ImportSettings):
          object). Example: "additionalFormatOptions": { "FORCE": "TRUE", "LOAD_UNCERTAIN_FILES":
          "'FALSE'" }.
         :paramtype additional_format_options: dict[str, JSON]
+        :keyword storage_integration: The name of the snowflake storage integration to use for the copy
+         operation. Type: string (or Expression with resultType string).
+        :paramtype storage_integration: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
         self.type: str = "SnowflakeImportCopyCommand"
         self.additional_copy_options = additional_copy_options
         self.additional_format_options = additional_format_options
+        self.storage_integration = storage_integration
 
 
 class SnowflakeLinkedService(LinkedService):
@@ -63100,6 +64180,8 @@ class SnowflakeLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -63126,6 +64208,7 @@ class SnowflakeLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -63140,6 +64223,7 @@ class SnowflakeLinkedService(LinkedService):
         *,
         connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -63152,6 +64236,8 @@ class SnowflakeLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -63171,6 +64257,7 @@ class SnowflakeLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -63505,6 +64592,8 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -63559,6 +64648,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -63585,6 +64675,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         database: JSON,
         warehouse: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -63605,6 +64696,8 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -63651,6 +64744,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -63919,6 +65013,8 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -63980,6 +65076,7 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -64007,6 +65104,7 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         port: JSON,
         authentication_type: Union[str, "_models.SparkAuthenticationType"],
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -64028,6 +65126,8 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -64081,6 +65181,7 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -65141,6 +66242,8 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -65232,7 +66335,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
     :ivar authentication_type: The type used for authentication. Type: string. Known values are:
-     "SQL" and "Windows".
+     "SQL", "Windows", and "UserAssignedManagedIdentity".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
     :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
      with resultType string).
@@ -65244,6 +66347,8 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype encrypted_credential: str
     :ivar always_encrypted_settings: Sql always encrypted properties.
     :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -65253,6 +66358,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -65285,12 +66391,14 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             "key": "typeProperties.alwaysEncryptedSettings",
             "type": "SqlAlwaysEncryptedProperties",
         },
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -65320,12 +66428,15 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -65417,7 +66528,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
         :keyword authentication_type: The type used for authentication. Type: string. Known values are:
-         "SQL" and "Windows".
+         "SQL", "Windows", and "UserAssignedManagedIdentity".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
         :keyword user_name: The on-premises Windows authentication user name. Type: string (or
@@ -65431,9 +66542,12 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword always_encrypted_settings: Sql always encrypted properties.
         :paramtype always_encrypted_settings:
          ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -65466,6 +66580,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         self.password = password
         self.encrypted_credential = encrypted_credential
         self.always_encrypted_settings = always_encrypted_settings
+        self.credential = credential
 
 
 class SqlServerLinkedServiceTypeProperties(
@@ -65556,7 +66671,7 @@ class SqlServerLinkedServiceTypeProperties(
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
     :ivar authentication_type: The type used for authentication. Type: string. Known values are:
-     "SQL" and "Windows".
+     "SQL", "Windows", and "UserAssignedManagedIdentity".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
     :ivar user_name: The on-premises Windows authentication user name. Type: string (or Expression
      with resultType string).
@@ -65568,6 +66683,8 @@ class SqlServerLinkedServiceTypeProperties(
     :vartype encrypted_credential: str
     :ivar always_encrypted_settings: Sql always encrypted properties.
     :vartype always_encrypted_settings: ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _attribute_map = {
@@ -65596,6 +66713,7 @@ class SqlServerLinkedServiceTypeProperties(
         "password": {"key": "password", "type": "SecretBase"},
         "encrypted_credential": {"key": "encryptedCredential", "type": "str"},
         "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -65626,6 +66744,7 @@ class SqlServerLinkedServiceTypeProperties(
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -65712,7 +66831,7 @@ class SqlServerLinkedServiceTypeProperties(
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
         :keyword authentication_type: The type used for authentication. Type: string. Known values are:
-         "SQL" and "Windows".
+         "SQL", "Windows", and "UserAssignedManagedIdentity".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.SqlServerAuthenticationType
         :keyword user_name: The on-premises Windows authentication user name. Type: string (or
@@ -65726,6 +66845,8 @@ class SqlServerLinkedServiceTypeProperties(
         :keyword always_encrypted_settings: Sql always encrypted properties.
         :paramtype always_encrypted_settings:
          ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedProperties
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             server=server,
@@ -65755,6 +66876,7 @@ class SqlServerLinkedServiceTypeProperties(
         self.password = password
         self.encrypted_credential = encrypted_credential
         self.always_encrypted_settings = always_encrypted_settings
+        self.credential = credential
 
 
 class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
@@ -66708,6 +67830,8 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -66750,6 +67874,7 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -66769,6 +67894,7 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -66788,6 +67914,8 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -66824,6 +67952,7 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -68090,7 +69219,7 @@ class StoredProcedureParameter(_serialization.Model):
      string).
     :vartype value: JSON
     :ivar type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
-     "Decimal", "Guid", "Boolean", and "Date".
+     "Decimal", "Guid", "Boolean", "Date", and "Int".
     :vartype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
 
@@ -68111,7 +69240,7 @@ class StoredProcedureParameter(_serialization.Model):
          string).
         :paramtype value: JSON
         :keyword type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
-         "Decimal", "Guid", "Boolean", and "Date".
+         "Decimal", "Guid", "Boolean", "Date", and "Int".
         :paramtype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
         """
         super().__init__(**kwargs)
@@ -68276,6 +69405,8 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -68314,6 +69445,7 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -68333,6 +69465,7 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         server: JSON,
         database: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -68348,6 +69481,8 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -68379,6 +69514,7 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -69344,6 +70480,8 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -69379,6 +70517,7 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -69397,6 +70536,7 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
         authentication_type: Union[str, "_models.TeamDeskAuthenticationType"],
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -69411,6 +70551,8 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -69439,6 +70581,7 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -69464,6 +70607,8 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -69497,6 +70642,7 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -69513,6 +70659,7 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -69529,6 +70676,8 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -69558,6 +70707,7 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -70587,6 +71737,8 @@ class TwilioLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -70611,6 +71763,7 @@ class TwilioLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -70625,6 +71778,7 @@ class TwilioLinkedService(LinkedService):
         user_name: JSON,
         password: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -70635,6 +71789,8 @@ class TwilioLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -70651,6 +71807,7 @@ class TwilioLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -71185,7 +72342,7 @@ class VariableSpecification(_serialization.Model):
         self.default_value = default_value
 
 
-class VerticaLinkedService(LinkedService):
+class VerticaLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Vertica linked service.
 
     All required parameters must be populated in order to send to server.
@@ -71195,6 +72352,8 @@ class VerticaLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -71206,6 +72365,14 @@ class VerticaLinkedService(LinkedService):
     :ivar connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar server: Server name for connection. Type: string.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar uid: Username for authentication. Type: string.
+    :vartype uid: JSON
+    :ivar database: Database name for connection. Type: string.
+    :vartype database: JSON
     :ivar pwd: The Azure key vault secret reference of password in connection string.
     :vartype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -71220,11 +72387,16 @@ class VerticaLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "uid": {"key": "typeProperties.uid", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
         "pwd": {"key": "typeProperties.pwd", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
@@ -71233,11 +72405,16 @@ class VerticaLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         connection_string: Optional[JSON] = None,
+        server: Optional[JSON] = None,
+        port: Optional[JSON] = None,
+        uid: Optional[JSON] = None,
+        database: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -71246,6 +72423,8 @@ class VerticaLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -71257,6 +72436,14 @@ class VerticaLinkedService(LinkedService):
         :keyword connection_string: An ODBC connection string. Type: string, SecureString or
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword server: Server name for connection. Type: string.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword uid: Username for authentication. Type: string.
+        :paramtype uid: JSON
+        :keyword database: Database name for connection. Type: string.
+        :paramtype database: JSON
         :keyword pwd: The Azure key vault secret reference of password in connection string.
         :paramtype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
@@ -71265,6 +72452,7 @@ class VerticaLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -71273,6 +72461,10 @@ class VerticaLinkedService(LinkedService):
         )
         self.type: str = "Vertica"
         self.connection_string = connection_string
+        self.server = server
+        self.port = port
+        self.uid = uid
+        self.database = database
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
 
@@ -71609,6 +72801,8 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -71659,6 +72853,7 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -71680,6 +72875,7 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         artifact_id: JSON,
         endpoint: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -71697,6 +72893,8 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -71739,6 +72937,7 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -72789,6 +73988,8 @@ class WebLinkedService(LinkedService):
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -72809,6 +74010,7 @@ class WebLinkedService(LinkedService):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -72821,6 +74023,7 @@ class WebLinkedService(LinkedService):
         *,
         type_properties: "_models.WebLinkedServiceTypeProperties",
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -72831,6 +74034,8 @@ class WebLinkedService(LinkedService):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -72844,6 +74049,7 @@ class WebLinkedService(LinkedService):
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -73131,6 +74337,8 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -73172,6 +74380,7 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -73190,6 +74399,7 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -73208,6 +74418,8 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -73244,6 +74456,7 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -73788,6 +75001,8 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -73823,6 +75038,7 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -73841,6 +75057,7 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         authentication_type: Union[str, "_models.ZendeskAuthenticationType"],
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -73855,6 +75072,8 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -73882,6 +75101,7 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,
@@ -73952,6 +75172,8 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     :vartype additional_properties: dict[str, JSON]
     :ivar type: Type of linked service. Required.
     :vartype type: str
+    :ivar version: Version of the linked service.
+    :vartype version: str
     :ivar connect_via: The integration runtime reference.
     :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :ivar description: Linked service description.
@@ -73989,6 +75211,7 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
         "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
@@ -74006,6 +75229,7 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         self,
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
+        version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
@@ -74023,6 +75247,8 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
+        :keyword version: Version of the linked service.
+        :paramtype version: str
         :keyword connect_via: The integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
         :keyword description: Linked service description.
@@ -74054,6 +75280,7 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         """
         super().__init__(
             additional_properties=additional_properties,
+            version=version,
             connect_via=connect_via,
             description=description,
             parameters=parameters,

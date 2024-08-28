@@ -29,13 +29,11 @@ extends:
     ServiceDirectory: maps
     TestProxy: true
     Artifacts:
-    - name: azure-mgmt-maps
-      safeName: azuremgmtmaps
     - name: azure-maps-search
       safeName: azuremapssearch
-    - name: azure-maps-geolocation
-      safeName: azuremapsgeolocation
     - name: azure-maps-render
       safeName: azuremapsrender
     - name: azure-maps-route
       safeName: azuremapsroute
+    - name: azure-maps-weather
+      safeName: azuremapsweather

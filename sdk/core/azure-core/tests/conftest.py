@@ -87,7 +87,7 @@ def start_testserver():
         if not is_port_available(port):
             return child_process
         time.sleep(1)
-    raise ValueError("Didn't start!")
+    raise ValueError(f"Didn't start!")
 
 
 def terminate_testserver(process):

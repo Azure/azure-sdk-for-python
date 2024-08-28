@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -96,7 +96,6 @@ class WorkspaceGitRepoManagementOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -105,7 +104,7 @@ class WorkspaceGitRepoManagementOperations:
     @overload
     def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: IO,
+        git_hub_access_token_request: IO[bytes],
         client_request_id: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -114,14 +113,13 @@ class WorkspaceGitRepoManagementOperations:
         """Get the GitHub access token.
 
         :param git_hub_access_token_request: Required.
-        :type git_hub_access_token_request: IO
+        :type git_hub_access_token_request: IO[bytes]
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -130,23 +128,19 @@ class WorkspaceGitRepoManagementOperations:
     @distributed_trace
     def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO],
+        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO[bytes]],
         client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.GitHubAccessTokenResponse:
         """Get the GitHub access token.
 
-        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO type.
-         Required.
+        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO[bytes]
+         type. Required.
         :type git_hub_access_token_request: ~azure.synapse.artifacts.models.GitHubAccessTokenRequest or
-         IO
+         IO[bytes]
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:

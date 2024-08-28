@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/stable/2023-12-30/examples/ServerValidateEstimateHighAvailability.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-02-01-preview/examples/ServerValidateEstimateHighAvailability.json
 if __name__ == "__main__":
     main()

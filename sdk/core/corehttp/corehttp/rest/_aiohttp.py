@@ -30,7 +30,7 @@ import logging
 from itertools import groupby
 from typing import Iterator, cast, TYPE_CHECKING
 from multidict import CIMultiDict
-import aiohttp.client_exceptions  # pylint: disable=all
+import aiohttp.client_exceptions  # pylint: disable=networking-import-outside-azure-core-transport
 
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ..exceptions import (

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -33,10 +33,10 @@ from ...operations._queue_services_operations import (
     build_set_service_properties_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -72,12 +72,11 @@ class QueueServicesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListQueueServices or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_06_01.models.ListQueueServices
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -91,21 +90,20 @@ class QueueServicesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-06-01"))
         cls: ClsType[_models.ListQueueServices] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -118,13 +116,9 @@ class QueueServicesOperations:
         deserialized = self._deserialize("ListQueueServices", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/queueServices"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def set_service_properties(
@@ -152,11 +146,6 @@ class QueueServicesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword queue_service_name: The name of the Queue Service within the specified storage
-         account. Queue Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype queue_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueueServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -167,7 +156,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -184,15 +173,10 @@ class QueueServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Queue service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword queue_service_name: The name of the Queue Service within the specified storage
-         account. Queue Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype queue_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueueServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -203,7 +187,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.QueueServiceProperties, IO],
+        parameters: Union[_models.QueueServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.QueueServiceProperties:
         """Sets the properties of a storage account’s Queue service, including properties for Storage
@@ -218,21 +202,13 @@ class QueueServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Queue service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is either a
-         QueueServiceProperties type or a IO type. Required.
-        :type parameters: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties or IO
-        :keyword queue_service_name: The name of the Queue Service within the specified storage
-         account. Queue Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype queue_service_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         QueueServiceProperties type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties or IO[bytes]
         :return: QueueServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -256,7 +232,7 @@ class QueueServicesOperations:
         else:
             _json = self._serialize.body(parameters, "QueueServiceProperties")
 
-        request = build_set_service_properties_request(
+        _request = build_set_service_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -265,16 +241,15 @@ class QueueServicesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.set_service_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -287,13 +262,9 @@ class QueueServicesOperations:
         deserialized = self._deserialize("QueueServiceProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    set_service_properties.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/queueServices/{queueServiceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_service_properties(
@@ -309,16 +280,11 @@ class QueueServicesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :keyword queue_service_name: The name of the Queue Service within the specified storage
-         account. Queue Service Name must be 'default'. Default value is "default". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype queue_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueueServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2021_06_01.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -333,22 +299,21 @@ class QueueServicesOperations:
         queue_service_name: Literal["default"] = kwargs.pop("queue_service_name", "default")
         cls: ClsType[_models.QueueServiceProperties] = kwargs.pop("cls", None)
 
-        request = build_get_service_properties_request(
+        _request = build_get_service_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             queue_service_name=queue_service_name,
-            template_url=self.get_service_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -361,10 +326,6 @@ class QueueServicesOperations:
         deserialized = self._deserialize("QueueServiceProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_service_properties.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/queueServices/{queueServiceName}"
-    }
+        return deserialized  # type: ignore

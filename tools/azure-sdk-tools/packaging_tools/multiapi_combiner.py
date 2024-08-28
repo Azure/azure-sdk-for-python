@@ -520,7 +520,11 @@ class Serializer:
                     ):
                         imports_to_add.append(i)
                 elif i not in imports_splitlines:
-                    imports_to_add.append(i)
+                    error_name = i.strip(" ,\n")
+                    if error_name in ("StreamClosedError", "StreamConsumedError"):
+                        imports_to_add.append(f"from azure.core.exceptions import {error_name}")
+                    else:
+                        imports_to_add.append(i)
 
         imports += "\n".join(imports_to_add)
         try:

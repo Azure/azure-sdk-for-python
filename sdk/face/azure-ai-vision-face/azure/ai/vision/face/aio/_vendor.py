@@ -8,11 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import (
-    FaceAdministrationClientConfiguration,
-    FaceClientConfiguration,
-    FaceSessionClientConfiguration,
-)
+from ._configuration import FaceClientConfiguration, FaceSessionClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -26,15 +22,6 @@ class FaceClientMixinABC(ABC):
 
     _client: "AsyncPipelineClient"
     _config: FaceClientConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
-
-
-class FaceAdministrationClientMixinABC(ABC):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "AsyncPipelineClient"
-    _config: FaceAdministrationClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
 

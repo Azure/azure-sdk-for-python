@@ -261,6 +261,7 @@ from ._models_py3 import ExportSettings
 from ._models_py3 import ExposureControlRequest
 from ._models_py3 import ExposureControlResponse
 from ._models_py3 import Expression
+from ._models_py3 import ExpressionV2
 from ._models_py3 import FailActivity
 from ._models_py3 import FileServerLinkedService
 from ._models_py3 import FileServerLocation
@@ -288,6 +289,9 @@ from ._models_py3 import GoogleAdWordsSource
 from ._models_py3 import GoogleBigQueryLinkedService
 from ._models_py3 import GoogleBigQueryObjectDataset
 from ._models_py3 import GoogleBigQuerySource
+from ._models_py3 import GoogleBigQueryV2LinkedService
+from ._models_py3 import GoogleBigQueryV2ObjectDataset
+from ._models_py3 import GoogleBigQueryV2Source
 from ._models_py3 import GoogleCloudStorageLinkedService
 from ._models_py3 import GoogleCloudStorageLocation
 from ._models_py3 import GoogleCloudStorageReadSettings
@@ -356,6 +360,13 @@ from ._models_py3 import KqlScriptContentCurrentConnection
 from ._models_py3 import KqlScriptContentMetadata
 from ._models_py3 import KqlScriptResource
 from ._models_py3 import KqlScriptsResourceCollectionResponse
+from ._models_py3 import LakeHouseLinkedService
+from ._models_py3 import LakeHouseLocation
+from ._models_py3 import LakeHouseReadSettings
+from ._models_py3 import LakeHouseTableDataset
+from ._models_py3 import LakeHouseTableSink
+from ._models_py3 import LakeHouseTableSource
+from ._models_py3 import LakeHouseWriteSettings
 from ._models_py3 import LibraryInfo
 from ._models_py3 import LibraryListResponse
 from ._models_py3 import LibraryRequirements
@@ -408,6 +419,7 @@ from ._models_py3 import MariaDBTableDataset
 from ._models_py3 import MarketoLinkedService
 from ._models_py3 import MarketoObjectDataset
 from ._models_py3 import MarketoSource
+from ._models_py3 import MetadataItem
 from ._models_py3 import MetastoreRegisterObject
 from ._models_py3 import MetastoreRegistrationResponse
 from ._models_py3 import MetastoreRequestSuccessResponse
@@ -474,6 +486,7 @@ from ._models_py3 import OutputColumn
 from ._models_py3 import ParameterSpecification
 from ._models_py3 import ParquetDataset
 from ._models_py3 import ParquetFormat
+from ._models_py3 import ParquetReadSettings
 from ._models_py3 import ParquetSink
 from ._models_py3 import ParquetSource
 from ._models_py3 import ParquetWriteSettings
@@ -494,6 +507,9 @@ from ._models_py3 import PolybaseSettings
 from ._models_py3 import PostgreSqlLinkedService
 from ._models_py3 import PostgreSqlSource
 from ._models_py3 import PostgreSqlTableDataset
+from ._models_py3 import PostgreSqlV2LinkedService
+from ._models_py3 import PostgreSqlV2Source
+from ._models_py3 import PostgreSqlV2TableDataset
 from ._models_py3 import PowerBIWorkspaceLinkedService
 from ._models_py3 import PrestoLinkedService
 from ._models_py3 import PrestoObjectDataset
@@ -556,8 +572,16 @@ from ._models_py3 import SalesforceServiceCloudLinkedService
 from ._models_py3 import SalesforceServiceCloudObjectDataset
 from ._models_py3 import SalesforceServiceCloudSink
 from ._models_py3 import SalesforceServiceCloudSource
+from ._models_py3 import SalesforceServiceCloudV2LinkedService
+from ._models_py3 import SalesforceServiceCloudV2ObjectDataset
+from ._models_py3 import SalesforceServiceCloudV2Sink
+from ._models_py3 import SalesforceServiceCloudV2Source
 from ._models_py3 import SalesforceSink
 from ._models_py3 import SalesforceSource
+from ._models_py3 import SalesforceV2LinkedService
+from ._models_py3 import SalesforceV2ObjectDataset
+from ._models_py3 import SalesforceV2Sink
+from ._models_py3 import SalesforceV2Source
 from ._models_py3 import SapBWLinkedService
 from ._models_py3 import SapBwCubeDataset
 from ._models_py3 import SapBwSource
@@ -597,6 +621,9 @@ from ._models_py3 import SelfHostedIntegrationRuntime
 from ._models_py3 import ServiceNowLinkedService
 from ._models_py3 import ServiceNowObjectDataset
 from ._models_py3 import ServiceNowSource
+from ._models_py3 import ServiceNowV2LinkedServiceTypeProperties
+from ._models_py3 import ServiceNowV2ObjectDataset
+from ._models_py3 import ServiceNowV2Source
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
 from ._models_py3 import SftpReadSettings
@@ -617,6 +644,10 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
+from ._models_py3 import SnowflakeV2Dataset
+from ._models_py3 import SnowflakeV2LinkedService
+from ._models_py3 import SnowflakeV2Sink
+from ._models_py3 import SnowflakeV2Source
 from ._models_py3 import SparkBatchJob
 from ._models_py3 import SparkBatchJobState
 from ._models_py3 import SparkConfiguration
@@ -717,6 +748,10 @@ from ._models_py3 import VerticaSource
 from ._models_py3 import VerticaTableDataset
 from ._models_py3 import VirtualNetworkProfile
 from ._models_py3 import WaitActivity
+from ._models_py3 import WarehouseLinkedService
+from ._models_py3 import WarehouseSink
+from ._models_py3 import WarehouseSource
+from ._models_py3 import WarehouseTableDataset
 from ._models_py3 import WebActivity
 from ._models_py3 import WebActivityAuthentication
 from ._models_py3 import WebAnonymousAuthentication
@@ -776,9 +811,11 @@ from ._artifacts_client_enums import DynamicsSinkWriteBehavior
 from ._artifacts_client_enums import Enum13
 from ._artifacts_client_enums import EventSubscriptionStatus
 from ._artifacts_client_enums import ExpressionType
+from ._artifacts_client_enums import ExpressionV2Type
 from ._artifacts_client_enums import FtpAuthenticationType
 from ._artifacts_client_enums import GoogleAdWordsAuthenticationType
 from ._artifacts_client_enums import GoogleBigQueryAuthenticationType
+from ._artifacts_client_enums import GoogleBigQueryV2AuthenticationType
 from ._artifacts_client_enums import HBaseAuthenticationType
 from ._artifacts_client_enums import HDInsightActivityDebugInfoOption
 from ._artifacts_client_enums import HdiNodeTypes
@@ -826,6 +863,7 @@ from ._artifacts_client_enums import RunQueryOrder
 from ._artifacts_client_enums import RunQueryOrderByField
 from ._artifacts_client_enums import SalesforceSinkWriteBehavior
 from ._artifacts_client_enums import SalesforceSourceReadBehavior
+from ._artifacts_client_enums import SalesforceV2SinkWriteBehavior
 from ._artifacts_client_enums import SapCloudForCustomerSinkWriteBehavior
 from ._artifacts_client_enums import SapHanaAuthenticationType
 from ._artifacts_client_enums import SapHanaPartitionOption
@@ -836,7 +874,9 @@ from ._artifacts_client_enums import ScriptActivityParameterDirection
 from ._artifacts_client_enums import ScriptActivityParameterType
 from ._artifacts_client_enums import ScriptType
 from ._artifacts_client_enums import ServiceNowAuthenticationType
+from ._artifacts_client_enums import ServiceNowV2AuthenticationType
 from ._artifacts_client_enums import SftpAuthenticationType
+from ._artifacts_client_enums import SnowflakeAuthenticationType
 from ._artifacts_client_enums import SparkAuthenticationType
 from ._artifacts_client_enums import SparkBatchJobResultType
 from ._artifacts_client_enums import SparkConfigurationReferenceType
@@ -1127,6 +1167,7 @@ __all__ = [
     "ExposureControlRequest",
     "ExposureControlResponse",
     "Expression",
+    "ExpressionV2",
     "FailActivity",
     "FileServerLinkedService",
     "FileServerLocation",
@@ -1154,6 +1195,9 @@ __all__ = [
     "GoogleBigQueryLinkedService",
     "GoogleBigQueryObjectDataset",
     "GoogleBigQuerySource",
+    "GoogleBigQueryV2LinkedService",
+    "GoogleBigQueryV2ObjectDataset",
+    "GoogleBigQueryV2Source",
     "GoogleCloudStorageLinkedService",
     "GoogleCloudStorageLocation",
     "GoogleCloudStorageReadSettings",
@@ -1222,6 +1266,13 @@ __all__ = [
     "KqlScriptContentMetadata",
     "KqlScriptResource",
     "KqlScriptsResourceCollectionResponse",
+    "LakeHouseLinkedService",
+    "LakeHouseLocation",
+    "LakeHouseReadSettings",
+    "LakeHouseTableDataset",
+    "LakeHouseTableSink",
+    "LakeHouseTableSource",
+    "LakeHouseWriteSettings",
     "LibraryInfo",
     "LibraryListResponse",
     "LibraryRequirements",
@@ -1274,6 +1325,7 @@ __all__ = [
     "MarketoLinkedService",
     "MarketoObjectDataset",
     "MarketoSource",
+    "MetadataItem",
     "MetastoreRegisterObject",
     "MetastoreRegistrationResponse",
     "MetastoreRequestSuccessResponse",
@@ -1340,6 +1392,7 @@ __all__ = [
     "ParameterSpecification",
     "ParquetDataset",
     "ParquetFormat",
+    "ParquetReadSettings",
     "ParquetSink",
     "ParquetSource",
     "ParquetWriteSettings",
@@ -1360,6 +1413,9 @@ __all__ = [
     "PostgreSqlLinkedService",
     "PostgreSqlSource",
     "PostgreSqlTableDataset",
+    "PostgreSqlV2LinkedService",
+    "PostgreSqlV2Source",
+    "PostgreSqlV2TableDataset",
     "PowerBIWorkspaceLinkedService",
     "PrestoLinkedService",
     "PrestoObjectDataset",
@@ -1422,8 +1478,16 @@ __all__ = [
     "SalesforceServiceCloudObjectDataset",
     "SalesforceServiceCloudSink",
     "SalesforceServiceCloudSource",
+    "SalesforceServiceCloudV2LinkedService",
+    "SalesforceServiceCloudV2ObjectDataset",
+    "SalesforceServiceCloudV2Sink",
+    "SalesforceServiceCloudV2Source",
     "SalesforceSink",
     "SalesforceSource",
+    "SalesforceV2LinkedService",
+    "SalesforceV2ObjectDataset",
+    "SalesforceV2Sink",
+    "SalesforceV2Source",
     "SapBWLinkedService",
     "SapBwCubeDataset",
     "SapBwSource",
@@ -1463,6 +1527,9 @@ __all__ = [
     "ServiceNowLinkedService",
     "ServiceNowObjectDataset",
     "ServiceNowSource",
+    "ServiceNowV2LinkedServiceTypeProperties",
+    "ServiceNowV2ObjectDataset",
+    "ServiceNowV2Source",
     "SetVariableActivity",
     "SftpLocation",
     "SftpReadSettings",
@@ -1483,6 +1550,10 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
+    "SnowflakeV2Dataset",
+    "SnowflakeV2LinkedService",
+    "SnowflakeV2Sink",
+    "SnowflakeV2Source",
     "SparkBatchJob",
     "SparkBatchJobState",
     "SparkConfiguration",
@@ -1583,6 +1654,10 @@ __all__ = [
     "VerticaTableDataset",
     "VirtualNetworkProfile",
     "WaitActivity",
+    "WarehouseLinkedService",
+    "WarehouseSink",
+    "WarehouseSource",
+    "WarehouseTableDataset",
     "WebActivity",
     "WebActivityAuthentication",
     "WebAnonymousAuthentication",
@@ -1641,9 +1716,11 @@ __all__ = [
     "Enum13",
     "EventSubscriptionStatus",
     "ExpressionType",
+    "ExpressionV2Type",
     "FtpAuthenticationType",
     "GoogleAdWordsAuthenticationType",
     "GoogleBigQueryAuthenticationType",
+    "GoogleBigQueryV2AuthenticationType",
     "HBaseAuthenticationType",
     "HDInsightActivityDebugInfoOption",
     "HdiNodeTypes",
@@ -1691,6 +1768,7 @@ __all__ = [
     "RunQueryOrderByField",
     "SalesforceSinkWriteBehavior",
     "SalesforceSourceReadBehavior",
+    "SalesforceV2SinkWriteBehavior",
     "SapCloudForCustomerSinkWriteBehavior",
     "SapHanaAuthenticationType",
     "SapHanaPartitionOption",
@@ -1701,7 +1779,9 @@ __all__ = [
     "ScriptActivityParameterType",
     "ScriptType",
     "ServiceNowAuthenticationType",
+    "ServiceNowV2AuthenticationType",
     "SftpAuthenticationType",
+    "SnowflakeAuthenticationType",
     "SparkAuthenticationType",
     "SparkBatchJobResultType",
     "SparkConfigurationReferenceType",

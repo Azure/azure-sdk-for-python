@@ -14,11 +14,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from .._patch import (
-    DEFAULT_TOKEN_SCOPE,
     DEFAULT_ENTRA_ID_SCOPE,
     DEFAULT_SCOPE,
     get_translation_endpoint,
     TranslatorAuthenticationPolicy,
+    is_cognitive_services_scope,
 )
 
 from ._client import TextTranslationClient as ServiceClientGenerated
@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/") + DEFAULT_SCOPE
+                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = AsyncTranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
@@ -85,8 +85,11 @@ def set_authentication_policy(credential, kwargs):
                         """Both 'resource_id' and 'region' must be provided with a TokenCredential
                          for regional resource authentication."""
                     )
+                scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
+                if not is_cognitive_services_scope(scope):
+                    scope = scope.rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
-                    credential, *[kwargs.pop("audience", DEFAULT_TOKEN_SCOPE)], kwargs
+                    credential, scope
                 )
 
 

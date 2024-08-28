@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import NetworkManagementClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -39,7 +44,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_application_gateways_delete_request(
+def build_application_gateways_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, application_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -95,7 +100,7 @@ def build_application_gateways_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_application_gateways_create_or_update_request(
+def build_application_gateways_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, application_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -159,7 +164,9 @@ def build_application_gateways_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_application_gateways_list_all_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_application_gateways_list_all_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -233,7 +240,7 @@ def build_application_gateways_stop_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_network_management_check_dns_name_availability_request(
+def build_network_management_check_dns_name_availability_request(  # pylint: disable=name-too-long
     location: str, subscription_id: str, *, domain_name_label: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -265,7 +272,7 @@ def build_network_management_check_dns_name_availability_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_authorizations_delete_request(
+def build_express_route_circuit_authorizations_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, authorization_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -291,7 +298,7 @@ def build_express_route_circuit_authorizations_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_express_route_circuit_authorizations_get_request(
+def build_express_route_circuit_authorizations_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, authorization_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -323,7 +330,7 @@ def build_express_route_circuit_authorizations_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_authorizations_create_or_update_request(
+def build_express_route_circuit_authorizations_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, authorization_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -358,7 +365,7 @@ def build_express_route_circuit_authorizations_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_authorizations_list_request(
+def build_express_route_circuit_authorizations_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -389,7 +396,7 @@ def build_express_route_circuit_authorizations_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_peerings_delete_request(
+def build_express_route_circuit_peerings_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, peering_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -415,7 +422,7 @@ def build_express_route_circuit_peerings_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_express_route_circuit_peerings_get_request(
+def build_express_route_circuit_peerings_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, peering_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -447,7 +454,7 @@ def build_express_route_circuit_peerings_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_peerings_create_or_update_request(
+def build_express_route_circuit_peerings_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, peering_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -482,7 +489,7 @@ def build_express_route_circuit_peerings_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuit_peerings_list_request(
+def build_express_route_circuit_peerings_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -513,7 +520,7 @@ def build_express_route_circuit_peerings_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_delete_request(
+def build_express_route_circuits_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -569,7 +576,7 @@ def build_express_route_circuits_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_create_or_update_request(
+def build_express_route_circuits_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -603,7 +610,7 @@ def build_express_route_circuits_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_list_arp_table_request(
+def build_express_route_circuits_list_arp_table_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -634,7 +641,7 @@ def build_express_route_circuits_list_arp_table_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_list_routes_table_request(
+def build_express_route_circuits_list_routes_table_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -665,7 +672,7 @@ def build_express_route_circuits_list_routes_table_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_list_stats_request(
+def build_express_route_circuits_list_stats_request(  # pylint: disable=name-too-long
     resource_group_name: str, circuit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -696,7 +703,7 @@ def build_express_route_circuits_list_stats_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_list_request(
+def build_express_route_circuits_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -726,7 +733,9 @@ def build_express_route_circuits_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_circuits_list_all_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_express_route_circuits_list_all_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -752,7 +761,9 @@ def build_express_route_circuits_list_all_request(subscription_id: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_express_route_service_providers_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_express_route_service_providers_list_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -841,7 +852,7 @@ def build_load_balancers_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_balancers_create_or_update_request(
+def build_load_balancers_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, load_balancer_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -990,7 +1001,7 @@ def build_network_interfaces_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_interfaces_create_or_update_request(
+def build_network_interfaces_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, network_interface_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1024,7 +1035,9 @@ def build_network_interfaces_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_interfaces_list_all_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_network_interfaces_list_all_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1076,7 +1089,7 @@ def build_network_interfaces_list_request(resource_group_name: str, subscription
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces_request(
+def build_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     virtual_machine_scale_set_name: str,
     virtualmachine_index: str,
@@ -1114,7 +1127,7 @@ def build_network_interfaces_list_virtual_machine_scale_set_vm_network_interface
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_request(
+def build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_machine_scale_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1147,7 +1160,7 @@ def build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_r
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
+def build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     virtual_machine_scale_set_name: str,
     virtualmachine_index: str,
@@ -1191,7 +1204,7 @@ def build_network_interfaces_get_virtual_machine_scale_set_network_interface_req
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_security_groups_delete_request(
+def build_network_security_groups_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, network_security_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1216,7 +1229,7 @@ def build_network_security_groups_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_network_security_groups_get_request(
+def build_network_security_groups_get_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     network_security_group_name: str,
     subscription_id: str,
@@ -1254,7 +1267,7 @@ def build_network_security_groups_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_security_groups_create_or_update_request(
+def build_network_security_groups_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, network_security_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1288,7 +1301,9 @@ def build_network_security_groups_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_security_groups_list_all_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_network_security_groups_list_all_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1314,7 +1329,7 @@ def build_network_security_groups_list_all_request(subscription_id: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_network_security_groups_list_request(
+def build_network_security_groups_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1410,7 +1425,7 @@ def build_security_rules_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_security_rules_create_or_update_request(
+def build_security_rules_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     network_security_group_name: str,
     security_rule_name: str,
@@ -1543,7 +1558,7 @@ def build_public_ip_addresses_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_public_ip_addresses_create_or_update_request(
+def build_public_ip_addresses_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, public_ip_address_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1577,7 +1592,9 @@ def build_public_ip_addresses_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_public_ip_addresses_list_all_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_public_ip_addresses_list_all_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1694,7 +1711,7 @@ def build_route_tables_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_route_tables_create_or_update_request(
+def build_route_tables_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, route_table_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1994,7 +2011,7 @@ def build_virtual_networks_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_networks_create_or_update_request(
+def build_virtual_networks_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2212,7 +2229,7 @@ def build_subnets_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateways_create_or_update_request(
+def build_virtual_network_gateways_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2248,7 +2265,7 @@ def build_virtual_network_gateways_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateways_get_request(
+def build_virtual_network_gateways_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2281,7 +2298,7 @@ def build_virtual_network_gateways_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateways_delete_request(
+def build_virtual_network_gateways_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2308,7 +2325,7 @@ def build_virtual_network_gateways_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_virtual_network_gateways_list_request(
+def build_virtual_network_gateways_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2338,7 +2355,7 @@ def build_virtual_network_gateways_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateways_reset_request(
+def build_virtual_network_gateways_reset_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2374,7 +2391,7 @@ def build_virtual_network_gateways_reset_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateways_generatevpnclientpackage_request(
+def build_virtual_network_gateways_generatevpnclientpackage_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2410,7 +2427,7 @@ def build_virtual_network_gateways_generatevpnclientpackage_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_create_or_update_request(
+def build_virtual_network_gateway_connections_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2446,7 +2463,7 @@ def build_virtual_network_gateway_connections_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_get_request(
+def build_virtual_network_gateway_connections_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2479,7 +2496,7 @@ def build_virtual_network_gateway_connections_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_delete_request(
+def build_virtual_network_gateway_connections_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2506,7 +2523,7 @@ def build_virtual_network_gateway_connections_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_virtual_network_gateway_connections_list_request(
+def build_virtual_network_gateway_connections_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2536,7 +2553,7 @@ def build_virtual_network_gateway_connections_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_reset_shared_key_request(
+def build_virtual_network_gateway_connections_reset_shared_key_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2572,7 +2589,7 @@ def build_virtual_network_gateway_connections_reset_shared_key_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_set_shared_key_request(
+def build_virtual_network_gateway_connections_set_shared_key_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2608,7 +2625,7 @@ def build_virtual_network_gateway_connections_set_shared_key_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_virtual_network_gateway_connections_get_shared_key_request(
+def build_virtual_network_gateway_connections_get_shared_key_request(  # pylint: disable=name-too-long
     resource_group_name: str, virtual_network_gateway_connection_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2641,7 +2658,7 @@ def build_virtual_network_gateway_connections_get_shared_key_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_local_network_gateways_create_or_update_request(
+def build_local_network_gateways_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, local_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2706,7 +2723,7 @@ def build_local_network_gateways_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_local_network_gateways_delete_request(
+def build_local_network_gateways_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, local_network_gateway_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2731,7 +2748,7 @@ def build_local_network_gateways_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_local_network_gateways_list_request(
+def build_local_network_gateways_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2784,7 +2801,7 @@ class ApplicationGatewaysOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2798,21 +2815,20 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_application_gateways_delete_request(
+        _request = build_application_gateways_delete_request(
             resource_group_name=resource_group_name,
             application_gateway_name=application_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2822,11 +2838,7 @@ class ApplicationGatewaysOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, application_gateway_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -2836,14 +2848,6 @@ class ApplicationGatewaysOperations:
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2870,7 +2874,7 @@ class ApplicationGatewaysOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -2879,17 +2883,13 @@ class ApplicationGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, application_gateway_name: str, **kwargs: Any) -> _models.ApplicationGateway:
@@ -2899,12 +2899,11 @@ class ApplicationGatewaysOperations:
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGateway or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ApplicationGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2918,21 +2917,20 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
-        request = build_application_gateways_get_request(
+        _request = build_application_gateways_get_request(
             resource_group_name=resource_group_name,
             application_gateway_name=application_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2944,22 +2942,18 @@ class ApplicationGatewaysOperations:
         deserialized = self._deserialize("ApplicationGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: Union[_models.ApplicationGateway, IO],
+        parameters: Union[_models.ApplicationGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationGateway:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2982,7 +2976,7 @@ class ApplicationGatewaysOperations:
         else:
             _json = self._serialize.body(parameters, "ApplicationGateway")
 
-        request = build_application_gateways_create_or_update_request(
+        _request = build_application_gateways_create_or_update_request(
             resource_group_name=resource_group_name,
             application_gateway_name=application_gateway_name,
             subscription_id=self._config.subscription_id,
@@ -2990,16 +2984,15 @@ class ApplicationGatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3018,10 +3011,6 @@ class ApplicationGatewaysOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -3045,14 +3034,6 @@ class ApplicationGatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ApplicationGateway or the result of
          cls(response)
         :rtype:
@@ -3065,7 +3046,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3078,18 +3059,10 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :param parameters: Parameters supplied to the create or update application gateway operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ApplicationGateway or the result of
          cls(response)
         :rtype:
@@ -3102,7 +3075,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: Union[_models.ApplicationGateway, IO],
+        parameters: Union[_models.ApplicationGateway, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationGateway]:
         """Creates or updates the specified application gateway.
@@ -3112,19 +3085,8 @@ class ApplicationGatewaysOperations:
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
         :param parameters: Parameters supplied to the create or update application gateway operation.
-         Is either a ApplicationGateway type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ApplicationGateway or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a ApplicationGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ApplicationGateway or IO[bytes]
         :return: An instance of LROPoller that returns either ApplicationGateway or the result of
          cls(response)
         :rtype:
@@ -3157,7 +3119,7 @@ class ApplicationGatewaysOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ApplicationGateway", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -3167,17 +3129,15 @@ class ApplicationGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ApplicationGateway].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}"
-    }
+        return LROPoller[_models.ApplicationGateway](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.ApplicationGateway"]:
@@ -3185,7 +3145,6 @@ class ApplicationGatewaysOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3196,7 +3155,7 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3207,16 +3166,15 @@ class ApplicationGatewaysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_application_gateways_list_request(
+                _request = build_application_gateways_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -3227,14 +3185,14 @@ class ApplicationGatewaysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ApplicationGatewayListResult", pipeline_response)
@@ -3244,11 +3202,11 @@ class ApplicationGatewaysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3259,16 +3217,11 @@ class ApplicationGatewaysOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways"
-    }
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.ApplicationGateway"]:
         """Gets all the application gateways in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3279,7 +3232,7 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3290,15 +3243,14 @@ class ApplicationGatewaysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_application_gateways_list_all_request(
+                _request = build_application_gateways_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -3309,14 +3261,14 @@ class ApplicationGatewaysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ApplicationGatewayListResult", pipeline_response)
@@ -3326,11 +3278,11 @@ class ApplicationGatewaysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3342,12 +3294,10 @@ class ApplicationGatewaysOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGateways"}
-
     def _start_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3361,21 +3311,20 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_application_gateways_start_request(
+        _request = build_application_gateways_start_request(
             resource_group_name=resource_group_name,
             application_gateway_name=application_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3385,11 +3334,7 @@ class ApplicationGatewaysOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _start_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/start"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_start(self, resource_group_name: str, application_gateway_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -3399,14 +3344,6 @@ class ApplicationGatewaysOperations:
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3433,7 +3370,7 @@ class ApplicationGatewaysOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3442,22 +3379,18 @@ class ApplicationGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/start"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _stop_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3471,21 +3404,20 @@ class ApplicationGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_application_gateways_stop_request(
+        _request = build_application_gateways_stop_request(
             resource_group_name=resource_group_name,
             application_gateway_name=application_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3495,11 +3427,7 @@ class ApplicationGatewaysOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _stop_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/stop"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_stop(self, resource_group_name: str, application_gateway_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -3509,14 +3437,6 @@ class ApplicationGatewaysOperations:
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3543,7 +3463,7 @@ class ApplicationGatewaysOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3552,17 +3472,13 @@ class ApplicationGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/stop"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
@@ -3583,12 +3499,11 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :keyword domain_name_label: The domain name to be verified. It must conform to the following
          regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Default value is None.
         :paramtype domain_name_label: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.DnsNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3604,21 +3519,20 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         )
         cls: ClsType[_models.DnsNameAvailabilityResult] = kwargs.pop("cls", None)
 
-        request = build_network_management_check_dns_name_availability_request(
+        _request = build_network_management_check_dns_name_availability_request(
             location=location,
             subscription_id=self._config.subscription_id,
             domain_name_label=domain_name_label,
             api_version=api_version,
-            template_url=self.check_dns_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3630,16 +3544,12 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         deserialized = self._deserialize("DnsNameAvailabilityResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_dns_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability"
-    }
+        return deserialized  # type: ignore
 
 
-class ExpressRouteCircuitAuthorizationsOperations:
+class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3662,7 +3572,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, circuit_name: str, authorization_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3676,22 +3586,21 @@ class ExpressRouteCircuitAuthorizationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuit_authorizations_delete_request(
+        _request = build_express_route_circuit_authorizations_delete_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             authorization_name=authorization_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3701,11 +3610,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -3719,14 +3624,6 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :type circuit_name: str
         :param authorization_name: The name of the authorization. Required.
         :type authorization_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3754,7 +3651,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3763,17 +3660,13 @@ class ExpressRouteCircuitAuthorizationsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -3787,12 +3680,11 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :type circuit_name: str
         :param authorization_name: The name of the authorization. Required.
         :type authorization_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitAuthorization or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3806,22 +3698,21 @@ class ExpressRouteCircuitAuthorizationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuit_authorizations_get_request(
+        _request = build_express_route_circuit_authorizations_get_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             authorization_name=authorization_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3833,23 +3724,19 @@ class ExpressRouteCircuitAuthorizationsOperations:
         deserialized = self._deserialize("ExpressRouteCircuitAuthorization", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, IO],
+        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRouteCircuitAuthorization:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3872,7 +3759,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         else:
             _json = self._serialize.body(authorization_parameters, "ExpressRouteCircuitAuthorization")
 
-        request = build_express_route_circuit_authorizations_create_or_update_request(
+        _request = build_express_route_circuit_authorizations_create_or_update_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             authorization_name=authorization_name,
@@ -3881,16 +3768,15 @@ class ExpressRouteCircuitAuthorizationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3909,10 +3795,6 @@ class ExpressRouteCircuitAuthorizationsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -3940,14 +3822,6 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuitAuthorization or the
          result of cls(response)
         :rtype:
@@ -3961,7 +3835,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: IO,
+        authorization_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3976,18 +3850,10 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route
          circuit authorization operation. Required.
-        :type authorization_parameters: IO
+        :type authorization_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuitAuthorization or the
          result of cls(response)
         :rtype:
@@ -4001,7 +3867,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, IO],
+        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExpressRouteCircuitAuthorization]:
         """Creates or updates an authorization in the specified express route circuit.
@@ -4013,21 +3879,10 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :param authorization_name: The name of the authorization. Required.
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route
-         circuit authorization operation. Is either a ExpressRouteCircuitAuthorization type or a IO
-         type. Required.
+         circuit authorization operation. Is either a ExpressRouteCircuitAuthorization type or a
+         IO[bytes] type. Required.
         :type authorization_parameters:
-         ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization or IO[bytes]
         :return: An instance of LROPoller that returns either ExpressRouteCircuitAuthorization or the
          result of cls(response)
         :rtype:
@@ -4061,7 +3916,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitAuthorization", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -4071,17 +3926,15 @@ class ExpressRouteCircuitAuthorizationsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ExpressRouteCircuitAuthorization].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}"
-    }
+        return LROPoller[_models.ExpressRouteCircuitAuthorization](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
@@ -4093,7 +3946,6 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuitAuthorization or the result of
          cls(response)
         :rtype:
@@ -4106,7 +3958,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.AuthorizationListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4117,17 +3969,16 @@ class ExpressRouteCircuitAuthorizationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuit_authorizations_list_request(
+                _request = build_express_route_circuit_authorizations_list_request(
                     resource_group_name=resource_group_name,
                     circuit_name=circuit_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -4138,14 +3989,14 @@ class ExpressRouteCircuitAuthorizationsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AuthorizationListResult", pipeline_response)
@@ -4155,11 +4006,11 @@ class ExpressRouteCircuitAuthorizationsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4170,10 +4021,6 @@ class ExpressRouteCircuitAuthorizationsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations"
-    }
 
 
 class ExpressRouteCircuitPeeringsOperations:
@@ -4199,7 +4046,7 @@ class ExpressRouteCircuitPeeringsOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, circuit_name: str, peering_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4213,22 +4060,21 @@ class ExpressRouteCircuitPeeringsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuit_peerings_delete_request(
+        _request = build_express_route_circuit_peerings_delete_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             peering_name=peering_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4238,11 +4084,7 @@ class ExpressRouteCircuitPeeringsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -4256,14 +4098,6 @@ class ExpressRouteCircuitPeeringsOperations:
         :type circuit_name: str
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4291,7 +4125,7 @@ class ExpressRouteCircuitPeeringsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -4300,17 +4134,13 @@ class ExpressRouteCircuitPeeringsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -4324,12 +4154,11 @@ class ExpressRouteCircuitPeeringsOperations:
         :type circuit_name: str
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitPeering or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4343,22 +4172,21 @@ class ExpressRouteCircuitPeeringsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuit_peerings_get_request(
+        _request = build_express_route_circuit_peerings_get_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             peering_name=peering_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4370,23 +4198,19 @@ class ExpressRouteCircuitPeeringsOperations:
         deserialized = self._deserialize("ExpressRouteCircuitPeering", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCircuitPeering, IO],
+        peering_parameters: Union[_models.ExpressRouteCircuitPeering, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRouteCircuitPeering:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4409,7 +4233,7 @@ class ExpressRouteCircuitPeeringsOperations:
         else:
             _json = self._serialize.body(peering_parameters, "ExpressRouteCircuitPeering")
 
-        request = build_express_route_circuit_peerings_create_or_update_request(
+        _request = build_express_route_circuit_peerings_create_or_update_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             peering_name=peering_name,
@@ -4418,16 +4242,15 @@ class ExpressRouteCircuitPeeringsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4446,10 +4269,6 @@ class ExpressRouteCircuitPeeringsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -4476,14 +4295,6 @@ class ExpressRouteCircuitPeeringsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuitPeering or the result
          of cls(response)
         :rtype:
@@ -4497,7 +4308,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: IO,
+        peering_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4512,18 +4323,10 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update express route circuit
          peering operation. Required.
-        :type peering_parameters: IO
+        :type peering_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuitPeering or the result
          of cls(response)
         :rtype:
@@ -4537,7 +4340,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCircuitPeering, IO],
+        peering_parameters: Union[_models.ExpressRouteCircuitPeering, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExpressRouteCircuitPeering]:
         """Creates or updates a peering in the specified express route circuits.
@@ -4549,20 +4352,9 @@ class ExpressRouteCircuitPeeringsOperations:
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update express route circuit
-         peering operation. Is either a ExpressRouteCircuitPeering type or a IO type. Required.
+         peering operation. Is either a ExpressRouteCircuitPeering type or a IO[bytes] type. Required.
         :type peering_parameters: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of LROPoller that returns either ExpressRouteCircuitPeering or the result
          of cls(response)
         :rtype:
@@ -4596,7 +4388,7 @@ class ExpressRouteCircuitPeeringsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitPeering", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -4606,17 +4398,15 @@ class ExpressRouteCircuitPeeringsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ExpressRouteCircuitPeering].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}"
-    }
+        return LROPoller[_models.ExpressRouteCircuitPeering](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
@@ -4628,7 +4418,6 @@ class ExpressRouteCircuitPeeringsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the express route circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuitPeering or the result of
          cls(response)
         :rtype:
@@ -4641,7 +4430,7 @@ class ExpressRouteCircuitPeeringsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitPeeringListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4652,17 +4441,16 @@ class ExpressRouteCircuitPeeringsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuit_peerings_list_request(
+                _request = build_express_route_circuit_peerings_list_request(
                     resource_group_name=resource_group_name,
                     circuit_name=circuit_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -4673,14 +4461,14 @@ class ExpressRouteCircuitPeeringsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitPeeringListResult", pipeline_response)
@@ -4690,11 +4478,11 @@ class ExpressRouteCircuitPeeringsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4705,10 +4493,6 @@ class ExpressRouteCircuitPeeringsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings"
-    }
 
 
 class ExpressRouteCircuitsOperations:
@@ -4734,7 +4518,7 @@ class ExpressRouteCircuitsOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, circuit_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4748,21 +4532,20 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuits_delete_request(
+        _request = build_express_route_circuits_delete_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4772,11 +4555,7 @@ class ExpressRouteCircuitsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, circuit_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -4786,14 +4565,6 @@ class ExpressRouteCircuitsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the express route circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4820,7 +4591,7 @@ class ExpressRouteCircuitsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -4829,17 +4600,13 @@ class ExpressRouteCircuitsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, circuit_name: str, **kwargs: Any) -> _models.ExpressRouteCircuit:
@@ -4849,12 +4616,11 @@ class ExpressRouteCircuitsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of express route circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuit or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4868,21 +4634,20 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
-        request = build_express_route_circuits_get_request(
+        _request = build_express_route_circuits_get_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4894,22 +4659,18 @@ class ExpressRouteCircuitsOperations:
         deserialized = self._deserialize("ExpressRouteCircuit", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: Union[_models.ExpressRouteCircuit, IO],
+        parameters: Union[_models.ExpressRouteCircuit, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRouteCircuit:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4932,7 +4693,7 @@ class ExpressRouteCircuitsOperations:
         else:
             _json = self._serialize.body(parameters, "ExpressRouteCircuit")
 
-        request = build_express_route_circuits_create_or_update_request(
+        _request = build_express_route_circuits_create_or_update_request(
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             subscription_id=self._config.subscription_id,
@@ -4940,16 +4701,15 @@ class ExpressRouteCircuitsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4968,10 +4728,6 @@ class ExpressRouteCircuitsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -4995,14 +4751,6 @@ class ExpressRouteCircuitsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuit or the result of
          cls(response)
         :rtype:
@@ -5015,7 +4763,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5028,18 +4776,10 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :param parameters: Parameters supplied to the create or update express route circuit operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ExpressRouteCircuit or the result of
          cls(response)
         :rtype:
@@ -5052,7 +4792,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: Union[_models.ExpressRouteCircuit, IO],
+        parameters: Union[_models.ExpressRouteCircuit, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExpressRouteCircuit]:
         """Creates or updates an express route circuit.
@@ -5062,19 +4802,8 @@ class ExpressRouteCircuitsOperations:
         :param circuit_name: The name of the circuit. Required.
         :type circuit_name: str
         :param parameters: Parameters supplied to the create or update express route circuit operation.
-         Is either a ExpressRouteCircuit type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a ExpressRouteCircuit type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit or IO[bytes]
         :return: An instance of LROPoller that returns either ExpressRouteCircuit or the result of
          cls(response)
         :rtype:
@@ -5107,7 +4836,7 @@ class ExpressRouteCircuitsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuit", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -5117,17 +4846,15 @@ class ExpressRouteCircuitsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ExpressRouteCircuit].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}"
-    }
+        return LROPoller[_models.ExpressRouteCircuit](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_arp_table(
@@ -5140,7 +4867,6 @@ class ExpressRouteCircuitsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuitArpTable or the result of
          cls(response)
         :rtype:
@@ -5153,7 +4879,7 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitsArpTableListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5164,17 +4890,16 @@ class ExpressRouteCircuitsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuits_list_arp_table_request(
+                _request = build_express_route_circuits_list_arp_table_request(
                     resource_group_name=resource_group_name,
                     circuit_name=circuit_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_arp_table.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5185,14 +4910,14 @@ class ExpressRouteCircuitsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitsArpTableListResult", pipeline_response)
@@ -5202,11 +4927,11 @@ class ExpressRouteCircuitsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5217,10 +4942,6 @@ class ExpressRouteCircuitsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_arp_table.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/arpTable"
-    }
 
     @distributed_trace
     def list_routes_table(
@@ -5233,7 +4954,6 @@ class ExpressRouteCircuitsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the circuit. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuitRoutesTable or the result of
          cls(response)
         :rtype:
@@ -5246,7 +4966,7 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5257,17 +4977,16 @@ class ExpressRouteCircuitsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuits_list_routes_table_request(
+                _request = build_express_route_circuits_list_routes_table_request(
                     resource_group_name=resource_group_name,
                     circuit_name=circuit_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_routes_table.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5278,14 +4997,14 @@ class ExpressRouteCircuitsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitsRoutesTableListResult", pipeline_response)
@@ -5295,11 +5014,11 @@ class ExpressRouteCircuitsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5310,10 +5029,6 @@ class ExpressRouteCircuitsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_routes_table.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/routesTable"
-    }
 
     @distributed_trace
     def list_stats(
@@ -5326,7 +5041,6 @@ class ExpressRouteCircuitsOperations:
         :type resource_group_name: str
         :param circuit_name: The name of the loadBalancer. Required.
         :type circuit_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuitStats or the result of
          cls(response)
         :rtype:
@@ -5339,7 +5053,7 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitsStatsListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5350,17 +5064,16 @@ class ExpressRouteCircuitsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuits_list_stats_request(
+                _request = build_express_route_circuits_list_stats_request(
                     resource_group_name=resource_group_name,
                     circuit_name=circuit_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_stats.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5371,14 +5084,14 @@ class ExpressRouteCircuitsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitsStatsListResult", pipeline_response)
@@ -5388,11 +5101,11 @@ class ExpressRouteCircuitsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5403,10 +5116,6 @@ class ExpressRouteCircuitsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_stats.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats"
-    }
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.ExpressRouteCircuit"]:
@@ -5414,7 +5123,6 @@ class ExpressRouteCircuitsOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit]
@@ -5426,7 +5134,7 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5437,16 +5145,15 @@ class ExpressRouteCircuitsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuits_list_request(
+                _request = build_express_route_circuits_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5457,14 +5164,14 @@ class ExpressRouteCircuitsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitListResult", pipeline_response)
@@ -5474,11 +5181,11 @@ class ExpressRouteCircuitsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5489,16 +5196,11 @@ class ExpressRouteCircuitsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits"
-    }
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.ExpressRouteCircuit"]:
         """Gets all the express route circuits in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit]
@@ -5510,7 +5212,7 @@ class ExpressRouteCircuitsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5521,15 +5223,14 @@ class ExpressRouteCircuitsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_circuits_list_all_request(
+                _request = build_express_route_circuits_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5540,14 +5241,14 @@ class ExpressRouteCircuitsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteCircuitListResult", pipeline_response)
@@ -5557,11 +5258,11 @@ class ExpressRouteCircuitsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5572,8 +5273,6 @@ class ExpressRouteCircuitsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteCircuits"}
 
 
 class ExpressRouteServiceProvidersOperations:
@@ -5600,7 +5299,6 @@ class ExpressRouteServiceProvidersOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.ExpressRouteServiceProvider"]:
         """Gets all the available express route service providers.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteServiceProvider or the result of
          cls(response)
         :rtype:
@@ -5613,7 +5311,7 @@ class ExpressRouteServiceProvidersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ExpressRouteServiceProviderListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5624,15 +5322,14 @@ class ExpressRouteServiceProvidersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_express_route_service_providers_list_request(
+                _request = build_express_route_service_providers_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -5643,14 +5340,14 @@ class ExpressRouteServiceProvidersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExpressRouteServiceProviderListResult", pipeline_response)
@@ -5660,11 +5357,11 @@ class ExpressRouteServiceProvidersOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5675,8 +5372,6 @@ class ExpressRouteServiceProvidersOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders"}
 
 
 class LoadBalancersOperations:
@@ -5702,7 +5397,7 @@ class LoadBalancersOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5716,21 +5411,20 @@ class LoadBalancersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_load_balancers_delete_request(
+        _request = build_load_balancers_delete_request(
             resource_group_name=resource_group_name,
             load_balancer_name=load_balancer_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5740,11 +5434,7 @@ class LoadBalancersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, load_balancer_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -5754,14 +5444,6 @@ class LoadBalancersOperations:
         :type resource_group_name: str
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5788,7 +5470,7 @@ class LoadBalancersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -5797,17 +5479,13 @@ class LoadBalancersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -5821,12 +5499,11 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LoadBalancer or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.LoadBalancer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5840,22 +5517,21 @@ class LoadBalancersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
-        request = build_load_balancers_get_request(
+        _request = build_load_balancers_get_request(
             resource_group_name=resource_group_name,
             load_balancer_name=load_balancer_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5867,22 +5543,18 @@ class LoadBalancersOperations:
         deserialized = self._deserialize("LoadBalancer", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: Union[_models.LoadBalancer, IO],
+        parameters: Union[_models.LoadBalancer, IO[bytes]],
         **kwargs: Any
     ) -> _models.LoadBalancer:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5905,7 +5577,7 @@ class LoadBalancersOperations:
         else:
             _json = self._serialize.body(parameters, "LoadBalancer")
 
-        request = build_load_balancers_create_or_update_request(
+        _request = build_load_balancers_create_or_update_request(
             resource_group_name=resource_group_name,
             load_balancer_name=load_balancer_name,
             subscription_id=self._config.subscription_id,
@@ -5913,16 +5585,15 @@ class LoadBalancersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5941,10 +5612,6 @@ class LoadBalancersOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -5968,14 +5635,6 @@ class LoadBalancersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LoadBalancer or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
@@ -5987,7 +5646,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6000,18 +5659,10 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param parameters: Parameters supplied to the create or update load balancer operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LoadBalancer or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
@@ -6023,7 +5674,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: Union[_models.LoadBalancer, IO],
+        parameters: Union[_models.LoadBalancer, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.LoadBalancer]:
         """Creates or updates a load balancer.
@@ -6033,19 +5684,8 @@ class LoadBalancersOperations:
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
         :param parameters: Parameters supplied to the create or update load balancer operation. Is
-         either a LoadBalancer type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.LoadBalancer or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a LoadBalancer type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.LoadBalancer or IO[bytes]
         :return: An instance of LROPoller that returns either LoadBalancer or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
@@ -6077,7 +5717,7 @@ class LoadBalancersOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LoadBalancer", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -6087,23 +5727,20 @@ class LoadBalancersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LoadBalancer].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}"
-    }
+        return LROPoller[_models.LoadBalancer](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.LoadBalancer"]:
         """Gets all the load balancers in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6114,7 +5751,7 @@ class LoadBalancersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6125,15 +5762,14 @@ class LoadBalancersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_balancers_list_all_request(
+                _request = build_load_balancers_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6144,14 +5780,14 @@ class LoadBalancersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LoadBalancerListResult", pipeline_response)
@@ -6161,11 +5797,11 @@ class LoadBalancersOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6176,8 +5812,6 @@ class LoadBalancersOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/loadBalancers"}
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.LoadBalancer"]:
@@ -6185,7 +5819,6 @@ class LoadBalancersOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6196,7 +5829,7 @@ class LoadBalancersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6207,16 +5840,15 @@ class LoadBalancersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_balancers_list_request(
+                _request = build_load_balancers_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6227,14 +5859,14 @@ class LoadBalancersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LoadBalancerListResult", pipeline_response)
@@ -6244,11 +5876,11 @@ class LoadBalancersOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6259,10 +5891,6 @@ class LoadBalancersOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers"
-    }
 
 
 class NetworkInterfacesOperations:
@@ -6288,7 +5916,7 @@ class NetworkInterfacesOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6302,21 +5930,20 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_network_interfaces_delete_request(
+        _request = build_network_interfaces_delete_request(
             resource_group_name=resource_group_name,
             network_interface_name=network_interface_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6326,11 +5953,7 @@ class NetworkInterfacesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, network_interface_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -6340,14 +5963,6 @@ class NetworkInterfacesOperations:
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6374,7 +5989,7 @@ class NetworkInterfacesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -6383,17 +5998,13 @@ class NetworkInterfacesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -6407,12 +6018,11 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6426,22 +6036,21 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
-        request = build_network_interfaces_get_request(
+        _request = build_network_interfaces_get_request(
             resource_group_name=resource_group_name,
             network_interface_name=network_interface_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6453,22 +6062,18 @@ class NetworkInterfacesOperations:
         deserialized = self._deserialize("NetworkInterface", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: Union[_models.NetworkInterface, IO],
+        parameters: Union[_models.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkInterface:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6491,7 +6096,7 @@ class NetworkInterfacesOperations:
         else:
             _json = self._serialize.body(parameters, "NetworkInterface")
 
-        request = build_network_interfaces_create_or_update_request(
+        _request = build_network_interfaces_create_or_update_request(
             resource_group_name=resource_group_name,
             network_interface_name=network_interface_name,
             subscription_id=self._config.subscription_id,
@@ -6499,16 +6104,15 @@ class NetworkInterfacesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6527,10 +6131,6 @@ class NetworkInterfacesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -6554,14 +6154,6 @@ class NetworkInterfacesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NetworkInterface or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
@@ -6573,7 +6165,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6586,18 +6178,10 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param parameters: Parameters supplied to the create or update network interface operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NetworkInterface or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
@@ -6609,7 +6193,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: Union[_models.NetworkInterface, IO],
+        parameters: Union[_models.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetworkInterface]:
         """Creates or updates a network interface.
@@ -6619,19 +6203,8 @@ class NetworkInterfacesOperations:
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
         :param parameters: Parameters supplied to the create or update network interface operation. Is
-         either a NetworkInterface type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.NetworkInterface or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a NetworkInterface type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.NetworkInterface or IO[bytes]
         :return: An instance of LROPoller that returns either NetworkInterface or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
@@ -6663,7 +6236,7 @@ class NetworkInterfacesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("NetworkInterface", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -6673,23 +6246,20 @@ class NetworkInterfacesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.NetworkInterface].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}"
-    }
+        return LROPoller[_models.NetworkInterface](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.NetworkInterface"]:
         """Gets all network interfaces in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6700,7 +6270,7 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6711,15 +6281,14 @@ class NetworkInterfacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_interfaces_list_all_request(
+                _request = build_network_interfaces_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6730,14 +6299,14 @@ class NetworkInterfacesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkInterfaceListResult", pipeline_response)
@@ -6747,11 +6316,11 @@ class NetworkInterfacesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6762,8 +6331,6 @@ class NetworkInterfacesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkInterfaces"}
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.NetworkInterface"]:
@@ -6771,7 +6338,6 @@ class NetworkInterfacesOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6782,7 +6348,7 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6793,16 +6359,15 @@ class NetworkInterfacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_interfaces_list_request(
+                _request = build_network_interfaces_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6813,14 +6378,14 @@ class NetworkInterfacesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkInterfaceListResult", pipeline_response)
@@ -6830,11 +6395,11 @@ class NetworkInterfacesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6846,12 +6411,8 @@ class NetworkInterfacesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces"
-    }
-
     @distributed_trace
-    def list_virtual_machine_scale_set_vm_network_interfaces(
+    def list_virtual_machine_scale_set_vm_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, virtualmachine_index: str, **kwargs: Any
     ) -> Iterable["_models.NetworkInterface"]:
         """Gets information about all network interfaces in a virtual machine in a virtual machine scale
@@ -6863,7 +6424,6 @@ class NetworkInterfacesOperations:
         :type virtual_machine_scale_set_name: str
         :param virtualmachine_index: The virtual machine index. Required.
         :type virtualmachine_index: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6874,7 +6434,7 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6885,18 +6445,17 @@ class NetworkInterfacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces_request(
+                _request = build_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces_request(
                     resource_group_name=resource_group_name,
                     virtual_machine_scale_set_name=virtual_machine_scale_set_name,
                     virtualmachine_index=virtualmachine_index,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_virtual_machine_scale_set_vm_network_interfaces.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6907,14 +6466,14 @@ class NetworkInterfacesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkInterfaceListResult", pipeline_response)
@@ -6924,11 +6483,11 @@ class NetworkInterfacesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6940,12 +6499,8 @@ class NetworkInterfacesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_virtual_machine_scale_set_vm_network_interfaces.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces"
-    }
-
     @distributed_trace
-    def list_virtual_machine_scale_set_network_interfaces(
+    def list_virtual_machine_scale_set_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, **kwargs: Any
     ) -> Iterable["_models.NetworkInterface"]:
         """Gets all network interfaces in a virtual machine scale set.
@@ -6954,7 +6509,6 @@ class NetworkInterfacesOperations:
         :type resource_group_name: str
         :param virtual_machine_scale_set_name: The name of the virtual machine scale set. Required.
         :type virtual_machine_scale_set_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6965,7 +6519,7 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6976,17 +6530,16 @@ class NetworkInterfacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_request(
+                _request = build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_request(
                     resource_group_name=resource_group_name,
                     virtual_machine_scale_set_name=virtual_machine_scale_set_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_virtual_machine_scale_set_network_interfaces.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -6997,14 +6550,14 @@ class NetworkInterfacesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkInterfaceListResult", pipeline_response)
@@ -7014,11 +6567,11 @@ class NetworkInterfacesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7030,12 +6583,8 @@ class NetworkInterfacesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_virtual_machine_scale_set_network_interfaces.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/networkInterfaces"
-    }
-
     @distributed_trace
-    def get_virtual_machine_scale_set_network_interface(
+    def get_virtual_machine_scale_set_network_interface(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         virtual_machine_scale_set_name: str,
@@ -7057,12 +6606,11 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7076,7 +6624,7 @@ class NetworkInterfacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
-        request = build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
+        _request = build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
             resource_group_name=resource_group_name,
             virtual_machine_scale_set_name=virtual_machine_scale_set_name,
             virtualmachine_index=virtualmachine_index,
@@ -7084,16 +6632,15 @@ class NetworkInterfacesOperations:
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get_virtual_machine_scale_set_network_interface.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7105,13 +6652,9 @@ class NetworkInterfacesOperations:
         deserialized = self._deserialize("NetworkInterface", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_virtual_machine_scale_set_network_interface.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}"
-    }
+        return deserialized  # type: ignore
 
 
 class NetworkSecurityGroupsOperations:
@@ -7137,7 +6680,7 @@ class NetworkSecurityGroupsOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, network_security_group_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7151,21 +6694,20 @@ class NetworkSecurityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_network_security_groups_delete_request(
+        _request = build_network_security_groups_delete_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7175,11 +6717,7 @@ class NetworkSecurityGroupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -7191,14 +6729,6 @@ class NetworkSecurityGroupsOperations:
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7225,7 +6755,7 @@ class NetworkSecurityGroupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -7234,17 +6764,13 @@ class NetworkSecurityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -7258,12 +6784,11 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityGroup or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7277,22 +6802,21 @@ class NetworkSecurityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
-        request = build_network_security_groups_get_request(
+        _request = build_network_security_groups_get_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7304,22 +6828,18 @@ class NetworkSecurityGroupsOperations:
         deserialized = self._deserialize("NetworkSecurityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: Union[_models.NetworkSecurityGroup, IO],
+        parameters: Union[_models.NetworkSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkSecurityGroup:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7342,7 +6862,7 @@ class NetworkSecurityGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "NetworkSecurityGroup")
 
-        request = build_network_security_groups_create_or_update_request(
+        _request = build_network_security_groups_create_or_update_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             subscription_id=self._config.subscription_id,
@@ -7350,16 +6870,15 @@ class NetworkSecurityGroupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7378,10 +6897,6 @@ class NetworkSecurityGroupsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -7405,14 +6920,6 @@ class NetworkSecurityGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
@@ -7425,7 +6932,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7438,18 +6945,10 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create or update network security group
          operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
@@ -7462,7 +6961,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: Union[_models.NetworkSecurityGroup, IO],
+        parameters: Union[_models.NetworkSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetworkSecurityGroup]:
         """Creates or updates a network security group in the specified resource group.
@@ -7472,19 +6971,8 @@ class NetworkSecurityGroupsOperations:
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create or update network security group
-         operation. Is either a NetworkSecurityGroup type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         operation. Is either a NetworkSecurityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup or IO[bytes]
         :return: An instance of LROPoller that returns either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
@@ -7517,7 +7005,7 @@ class NetworkSecurityGroupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("NetworkSecurityGroup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -7527,23 +7015,20 @@ class NetworkSecurityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.NetworkSecurityGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
-    }
+        return LROPoller[_models.NetworkSecurityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.NetworkSecurityGroup"]:
         """Gets all network security groups in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
@@ -7556,7 +7041,7 @@ class NetworkSecurityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7567,15 +7052,14 @@ class NetworkSecurityGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_security_groups_list_all_request(
+                _request = build_network_security_groups_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -7586,14 +7070,14 @@ class NetworkSecurityGroupsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkSecurityGroupListResult", pipeline_response)
@@ -7603,11 +7087,11 @@ class NetworkSecurityGroupsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7618,8 +7102,6 @@ class NetworkSecurityGroupsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkSecurityGroups"}
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.NetworkSecurityGroup"]:
@@ -7627,7 +7109,6 @@ class NetworkSecurityGroupsOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
@@ -7640,7 +7121,7 @@ class NetworkSecurityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7651,16 +7132,15 @@ class NetworkSecurityGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_network_security_groups_list_request(
+                _request = build_network_security_groups_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -7671,14 +7151,14 @@ class NetworkSecurityGroupsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NetworkSecurityGroupListResult", pipeline_response)
@@ -7688,11 +7168,11 @@ class NetworkSecurityGroupsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7703,10 +7183,6 @@ class NetworkSecurityGroupsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups"
-    }
 
 
 class SecurityRulesOperations:
@@ -7732,7 +7208,7 @@ class SecurityRulesOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, network_security_group_name: str, security_rule_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7746,22 +7222,21 @@ class SecurityRulesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_security_rules_delete_request(
+        _request = build_security_rules_delete_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             security_rule_name=security_rule_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7771,11 +7246,7 @@ class SecurityRulesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -7789,14 +7260,6 @@ class SecurityRulesOperations:
         :type network_security_group_name: str
         :param security_rule_name: The name of the security rule. Required.
         :type security_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7824,7 +7287,7 @@ class SecurityRulesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -7833,17 +7296,13 @@ class SecurityRulesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -7857,12 +7316,11 @@ class SecurityRulesOperations:
         :type network_security_group_name: str
         :param security_rule_name: The name of the security rule. Required.
         :type security_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityRule or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.SecurityRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7876,22 +7334,21 @@ class SecurityRulesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
-        request = build_security_rules_get_request(
+        _request = build_security_rules_get_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             security_rule_name=security_rule_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7903,23 +7360,19 @@ class SecurityRulesOperations:
         deserialized = self._deserialize("SecurityRule", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: Union[_models.SecurityRule, IO],
+        security_rule_parameters: Union[_models.SecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityRule:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7942,7 +7395,7 @@ class SecurityRulesOperations:
         else:
             _json = self._serialize.body(security_rule_parameters, "SecurityRule")
 
-        request = build_security_rules_create_or_update_request(
+        _request = build_security_rules_create_or_update_request(
             resource_group_name=resource_group_name,
             network_security_group_name=network_security_group_name,
             security_rule_name=security_rule_name,
@@ -7951,16 +7404,15 @@ class SecurityRulesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7979,10 +7431,6 @@ class SecurityRulesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -8009,14 +7457,6 @@ class SecurityRulesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either SecurityRule or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
@@ -8029,7 +7469,7 @@ class SecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: IO,
+        security_rule_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8044,18 +7484,10 @@ class SecurityRulesOperations:
         :type security_rule_name: str
         :param security_rule_parameters: Parameters supplied to the create or update network security
          rule operation. Required.
-        :type security_rule_parameters: IO
+        :type security_rule_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either SecurityRule or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
@@ -8068,7 +7500,7 @@ class SecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: Union[_models.SecurityRule, IO],
+        security_rule_parameters: Union[_models.SecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SecurityRule]:
         """Creates or updates a security rule in the specified network security group.
@@ -8080,19 +7512,9 @@ class SecurityRulesOperations:
         :param security_rule_name: The name of the security rule. Required.
         :type security_rule_name: str
         :param security_rule_parameters: Parameters supplied to the create or update network security
-         rule operation. Is either a SecurityRule type or a IO type. Required.
-        :type security_rule_parameters: ~azure.mgmt.network.v2015_06_15.models.SecurityRule or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         rule operation. Is either a SecurityRule type or a IO[bytes] type. Required.
+        :type security_rule_parameters: ~azure.mgmt.network.v2015_06_15.models.SecurityRule or
+         IO[bytes]
         :return: An instance of LROPoller that returns either SecurityRule or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
@@ -8125,7 +7547,7 @@ class SecurityRulesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SecurityRule", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -8135,17 +7557,15 @@ class SecurityRulesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.SecurityRule].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}"
-    }
+        return LROPoller[_models.SecurityRule](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
@@ -8157,7 +7577,6 @@ class SecurityRulesOperations:
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityRule or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8168,7 +7587,7 @@ class SecurityRulesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.SecurityRuleListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8179,17 +7598,16 @@ class SecurityRulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_security_rules_list_request(
+                _request = build_security_rules_list_request(
                     resource_group_name=resource_group_name,
                     network_security_group_name=network_security_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -8200,14 +7618,14 @@ class SecurityRulesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SecurityRuleListResult", pipeline_response)
@@ -8217,11 +7635,11 @@ class SecurityRulesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8232,10 +7650,6 @@ class SecurityRulesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules"
-    }
 
 
 class PublicIPAddressesOperations:
@@ -8261,7 +7675,7 @@ class PublicIPAddressesOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, public_ip_address_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8275,21 +7689,20 @@ class PublicIPAddressesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_public_ip_addresses_delete_request(
+        _request = build_public_ip_addresses_delete_request(
             resource_group_name=resource_group_name,
             public_ip_address_name=public_ip_address_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8299,11 +7712,7 @@ class PublicIPAddressesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, public_ip_address_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -8313,14 +7722,6 @@ class PublicIPAddressesOperations:
         :type resource_group_name: str
         :param public_ip_address_name: The name of the subnet. Required.
         :type public_ip_address_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8347,7 +7748,7 @@ class PublicIPAddressesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -8356,17 +7757,13 @@ class PublicIPAddressesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -8380,12 +7777,11 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8399,22 +7795,21 @@ class PublicIPAddressesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
-        request = build_public_ip_addresses_get_request(
+        _request = build_public_ip_addresses_get_request(
             resource_group_name=resource_group_name,
             public_ip_address_name=public_ip_address_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8426,22 +7821,18 @@ class PublicIPAddressesOperations:
         deserialized = self._deserialize("PublicIPAddress", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.PublicIPAddress, IO],
+        parameters: Union[_models.PublicIPAddress, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicIPAddress:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8464,7 +7855,7 @@ class PublicIPAddressesOperations:
         else:
             _json = self._serialize.body(parameters, "PublicIPAddress")
 
-        request = build_public_ip_addresses_create_or_update_request(
+        _request = build_public_ip_addresses_create_or_update_request(
             resource_group_name=resource_group_name,
             public_ip_address_name=public_ip_address_name,
             subscription_id=self._config.subscription_id,
@@ -8472,16 +7863,15 @@ class PublicIPAddressesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8500,10 +7890,6 @@ class PublicIPAddressesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -8527,14 +7913,6 @@ class PublicIPAddressesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PublicIPAddress or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
@@ -8546,7 +7924,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8559,18 +7937,10 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public IP address operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PublicIPAddress or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
@@ -8582,7 +7952,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.PublicIPAddress, IO],
+        parameters: Union[_models.PublicIPAddress, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PublicIPAddress]:
         """Creates or updates a static or dynamic public IP address.
@@ -8592,19 +7962,8 @@ class PublicIPAddressesOperations:
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public IP address operation. Is
-         either a PublicIPAddress type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a PublicIPAddress type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress or IO[bytes]
         :return: An instance of LROPoller that returns either PublicIPAddress or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
@@ -8636,7 +7995,7 @@ class PublicIPAddressesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("PublicIPAddress", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -8646,23 +8005,20 @@ class PublicIPAddressesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.PublicIPAddress].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}"
-    }
+        return LROPoller[_models.PublicIPAddress](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.PublicIPAddress"]:
         """Gets all the public IP addresses in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8673,7 +8029,7 @@ class PublicIPAddressesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8684,15 +8040,14 @@ class PublicIPAddressesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_public_ip_addresses_list_all_request(
+                _request = build_public_ip_addresses_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -8703,14 +8058,14 @@ class PublicIPAddressesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PublicIPAddressListResult", pipeline_response)
@@ -8720,11 +8075,11 @@ class PublicIPAddressesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8735,8 +8090,6 @@ class PublicIPAddressesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/publicIPAddresses"}
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.PublicIPAddress"]:
@@ -8744,7 +8097,6 @@ class PublicIPAddressesOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8755,7 +8107,7 @@ class PublicIPAddressesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8766,16 +8118,15 @@ class PublicIPAddressesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_public_ip_addresses_list_request(
+                _request = build_public_ip_addresses_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -8786,14 +8137,14 @@ class PublicIPAddressesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PublicIPAddressListResult", pipeline_response)
@@ -8803,11 +8154,11 @@ class PublicIPAddressesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8818,10 +8169,6 @@ class PublicIPAddressesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses"
-    }
 
 
 class RouteTablesOperations:
@@ -8847,7 +8194,7 @@ class RouteTablesOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, route_table_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8861,21 +8208,20 @@ class RouteTablesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_route_tables_delete_request(
+        _request = build_route_tables_delete_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8885,11 +8231,7 @@ class RouteTablesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -8899,14 +8241,6 @@ class RouteTablesOperations:
         :type resource_group_name: str
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8933,7 +8267,7 @@ class RouteTablesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -8942,17 +8276,13 @@ class RouteTablesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -8966,12 +8296,11 @@ class RouteTablesOperations:
         :type route_table_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteTable or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.RouteTable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8985,22 +8314,21 @@ class RouteTablesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
-        request = build_route_tables_get_request(
+        _request = build_route_tables_get_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9012,18 +8340,18 @@ class RouteTablesOperations:
         deserialized = self._deserialize("RouteTable", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, route_table_name: str, parameters: Union[_models.RouteTable, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        route_table_name: str,
+        parameters: Union[_models.RouteTable, IO[bytes]],
+        **kwargs: Any
     ) -> _models.RouteTable:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9046,7 +8374,7 @@ class RouteTablesOperations:
         else:
             _json = self._serialize.body(parameters, "RouteTable")
 
-        request = build_route_tables_create_or_update_request(
+        _request = build_route_tables_create_or_update_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             subscription_id=self._config.subscription_id,
@@ -9054,16 +8382,15 @@ class RouteTablesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9082,10 +8409,6 @@ class RouteTablesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -9108,14 +8431,6 @@ class RouteTablesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either RouteTable or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9126,7 +8441,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9138,18 +8453,10 @@ class RouteTablesOperations:
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
         :param parameters: Parameters supplied to the create or update route table operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either RouteTable or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9157,7 +8464,11 @@ class RouteTablesOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, route_table_name: str, parameters: Union[_models.RouteTable, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        route_table_name: str,
+        parameters: Union[_models.RouteTable, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.RouteTable]:
         """Create or updates a route table in a specified resource group.
 
@@ -9166,19 +8477,8 @@ class RouteTablesOperations:
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
         :param parameters: Parameters supplied to the create or update route table operation. Is either
-         a RouteTable type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.RouteTable or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a RouteTable type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.RouteTable or IO[bytes]
         :return: An instance of LROPoller that returns either RouteTable or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9209,7 +8509,7 @@ class RouteTablesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("RouteTable", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -9219,17 +8519,15 @@ class RouteTablesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.RouteTable].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}"
-    }
+        return LROPoller[_models.RouteTable](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.RouteTable"]:
@@ -9237,7 +8535,6 @@ class RouteTablesOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteTable or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9248,7 +8545,7 @@ class RouteTablesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9259,16 +8556,15 @@ class RouteTablesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_route_tables_list_request(
+                _request = build_route_tables_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -9279,14 +8575,14 @@ class RouteTablesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("RouteTableListResult", pipeline_response)
@@ -9296,11 +8592,11 @@ class RouteTablesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9311,16 +8607,11 @@ class RouteTablesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables"
-    }
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.RouteTable"]:
         """Gets all route tables in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteTable or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9331,7 +8622,7 @@ class RouteTablesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9342,15 +8633,14 @@ class RouteTablesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_route_tables_list_all_request(
+                _request = build_route_tables_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -9361,14 +8651,14 @@ class RouteTablesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("RouteTableListResult", pipeline_response)
@@ -9378,11 +8668,11 @@ class RouteTablesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9393,8 +8683,6 @@ class RouteTablesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/routeTables"}
 
 
 class RoutesOperations:
@@ -9420,7 +8708,7 @@ class RoutesOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, route_table_name: str, route_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9434,22 +8722,21 @@ class RoutesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_routes_delete_request(
+        _request = build_routes_delete_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             route_name=route_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9459,11 +8746,7 @@ class RoutesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes/{routeName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -9477,14 +8760,6 @@ class RoutesOperations:
         :type route_table_name: str
         :param route_name: The name of the route. Required.
         :type route_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9512,7 +8787,7 @@ class RoutesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -9521,17 +8796,13 @@ class RoutesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes/{routeName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, route_table_name: str, route_name: str, **kwargs: Any) -> _models.Route:
@@ -9543,12 +8814,11 @@ class RoutesOperations:
         :type route_table_name: str
         :param route_name: The name of the route. Required.
         :type route_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Route or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.Route
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9562,22 +8832,21 @@ class RoutesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
 
-        request = build_routes_get_request(
+        _request = build_routes_get_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             route_name=route_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9589,23 +8858,19 @@ class RoutesOperations:
         deserialized = self._deserialize("Route", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes/{routeName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: Union[_models.Route, IO],
+        route_parameters: Union[_models.Route, IO[bytes]],
         **kwargs: Any
     ) -> _models.Route:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9628,7 +8893,7 @@ class RoutesOperations:
         else:
             _json = self._serialize.body(route_parameters, "Route")
 
-        request = build_routes_create_or_update_request(
+        _request = build_routes_create_or_update_request(
             resource_group_name=resource_group_name,
             route_table_name=route_table_name,
             route_name=route_name,
@@ -9637,16 +8902,15 @@ class RoutesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9665,10 +8929,6 @@ class RoutesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes/{routeName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -9694,14 +8954,6 @@ class RoutesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Route or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9713,7 +8965,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: IO,
+        route_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9727,18 +8979,10 @@ class RoutesOperations:
         :param route_name: The name of the route. Required.
         :type route_name: str
         :param route_parameters: Parameters supplied to the create or update route operation. Required.
-        :type route_parameters: IO
+        :type route_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Route or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9750,7 +8994,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: Union[_models.Route, IO],
+        route_parameters: Union[_models.Route, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Route]:
         """Creates or updates a route in the specified route table.
@@ -9762,19 +9006,8 @@ class RoutesOperations:
         :param route_name: The name of the route. Required.
         :type route_name: str
         :param route_parameters: Parameters supplied to the create or update route operation. Is either
-         a Route type or a IO type. Required.
-        :type route_parameters: ~azure.mgmt.network.v2015_06_15.models.Route or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a Route type or a IO[bytes] type. Required.
+        :type route_parameters: ~azure.mgmt.network.v2015_06_15.models.Route or IO[bytes]
         :return: An instance of LROPoller that returns either Route or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9806,7 +9039,7 @@ class RoutesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Route", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -9816,17 +9049,15 @@ class RoutesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Route].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes/{routeName}"
-    }
+        return LROPoller[_models.Route](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> Iterable["_models.Route"]:
@@ -9836,7 +9067,6 @@ class RoutesOperations:
         :type resource_group_name: str
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Route or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9847,7 +9077,7 @@ class RoutesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.RouteListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9858,17 +9088,16 @@ class RoutesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_routes_list_request(
+                _request = build_routes_list_request(
                     resource_group_name=resource_group_name,
                     route_table_name=route_table_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -9879,14 +9108,14 @@ class RoutesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("RouteListResult", pipeline_response)
@@ -9896,11 +9125,11 @@ class RoutesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9911,10 +9140,6 @@ class RoutesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}/routes"
-    }
 
 
 class UsagesOperations:
@@ -9943,7 +9168,6 @@ class UsagesOperations:
 
         :param location: The location where resource usage is queried. Required.
         :type location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Usage or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.Usage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9954,7 +9178,7 @@ class UsagesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.UsagesListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9965,16 +9189,15 @@ class UsagesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_usages_list_request(
+                _request = build_usages_list_request(
                     location=location,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -9985,14 +9208,14 @@ class UsagesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("UsagesListResult", pipeline_response)
@@ -10002,11 +9225,11 @@ class UsagesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10017,8 +9240,6 @@ class UsagesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/usages"}
 
 
 class VirtualNetworksOperations:
@@ -10044,7 +9265,7 @@ class VirtualNetworksOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10058,21 +9279,20 @@ class VirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_virtual_networks_delete_request(
+        _request = build_virtual_networks_delete_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10082,11 +9302,7 @@ class VirtualNetworksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, virtual_network_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -10096,14 +9312,6 @@ class VirtualNetworksOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10130,7 +9338,7 @@ class VirtualNetworksOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -10139,17 +9347,13 @@ class VirtualNetworksOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -10163,12 +9367,11 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetwork or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.VirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10182,22 +9385,21 @@ class VirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
-        request = build_virtual_networks_get_request(
+        _request = build_virtual_networks_get_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10209,22 +9411,18 @@ class VirtualNetworksOperations:
         deserialized = self._deserialize("VirtualNetwork", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.VirtualNetwork, IO],
+        parameters: Union[_models.VirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetwork:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10247,7 +9445,7 @@ class VirtualNetworksOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetwork")
 
-        request = build_virtual_networks_create_or_update_request(
+        _request = build_virtual_networks_create_or_update_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subscription_id=self._config.subscription_id,
@@ -10255,16 +9453,15 @@ class VirtualNetworksOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10283,10 +9480,6 @@ class VirtualNetworksOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -10310,14 +9503,6 @@ class VirtualNetworksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetwork or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
@@ -10329,7 +9514,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10342,18 +9527,10 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetwork or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
@@ -10365,7 +9542,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.VirtualNetwork, IO],
+        parameters: Union[_models.VirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
         """Creates or updates a virtual network in the specified resource group.
@@ -10375,19 +9552,8 @@ class VirtualNetworksOperations:
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation. Is
-         either a VirtualNetwork type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetwork or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a VirtualNetwork type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetwork or IO[bytes]
         :return: An instance of LROPoller that returns either VirtualNetwork or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
@@ -10419,7 +9585,7 @@ class VirtualNetworksOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("VirtualNetwork", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -10429,23 +9595,20 @@ class VirtualNetworksOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.VirtualNetwork].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}"
-    }
+        return LROPoller[_models.VirtualNetwork](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> Iterable["_models.VirtualNetwork"]:
         """Gets all virtual networks in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10456,7 +9619,7 @@ class VirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10467,15 +9630,14 @@ class VirtualNetworksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_virtual_networks_list_all_request(
+                _request = build_virtual_networks_list_all_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -10486,14 +9648,14 @@ class VirtualNetworksOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkListResult", pipeline_response)
@@ -10503,11 +9665,11 @@ class VirtualNetworksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10518,8 +9680,6 @@ class VirtualNetworksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/virtualnetworks"}
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.VirtualNetwork"]:
@@ -10527,7 +9687,6 @@ class VirtualNetworksOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10538,7 +9697,7 @@ class VirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10549,16 +9708,15 @@ class VirtualNetworksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_virtual_networks_list_request(
+                _request = build_virtual_networks_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -10569,14 +9727,14 @@ class VirtualNetworksOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkListResult", pipeline_response)
@@ -10586,11 +9744,11 @@ class VirtualNetworksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10601,10 +9759,6 @@ class VirtualNetworksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks"
-    }
 
 
 class SubnetsOperations:
@@ -10630,7 +9784,7 @@ class SubnetsOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, virtual_network_name: str, subnet_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10644,22 +9798,21 @@ class SubnetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_subnets_delete_request(
+        _request = build_subnets_delete_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subnet_name=subnet_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10669,11 +9822,7 @@ class SubnetsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets/{subnetName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -10687,14 +9836,6 @@ class SubnetsOperations:
         :type virtual_network_name: str
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10722,7 +9863,7 @@ class SubnetsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -10731,17 +9872,13 @@ class SubnetsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets/{subnetName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(
@@ -10763,12 +9900,11 @@ class SubnetsOperations:
         :type subnet_name: str
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subnet or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.Subnet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10782,23 +9918,22 @@ class SubnetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
 
-        request = build_subnets_get_request(
+        _request = build_subnets_get_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subnet_name=subnet_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10810,23 +9945,19 @@ class SubnetsOperations:
         deserialized = self._deserialize("Subnet", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets/{subnetName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: Union[_models.Subnet, IO],
+        subnet_parameters: Union[_models.Subnet, IO[bytes]],
         **kwargs: Any
     ) -> _models.Subnet:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10849,7 +9980,7 @@ class SubnetsOperations:
         else:
             _json = self._serialize.body(subnet_parameters, "Subnet")
 
-        request = build_subnets_create_or_update_request(
+        _request = build_subnets_create_or_update_request(
             resource_group_name=resource_group_name,
             virtual_network_name=virtual_network_name,
             subnet_name=subnet_name,
@@ -10858,16 +9989,15 @@ class SubnetsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10886,10 +10016,6 @@ class SubnetsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets/{subnetName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -10916,14 +10042,6 @@ class SubnetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Subnet or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10935,7 +10053,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: IO,
+        subnet_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10950,18 +10068,10 @@ class SubnetsOperations:
         :type subnet_name: str
         :param subnet_parameters: Parameters supplied to the create or update subnet operation.
          Required.
-        :type subnet_parameters: IO
+        :type subnet_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Subnet or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10973,7 +10083,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: Union[_models.Subnet, IO],
+        subnet_parameters: Union[_models.Subnet, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Subnet]:
         """Creates or updates a subnet in the specified virtual network.
@@ -10985,19 +10095,8 @@ class SubnetsOperations:
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
         :param subnet_parameters: Parameters supplied to the create or update subnet operation. Is
-         either a Subnet type or a IO type. Required.
-        :type subnet_parameters: ~azure.mgmt.network.v2015_06_15.models.Subnet or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a Subnet type or a IO[bytes] type. Required.
+        :type subnet_parameters: ~azure.mgmt.network.v2015_06_15.models.Subnet or IO[bytes]
         :return: An instance of LROPoller that returns either Subnet or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2015_06_15.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11029,7 +10128,7 @@ class SubnetsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Subnet", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -11039,17 +10138,15 @@ class SubnetsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Subnet].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets/{subnetName}"
-    }
+        return LROPoller[_models.Subnet](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(self, resource_group_name: str, virtual_network_name: str, **kwargs: Any) -> Iterable["_models.Subnet"]:
@@ -11059,7 +10156,6 @@ class SubnetsOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Subnet or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11070,7 +10166,7 @@ class SubnetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.SubnetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11081,17 +10177,16 @@ class SubnetsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_subnets_list_request(
+                _request = build_subnets_list_request(
                     resource_group_name=resource_group_name,
                     virtual_network_name=virtual_network_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -11102,14 +10197,14 @@ class SubnetsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SubnetListResult", pipeline_response)
@@ -11119,11 +10214,11 @@ class SubnetsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -11134,10 +10229,6 @@ class SubnetsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}/subnets"
-    }
 
 
 class VirtualNetworkGatewaysOperations:
@@ -11164,10 +10255,10 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, IO],
+        parameters: Union[_models.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetworkGateway:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11190,7 +10281,7 @@ class VirtualNetworkGatewaysOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetworkGateway")
 
-        request = build_virtual_network_gateways_create_or_update_request(
+        _request = build_virtual_network_gateways_create_or_update_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             subscription_id=self._config.subscription_id,
@@ -11198,16 +10289,15 @@ class VirtualNetworkGatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11226,10 +10316,6 @@ class VirtualNetworkGatewaysOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -11253,14 +10339,6 @@ class VirtualNetworkGatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11273,7 +10351,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11286,18 +10364,10 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual network gateway operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11310,7 +10380,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, IO],
+        parameters: Union[_models.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetworkGateway]:
         """Creates or updates a virtual network gateway in the specified resource group.
@@ -11320,19 +10390,8 @@ class VirtualNetworkGatewaysOperations:
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual network gateway operation.
-         Is either a VirtualNetworkGateway type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a VirtualNetworkGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway or IO[bytes]
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11365,7 +10424,7 @@ class VirtualNetworkGatewaysOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkGateway", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -11375,17 +10434,15 @@ class VirtualNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.VirtualNetworkGateway].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}"
-    }
+        return LROPoller[_models.VirtualNetworkGateway](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(
@@ -11397,12 +10454,11 @@ class VirtualNetworkGatewaysOperations:
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkGateway or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11416,21 +10472,20 @@ class VirtualNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
 
-        request = build_virtual_network_gateways_get_request(
+        _request = build_virtual_network_gateways_get_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11442,18 +10497,14 @@ class VirtualNetworkGatewaysOperations:
         deserialized = self._deserialize("VirtualNetworkGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}"
-    }
+        return deserialized  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11467,21 +10518,20 @@ class VirtualNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_virtual_network_gateways_delete_request(
+        _request = build_virtual_network_gateways_delete_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11491,11 +10541,7 @@ class VirtualNetworkGatewaysOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -11507,14 +10553,6 @@ class VirtualNetworkGatewaysOperations:
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11541,7 +10579,7 @@ class VirtualNetworkGatewaysOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -11552,17 +10590,13 @@ class VirtualNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.VirtualNetworkGateway"]:
@@ -11570,7 +10604,6 @@ class VirtualNetworkGatewaysOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11583,7 +10616,7 @@ class VirtualNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkGatewayListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11594,16 +10627,15 @@ class VirtualNetworkGatewaysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_virtual_network_gateways_list_request(
+                _request = build_virtual_network_gateways_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -11614,14 +10646,14 @@ class VirtualNetworkGatewaysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkGatewayListResult", pipeline_response)
@@ -11631,11 +10663,11 @@ class VirtualNetworkGatewaysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -11647,18 +10679,14 @@ class VirtualNetworkGatewaysOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways"
-    }
-
     def _reset_initial(
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, IO],
+        parameters: Union[_models.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.VirtualNetworkGateway]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11681,7 +10709,7 @@ class VirtualNetworkGatewaysOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetworkGateway")
 
-        request = build_virtual_network_gateways_reset_request(
+        _request = build_virtual_network_gateways_reset_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             subscription_id=self._config.subscription_id,
@@ -11689,16 +10717,15 @@ class VirtualNetworkGatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._reset_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11712,13 +10739,9 @@ class VirtualNetworkGatewaysOperations:
             deserialized = self._deserialize("VirtualNetworkGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _reset_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_reset(
@@ -11742,14 +10765,6 @@ class VirtualNetworkGatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11762,7 +10777,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11775,18 +10790,10 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway vip address supplied to the begin reset of the
          active-active feature enabled gateway. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11799,7 +10806,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, IO],
+        parameters: Union[_models.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetworkGateway]:
         """Resets the primary of the virtual network gateway in the specified resource group.
@@ -11809,20 +10816,9 @@ class VirtualNetworkGatewaysOperations:
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway vip address supplied to the begin reset of the
-         active-active feature enabled gateway. Is either a VirtualNetworkGateway type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         active-active feature enabled gateway. Is either a VirtualNetworkGateway type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway or IO[bytes]
         :return: An instance of LROPoller that returns either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -11855,7 +10851,7 @@ class VirtualNetworkGatewaysOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkGateway", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -11867,26 +10863,24 @@ class VirtualNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.VirtualNetworkGateway].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_reset.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset"
-    }
+        return LROPoller[_models.VirtualNetworkGateway](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _generatevpnclientpackage_initial(
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, IO],
+        parameters: Union[_models.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> str:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11909,7 +10903,7 @@ class VirtualNetworkGatewaysOperations:
         else:
             _json = self._serialize.body(parameters, "VpnClientParameters")
 
-        request = build_virtual_network_gateways_generatevpnclientpackage_request(
+        _request = build_virtual_network_gateways_generatevpnclientpackage_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_name=virtual_network_gateway_name,
             subscription_id=self._config.subscription_id,
@@ -11917,16 +10911,15 @@ class VirtualNetworkGatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._generatevpnclientpackage_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11938,13 +10931,9 @@ class VirtualNetworkGatewaysOperations:
         deserialized = self._deserialize("str", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _generatevpnclientpackage_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnclientpackage"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_generatevpnclientpackage(
@@ -11969,14 +10958,6 @@ class VirtualNetworkGatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either str or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11987,7 +10968,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12001,18 +10982,10 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
          package operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either str or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12023,7 +10996,7 @@ class VirtualNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, IO],
+        parameters: Union[_models.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[str]:
         """Generates VPN client package for P2S client of the virtual network gateway in the specified
@@ -12034,19 +11007,8 @@ class VirtualNetworkGatewaysOperations:
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
-         package operation. Is either a VpnClientParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VpnClientParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         package operation. Is either a VpnClientParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VpnClientParameters or IO[bytes]
         :return: An instance of LROPoller that returns either str or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12077,7 +11039,7 @@ class VirtualNetworkGatewaysOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("str", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -12089,20 +11051,16 @@ class VirtualNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[str].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_generatevpnclientpackage.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnclientpackage"
-    }
+        return LROPoller[str](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class VirtualNetworkGatewayConnectionsOperations:
+class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12126,10 +11084,10 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VirtualNetworkGatewayConnection, IO],
+        parameters: Union[_models.VirtualNetworkGatewayConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetworkGatewayConnection:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12152,7 +11110,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetworkGatewayConnection")
 
-        request = build_virtual_network_gateway_connections_create_or_update_request(
+        _request = build_virtual_network_gateway_connections_create_or_update_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
@@ -12160,16 +11118,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12188,10 +11145,6 @@ class VirtualNetworkGatewayConnectionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -12216,14 +11169,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGatewayConnection or the
          result of cls(response)
         :rtype:
@@ -12236,7 +11181,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12250,18 +11195,10 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual network gateway
          connection operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkGatewayConnection or the
          result of cls(response)
         :rtype:
@@ -12274,7 +11211,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VirtualNetworkGatewayConnection, IO],
+        parameters: Union[_models.VirtualNetworkGatewayConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetworkGatewayConnection]:
         """Creates or updates a virtual network gateway connection in the specified resource group.
@@ -12285,19 +11222,10 @@ class VirtualNetworkGatewayConnectionsOperations:
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual network gateway
-         connection operation. Is either a VirtualNetworkGatewayConnection type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayConnection or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         connection operation. Is either a VirtualNetworkGatewayConnection type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayConnection or
+         IO[bytes]
         :return: An instance of LROPoller that returns either VirtualNetworkGatewayConnection or the
          result of cls(response)
         :rtype:
@@ -12330,7 +11258,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkGatewayConnection", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -12340,17 +11268,15 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.VirtualNetworkGatewayConnection].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}"
-    }
+        return LROPoller[_models.VirtualNetworkGatewayConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(
@@ -12363,12 +11289,11 @@ class VirtualNetworkGatewayConnectionsOperations:
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
          connection. Required.
         :type virtual_network_gateway_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkGatewayConnection or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12382,21 +11307,20 @@ class VirtualNetworkGatewayConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
 
-        request = build_virtual_network_gateway_connections_get_request(
+        _request = build_virtual_network_gateway_connections_get_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12408,18 +11332,14 @@ class VirtualNetworkGatewayConnectionsOperations:
         deserialized = self._deserialize("VirtualNetworkGatewayConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, virtual_network_gateway_connection_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12433,21 +11353,20 @@ class VirtualNetworkGatewayConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_virtual_network_gateway_connections_delete_request(
+        _request = build_virtual_network_gateway_connections_delete_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12457,11 +11376,7 @@ class VirtualNetworkGatewayConnectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -12474,14 +11389,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
          connection. Required.
         :type virtual_network_gateway_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12508,7 +11415,7 @@ class VirtualNetworkGatewayConnectionsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -12519,17 +11426,13 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.VirtualNetworkGatewayConnection"]:
@@ -12538,7 +11441,6 @@ class VirtualNetworkGatewayConnectionsOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkGatewayConnection or the result of
          cls(response)
         :rtype:
@@ -12551,7 +11453,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualNetworkGatewayConnectionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12562,16 +11464,15 @@ class VirtualNetworkGatewayConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_virtual_network_gateway_connections_list_request(
+                _request = build_virtual_network_gateway_connections_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -12582,14 +11483,14 @@ class VirtualNetworkGatewayConnectionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkGatewayConnectionListResult", pipeline_response)
@@ -12599,11 +11500,11 @@ class VirtualNetworkGatewayConnectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -12615,18 +11516,14 @@ class VirtualNetworkGatewayConnectionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections"
-    }
-
     def _reset_shared_key_initial(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionResetSharedKey, IO],
+        parameters: Union[_models.ConnectionResetSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ConnectionResetSharedKey]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12649,7 +11546,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             _json = self._serialize.body(parameters, "ConnectionResetSharedKey")
 
-        request = build_virtual_network_gateway_connections_reset_shared_key_request(
+        _request = build_virtual_network_gateway_connections_reset_shared_key_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
@@ -12657,16 +11554,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._reset_shared_key_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12680,13 +11576,9 @@ class VirtualNetworkGatewayConnectionsOperations:
             deserialized = self._deserialize("ConnectionResetSharedKey", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _reset_shared_key_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey/reset"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_reset_shared_key(
@@ -12713,14 +11605,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ConnectionResetSharedKey or the result of
          cls(response)
         :rtype:
@@ -12733,7 +11617,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12749,18 +11633,10 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the begin reset virtual network gateway connection
          shared key operation through network resource provider. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ConnectionResetSharedKey or the result of
          cls(response)
         :rtype:
@@ -12773,7 +11649,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionResetSharedKey, IO],
+        parameters: Union[_models.ConnectionResetSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ConnectionResetSharedKey]:
         """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the virtual network gateway
@@ -12787,19 +11663,8 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the begin reset virtual network gateway connection
          shared key operation through network resource provider. Is either a ConnectionResetSharedKey
-         type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ConnectionResetSharedKey or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ConnectionResetSharedKey or IO[bytes]
         :return: An instance of LROPoller that returns either ConnectionResetSharedKey or the result of
          cls(response)
         :rtype:
@@ -12832,7 +11697,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ConnectionResetSharedKey", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -12844,26 +11709,24 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ConnectionResetSharedKey].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_reset_shared_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey/reset"
-    }
+        return LROPoller[_models.ConnectionResetSharedKey](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _set_shared_key_initial(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionSharedKey, IO],
+        parameters: Union[_models.ConnectionSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConnectionSharedKey:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12886,7 +11749,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             _json = self._serialize.body(parameters, "ConnectionSharedKey")
 
-        request = build_virtual_network_gateway_connections_set_shared_key_request(
+        _request = build_virtual_network_gateway_connections_set_shared_key_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
@@ -12894,16 +11757,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._set_shared_key_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12922,10 +11784,6 @@ class VirtualNetworkGatewayConnectionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _set_shared_key_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey"
-    }
 
     @overload
     def begin_set_shared_key(
@@ -12952,14 +11810,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ConnectionSharedKey or the result of
          cls(response)
         :rtype:
@@ -12972,7 +11822,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12988,18 +11838,10 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
          Shared key operation throughNetwork resource provider. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ConnectionSharedKey or the result of
          cls(response)
         :rtype:
@@ -13012,7 +11854,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionSharedKey, IO],
+        parameters: Union[_models.ConnectionSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ConnectionSharedKey]:
         """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the virtual network gateway
@@ -13026,19 +11868,8 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
          Shared key operation throughNetwork resource provider. Is either a ConnectionSharedKey type or
-         a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ConnectionSharedKey or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.ConnectionSharedKey or IO[bytes]
         :return: An instance of LROPoller that returns either ConnectionSharedKey or the result of
          cls(response)
         :rtype:
@@ -13071,7 +11902,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ConnectionSharedKey", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -13081,17 +11912,15 @@ class VirtualNetworkGatewayConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ConnectionSharedKey].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_set_shared_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey"
-    }
+        return LROPoller[_models.ConnectionSharedKey](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_shared_key(
@@ -13105,12 +11934,11 @@ class VirtualNetworkGatewayConnectionsOperations:
         :param virtual_network_gateway_connection_name: The virtual network gateway connection shared
          key name. Required.
         :type virtual_network_gateway_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectionSharedKeyResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ConnectionSharedKeyResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13124,21 +11952,20 @@ class VirtualNetworkGatewayConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ConnectionSharedKeyResult] = kwargs.pop("cls", None)
 
-        request = build_virtual_network_gateway_connections_get_shared_key_request(
+        _request = build_virtual_network_gateway_connections_get_shared_key_request(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_shared_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13150,13 +11977,9 @@ class VirtualNetworkGatewayConnectionsOperations:
         deserialized = self._deserialize("ConnectionSharedKeyResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_shared_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey"
-    }
+        return deserialized  # type: ignore
 
 
 class LocalNetworkGatewaysOperations:
@@ -13183,10 +12006,10 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: Union[_models.LocalNetworkGateway, IO],
+        parameters: Union[_models.LocalNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.LocalNetworkGateway:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13209,7 +12032,7 @@ class LocalNetworkGatewaysOperations:
         else:
             _json = self._serialize.body(parameters, "LocalNetworkGateway")
 
-        request = build_local_network_gateways_create_or_update_request(
+        _request = build_local_network_gateways_create_or_update_request(
             resource_group_name=resource_group_name,
             local_network_gateway_name=local_network_gateway_name,
             subscription_id=self._config.subscription_id,
@@ -13217,16 +12040,15 @@ class LocalNetworkGatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13245,10 +12067,6 @@ class LocalNetworkGatewaysOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -13272,14 +12090,6 @@ class LocalNetworkGatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LocalNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -13292,7 +12102,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13305,18 +12115,10 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local network gateway operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LocalNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -13329,7 +12131,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: Union[_models.LocalNetworkGateway, IO],
+        parameters: Union[_models.LocalNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.LocalNetworkGateway]:
         """Creates or updates a local network gateway in the specified resource group.
@@ -13339,19 +12141,8 @@ class LocalNetworkGatewaysOperations:
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local network gateway operation.
-         Is either a LocalNetworkGateway type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Is either a LocalNetworkGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway or IO[bytes]
         :return: An instance of LROPoller that returns either LocalNetworkGateway or the result of
          cls(response)
         :rtype:
@@ -13384,7 +12175,7 @@ class LocalNetworkGatewaysOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LocalNetworkGateway", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -13394,17 +12185,15 @@ class LocalNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LocalNetworkGateway].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}"
-    }
+        return LROPoller[_models.LocalNetworkGateway](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(
@@ -13416,12 +12205,11 @@ class LocalNetworkGatewaysOperations:
         :type resource_group_name: str
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalNetworkGateway or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13435,21 +12223,20 @@ class LocalNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
-        request = build_local_network_gateways_get_request(
+        _request = build_local_network_gateways_get_request(
             resource_group_name=resource_group_name,
             local_network_gateway_name=local_network_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13461,18 +12248,14 @@ class LocalNetworkGatewaysOperations:
         deserialized = self._deserialize("LocalNetworkGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}"
-    }
+        return deserialized  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, local_network_gateway_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13486,21 +12269,20 @@ class LocalNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_local_network_gateways_delete_request(
+        _request = build_local_network_gateways_delete_request(
             resource_group_name=resource_group_name,
             local_network_gateway_name=local_network_gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13510,11 +12292,7 @@ class LocalNetworkGatewaysOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, local_network_gateway_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -13524,14 +12302,6 @@ class LocalNetworkGatewaysOperations:
         :type resource_group_name: str
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13558,7 +12328,7 @@ class LocalNetworkGatewaysOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -13569,17 +12339,13 @@ class LocalNetworkGatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.LocalNetworkGateway"]:
@@ -13587,7 +12353,6 @@ class LocalNetworkGatewaysOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LocalNetworkGateway or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway]
@@ -13599,7 +12364,7 @@ class LocalNetworkGatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.LocalNetworkGatewayListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13610,16 +12375,15 @@ class LocalNetworkGatewaysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_local_network_gateways_list_request(
+                _request = build_local_network_gateways_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -13630,14 +12394,14 @@ class LocalNetworkGatewaysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LocalNetworkGatewayListResult", pipeline_response)
@@ -13647,11 +12411,11 @@ class LocalNetworkGatewaysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -13662,7 +12426,3 @@ class LocalNetworkGatewaysOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways"
-    }

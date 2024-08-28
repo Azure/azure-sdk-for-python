@@ -51,10 +51,11 @@ class PathLeaseAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PathLeaseAction."""
 
     ACQUIRE = "acquire"
-    BREAK_ENUM = "break"
+    BREAK = "break"
     CHANGE = "change"
     RENEW = "renew"
     RELEASE = "release"
+    BREAK_ENUM = "break"
 
 
 class PathRenameMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -463,6 +463,9 @@ class AMQPClient(
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
+        while not self.client_ready():
+            time.sleep(0.05)
+
         while not mgmt_link.ready():
             self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
@@ -1027,6 +1030,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def settle_messages(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
@@ -1037,6 +1041,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def settle_messages(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
@@ -1047,6 +1052,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def settle_messages(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
@@ -1058,6 +1064,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def settle_messages(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["modified"],
         *,
         delivery_failed: Optional[bool] = None,
@@ -1071,6 +1078,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def settle_messages(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["received"],
         *,
         section_number: int,
@@ -1080,7 +1088,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         ...
 
     def settle_messages(
-        self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs
+        self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
         if outcome.lower() == "accepted":
@@ -1103,6 +1111,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
+            delivery_tag=delivery_tag,
             settled=True,
             delivery_state=state,
             batchable=batchable,

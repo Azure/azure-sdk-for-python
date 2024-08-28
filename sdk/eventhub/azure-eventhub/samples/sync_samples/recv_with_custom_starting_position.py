@@ -10,8 +10,9 @@ An example to show receiving events from Event Hub partitions with custom starti
 """
 import os
 from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventData
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -46,9 +47,10 @@ def on_event(partition_context, event):
 
 if __name__ == '__main__':
 
-    producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    producer_client = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
     )
 
     with producer_client:
@@ -59,10 +61,11 @@ if __name__ == '__main__':
         event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
         producer_client.send_batch(event_data_batch_to_partition_0)
 
-    consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    consumer_client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
     )
 
     partition_0_prop = consumer_client.get_partition_properties("0")

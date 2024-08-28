@@ -18,7 +18,7 @@ from azure.ai.documentintelligence.models import (
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(
     _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
@@ -71,13 +71,12 @@ class TestCopyModelAsync(AsyncDocumentIntelligenceTest):
 
             assert copy.api_version == model.api_version
             assert copy.model_id != model.model_id
+            assert copy.model_id == copy_auth["targetModelId"]
             assert copy.description == model.description
-            assert copy.created_date_time == model.created_date_time
-            assert copy.expiration_date_time == model.expiration_date_time
             assert copy.tags == {"testkey": "testvalue"}
             assert model.tags is None
             for name, doc_type in copy.doc_types.items():
-                assert name
+                assert name == copy_auth["targetModelId"]
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]

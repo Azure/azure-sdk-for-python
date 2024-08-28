@@ -3,14 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Optional
+from typing import Optional
 
 
-def raise_if_time_invalid(not_before: "Optional[datetime]", expires_on: "Optional[datetime]") -> None:
+def raise_if_time_invalid(not_before: Optional[datetime], expires_on: Optional[datetime]) -> None:
     now = datetime.now(timezone.utc)
     if (not_before and expires_on) and not not_before <= now <= expires_on:
         raise ValueError(f"This client's key is useable only between {not_before} and {expires_on} (UTC)")

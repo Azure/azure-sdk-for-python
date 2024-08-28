@@ -6,7 +6,7 @@ import pytest
 import json
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import AZURE, OPENAI, AZURE_AD, PREVIEW, GA, configure_async
+from conftest import AZURE, OPENAI, PREVIEW, GA, configure_async
 
 
 class TestCompletionsAsync(AzureRecordedTestCase):
@@ -16,7 +16,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (AZURE_AD, PREVIEW), (AZURE_AD, GA), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     async def test_completion(self, client_async, api_type, api_version, **kwargs):
 

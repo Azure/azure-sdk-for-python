@@ -341,6 +341,12 @@ class ShareProperties(DictMixin):
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
         Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
+    :ivar bool enable_snapshot_virtual_directory_access:
+        Specifies whether the snapshot virtual directory should be accessible at the root of the share
+        mount point when NFS is enabled. If not specified, it will be accessible.
+    :ivar bool paid_bursting_enabled: This property enables paid bursting.
+    :ivar int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+    :ivar int paid_bursting_iops: The maximum IOPS the file share can support.
     """
 
     def __init__(self, **kwargs):
@@ -364,6 +370,12 @@ class ShareProperties(DictMixin):
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
+        self.enable_snapshot_virtual_directory_access = \
+            kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
+        self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
+        self.paid_bursting_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
+        self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
+
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -387,7 +399,10 @@ class ShareProperties(DictMixin):
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
             if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
-
+        props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
+        props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
+        props.paid_bursting_bandwidth_mibps = generated.properties.paid_bursting_max_bandwidth_mibps
+        props.paid_bursting_iops = generated.properties.paid_bursting_max_iops
         return props
 
 

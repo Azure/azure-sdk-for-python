@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,15 +19,17 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -72,7 +75,7 @@ def build_upload_request(
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -206,7 +209,7 @@ def build_put_blob_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -331,7 +334,7 @@ def build_stage_block_request(
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -407,7 +410,7 @@ def build_stage_block_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -508,7 +511,7 @@ def build_commit_block_list_request(
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -614,7 +617,7 @@ def build_get_block_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -749,7 +752,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -839,7 +842,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -971,7 +973,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1074,7 +1076,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1163,7 +1164,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1213,7 +1214,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1314,7 +1314,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1376,7 +1376,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1498,7 +1497,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1587,7 +1586,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1670,7 +1668,7 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1704,7 +1702,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1733,7 +1730,7 @@ class BlockBlobOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("BlockList", pipeline_response)
+        deserialized = self._deserialize("BlockList", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

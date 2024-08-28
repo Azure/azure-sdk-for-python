@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -20,9 +21,8 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -30,8 +30,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -235,12 +238,11 @@ class GatewaysOperations:
         :type service_name: str
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GatewayResource or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.GatewayResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -254,22 +256,20 @@ class GatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.GatewayResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             gateway_name=gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -278,26 +278,22 @@ class GatewaysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("GatewayResource", pipeline_response)
+        deserialized = self._deserialize("GatewayResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         service_name: str,
         gateway_name: str,
-        gateway_resource: Union[_models.GatewayResource, IO],
+        gateway_resource: Union[_models.GatewayResource, IO[bytes]],
         **kwargs: Any
-    ) -> _models.GatewayResource:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -310,7 +306,7 @@ class GatewaysOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.GatewayResource] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -320,7 +316,7 @@ class GatewaysOperations:
         else:
             _json = self._serialize.body(gateway_resource, "GatewayResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             gateway_name=gateway_name,
@@ -329,38 +325,33 @@ class GatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("GatewayResource", pipeline_response)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("GatewayResource", pipeline_response)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -387,14 +378,6 @@ class GatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GatewayResource or the result of
          cls(response)
         :rtype:
@@ -408,7 +391,7 @@ class GatewaysOperations:
         resource_group_name: str,
         service_name: str,
         gateway_name: str,
-        gateway_resource: IO,
+        gateway_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -423,18 +406,10 @@ class GatewaysOperations:
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
         :param gateway_resource: The gateway for the create or update operation. Required.
-        :type gateway_resource: IO
+        :type gateway_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GatewayResource or the result of
          cls(response)
         :rtype:
@@ -448,7 +423,7 @@ class GatewaysOperations:
         resource_group_name: str,
         service_name: str,
         gateway_name: str,
-        gateway_resource: Union[_models.GatewayResource, IO],
+        gateway_resource: Union[_models.GatewayResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GatewayResource]:
         """Create the default Spring Cloud Gateway or update the existing Spring Cloud Gateway.
@@ -461,19 +436,8 @@ class GatewaysOperations:
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
         :param gateway_resource: The gateway for the create or update operation. Is either a
-         GatewayResource type or a IO type. Required.
-        :type gateway_resource: ~azure.mgmt.appplatform.v2022_12_01.models.GatewayResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         GatewayResource type or a IO[bytes] type. Required.
+        :type gateway_resource: ~azure.mgmt.appplatform.v2022_12_01.models.GatewayResource or IO[bytes]
         :return: An instance of LROPoller that returns either GatewayResource or the result of
          cls(response)
         :rtype:
@@ -502,12 +466,13 @@ class GatewaysOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("GatewayResource", pipeline_response)
+            deserialized = self._deserialize("GatewayResource", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -517,22 +482,20 @@ class GatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.GatewayResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.GatewayResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}"
-    }
-
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_initial(
         self, resource_group_name: str, service_name: str, gateway_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -544,38 +507,44 @@ class GatewaysOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             gateway_name=gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}"
-    }
+        if response.status_code == 202:
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if response.status_code == 204:
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -590,14 +559,6 @@ class GatewaysOperations:
         :type service_name: str
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -611,7 +572,7 @@ class GatewaysOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 service_name=service_name,
                 gateway_name=gateway_name,
@@ -621,11 +582,12 @@ class GatewaysOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -634,17 +596,13 @@ class GatewaysOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(self, resource_group_name: str, service_name: str, **kwargs: Any) -> Iterable["_models.GatewayResource"]:
@@ -655,7 +613,6 @@ class GatewaysOperations:
         :type resource_group_name: str
         :param service_name: The name of the Service resource. Required.
         :type service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GatewayResource or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.appplatform.v2022_12_01.models.GatewayResource]
@@ -667,7 +624,7 @@ class GatewaysOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.GatewayResourceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -678,17 +635,15 @@ class GatewaysOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -699,14 +654,13 @@ class GatewaysOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("GatewayResourceCollection", pipeline_response)
@@ -716,11 +670,11 @@ class GatewaysOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -731,10 +685,6 @@ class GatewaysOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways"
-    }
 
     @overload
     def validate_domain(
@@ -761,7 +711,6 @@ class GatewaysOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomDomainValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.CustomDomainValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -773,7 +722,7 @@ class GatewaysOperations:
         resource_group_name: str,
         service_name: str,
         gateway_name: str,
-        validate_payload: IO,
+        validate_payload: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -788,11 +737,10 @@ class GatewaysOperations:
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
         :param validate_payload: Custom domain payload to be validated. Required.
-        :type validate_payload: IO
+        :type validate_payload: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomDomainValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.CustomDomainValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -804,7 +752,7 @@ class GatewaysOperations:
         resource_group_name: str,
         service_name: str,
         gateway_name: str,
-        validate_payload: Union[_models.CustomDomainValidatePayload, IO],
+        validate_payload: Union[_models.CustomDomainValidatePayload, IO[bytes]],
         **kwargs: Any
     ) -> _models.CustomDomainValidateResult:
         """Check the domains are valid as well as not in use.
@@ -817,18 +765,14 @@ class GatewaysOperations:
         :param gateway_name: The name of Spring Cloud Gateway. Required.
         :type gateway_name: str
         :param validate_payload: Custom domain payload to be validated. Is either a
-         CustomDomainValidatePayload type or a IO type. Required.
+         CustomDomainValidatePayload type or a IO[bytes] type. Required.
         :type validate_payload: ~azure.mgmt.appplatform.v2022_12_01.models.CustomDomainValidatePayload
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: CustomDomainValidateResult or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.CustomDomainValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -851,7 +795,7 @@ class GatewaysOperations:
         else:
             _json = self._serialize.body(validate_payload, "CustomDomainValidatePayload")
 
-        request = build_validate_domain_request(
+        _request = build_validate_domain_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             gateway_name=gateway_name,
@@ -860,16 +804,14 @@ class GatewaysOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate_domain.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -878,13 +820,9 @@ class GatewaysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CustomDomainValidateResult", pipeline_response)
+        deserialized = self._deserialize("CustomDomainValidateResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate_domain.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}/validateDomain"
-    }
+        return deserialized  # type: ignore

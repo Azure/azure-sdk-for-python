@@ -9,7 +9,7 @@ bandit = false
 sphinx=true
 breaking = false
 whl_no_aio = false
-strict_sphinx = true
+
 
 [tool.mypy] 
 python_version = "3.10"

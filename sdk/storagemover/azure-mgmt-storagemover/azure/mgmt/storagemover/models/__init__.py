@@ -40,6 +40,7 @@ from ._models_py3 import Project
 from ._models_py3 import ProjectList
 from ._models_py3 import ProjectUpdateParameters
 from ._models_py3 import ProxyResource
+from ._models_py3 import Recurrence
 from ._models_py3 import Resource
 from ._models_py3 import SmbMountEndpointProperties
 from ._models_py3 import SmbMountEndpointUpdateProperties
@@ -47,16 +48,23 @@ from ._models_py3 import StorageMover
 from ._models_py3 import StorageMoverList
 from ._models_py3 import StorageMoverUpdateParameters
 from ._models_py3 import SystemData
+from ._models_py3 import Time
 from ._models_py3 import TrackedResource
+from ._models_py3 import UploadLimit
+from ._models_py3 import UploadLimitSchedule
+from ._models_py3 import UploadLimitWeeklyRecurrence
+from ._models_py3 import WeeklyRecurrence
 
 from ._storage_mover_mgmt_client_enums import ActionType
 from ._storage_mover_mgmt_client_enums import AgentStatus
 from ._storage_mover_mgmt_client_enums import CopyMode
 from ._storage_mover_mgmt_client_enums import CreatedByType
 from ._storage_mover_mgmt_client_enums import CredentialType
+from ._storage_mover_mgmt_client_enums import DayOfWeek
 from ._storage_mover_mgmt_client_enums import EndpointType
 from ._storage_mover_mgmt_client_enums import JobRunScanStatus
 from ._storage_mover_mgmt_client_enums import JobRunStatus
+from ._storage_mover_mgmt_client_enums import Minute
 from ._storage_mover_mgmt_client_enums import NfsVersion
 from ._storage_mover_mgmt_client_enums import Origin
 from ._storage_mover_mgmt_client_enums import ProvisioningState
@@ -99,6 +107,7 @@ __all__ = [
     "ProjectList",
     "ProjectUpdateParameters",
     "ProxyResource",
+    "Recurrence",
     "Resource",
     "SmbMountEndpointProperties",
     "SmbMountEndpointUpdateProperties",
@@ -106,15 +115,22 @@ __all__ = [
     "StorageMoverList",
     "StorageMoverUpdateParameters",
     "SystemData",
+    "Time",
     "TrackedResource",
+    "UploadLimit",
+    "UploadLimitSchedule",
+    "UploadLimitWeeklyRecurrence",
+    "WeeklyRecurrence",
     "ActionType",
     "AgentStatus",
     "CopyMode",
     "CreatedByType",
     "CredentialType",
+    "DayOfWeek",
     "EndpointType",
     "JobRunScanStatus",
     "JobRunStatus",
+    "Minute",
     "NfsVersion",
     "Origin",
     "ProvisioningState",

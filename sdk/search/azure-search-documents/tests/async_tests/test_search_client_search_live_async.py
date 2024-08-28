@@ -8,7 +8,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.aio import SearchClient
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
@@ -17,8 +17,8 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
+    async def test_search_client(self, endpoint, index_name):
+        client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
@@ -144,8 +144,8 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
     @recorded_by_proxy_async
-    async def test_search_client_large(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+    async def test_search_client_large(self, endpoint, index_name):
+        client = SearchClient(endpoint, index_name, get_credential(is_async=True))
         async with client:
             await self._test_get_search_simple_large(client)
 

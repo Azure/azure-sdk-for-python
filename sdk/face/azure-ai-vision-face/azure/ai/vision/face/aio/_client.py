@@ -15,16 +15,8 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import (
-    FaceAdministrationClientConfiguration,
-    FaceClientConfiguration,
-    FaceSessionClientConfiguration,
-)
-from ._operations import (
-    FaceAdministrationClientOperationsMixin,
-    FaceClientOperationsMixin,
-    FaceSessionClientOperationsMixin,
-)
+from ._configuration import FaceClientConfiguration, FaceSessionClientConfiguration
+from ._operations import FaceClientOperationsMixin, FaceSessionClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -107,93 +99,6 @@ class FaceClient(FaceClientOperationsMixin):  # pylint: disable=client-accepts-a
         await self._client.close()
 
     async def __aenter__(self) -> "FaceClient":
-        await self._client.__aenter__()
-        return self
-
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
-
-
-class FaceAdministrationClient(
-    FaceAdministrationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
-    """FaceAdministrationClient.
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://{resource-name}.cognitiveservices.azure.com). Required.
-    :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: API Version. Default value is "v1.1-preview.1". Note that overriding this
-     default value may result in unsupported behavior.
-    :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
-    """
-
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
-        _endpoint = "{endpoint}/face/{apiVersion}"
-        self._config = FaceAdministrationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
-
-    def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
-        """Runs the network request through the client's chained policies.
-
-        >>> from azure.core.rest import HttpRequest
-        >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
-
-        :param request: The network request you want to make. Required.
-        :type request: ~azure.core.rest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
-        """
-
-        request_copy = deepcopy(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
-
-    async def close(self) -> None:
-        await self._client.close()
-
-    async def __aenter__(self) -> "FaceAdministrationClient":
         await self._client.__aenter__()
         return self
 

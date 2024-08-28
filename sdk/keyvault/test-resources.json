@@ -82,14 +82,7 @@
         "westus3"
       ],
       "metadata": {
-        "description": "The location of the Managed HSM. By default, this is 'japaneast'."
-      }
-    },
-    "enableAttestation": {
-      "type": "bool",
-      "defaultValue": true,
-      "metadata": {
-        "description": "Whether to enable deployment of attestation resources. The default is true."
+        "description": "The location of the Managed HSM. By default, this is 'brazilsouth'."
       }
     },
     "enableHsm": {
@@ -102,66 +95,15 @@
     "keyVaultSku": {
       "type": "string",
       "defaultValue": "premium",
-      "allowedValues": [
-        "standard",
-        "premium"
-      ],
       "metadata": {
-        "description": "Key Vault SKU to deploy. The default is 'Premium'"
+        "description": "Key Vault SKU to deploy. The default is 'premium'"
       }
-    },
-    "keyVaultEndpointSuffix": {
-      "type": "string",
-      "defaultValue": ".vault.azure.net"
-    },
-    "testApplicationId": {
-      "type": "string"
-    },
-    "enabledForDeployment": {
-      "type": "bool",
-      "defaultValue": false,
-      "allowedValues": [
-        true,
-        false
-      ]
-    },
-    "enabledForDiskEncryption": {
-      "type": "bool",
-      "defaultValue": false,
-      "allowedValues": [
-        true,
-        false
-      ]
-    },
-    "enabledForTemplateDeployment": {
-      "type": "bool",
-      "defaultValue": false,
-      "allowedValues": [
-        true,
-        false
-      ]
-    },
-    "identityName": {
-      "type": "string",
-      "defaultValue": "identityForKeyVault"
-    },
-    "certificateName": {
-      "type": "string",
-      "defaultValue": "myalias"
-    },
-    "subjectName": {
-      "type": "string",
-      "defaultValue": "CN=mydomain.com"
-    },
-    "utcValue": {
-      "type": "string",
-      "defaultValue": "[utcNow()]"
     },
     "baseTime": {
       "type": "string",
       "defaultValue": "[utcNow('u')]",
       "metadata": {
-        "description": "The base time to add 500 minutes to for SAS token expiration. The default is the current time."
+        "description": "The base time to add 2 hours to for SAS token expiration. The default is the current time."
       }
     },
     "attestationImage": {
@@ -169,13 +111,6 @@
       "defaultValue": "keyvault-mock-attestation:latest",
       "metadata": {
         "description": "The attestation image to use. The default is 'keyvault-mock-attestation:latest'."
-      }
-    },
-    "storageEndpointSuffix": {
-      "type": "string",
-      "defaultValue": "core.windows.net",
-      "metadata": {
-        "description": "The url suffix to use when accessing the storage data plane."
       }
     }
   },
@@ -188,8 +123,10 @@
     "hsmApiVersion": "2021-04-01-preview",
     "hsmName": "[concat(parameters('baseName'), 'hsm')]",
     "mgmtApiVersion": "2019-04-01",
-    "blobContainerName": "backup",
-    "primaryAccountName": "[concat(parameters('baseName'), 'prim')]",
+    "blobContainerName": "hsmbackups",
+    "primaryAccountName": "[concat(replace(parameters('baseName'), '-', ''), 'prim')]",
+    "kvAdminDefinitionId": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
+    "kvAdminAssignmentName": "[guid(resourceGroup().id, variables('kvAdminDefinitionId'), parameters('testApplicationOid'))]",
     "encryption": {
       "services": {
         "blob": {
@@ -208,34 +145,12 @@
       "signedServices": "b",
       "signedPermission": "rwdlacu",
       "signedProtocol": "https",
-      "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT500M')]",
+      "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT2H')]",
       "signedResourceTypes": "sco",
       "keyToSign": "key1"
-    },
-    "bootstrapRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
-    "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    }
   },
   "resources": [
-    {
-      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "apiVersion": "2018-11-30",
-      "name": "[parameters('identityName')]",
-      "location": "[parameters('location')]"
-    },
-    {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[variables('bootstrapRoleAssignmentId')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]"
-      ],
-      "properties": {
-        "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
-        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-        "scope": "[resourceGroup().id]",
-        "principalType": "ServicePrincipal"
-      }
-    },
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "[variables('kvApiVersion')]",
@@ -247,124 +162,22 @@
           "name": "[parameters('keyVaultSku')]"
         },
         "tenantId": "[parameters('tenantId')]",
-        "accessPolicies": [
-        {
-          "tenantId": "[parameters('tenantId')]",
-          "objectId": "[parameters('testApplicationOid')]",
-          "permissions": {
-            "keys": [
-              "Get",
-              "List",
-              "Update",
-              "Create",
-              "Import",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "Decrypt",
-              "Encrypt",
-              "UnwrapKey",
-              "WrapKey",
-              "Sign",
-              "Purge",
-              "Rotate",
-              "Verify",
-              "GetRotationPolicy",
-              "SetRotationPolicy"
-            ],
-            "secrets": [
-              "Get",
-              "List",
-              "Set",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "Purge"
-            ],
-            "certificates": [
-              "Get",
-              "List",
-              "Update",
-              "Create",
-              "Import",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "ManageContacts",
-              "ManageIssuers",
-              "GetIssuers",
-              "ListIssuers",
-              "SetIssuers",
-              "DeleteIssuers",
-              "Purge"
-            ]
-          }
-        },
-        {
-          "tenantId": "[parameters('tenantId')]",
-          "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-          "permissions": {
-            "keys": [
-              "Get",
-              "List",
-              "Update",
-              "Create",
-              "Import",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "Decrypt",
-              "Encrypt",
-              "UnwrapKey",
-              "WrapKey",
-              "Sign",
-              "Purge",
-              "Rotate",
-              "Verify",
-              "GetRotationPolicy",
-              "SetRotationPolicy"
-            ],
-            "secrets": [
-              "Get",
-              "List",
-              "Set",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "Purge"
-            ],
-            "certificates": [
-              "Get",
-              "List",
-              "Update",
-              "Create",
-              "Import",
-              "Delete",
-              "Recover",
-              "Backup",
-              "Restore",
-              "ManageContacts",
-              "ManageIssuers",
-              "GetIssuers",
-              "ListIssuers",
-              "SetIssuers",
-              "DeleteIssuers",
-              "Purge"
-            ]
-          }
-        }
-        ],
-        "enabledForDeployment": "[parameters('enabledForDeployment')]",
-        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
-        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
         "enableSoftDelete": true,
-        "softDeleteRetentionInDays": 7,
-        "networkAcls": "[variables('networkAcls')]"
+        "enableRbacAuthorization": true,
+        "softDeleteRetentionInDays": 7
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[variables('kvAdminAssignmentName')]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('kvAdminDefinitionId'))]",
+        "principalId": "[parameters('testApplicationOid')]",
+        "scope": "[resourceGroup().id]"
       }
     },
     {
@@ -378,13 +191,13 @@
         "name": "Standard_B1"
       },
       "properties": {
+        "publicNetworkAccess": "Enabled",
+        "networkAcls": "[variables('networkAcls')]",
         "tenantId": "[parameters('tenantId')]",
         "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
         "enablePurgeProtection": false,
         "enableSoftDelete": true,
-        "softDeleteRetentionInDays": 7,
-        "publicNetworkAccess": "Enabled",
-        "networkAcls": "[variables('networkAcls')]"
+        "softDeleteRetentionInDays": 7
       }
     },
     {
@@ -401,13 +214,12 @@
         "networkAcls": "[variables('networkAcls')]",
         "supportsHttpsTrafficOnly": true,
         "encryption": "[variables('encryption')]",
-        "accessTier": "Hot",
-        "minimumTlsVersion": "TLS1_2"
+        "accessTier": "Hot"
       }
     },
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices",
-      "apiVersion": "2022-05-01",
+      "apiVersion": "2019-06-01",
       "name": "[concat(variables('primaryAccountName'), '/default')]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName'))]"
@@ -441,7 +253,6 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2020-12-01",
       "name": "[variables('attestationFarm')]",
-      "condition": "[parameters('enableAttestation')]",
       "location": "[parameters('location')]",
       "kind": "linux",
       "sku": {
@@ -455,7 +266,6 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2020-12-01",
       "name": "[variables('attestationSite')]",
-      "condition": "[parameters('enableAttestation')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('attestationFarm'))]"
       ],
@@ -474,66 +284,6 @@
             }
           ]
         }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deploymentScripts",
-      "apiVersion": "2020-10-01",
-      "name": "createAddCertificate",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]",
-        "[resourceId('Microsoft.Authorization/roleAssignments', variables('bootstrapRoleAssignmentId'))]"
-      ],
-      "identity": {
-        "type": "UserAssigned",
-        "userAssignedIdentities": {
-          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]": {}
-        }
-      },
-      "kind": "AzurePowerShell",
-      "properties": {
-        "forceUpdateTag": "[parameters('utcValue')]",
-        "azPowerShellVersion": "5.0",
-        "timeout": "PT30M",
-        "arguments": "[format(' -vaultName {0} -certificateName {1} -subjectName {2}', variables('kvName'), parameters('certificateName'), parameters('subjectName'))]",
-        "scriptContent": "
-        param(
-    [string] [Parameter(Mandatory=$true)] $vaultName,
-    [string] [Parameter(Mandatory=$true)] $certificateName,
-    [string] [Parameter(Mandatory=$true)] $subjectName
-    )
-  
-    $ErrorActionPreference = 'Stop'
-    $DeploymentScriptOutputs = @{}
-  
-    $policy = New-AzKeyVaultCertificatePolicy -SubjectName $subjectName -IssuerName Self -ValidityInMonths 12 -Verbose
-  
-    Add-AzKeyVaultCertificate -VaultName $vaultName -Name $certificateName -CertificatePolicy $policy -Verbose
-  
-    $newCert = Get-AzKeyVaultCertificate -VaultName $vaultName -Name $certificateName
-  
-    $tries = 0
-    do {
-    Write-Host 'Waiting for certificate creation completion...'
-    Start-Sleep -Seconds 10
-    $operation = Get-AzKeyVaultCertificateOperation -VaultName $vaultName -Name $certificateName
-    $tries++
-  
-    if ($operation.Status -eq 'failed') {
-      throw 'Creating certificate $certificateName in vault $vaultName failed with error $($operation.ErrorMessage)'
-    }
-  
-    if ($tries -gt 120) {
-      throw 'Timed out waiting for creation of certificate $certificateName in vault $vaultName'
-    }
-    } while ($operation.Status -ne 'completed')
-  
-    $DeploymentScriptOutputs['certThumbprint'] = $newCert.Thumbprint
-    $newCert | Out-String
-    ",
-        "cleanupPreference": "OnSuccess",
-        "retentionInterval": "P1D"
       }
     }
   ],
@@ -555,29 +305,20 @@
       "type": "string",
       "value": "[parameters('testApplicationOid')]"
     },
-    "KEYVAULT_STORAGE_ENDPOINT_SUFFIX": {
+    "BLOB_STORAGE_URL": {
       "type": "string",
-      "value": "[parameters('storageEndpointSuffix')]"
-    },
-    "BLOB_STORAGE_ACCOUNT_NAME": {
-      "type": "string",
-      "value": "[variables('primaryAccountName')]"
-    },
-    "BLOB_PRIMARY_STORAGE_ACCOUNT_KEY": {
-      "type": "string",
-      "value": "[listKeys(variables('primaryAccountName'), variables('mgmtApiVersion')).keys[0].value]"
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName'))).primaryEndpoints.blob]"
     },
     "BLOB_STORAGE_SAS_TOKEN": {
       "type": "string",
       "value": "[listAccountSas(variables('primaryAccountName'), '2019-06-01', variables('accountSasProperties')).accountSasToken]"
     },
-    "BLOB_CONTAINER_NAME" : {
+    "BLOB_CONTAINER_NAME": {
       "type": "string",
       "value": "[variables('blobContainerName')]"
     },
     "AZURE_KEYVAULT_ATTESTATION_URL": {
       "type": "string",
-      "condition": "[parameters('enableAttestation')]",
       "value": "[format('https://{0}/', reference(variables('attestationSite')).defaultHostName)]"
     }
   }

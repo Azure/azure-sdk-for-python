@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.web import WebSiteManagementClient
 
 """
@@ -29,7 +30,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.get_private_endpoint_connection(
+    response = client.web_apps.get_private_endpoint_connection(
         resource_group_name="rg",
         name="testSite",
         private_endpoint_connection_name="connection",
@@ -37,6 +38,7 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/GetSitePrivateEndpointConnection.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/GetSitePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()
+n()

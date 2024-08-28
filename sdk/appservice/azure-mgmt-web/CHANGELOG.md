@@ -1,5 +1,32 @@
 # Release History
 
+## 7.3.1 (2024-08-19)
+
+### Bugs Fixed
+
+  - Fix type of property instance_count in model FunctionsAlwaysReadyConfig from float to int
+  - Fix type of property maximum_instance_count in model FunctionsScaleAndConcurrency from float to int
+  - Fix type of property instance_memory_mb in model FunctionsScaleAndConcurrency from float to int
+  - Fix type of property per_instance_concurrency in model FunctionsScaleAndConcurrencyTriggersHttp from float to int
+
+## 7.3.0 (2024-06-17)
+
+### Features Added
+
+  - Added operation WebAppsOperations.create_or_update_site_container
+  - Added operation WebAppsOperations.create_or_update_site_container_slot
+  - Added operation WebAppsOperations.delete_site_container
+  - Added operation WebAppsOperations.delete_site_container_slot
+  - Added operation WebAppsOperations.get_site_container
+  - Added operation WebAppsOperations.get_site_container_slot
+  - Added operation WebAppsOperations.list_site_containers
+  - Added operation WebAppsOperations.list_site_containers_slot
+  - Model AzureStorageInfoValue has a new parameter protocol
+  - Model Site has a new parameter dns_configuration
+  - Model Site has a new parameter function_app_config
+  - Model Site has a new parameter vnet_backup_restore_enabled
+  - Model SitePatchResource has a new parameter dns_configuration
+
 ## 7.2.0 (2023-11-20)
 
 ### Features Added

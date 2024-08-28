@@ -27,10 +27,9 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
 def main():
     client = SelfHelpMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.check_name_availability.post(
+    response = client.check_name_availability.check_availability(
         scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6",
     )
     print(response)
