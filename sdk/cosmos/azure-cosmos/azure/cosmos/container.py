@@ -1310,14 +1310,28 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
 
-    def read_feed_ranges(  # pylint: disable=unused-argument
+    def read_feed_ranges(
             self,
-            **kwargs: Any
-    ) -> List[str]:
+            *,
+            force_refresh: Optional[bool] = False,
+            **kwargs: Any) -> List[str]:
+
+        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+
+        :param bool force_refresh:
+            Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
+        :returns: A list representing the feed ranges in base64 encoded string
+        :rtype: List[str]
+
+        """
+        if force_refresh is True:
+            self.client_connection.refresh_routing_map_provider()
+
         partition_key_ranges =\
             self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,
-                [Range("", "FF", True, False)]) # default to full range
+                [Range("", "FF", True, False)], # default to full range
+                **kwargs)
 
         return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
                 for partitionKeyRange in partition_key_ranges]
