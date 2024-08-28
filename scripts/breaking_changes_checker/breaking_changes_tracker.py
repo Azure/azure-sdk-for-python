@@ -74,7 +74,7 @@ class BreakingChangesTracker:
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
         "Publicly exposed function '{}' had default value '{}' removed from its parameter '{}'"
     CHANGED_PARAMETER_ORDERING_MSG = \
-        "'{}.{}' had its parameters re-ordered from '{}' to '{}'"
+        "'{}.{}' method had its parameters re-ordered from '{}' to '{}'"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
         "Publicly exposed function '{}' had its parameters re-ordered from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_MSG = \
