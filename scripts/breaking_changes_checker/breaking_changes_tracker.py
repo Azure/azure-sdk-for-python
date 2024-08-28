@@ -588,15 +588,15 @@ class BreakingChangesTracker:
                 return False
         return True
 
-    def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
+    def get_reportable_changes(self, ignore_changes: Dict, changes_list: Dict) -> List:
         ignored = []
         # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
             if re.findall(ignored_package, self.package_name):
                 ignored.extend(ignore_rules)
 
-        # Remove ignored breaking changes from list of reportable changes
-        bc_copy = deepcopy(self.breaking_changes)
+        # Remove ignored changes from list of reportable changes
+        bc_copy = deepcopy(changes_list)
         for bc in bc_copy:
             _, bc_type, module_name, *args = bc
             class_name = args[0] if args else None
@@ -607,17 +607,17 @@ class BreakingChangesTracker:
                 suppression = Suppression(*rule)
 
                 if suppression.parameter_or_property_name is not None:
-                    # If the ignore rule is for a property or parameter, we should check up to that level on the original breaking change
+                    # If the ignore rule is for a property or parameter, we should check up to that level on the original change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
-                        self.breaking_changes.remove(bc)
+                        changes_list.remove(bc)
                         break
                 elif self.match((bc_type, module_name, class_name, function_name), suppression):
-                    self.breaking_changes.remove(bc)
+                    changes_list.remove(bc)
                     break
 
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
-        self.get_reportable_breaking_changes(ignore_changes)
+        self.get_reportable_changes(ignore_changes, self.breaking_changes)
 
         # If there are no breaking changes after the ignore check, return early
         if not self.breaking_changes:
