@@ -38,7 +38,12 @@ def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled: bool)
     if origin is None or not _validate(known_domain, origin.target):
         return []
 
-    srv_records = [origin] + _find_replicas(origin.target)
+    replicas = _find_replicas(origin.target)
+
+    if not replicas:
+        return None  # Timeout
+
+    srv_records = [origin] + replicas
     endpoints = []
     if endpoint.startswith(HTTPS_PREFIX):
         endpoint = endpoint[len(HTTPS_PREFIX) :]
@@ -63,7 +68,9 @@ def _find_replicas(origin):
     while True:
         request = f"_alt{str(i)}._tcp.{origin}"
         answers = _request_record(request)
-        if not answers:
+        if answers is None:
+            return None  # Timeout
+        if len(answers) == 0:
             break
         for answer in answers:
             replicas.append(SRVRecord(answer))
@@ -77,10 +84,10 @@ def _request_record(request):
         try:
             return dns.resolver.resolve(request, SRV)
         except (NXDOMAIN, YXDOMAIN):  # cspell:disable-line
-            break
+            return []  # No records found
         except (LifetimeTimeout, NoNameservers):
             continue
-    return None
+    return None  # Timeout
 
 
 def _validate(known_domain, endpoint):

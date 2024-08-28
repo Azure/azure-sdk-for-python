@@ -1305,7 +1305,8 @@
         "mros",
         "Nify",
         "ctxt",
-        "wday"
+        "wday",
+        "dtype"
       ]
     },
     {
@@ -1818,7 +1819,12 @@
         "Nify",
         "loinc",
         "wday",
-        "SNOMED"
+        "SNOMED",
+        "lobulated",
+        "pericholecystic",
+        "craniocaudally",
+        "angiomyolipomas",
+        "Omnipaque"
       ]
     },
     {

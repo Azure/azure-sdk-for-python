@@ -18,6 +18,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.core.credentials import TokenCredential
+from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
 )
@@ -70,6 +71,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             if list_secrets_response.properties.credentials is not None:
                 connection.credentials.key = list_secrets_response.properties.credentials.key
 
+    @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> WorkspaceConnection:
         """Get a connection by name.
@@ -98,10 +100,11 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             self._try_fill_api_key(connection)
         return connection  # type: ignore[return-value]
 
+    @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, workspace_connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
-    ) -> Optional[WorkspaceConnection]:
+    ) -> WorkspaceConnection:
         """Create or update a connection.
 
         :param workspace_connection: Definition of a Workspace Connection or one of its subclasses
@@ -126,8 +129,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             self._try_fill_api_key(conn)
         return conn
 
+    @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str) -> None:
+    def delete(self, name: str, **kwargs: Any) -> None:
         """Delete the connection.
 
         :param name: Name of the connection.
@@ -138,8 +142,10 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             connection_name=name,
             workspace_name=self._workspace_name,
             **self._scope_kwargs,
+            **kwargs,
         )
 
+    @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
