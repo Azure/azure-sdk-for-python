@@ -86,21 +86,22 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-class TestAAD(unittest.TestCase):
+class TestAADAsync(unittest.TestCase):
     client: CosmosClient = None
     database: DatabaseProxy = None
     container: ContainerProxy = None
     configs = test_config.TestConfig
     host = configs.host
+    masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
 
     @classmethod
     async def setUpClass(cls):
-        cls.client = CosmosClient(cls.host, cls.host)
+        cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-    async def test_aad_credentials(self):
+    async def test_aad_credentials_async(self):
         aad_client = CosmosClient(self.host, self.credential)
         # Do any R/W data operations with your authorized AAD client
 
