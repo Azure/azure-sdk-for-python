@@ -90,6 +90,30 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
+    async def test_upload_data_substream(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.file_system._config.min_large_chunk_upload_threshold = 1  # Set less than chunk size to enable substream
+        file = self.file_system.get_file_client(self._get_file_reference())
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        data = b'abc' * 512 + b'abcde'
+        io = BytesIO(data)
+
+        # Act
+        await file.upload_data(io, overwrite=True, validate_content=a, chunk_size=512, raw_request_hook=assert_method)
+
+        # Assert
+        content = await file.download_file()
+        assert await content.read() == data
+        await self._teardown()
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
     async def test_append_data(self, a, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

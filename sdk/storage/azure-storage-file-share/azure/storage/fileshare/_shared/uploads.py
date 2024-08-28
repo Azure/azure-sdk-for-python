@@ -499,10 +499,19 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 
     def _upload_substream_block(self, index, block_stream):
         try:
+            data_length = len(block_stream)
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                block_stream = StructuredMessageEncodeStream(
+                    block_stream,
+                    len(block_stream),
+                    StructuredMessageProperties.CRC64)
+
             self.service.append_data(
                 body=block_stream,
                 position=index,
                 content_length=len(block_stream),
+                structured_body_type=SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None,
+                structured_content_length=data_length if self.validate_content == ChecksumAlgorithm.CRC64 else None,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -510,6 +519,7 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
             )
         finally:
             block_stream.close()
+        return None
 
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
