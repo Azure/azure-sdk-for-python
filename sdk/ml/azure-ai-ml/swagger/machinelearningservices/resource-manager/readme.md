@@ -23,6 +23,7 @@ These are the global settings for the Machine Learning Services API.
 
 ```yaml
 openapi-type: arm
+tag: package-preview-2024-07
 ```
 
 ### Transformation
@@ -53,9 +54,9 @@ These settings apply only when `--tag=v2022-05-01` is specified on the command l
 
 ```yaml $(tag) == 'v2022-05-01'
 input-file:
-  - Microsoft.MachineLearningServices/stable/2022-05-01/mfe.json
-  - Microsoft.MachineLearningServices/stable/2022-05-01/machineLearningServices.json
-  - Microsoft.MachineLearningServices/stable/2022-05-01/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2022-05-01/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2022-05-01/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2022-05-01/workspaceFeatures.json
 output-folder: $(python-sdks-folder)/v2022_05_01
 ```
 
@@ -65,7 +66,7 @@ These settings apply only when `--tag=v2022-02-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2022-02-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2022-02-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-02-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2022_02_01_preview
 ```
 
@@ -75,8 +76,8 @@ These settings apply only when `--tag=v2022-01-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2022-01-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2022-01-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2022-01-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-01-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-01-01-preview/workspaceFeatures.json
 output-folder: $(python-sdks-folder)/v2022_01_01_preview
 ```
 
@@ -136,10 +137,10 @@ These settings apply only when `--tag=v2022-10-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2022-10-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2022-10-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2022-10-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2022-10-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2022-10-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-10-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-10-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-10-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-10-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2022_10_01_preview
 ```
 
@@ -149,10 +150,10 @@ These settings apply only when `--tag=v2023-0201-preview` is specified on the co
 
 ```yaml $(tag) == 'v2023-02-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-02-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-02-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-02-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-02-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2023_02_01_preview
 ```
 
@@ -162,10 +163,10 @@ These settings apply only when `--tag=v2022-12-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2022-12-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2022-12-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2022-12-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2022-12-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2022-12-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-12-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-12-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-12-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2022-12-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2022_12_01_preview
 ```
 
@@ -175,10 +176,10 @@ These settings apply only when `--tag=v2023-04-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2023-04-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2023-04-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-04-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-04-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-04-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2023_04_01_preview
 ```
 
@@ -188,10 +189,10 @@ These settings apply only when `--tag=v2023-04-01` is specified on the command l
 
 ```yaml $(tag) == 'v2023-04-01'
 input-file:
-  - Microsoft.MachineLearningServices/stable/2023-04-01/machineLearningServices.json
-  - Microsoft.MachineLearningServices/stable/2023-04-01/registries.json
-  - Microsoft.MachineLearningServices/stable/2023-04-01/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/stable/2023-04-01/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-04-01/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-04-01/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-04-01/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-04-01/mfe.json
 output-folder: $(python-sdks-folder)/v2023_04_01
 ```
 
@@ -201,11 +202,11 @@ These settings apply only when `--tag=v2023-06-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2023-06-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2023-06-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2023-06-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2023-06-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2023-06-01-preview/mfe.json
-  - Microsoft.MachineLearningServices/preview/2023-06-01-preview/workspaceRP.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-06-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-06-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-06-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-06-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-06-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2023_06_01_preview
 ```
 
@@ -215,11 +216,11 @@ These settings apply only when `--tag=v2023-08-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2023-08-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2023-08-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2023-08-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2023-08-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2023-08-01-preview/mfe.json
-  - Microsoft.MachineLearningServices/preview/2023-08-01-preview/workspaceRP.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-08-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-08-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-08-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-08-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2023-08-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2023_08_01_preview
 ```
 
@@ -229,10 +230,10 @@ These settings apply only when `--tag=v2023-10-01` is specified on the command l
 
 ```yaml $(tag) == 'v2023-10-01'
 input-file:
-  - Microsoft.MachineLearningServices/stable/2023-10-01/machineLearningServices.json
-  - Microsoft.MachineLearningServices/stable/2023-10-01/registries.json
-  - Microsoft.MachineLearningServices/stable/2023-10-01/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/stable/2023-10-01/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-10-01/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-10-01/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-10-01/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2023-10-01/mfe.json
 output-folder: $(python-sdks-folder)/v2023_10_01
 ```
 
@@ -242,11 +243,11 @@ These settings apply only when `--tag=v2024-01-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2024-01-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/mfe.json
-  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceRP.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-01-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-01-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_01_01_preview
 ```
 
@@ -256,11 +257,11 @@ These settings apply only when `--tag=v2024-04-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2024-04-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/mfe.json
-  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceRP.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-04-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-04-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-04-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_04_01_preview
 ```
 
@@ -270,11 +271,11 @@ These settings apply only when `--tag=v2024-07-01-preview` is specified on the c
 
 ```yaml $(tag) == 'v2024-07-01-preview'
 input-file:
-  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/machineLearningServices.json
-  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/registries.json
-  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceFeatures.json
-  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/mfe.json
-  - Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceRP.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-07-01-preview/machineLearningServices.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-07-01-preview/registries.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceFeatures.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-07-01-preview/mfe.json
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/preview/2024-07-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_07_01_preview
 ```
 
