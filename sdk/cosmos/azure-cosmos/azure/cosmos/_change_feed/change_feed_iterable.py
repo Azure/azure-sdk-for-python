@@ -21,12 +21,12 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, List, Optional, Callable
 
 from azure.core.paging import PageIterator
 
 from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV1, ChangeFeedState
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 from azure.cosmos._utils import is_base64_encoded
 
 
@@ -39,11 +39,11 @@ class ChangeFeedIterable(PageIterator):
     def __init__(
         self,
         client,
-        options,
-        fetch_function=None,
-        collection_link=None,
-        continuation_token=None,
-    ):
+        options: Dict[str, Any],
+        fetch_function=Optional[Callable[[Dict[str, Any]], Tuple[List[Dict[str, Any]], Dict[str, Any]]]],
+        collection_link=Optional[str],
+        continuation_token=Optional[str],
+    ) -> None:
         """Instantiates a ChangeFeedIterable for non-client side partitioning queries.
 
         :param CosmosClient client: Instance of document client.
@@ -85,7 +85,7 @@ class ChangeFeedIterable(PageIterator):
 
         super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-    def _unpack(self, block):
+    def _unpack(self, block) -> Tuple[str, List[Dict[str, Any]]]:
         continuation = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
@@ -94,11 +94,8 @@ class ChangeFeedIterable(PageIterator):
             self._did_a_call_already = False
         return continuation, block
 
-    def _fetch_next(self, *args):  # pylint: disable=unused-argument
+    def _fetch_next(self, *args) -> List[Dict[str, Any]]:  # pylint: disable=unused-argument
         """Return a block of results with respecting retry policy.
-
-        This method only exists for backward compatibility reasons. (Because
-        QueryIterable has exposed fetch_next_block api).
 
         :param Any args:
         :return: List of results.
@@ -113,7 +110,7 @@ class ChangeFeedIterable(PageIterator):
             raise StopIteration
         return block
 
-    def _initialize_change_feed_fetcher(self):
+    def _initialize_change_feed_fetcher(self) -> None:
         change_feed_state_context = self._options.pop("changeFeedStateContext")
         change_feed_state = \
             ChangeFeedState.from_json(
@@ -123,7 +120,7 @@ class ChangeFeedIterable(PageIterator):
 
         self._options["changeFeedState"] = change_feed_state
 
-        if isinstance(change_feed_state, ChangeFeedStateV1):
+        if change_feed_state.version == ChangeFeedStateVersion.V1:
             self._change_feed_fetcher = ChangeFeedFetcherV1(
                 self._client,
                 self._collection_link,
@@ -140,11 +137,11 @@ class ChangeFeedIterable(PageIterator):
 
     def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
 
-        if change_feed_state_context.get("continuationPkRangeId"):
+        if change_feed_state_context.get("continuationPkRangeId") is not None:
             # if continuation token is in v1 format, throw exception if feed_range is set
-            if change_feed_state_context.get("feedRange"):
+            if change_feed_state_context.get("feedRange") is not None:
                 raise ValueError("feed_range and continuation are incompatible")
-        elif change_feed_state_context.get("continuationFeedRange"):
+        elif change_feed_state_context.get("continuationFeedRange") is not None:
             # if continuation token is in v2 format, since the token itself contains the full change feed state
             # so we will ignore other parameters (including incompatible parameters) if they passed in
             pass

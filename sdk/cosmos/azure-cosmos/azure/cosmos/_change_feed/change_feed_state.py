@@ -27,6 +27,7 @@ import base64
 import collections
 import json
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import Optional, Union, List, Any, Dict, Deque
 
 from azure.cosmos import http_constants
@@ -41,9 +42,15 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.exceptions import CosmosFeedRangeGoneError
 from azure.cosmos.partition_key import _Empty, _Undefined
 
+class ChangeFeedStateVersion(Enum):
+    V1 = "v1"
+    V2 = "v2"
 
 class ChangeFeedState(ABC):
     version_property_name = "v"
+
+    def __init__(self, version: ChangeFeedStateVersion) -> None:
+        self.version = version
 
     @abstractmethod
     def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
@@ -106,7 +113,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             change_feed_start_from: ChangeFeedStartFromInternal,
             partition_key_range_id: Optional[str] = None,
             partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]] = None, # pylint: disable=line-too-long
-            continuation: Optional[str] = None):
+            continuation: Optional[str] = None) -> None:
 
         self._container_link = container_link
         self._container_rid = container_rid
@@ -114,6 +121,7 @@ class ChangeFeedStateV1(ChangeFeedState):
         self._partition_key_range_id = partition_key_range_id
         self._partition_key = partition_key
         self._continuation = continuation
+        super(ChangeFeedStateV1).__init__(ChangeFeedStateVersion.V1)
 
     @property
     def container_rid(self):
@@ -187,7 +195,8 @@ class ChangeFeedStateV2(ChangeFeedState):
             container_rid: str,
             feed_range: FeedRange,
             change_feed_start_from: ChangeFeedStartFromInternal,
-            continuation: Optional[FeedRangeCompositeContinuation]):
+            continuation: Optional[FeedRangeCompositeContinuation]
+    ) -> None:
 
         self._container_link = container_link
         self._container_rid = container_rid
@@ -207,13 +216,15 @@ class ChangeFeedStateV2(ChangeFeedState):
         else:
             self._continuation = continuation
 
+        super(ChangeFeedStateV2).__init__(ChangeFeedStateVersion.V2)
+
     @property
     def container_rid(self) -> str :
         return self._container_rid
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            self.version_property_name: "V2",
+            self.version_property_name: ChangeFeedStateVersion.V2.value,
             self.container_rid_property_name: self._container_rid,
             self.change_feed_mode_property_name: "Incremental",
             self.change_feed_start_from_property_name: self._change_feed_start_from.to_dict(),

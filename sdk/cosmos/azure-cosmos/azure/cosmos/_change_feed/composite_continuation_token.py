@@ -22,41 +22,41 @@
 """Internal class for change feed composite continuation token in the Azure Cosmos
 database service.
 """
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from azure.cosmos._routing.routing_range import Range
 
 
-class CompositeContinuationToken(object):
+class CompositeContinuationToken:
     token_property_name = "token"
     feed_range_property_name = "range"
 
-    def __init__(self, feed_range: Range, token: Optional[str] = None):
+    def __init__(self, feed_range: Range, token: Optional[str] = None) -> None:
         if feed_range is None:
             raise ValueError("Missing required parameter feed_range")
 
         self._token = token
         self._feed_range = feed_range
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             self.token_property_name: self._token,
-            self.feed_range_property_name: self._feed_range.to_dict()
+            self.feed_range_property_name: self.feed_range.to_dict()
         }
 
     @property
-    def feed_range(self):
+    def feed_range(self) -> Range:
         return self._feed_range
 
     @property
-    def token(self):
+    def token(self) -> str:
         return self._token
 
-    def update_token(self, etag):
+    def update_token(self, etag) -> None:
         self._token = etag
 
     @classmethod
-    def from_json(cls, data):
+    def from_json(cls, data) -> 'CompositeContinuationToken':
         token = data.get(cls.token_property_name)
         if token is None:
             raise ValueError(f"Invalid composite token [Missing {cls.token_property_name}]")
@@ -69,4 +69,4 @@ class CompositeContinuationToken(object):
         return cls(feed_range=feed_range, token=token)
 
     def __repr__(self):
-        return f"CompositeContinuationToken(token={self.token}, range={self._feed_range})"
+        return f"CompositeContinuationToken(token={self.token}, range={self.feed_range})"

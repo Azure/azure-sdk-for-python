@@ -490,68 +490,97 @@ class ContainerProxy:
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Get a sorted list of items that were changed in the entire container,
+         in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+        :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current (NOW)
-        :keyword PartitionKeyType partition_key: The partition key that is used to define the scope (logical partition or a subset of a container)
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        # pylint: enable=line-too-long
         ...
 
     @overload
     def query_items_change_feed(
             self,
             *,
-            feed_range: Optional[str] = None,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            partition_key: PartitionKeyType,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+        """
+        ...
+
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            feed_range: str,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str feed_range: The feed range that is used to define the scope. By default, the scope will be the entire container.
+        :keyword str feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time: The start time to start processing chang feed items.
+        :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current (NOW)
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        # pylint: enable=line-too-long
         ...
 
     @overload
     def query_items_change_feed(
             self,
             *,
-            continuation: Optional[str] = None,
+            continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
@@ -559,6 +588,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -566,73 +596,59 @@ class ContainerProxy:
         ...
 
     @distributed_trace
-    def query_items_change_feed(
+    def query_items_change_feed( # pylint: disable=unused-argument
             self,
             *args: Any,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         # pylint: disable=too-many-statements
-        if kwargs.get("priority"):
+        if kwargs.get("priority") is not None:
             kwargs['priority'] = kwargs['priority']
         feed_options = _build_options(kwargs)
 
         change_feed_state_context = {}
         # Back compatibility with deprecation warnings for partition_key_range_id
-        if (args and args[0] is not None) or kwargs.get("partition_key_range_id"):
+        if kwargs.get("partition_key_range_id") is not None:
             warnings.warn(
                 "partition_key_range_id is deprecated. Please pass in feed_range instead.",
                 DeprecationWarning
             )
 
-            try:
-                change_feed_state_context["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
-            except KeyError:
-                change_feed_state_context['partitionKeyRangeId'] = args[0]
+            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
 
         # Back compatibility with deprecation warnings for is_start_from_beginning
-        if (len(args) >= 2 and args[1] is not None) or kwargs.get("is_start_from_beginning"):
+        if kwargs.get("is_start_from_beginning") is not None:
             warnings.warn(
                 "is_start_from_beginning is deprecated. Please pass in start_time instead.",
                 DeprecationWarning
             )
 
-            try:
-                is_start_from_beginning = kwargs.pop('is_start_from_beginning')
-            except KeyError:
-                is_start_from_beginning = args[1]
+            if kwargs.get("start_time") is not None:
+                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
 
-            if is_start_from_beginning:
+            is_start_from_beginning = kwargs.pop('is_start_from_beginning')
+            if is_start_from_beginning is True:
                 change_feed_state_context["startTime"] = "Beginning"
 
         # parse start_time
-        if kwargs.get("start_time"):
-            if change_feed_state_context.get("startTime") is not None:
-                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
-
+        if kwargs.get("start_time") is not None:
             start_time = kwargs.pop('start_time')
             if not isinstance(start_time, (datetime, str)):
                 raise TypeError(
-                    "'start_time' must be either a datetime object, or either the values 'now' or 'beginning'.")
+                    "'start_time' must be either a datetime object, or either the values 'Now' or 'Beginning'.")
             change_feed_state_context["startTime"] = start_time
 
         # parse continuation token
-        if len(args) >= 3 and args[2] is not None or feed_options.get("continuation"):
-            try:
-                continuation = feed_options.pop('continuation')
-            except KeyError:
-                continuation = args[2]
-            change_feed_state_context["continuation"] = continuation
+        if feed_options.get("continuation") is not None:
+            change_feed_state_context["continuation"] = feed_options.pop('continuation')
 
-        if len(args) >= 4 and args[3] is not None or kwargs.get("max_item_count"):
-            try:
-                feed_options["maxItemCount"] = kwargs.pop('max_item_count')
-            except KeyError:
-                feed_options["maxItemCount"] = args[3]
+        if kwargs.get("max_item_count") is not None:
+            feed_options["maxItemCount"] = kwargs.pop('max_item_count')
 
-        if kwargs.get("partition_key"):
+        if kwargs.get("partition_key") is not None:
             change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop("partition_key"))
 
-        if kwargs.get("feed_range"):
+        if kwargs.get("feed_range") is not None:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
         feed_options["containerProperties"] = self._get_properties()

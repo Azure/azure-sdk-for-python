@@ -45,7 +45,7 @@ class FeedRangePartitionKey(FeedRange):
     def __init__(
             self,
             pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range):  # pylint: disable=line-too-long
+            feed_range: Range) -> None:  # pylint: disable=line-too-long
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
@@ -87,7 +87,7 @@ class FeedRangePartitionKey(FeedRange):
 class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
 
-    def __init__(self, feed_range: Range):
+    def __init__(self, feed_range: Range) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 

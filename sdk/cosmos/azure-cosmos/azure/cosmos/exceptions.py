@@ -137,7 +137,7 @@ class CosmosClientTimeoutError(AzureError):
 
 
 class CosmosFeedRangeGoneError(CosmosHttpResponseError):
-    """An HTTP error response with status code 404."""
+    """An HTTP error response with status code 410."""
     def __init__(self, message=None, response=None, **kwargs):
         """
         :param int sub_status_code: HTTP response sub code.

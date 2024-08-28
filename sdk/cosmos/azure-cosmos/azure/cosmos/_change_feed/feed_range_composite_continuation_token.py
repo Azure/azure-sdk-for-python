@@ -31,7 +31,7 @@ from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
 
-class FeedRangeCompositeContinuation(object):
+class FeedRangeCompositeContinuation:
     _version_property_name = "v"
     _container_rid_property_name = "rid"
     _continuation_property_name = "continuation"
@@ -40,7 +40,7 @@ class FeedRangeCompositeContinuation(object):
             self,
             container_rid: str,
             feed_range: FeedRange,
-            continuation: Deque[CompositeContinuationToken]):
+            continuation: Deque[CompositeContinuationToken]) -> None:
         if container_rid is None:
             raise ValueError("container_rid is missing")
 
@@ -51,7 +51,7 @@ class FeedRangeCompositeContinuation(object):
         self._initial_no_result_range = None
 
     @property
-    def current_token(self):
+    def current_token(self) -> CompositeContinuationToken:
         return self._current_token
 
     def to_dict(self) -> Dict[str, Any]:
