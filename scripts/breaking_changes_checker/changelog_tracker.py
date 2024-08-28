@@ -5,10 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from copy import deepcopy
 from enum import Enum
+import re
 from typing import Any, Dict, List, Union
 import jsondiff
-from breaking_changes_tracker import BreakingChangesTracker
+from breaking_changes_tracker import BreakingChangesTracker, Suppression
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
@@ -154,10 +156,37 @@ class ChangelogTracker(BreakingChangesTracker):
                     )
                 )
 
+    def get_reportable_features_added(self, ignore_changes: Dict) -> List:
+        ignored = []
+        # Match all ignore rules that should apply to this package
+        for ignored_package, ignore_rules in ignore_changes.items():
+            if re.findall(ignored_package, self.package_name):
+                ignored.extend(ignore_rules)
+
+        # Remove ignored changes from list of reportable changes
+        fa_copy = deepcopy(self.features_added)
+        for fa in fa_copy:
+            _, bc_type, module_name, *args = fa
+            class_name = args[0] if args else None
+            function_name = args[1] if len(args) > 1 else None
+            parameter_name = args[2] if len(args) > 2 else None
+
+            for rule in ignored:
+                suppression = Suppression(*rule)
+
+                if suppression.parameter_or_property_name is not None:
+                    # If the ignore rule is for a property or parameter, we should check up to that level on the original change
+                    if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
+                        self.features_added.remove(fa)
+                        break
+                elif self.match((bc_type, module_name, class_name, function_name), suppression):
+                    self.features_added.remove(fa)
+                    break
+
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
         self.get_reportable_breaking_changes(ignore_changes)
-
+        self.get_reportable_features_added(ignore_changes)
         # Code borrowed and modified from the previous change log tool
         def _build_md(content: list, title: str, buffer: list):
             buffer.append(title)
