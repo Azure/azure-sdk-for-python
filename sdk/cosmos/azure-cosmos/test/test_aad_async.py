@@ -10,9 +10,9 @@ from io import StringIO
 import pytest
 from azure.core.credentials import AccessToken
 
-import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
+from azure.cosmos import exceptions
+from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 
 
 def _remove_padding(encoded_string):
@@ -34,7 +34,7 @@ def get_test_item(num):
 
 class CosmosEmulatorCredential(object):
 
-    def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
 
@@ -87,7 +87,7 @@ class CosmosEmulatorCredential(object):
 
 @pytest.mark.cosmosEmulator
 class TestAAD(unittest.TestCase):
-    client: cosmos_client.CosmosClient = None
+    client: CosmosClient = None
     database: DatabaseProxy = None
     container: ContainerProxy = None
     configs = test_config.TestConfig
@@ -95,28 +95,28 @@ class TestAAD(unittest.TestCase):
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
 
     @classmethod
-    def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.host)
+    async def setUpClass(cls):
+        cls.client = CosmosClient(cls.host, cls.host)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-    def test_aad_credentials(self):
-        aad_client = cosmos_client.CosmosClient(self.host, self.credential)
+    async def test_aad_credentials(self):
+        aad_client = CosmosClient(self.host, self.credential)
         # Do any R/W data operations with your authorized AAD client
 
         print("Container info: " + str(self.container.read()))
-        self.container.create_item(get_test_item(0))
-        read_rsp = self.container.read_item(item='Item_0', partition_key='pk')
-        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
+        await self.container.create_item(get_test_item(0))
+        read_rsp = await self.container.read_item(item='Item_0', partition_key='pk')
+        print("Point read result: " + str(read_rsp))
         assert read_rsp == get_test_item(0)
-        query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
+        query_results = list(await self.container.query_items(query='select * from c', partition_key='pk'))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
-        self.container.delete_item(item='Item_0', partition_key='pk')
+        await self.container.delete_item(item='Item_0', partition_key='pk')
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
-            aad_client.delete_database(self.configs.TEST_DATABASE_ID)
+            await aad_client.delete_database(self.configs.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")

@@ -248,9 +248,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("priorityLevel"):
         headers[http_constants.HttpHeaders.PriorityLevel] = options["priorityLevel"]
 
-    if cosmos_client_connection.master_key:
-        # formatdate guarantees RFC 1123 date format regardless of current locale
-        headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
+    # formatdate guarantees RFC 1123 date format regardless of current locale
+    headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
         resource_type = _internal_resourcetype(resource_type)

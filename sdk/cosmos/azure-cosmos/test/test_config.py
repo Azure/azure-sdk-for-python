@@ -12,6 +12,7 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from devtools_testutils.azure_recorded_testcase import get_credential
 
 try:
     import urllib3
@@ -30,6 +31,9 @@ class TestConfig(object):
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
+    is_emulator = host == 'https://localhost:8081/'
+    credential = get_credential()
+    credential_async = get_credential(is_async=True)
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
