@@ -8,9 +8,9 @@ from uuid import uuid4
 import jwt
 import pytest
 
-import promptflow.evals.evaluate._utils as ev_utils
+import azure.ai.evaluation.evaluate._utils as ev_utils
 from promptflow.azure._utils._token_cache import ArmTokenCache
-from promptflow.evals.evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation.evaluate._eval_run import EvalRun, RunStatus
 
 
 def generate_mock_token():
@@ -60,7 +60,7 @@ class TestEvalRun:
     )
     def test_end_raises(self, token_mock, status, should_raise, caplog):
         """Test that end run raises exception if incorrect status is set."""
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
                     with pytest.raises(ValueError) as cm:
@@ -72,7 +72,7 @@ class TestEvalRun:
 
     def test_run_logs_if_terminated(self, token_mock, caplog):
         """Test that run warn user if we are trying to terminate it twice."""
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -95,7 +95,7 @@ class TestEvalRun:
     def test_end_logs_if_fails(self, token_mock, caplog):
         """Test that if the terminal status setting was failed, it is logged."""
         with patch(
-            "promptflow.evals._http_utils.HttpPipeline.request",
+            "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[self._get_mock_create_resonse(), self._get_mock_end_response(500)],
         ):
             logger = logging.getLogger(EvalRun.__module__)
@@ -120,7 +120,7 @@ class TestEvalRun:
         mock_response_start = MagicMock()
         mock_response_start.status_code = 500
         mock_response_start.text = lambda: "Mock internal service error."
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=mock_response_start):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response_start):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -159,7 +159,7 @@ class TestEvalRun:
     def test_run_name(self, token_mock):
         """Test that the run name is the same as ID if name is not given."""
         mock_response = self._get_mock_create_resonse()
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=mock_response):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response):
             with EvalRun(
                 run_name=None,
                 tracking_uri="www.microsoft.com",
@@ -177,7 +177,7 @@ class TestEvalRun:
         """Test that the run name is not the same as id if it is given."""
         mock_response = self._get_mock_create_resonse()
         mock_response.json.return_value["run"]["info"]["run_name"] = "test"
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=mock_response):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response):
             with EvalRun(
                 run_name="test",
                 tracking_uri="www.microsoft.com",
@@ -194,7 +194,7 @@ class TestEvalRun:
 
     def test_get_urls(self, token_mock):
         """Test getting url-s from eval run."""
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 pass
         assert run.get_run_history_uri() == (
@@ -232,7 +232,7 @@ class TestEvalRun:
                 json.dump({"f1": 0.5}, fp)
 
         with patch(
-            "promptflow.evals._http_utils.HttpPipeline.request",
+            "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[
                 self._get_mock_create_resonse(),
                 mock_response,
@@ -252,7 +252,7 @@ class TestEvalRun:
                     kwargs = {"artifact_folder": tmp_path}
                 else:
                     kwargs = {"key": "f1", "value": 0.5}
-                with patch("promptflow.evals.evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
+                with patch("azure.ai.evaluation.evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
                     fn(**kwargs)
         assert len(caplog.records) == 1
         assert mock_response.text() in caplog.records[0].message
@@ -277,7 +277,7 @@ class TestEvalRun:
         expected_error,
     ):
         """Test that if artifact path is empty, or dies not exist we are logging the error."""
-        with patch("promptflow.evals._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 logger = logging.getLogger(EvalRun.__module__)
                 # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -326,7 +326,7 @@ class TestEvalRun:
         ) as run:
             assert len(caplog.records) == 1
             assert "The results will be saved locally, but will not be logged to Azure." in caplog.records[0].message
-            with patch("promptflow.evals.evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
+            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
                 run.log_artifact("mock_dir")
                 run.log_metric("foo", 42)
                 run.write_properties_to_run_history({"foo": "bar"})
@@ -349,7 +349,7 @@ class TestEvalRun:
             pf_run_mock.name = "mock_pf_run"
             pf_run_mock._experiment_name = "mock_pf_experiment"
         with patch(
-            "promptflow.evals._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse(status_code)
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse(status_code)
         ):
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, promptflow_run=pf_run_mock)
             assert run.status == RunStatus.NOT_STARTED, f"Get {run.status}, expected {RunStatus.NOT_STARTED}"
@@ -387,7 +387,7 @@ class TestEvalRun:
         mock_write.status_code = status_code
         mock_write.text = lambda: "Mock error"
         with patch(
-            "promptflow.evals._http_utils.HttpPipeline.request",
+            "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[self._get_mock_create_resonse(), mock_write, self._get_mock_end_response()],
         ):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
@@ -448,7 +448,7 @@ class TestEvalRun:
         """Test exception if the run was already started"""
         run = EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS)
         with patch(
-            "promptflow.evals._http_utils.HttpPipeline.request",
+            "azure.ai.evaluation._http_utils.HttpPipeline.request",
             return_value=self._get_mock_create_resonse(500 if status == RunStatus.BROKEN else 200),
         ):
             run._start_run()

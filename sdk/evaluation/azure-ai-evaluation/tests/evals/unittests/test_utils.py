@@ -1,6 +1,6 @@
 import pytest
 
-from promptflow.evals._common.utils import nltk_tokenize
+from azure.ai.evaluation._common.utils import nltk_tokenize
 
 
 @pytest.mark.unittest

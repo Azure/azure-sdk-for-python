@@ -46,8 +46,8 @@ except ImportError:
     AZURE_INSTALLED = False
 
 PROMPTFLOW_ROOT = Path(__file__) / "../../../.."
-CONNECTION_FILE = (PROMPTFLOW_ROOT / "promptflow-evals/connections.json").resolve().absolute().as_posix()
-RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "promptflow-evals/tests/recordings").resolve()
+CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation/connections.json").resolve().absolute().as_posix()
+RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/recordings").resolve()
 
 
 def pytest_configure():

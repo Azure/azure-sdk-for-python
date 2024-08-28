@@ -1,6 +1,6 @@
 import pytest
 
-from promptflow.evals.evaluators import ContentSafetyChatEvaluator
+from azure.ai.evaluation.evaluators import ContentSafetyChatEvaluator
 
 
 @pytest.mark.usefixtures("mock_project_scope")

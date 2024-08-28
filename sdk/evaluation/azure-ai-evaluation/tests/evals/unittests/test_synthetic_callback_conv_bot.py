@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from promptflow.evals.synthetic._conversation import (
+from azure.ai.evaluation.synthetic._conversation import (
     CallbackConversationBot,
     ConversationRole,
     OpenAIChatCompletionsModel,

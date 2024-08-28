@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from promptflow.evals.evaluators import FluencyEvaluator
+from azure.ai.evaluation.evaluators import FluencyEvaluator
 
 
 async def fluency_async_mock():

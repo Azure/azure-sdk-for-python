@@ -6,10 +6,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from promptflow.evals.evaluate import _utils as ev_utils
-from promptflow.evals.evaluate._eval_run import EvalRun
-from promptflow.evals.evaluate._evaluate import evaluate
-from promptflow.evals.evaluators._f1_score._f1_score import F1ScoreEvaluator
+from azure.ai.evaluation.evaluate import _utils as ev_utils
+from azure.ai.evaluation.evaluate._eval_run import EvalRun
+from azure.ai.evaluation.evaluate._evaluate import evaluate
+from azure.ai.evaluation.evaluators._f1_score._f1_score import F1ScoreEvaluator
 from promptflow.tracing import _start_trace
 
 try:
@@ -77,7 +77,7 @@ class TestMetricsUpload(object):
             workspace_name=project_scope["project_name"],
             ml_client=azure_ml_client,
         ) as ev_run:
-            with patch("promptflow.evals.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
+            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
                 ev_run.write_properties_to_run_history({"test": 42})
                 assert any(
                     lg_rec.levelno == logging.ERROR for lg_rec in caplog.records
@@ -105,7 +105,7 @@ class TestMetricsUpload(object):
         ) as ev_run:
             mock_response = MagicMock()
             mock_response.status_code = 418
-            with patch("promptflow.evals.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
+            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
                 ev_run.log_metric("f1", 0.54)
                 assert any(
                     lg_rec.levelno == logging.WARNING for lg_rec in caplog.records
@@ -139,7 +139,7 @@ class TestMetricsUpload(object):
             os.makedirs(os.path.join(tmp_path, "internal_dir"), exist_ok=True)
             with open(os.path.join(tmp_path, "internal_dir", "test.json"), "w") as fp:
                 json.dump({"internal_f1": 0.6}, fp)
-            with patch("promptflow.evals.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
+            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response):
                 ev_run.log_artifact(tmp_path)
                 assert any(
                     lg_rec.levelno == logging.WARNING for lg_rec in caplog.records

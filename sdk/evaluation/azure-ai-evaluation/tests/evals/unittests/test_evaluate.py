@@ -9,17 +9,17 @@ import pytest
 from pandas.testing import assert_frame_equal
 
 from promptflow.client import PFClient
-from promptflow.evals._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
-from promptflow.evals.evaluate import evaluate
-from promptflow.evals.evaluate._evaluate import _aggregate_metrics, _apply_target_to_data, _rename_columns_conditionally
-from promptflow.evals.evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
-from promptflow.evals.evaluators import (
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
+from azure.ai.evaluation.evaluate import evaluate
+from azure.ai.evaluation.evaluate._evaluate import _aggregate_metrics, _apply_target_to_data, _rename_columns_conditionally
+from azure.ai.evaluation.evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
+from azure.ai.evaluation.evaluators import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     GroundednessEvaluator,
     ProtectedMaterialEvaluator,
 )
-from promptflow.evals.evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation.evaluators._eci._eci import ECIEvaluator
 
 
 def _get_file(name):
@@ -389,7 +389,7 @@ class TestEvaluate:
         expected.at[3, "outputs.yeti.result"] = np.nan
         assert_frame_equal(expected, result_df)
 
-    @patch("promptflow.evals.evaluate._evaluate._evaluate")
+    @patch("azure.ai.evaluation.evaluate._evaluate._evaluate")
     def test_evaluate_main_entry_guard(self, mock_evaluate, evaluate_test_data_jsonl_file):
         err_msg = (
             "An attempt has been made to start a new process before the\n        "

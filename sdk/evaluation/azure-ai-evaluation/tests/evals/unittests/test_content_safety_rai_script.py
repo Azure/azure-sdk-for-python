@@ -10,8 +10,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.identity import DefaultAzureCredential
 
-from promptflow.evals._common.constants import EvaluationMetrics, HarmSeverityLevel, RAIService
-from promptflow.evals._common.rai_service import (
+from azure.ai.evaluation._common.constants import EvaluationMetrics, HarmSeverityLevel, RAIService
+from azure.ai.evaluation._common.rai_service import (
     _get_service_discovery_url,
     ensure_service_availability,
     evaluate_with_rai_service,
@@ -135,13 +135,13 @@ class TestContentSafetyEvaluator:
         ensure_service_availability()"""
 
     @pytest.mark.asyncio
-    @patch("promptflow.evals._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
+    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
     async def test_ensure_service_availability(self, client_mock):
         _ = await ensure_service_availability("dummy_url", "dummy_token")
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
-    @patch("promptflow.evals._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(9001, json={}))
+    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(9001, json={}))
     async def test_ensure_service_availability_service_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token")
@@ -149,7 +149,7 @@ class TestContentSafetyEvaluator:
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
-    @patch("promptflow.evals._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
+    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
     async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
@@ -158,7 +158,7 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.post",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.post",
         return_value=MockAsyncHttpResponse(
             202,
             json={"location": "this/is/the/dummy-operation-id"},
@@ -176,7 +176,7 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.post",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.post",
         return_value=MockAsyncHttpResponse(
             404,
             json={"location": "this/is/the/dummy-operation-id"},
@@ -211,11 +211,11 @@ class TestContentSafetyEvaluator:
         assert res == 100
 
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.get",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(200, json={"result": "stuff"}),
     )
-    @patch("promptflow.evals._common.constants.RAIService.TIMEOUT", 1)
-    @patch("promptflow.evals._common.constants.RAIService.SLEEP_TIME", 1.2)
+    @patch("azure.ai.evaluation._common.constants.RAIService.TIMEOUT", 1)
+    @patch("azure.ai.evaluation._common.constants.RAIService.SLEEP_TIME", 1.2)
     @pytest.mark.usefixtures("mock_token")
     @pytest.mark.asyncio
     async def test_fetch_result(self, client_mock, mock_token):
@@ -230,11 +230,11 @@ class TestContentSafetyEvaluator:
         assert res["result"] == "stuff"
 
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.get",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(404, json={"result": "stuff"}),
     )
-    @patch("promptflow.evals._common.constants.RAIService.TIMEOUT", 1)
-    @patch("promptflow.evals._common.constants.RAIService.SLEEP_TIME", 1.2)
+    @patch("azure.ai.evaluation._common.constants.RAIService.TIMEOUT", 1)
+    @patch("azure.ai.evaluation._common.constants.RAIService.SLEEP_TIME", 1.2)
     @pytest.mark.usefixtures("mock_token")
     @pytest.mark.asyncio
     async def test_fetch_result_timeout(self, client_mock, mock_token):
@@ -320,7 +320,7 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.get",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
             200, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
         ),
@@ -339,7 +339,7 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.get",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
             201, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
         ),
@@ -358,13 +358,13 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._http_utils.AsyncHttpPipeline.get",
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
             200, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
         ),
     )
     @patch(
-        "promptflow.evals._common.rai_service._get_service_discovery_url",
+        "azure.ai.evaluation._common.rai_service._get_service_discovery_url",
         return_value="https://www.url.com:123",
     )
     async def test_get_rai_svc_url(self, client_mock, discovery_mock):
@@ -382,27 +382,27 @@ class TestContentSafetyEvaluator:
 
     @pytest.mark.asyncio
     @patch(
-        "promptflow.evals._common.rai_service.fetch_or_reuse_token",
+        "azure.ai.evaluation._common.rai_service.fetch_or_reuse_token",
         return_value="dummy-token",
     )
     @patch(
-        "promptflow.evals._common.rai_service.get_rai_svc_url",
+        "azure.ai.evaluation._common.rai_service.get_rai_svc_url",
         return_value="www.rai_url.com",
     )
     @patch(
-        "promptflow.evals._common.rai_service.ensure_service_availability",
+        "azure.ai.evaluation._common.rai_service.ensure_service_availability",
         return_value=None,
     )
     @patch(
-        "promptflow.evals._common.rai_service.submit_request",
+        "azure.ai.evaluation._common.rai_service.submit_request",
         return_value="op_id",
     )
     @patch(
-        "promptflow.evals._common.rai_service.fetch_result",
+        "azure.ai.evaluation._common.rai_service.fetch_result",
         return_value="response_object",
     )
     @patch(
-        "promptflow.evals._common.rai_service.parse_response",
+        "azure.ai.evaluation._common.rai_service.parse_response",
         return_value="wow-that's-a-lot-of-patches",
     )
     @patch("azure.identity.DefaultAzureCredential")

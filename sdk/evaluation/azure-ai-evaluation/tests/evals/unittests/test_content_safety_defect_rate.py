@@ -4,8 +4,8 @@ import pathlib
 import pandas as pd
 import pytest
 
-from promptflow.evals.evaluate._evaluate import _aggregate_metrics
-from promptflow.evals.evaluators import ContentSafetyEvaluator
+from azure.ai.evaluation.evaluate._evaluate import _aggregate_metrics
+from azure.ai.evaluation.evaluators import ContentSafetyEvaluator
 
 
 def _get_file(name):

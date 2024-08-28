@@ -6,7 +6,7 @@ from typing import Any, List, Optional, Type
 
 import pytest
 
-from promptflow.evals import evaluators
+from azure.ai.evaluation import evaluators
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ class TestSaveEval:
 
     def test_load_and_run_evaluators(self, tmpdir, pf_client, data_file) -> None:
         """Test regular evaluator saving."""
-        from promptflow.evals.evaluators import F1ScoreEvaluator
+        from azure.ai.evaluation.evaluators import F1ScoreEvaluator
 
         pf_client.flows.save(F1ScoreEvaluator, path=tmpdir)
         run = pf_client.run(tmpdir, data=data_file)

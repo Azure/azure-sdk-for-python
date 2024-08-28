@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from promptflow.evals.evaluators import (
+from azure.ai.evaluation.evaluators import (
     BleuScoreEvaluator,
     ChatEvaluator,
     CoherenceEvaluator,
@@ -24,7 +24,7 @@ from promptflow.evals.evaluators import (
     SimilarityEvaluator,
     ViolenceEvaluator,
 )
-from promptflow.evals.evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation.evaluators._eci._eci import ECIEvaluator
 from promptflow.recording.record_mode import is_replay
 
 

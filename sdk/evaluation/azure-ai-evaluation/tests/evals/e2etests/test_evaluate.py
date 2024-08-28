@@ -8,8 +8,8 @@ import pandas as pd
 import pytest
 import requests
 
-from promptflow.evals.evaluate import evaluate
-from promptflow.evals.evaluators import (
+from azure.ai.evaluation.evaluate import evaluate
+from azure.ai.evaluation.evaluators import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
