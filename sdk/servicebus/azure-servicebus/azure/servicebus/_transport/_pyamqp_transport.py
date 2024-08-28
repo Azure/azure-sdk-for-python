@@ -832,7 +832,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             raise PyamqpTransport.create_servicebus_exception(logger, le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
-
+        except TimeoutError as te:
+            raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
+        except MessageLockLostError as mle:
+            raise mle
+        except SessionLockLostError as sle:
+            raise sle
         except AMQPException as ae:
             if (
                 ae.condition == ErrorCondition.IllegalState
@@ -841,8 +846,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
-        except TimeoutError as te:
-            raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
+        
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
