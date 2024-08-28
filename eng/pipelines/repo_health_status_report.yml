@@ -1,3 +1,7 @@
+parameters:
+  PythonVersion: ''
+
+
 jobs:
   - job: 'Generate_Health_Status_Report'
     displayName: 'Generate Health Status Report'
@@ -6,13 +10,26 @@ jobs:
       vmImage: MMSUbuntu20.04
     
     steps:
-    - task: UsePythonVersion@0
-      displayName: 'Use Python 3.11'
-      inputs:
-        versionSpec: '3.11'
+    - template: /eng/pipelines/templates/steps/use-python-version.yml
+      parameters:
+        versionSpec: '${{ parameters.PythonVersion }}'
 
-    - script: |
+    - template: /eng/pipelines/templates/steps/use-venv.yml
+      parameters:
+        Activate: false
+
+    - pwsh: |
+        if ($IsWindows) {
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
+        }
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $true
         python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
+        python -m pip freeze --all
+        Write-Host (Get-Command python).Source
       displayName: 'Prep Environment'
 
     - task: AzurePowerShell@5
