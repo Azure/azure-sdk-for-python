@@ -1,4 +1,4 @@
-# Azure AI Evaluation Client Library for Python
+# Azure AI Evaluation client library for Python
 
 ## Getting started
 
