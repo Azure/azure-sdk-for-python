@@ -29,7 +29,7 @@ class TestConfig(object):
                           'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
     host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
-    is_emulator = host == 'https://tomasvaron-cdb.documents.azure.com:443/'
+    is_emulator = host == 'https://localhost:8081/'
     is_live._cache = True if not is_emulator else False
     credential =  masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
