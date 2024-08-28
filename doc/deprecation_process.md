@@ -16,55 +16,56 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 ## README.md
 
-A disclaimer should be added directing to a replacement package and migration guide as necessary.
+A disclaimer should be added indicating end-of-life date of the package and directing to a replacement package and migration guide as necessary.
+  - (TODO: check with Laurent about end of life/deprecation policy) The package end-of-life date (same as the release date in the CHANGELOG.md) should be in the format `MM-DD-YYY`. In general, the dates of the service retirement and package end-of-life/deprecation should be aligned.
+    - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
   - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
-  - **NOTE**: While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package. 
+    - **NOTE**: You may decide to postpone or skip writing a migration guide based on downloads numbers (found on [pypistats](https://pypistats.org/), [pepy.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 
 Replace ALL existing text with a disclaimer in the following format.
 
-  - If a replacement package and migration guide exist.
+  - If a replacement package and migration guide exist:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-    
-    For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/), to continue receiving updates. Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading. Refer to our deprecation policy (https://azure.github.io/azure-sdk/policies_support.html) for more details.
     ```
 
-  - If a migration guide will not be provided.
+  - If a migration guide will not be provided:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/), to continue receiving updates.
     ```
 
-  - If the service has been retired and no replacement package exists.
+  - If a replacement package does not exist:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package is no longer being maintained, as the service has been retired. There is no replacement package for this package.
+    This package has been deprecated and will no longer be maintained after MM-DD-YYY.
     ```
 
-  - If the Azure service no longer exists, a new non-Azure service has replaced it, and existing customers should be directed to the new service's Rest API docs/repo.
+  - If the a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package is no longer being maintained. Please refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
     
-    For additional support, please open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
+    For additional support, open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
     ```
 
 ## CHANGELOG.md and _version.py
 
-- Update the version in the `azure/mypackage/_version.py` file to the next patch version. This file may be called `version.py` if your package is very old. For example:
-  - If the last released version was 1.2.3b1, the new version should be 1.2.4.
+- Update the version in the `azure/mypackage/_version.py` file to the next patch version if the package has had a stable release, or the next beta version if the package has only been in beta. This file may be called `version.py` if your package is very old. For example:
+  - If a stable version WAS NEVER RELEASED and the last released version was 1.0.0b1, the new version should be 1.0.0b2.
+  - If a stable version HAS BEEN RELEASED and the last released version was 1.2.3b1, the new version should be 1.2.4.
   - If the last released version was 1.2.3, the new version should be 1.2.4.
-- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`. No other changes/features added/breaking changes should be included for this version. For example:
+- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`, along with a release date. No other changes/features added/breaking changes should be included for this version. For example:
   ```md
   ## 1.2.4 (2023-03-31)
   
@@ -138,15 +139,29 @@ Check to make sure that the new version of the package has been released on PyPI
 
 # Step 5: Create a new PR to remove the package from CI
 
-- Remove the package artifact from `mypackage/ci.yml`. More specifically, remove the `name` and corresponding `safeName` lines from under `Artifacts` here:
-
-```yml
-extends:
-  parameters:
-    Artifacts:
-    - name: azure-mypackage    
-      safeName: azuremypackage
-```
+- You will see an `Artifacts` parameter in the `mypackage/ci.yml`.
+  ```yml
+  extends:
+    parameters:
+      ...
+      Artifacts:
+      - name: azure-mypackage
+        safeName: azuremypackage
+  ```
+ - If the only package listed is `azure-mypackage`, remove the `Artifacts` section altogether.
+    ```yml
+    extends:
+      parameters:
+        ...
+    ```
+ - If there are multiple packages listed, remove the `name` and corresponding `safeName` lines for only `azure-mypackage`.
+    ```yml
+    extends:
+      parameters:
+        ...
+        Artifacts:
+          ...
+    ```
 
 - Add the line `ci_enabled = false` to `azure-mypackage/pyproject.toml`.
 - Create a new PR targeting the `main` branch of the repository.
@@ -179,7 +194,7 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
   - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`. If not, set the value to `NA`.
 - **Note: If you are deprecating multiple packages, please wait until all deprecated packages have been released and update all entries necessary in one PR.**
 - Create a PR to push these changes. Checks will run to notify the repo owners to review your commit.
-- If your PR has not been reviewed within a couple of days, please ping Xiang Yan (xiangyan) for a review and include a link to your PR.
+- Ping Xiang Yan (xiangyan) for a review and include a link to your PR. If he is unavailable, ping Ronnie Geraghty (rgeraghty) or Wes Haggard (wesh).
 - Once the PR has been approved, merge.
 
 The Microsoft Learn API reference docs for your package will be updated to Legacy on the following Wednesday.
