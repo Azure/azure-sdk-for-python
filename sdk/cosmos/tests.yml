@@ -3,7 +3,6 @@ trigger: none
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      UseFederatedAuth: false
       Clouds: 'Cosmos_Public'
       CloudConfig:
         Cosmos_Public:
