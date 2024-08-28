@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,7 +67,7 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ManagedDatabaseRecommendedSensitivityLabelsOperations:
+class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -111,7 +111,6 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -123,7 +122,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -138,11 +137,10 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -154,7 +152,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.RecommendedSensitivityLabelUpdateList, IO],
+        parameters: Union[_models.RecommendedSensitivityLabelUpdateList, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Update recommended sensitivity labels states of a given database using an operations batch.
@@ -166,13 +164,9 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is either a RecommendedSensitivityLabelUpdateList type or a IO type.
+        :param parameters: Is either a RecommendedSensitivityLabelUpdateList type or a IO[bytes] type.
          Required.
-        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -200,7 +194,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         else:
             _json = self._serialize.body(parameters, "RecommendedSensitivityLabelUpdateList")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             database_name=database_name,
@@ -209,16 +203,15 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -228,8 +221,4 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/recommendedSensitivityLabels"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -37,9 +37,11 @@ class WorkspaceSchema(PathAwareSchema):
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
         casing_transform=snake_to_pascal,
     )
+    system_datastores_auth_mode = fields.Str()
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
     workspace_hub = fields.Str(validate=validate_arm_str)
     managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
     enable_data_isolation = fields.Bool()
+    allow_roleassignment_on_rg = fields.Bool()
     serverless_compute = NestedField(ServerlessComputeSettingsSchema)

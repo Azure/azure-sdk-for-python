@@ -87,12 +87,11 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
-        tokens = cache.find(
+        for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
-        )
-        for token in tokens:
+        ):
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
@@ -101,7 +100,7 @@ class AadClientBase(abc.ABC):
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
         # Assumes all cached refresh tokens belong to the same user
         cache = self._get_cache(**kwargs)
-        return cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
+        return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes)))
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -140,17 +139,21 @@ class AadClientBase(abc.ABC):
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 for invalid_token in cache_entries:
                     cache.remove_rt(invalid_token)
             if "refresh_token" in content:
                 # Microsoft Entra ID returned a new refresh token -> update the cache entry
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 # If the old token is in multiple cache entries, the cache is in a state we don't
                 # expect or know how to reason about, so we update nothing.
@@ -267,7 +270,7 @@ class AadClientBase(abc.ABC):
     def _get_on_behalf_of_request(
         self,
         scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
         **kwargs: Any
     ) -> HttpRequest:
@@ -287,6 +290,10 @@ class AadClientBase(abc.ABC):
 
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        elif isinstance(client_credential, dict):
+            func = client_credential["client_assertion"]
+            data["client_assertion"] = func()
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
         else:
             data["client_secret"] = client_credential
@@ -318,7 +325,7 @@ class AadClientBase(abc.ABC):
     def _get_refresh_token_on_behalf_of_request(
         self,
         scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
+        client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
         **kwargs: Any
     ) -> HttpRequest:
@@ -337,6 +344,10 @@ class AadClientBase(abc.ABC):
 
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        elif isinstance(client_credential, dict):
+            func = client_credential["client_assertion"]
+            data["client_assertion"] = func()
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
         else:
             data["client_secret"] = client_credential

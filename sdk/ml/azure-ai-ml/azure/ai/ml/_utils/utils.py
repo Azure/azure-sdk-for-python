@@ -415,7 +415,7 @@ def dump_yaml_to_file(
         try:
             cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
-            msg = "No such file or directory: {}"
+            msg = "No such parent folder path or not a file path: {}"
             raise ValidationException(
                 message=msg.format(dest),
                 no_personal_data_message=msg.format("[file_path]"),

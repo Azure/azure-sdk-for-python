@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import os
 from urllib.parse import urlparse
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
@@ -47,6 +48,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy)
 
 from .. import _base as base
+from .._base import _set_properties_cache
 from .. import documents
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
@@ -65,7 +67,7 @@ from ..partition_key import (
     _Undefined,
     PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue
+    NonePartitionKeyValue, _Empty
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -144,7 +146,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
-        self.partition_key_definition_cache: Dict[str, Any] = {}
+        self.__container_properties_cache: Dict[str, Dict[str, Any]] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -225,6 +227,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    @property
+    def _container_properties_cache(self) -> Dict[str, Dict[str, Any]]:
+        """Gets the container properties cache from the client.
+        :returns: the container properties cache for the client.
+        :rtype: Dict[str, Dict[str, Any]]"""
+        return self.__container_properties_cache
+
+    def _set_container_properties_cache(self, container_link: str, properties: Optional[Dict[str, Any]]) -> None:
+        """Sets the container properties cache for the specified container.
+
+        This will only update the properties cache for a specified container.
+        :param container_link: The container link will be used as the key to cache the container properties.
+        :type container_link: str
+        :param properties: These are the container properties to cache.
+        :type properties:  Optional[Dict[str, Any]]"""
+        if properties:
+            self.__container_properties_cache[container_link] = properties
+        else:
+            self.__container_properties_cache[container_link] = {}
 
     @property
     def _Session(self) -> Optional[_session.Session]:
@@ -2266,6 +2288,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+            if collection_link in self.__container_properties_cache:
+                new_options = dict(options)
+                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                options = new_options
             return (
                 await self.__QueryFeed(
                     path,
@@ -3030,26 +3056,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     # Adds the partition key to options
     async def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
-
-        # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
-
-        # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
-        # Else read the collection from backend and add it to the cache
-        else:
-            collection = await self.ReadContainer(collection_link)
-            partitionKeyDefinition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partitionKeyDefinition
-
+        new_options = dict(options)
+        partitionKeyDefinition = await self._get_partition_key_definition(collection_link)
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
             # If the user has passed in the partitionKey in options use that else extract it from the document
             if "partitionKey" not in options:
                 partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                options["partitionKey"] = partitionKeyValue
+                new_options["partitionKey"] = partitionKeyValue
 
-        return options
+        return new_options
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
@@ -3063,8 +3079,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if isinstance(val, _Undefined):
-                    break
+                if isinstance(val, (_Undefined, _Empty)):
+                    val = None
                 ret.append(val)
             return ret
 
@@ -3105,6 +3121,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = SmartRoutingMapProvider(self)
 
+    async def _refresh_container_properties_cache(self, container_link: str):
+        # If container properties cache is stale, refresh it by reading the container.
+        container = await self.ReadContainer(container_link, options=None)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self._set_container_properties_cache(container_link, _set_properties_cache(container))
+
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
@@ -3112,7 +3134,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.MultipleOrderBy + "," +
                                     documents._QueryFeature.OffsetAndLimit + "," +
                                     documents._QueryFeature.OrderBy + "," +
-                                    documents._QueryFeature.Top)
+                                    documents._QueryFeature.Top + "," +
+                                    documents._QueryFeature.NonStreamingOrderBy)
+        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+            supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                        documents._QueryFeature.CompositeAggregate + "," +
+                                        documents._QueryFeature.Distinct + "," +
+                                        documents._QueryFeature.MultipleOrderBy + "," +
+                                        documents._QueryFeature.OffsetAndLimit + "," +
+                                        documents._QueryFeature.OrderBy + "," +
+                                        documents._QueryFeature.Top)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,
@@ -3173,3 +3204,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, None)
+
+    async def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
+        partition_key_definition: Optional[Dict[str, Any]]
+        # If the document collection link is present in the cache, then use the cached partitionkey definition
+        if collection_link in self.__container_properties_cache:
+            cached_container: Dict[str, Any] = self.__container_properties_cache.get(collection_link, {})
+            partition_key_definition = cached_container.get("partitionKey")
+        # Else read the collection from backend and add it to the cache
+        else:
+            container = await self.ReadContainer(collection_link)
+            partition_key_definition = container.get("partitionKey")
+            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
+        return partition_key_definition

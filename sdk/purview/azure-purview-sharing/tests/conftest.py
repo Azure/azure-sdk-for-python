@@ -30,7 +30,14 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer, add_header_regex_sanitizer
+from devtools_testutils import (
+    test_proxy,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    remove_batch_sanitizers,
+)
+
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -61,3 +68,6 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..atlasKafkaPrimaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..atlasKafkaSecondaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..systemData.createdBy", value="000")
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    remove_batch_sanitizers(["AZSDK3430"])

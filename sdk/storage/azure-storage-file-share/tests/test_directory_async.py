@@ -138,7 +138,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_create_directory_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -331,7 +331,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_get_directory_properties_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -578,7 +578,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_get_set_directory_metadata_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -625,7 +625,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_set_directory_properties_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -784,7 +784,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_list_subdirectories_and_files_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1103,7 +1103,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_delete_directory_with_existing_share_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1210,7 +1210,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_rename_directory_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1455,7 +1455,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
@@ -1485,7 +1485,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
@@ -1495,7 +1495,63 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        with pytest.raises(ClientAuthenticationError):
-            await directory_client.exists()
+        await directory_client.exists()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_file_permission_format_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        user_given_permission_sddl = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
+                                      "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
+                                      "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+        user_given_permission_binary = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                        "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                        "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
+
+        directory_client = await share_client.create_directory(
+            'dir1',
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+
+        props = await directory_client.get_directory_properties()
+        assert props is not None
+        assert props.permission_key is not None
+
+        await directory_client.set_http_headers(
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+
+        props = await directory_client.get_directory_properties()
+        assert props is not None
+        assert props.permission_key is not None
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="sddl"
+        )
+        assert server_returned_permission == user_given_permission_sddl
+
+        new_directory_client = await directory_client.rename_directory(
+            'dir2',
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        props = await new_directory_client.get_directory_properties()
+        assert props is not None
+        assert props.permission_key is not None
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == user_given_permission_binary
+
+        await new_directory_client.delete_directory()
 
 # ------------------------------------------------------------------------------

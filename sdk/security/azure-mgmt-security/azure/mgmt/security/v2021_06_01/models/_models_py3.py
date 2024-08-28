@@ -57,7 +57,7 @@ class Setting(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -97,7 +97,7 @@ class AlertSyncSettings(Setting):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -163,7 +163,7 @@ class AssessmentLinks(_serialization.Model):
 class AssessmentStatus(_serialization.Model):
     """The result of the assessment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Programmatic code for the status of the assessment. Required. Known values are:
      "Healthy", "Unhealthy", and "NotApplicable".
@@ -212,7 +212,7 @@ class AssessmentStatusResponse(AssessmentStatus):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Programmatic code for the status of the assessment. Required. Known values are:
      "Healthy", "Unhealthy", and "NotApplicable".
@@ -271,7 +271,7 @@ class ResourceDetails(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureResourceDetails, OnPremiseResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -299,7 +299,7 @@ class AzureResourceDetails(ResourceDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -373,7 +373,7 @@ class DataExportSettings(Setting):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -447,7 +447,7 @@ class OnPremiseResourceDetails(ResourceDetails):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OnPremiseSqlResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -504,7 +504,7 @@ class OnPremiseResourceDetails(ResourceDetails):
 class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
     """Details of the On Premise Sql resource that was assessed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -826,7 +826,7 @@ class SecurityAssessmentMetadata(Resource):  # pylint: disable=too-many-instance
 class SecurityAssessmentMetadataPartnerData(_serialization.Model):
     """Describes the partner that created the assessment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partner_name: Name of the company of the partner. Required.
     :vartype partner_name: str
@@ -869,7 +869,7 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: User friendly display name of the assessment. Required.
     :vartype display_name: str
@@ -993,12 +993,12 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
 
 class SecurityAssessmentMetadataPropertiesResponse(
     SecurityAssessmentMetadataProperties
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Describes properties of an assessment metadata response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: User friendly display name of the assessment. Required.
     :vartype display_name: str
@@ -1152,10 +1152,10 @@ class SecurityAssessmentMetadataPropertiesResponse(
         self.techniques = techniques
 
 
-class SecurityAssessmentMetadataPropertiesResponsePublishDates(_serialization.Model):
+class SecurityAssessmentMetadataPropertiesResponsePublishDates(_serialization.Model):  # pylint: disable=name-too-long
     """SecurityAssessmentMetadataPropertiesResponsePublishDates.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ga:
     :vartype ga: str
@@ -1385,7 +1385,7 @@ class SecurityAssessmentMetadataResponseList(_serialization.Model):
 class SecurityAssessmentPartnerData(_serialization.Model):
     """Data regarding 3rd party partner integration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partner_name: Name of the company of the partner. Required.
     :vartype partner_name: str
@@ -1420,7 +1420,7 @@ class SecurityAssessmentPropertiesBase(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_details: Details of the resource that was assessed. Required.
     :vartype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1485,7 +1485,7 @@ class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_details: Details of the resource that was assessed. Required.
     :vartype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1558,7 +1558,7 @@ class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_details: Details of the resource that was assessed. Required.
     :vartype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails

@@ -1,9 +1,38 @@
 # Release History
 
-## 12.16.0 (Unreleased)
+## 12.18.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.18.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+- Added support for Entra ID authentication for all data plane file operations that were previously not enabled.
+- Added support to set `paid_bursting_enabled`, `paid_bursting_bandwidth_mibps`, and `paid_bursting_iops` for Share's
+`create_share` and `set_share_properties` APIs, and also retrieve them on the `get_share_properties` API.
+- Added `file_permission_format` to specify permission format for Share's `create_permission_for_share` and
+`get_permission_for_share` APIs; File's `create_file`, `rename_file`, and `set_http_headers` APIs; and
+Directory's `rename_directory` and `set_http_headers` APIs.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.17.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.17.0b1
+
+## 12.17.0b1 (2024-06-11)
+
+### Features Added
+- Added a more descriptive authorization error message when facing authorization errors.
+
+## 12.16.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.16.0b1
 
 ## 12.16.0b1 (2024-04-16)
 
@@ -14,6 +43,8 @@ This version and all future versions will require Python 3.8+. Python 3.7 is no 
 - Added support for service version 2024-05-04.
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+- Added `client_name` property to `Handle`.
+- Added support for `support_rename` to `get_ranges_diff()`
 
 ### Bugs Fixed
 - Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`

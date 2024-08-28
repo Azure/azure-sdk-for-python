@@ -1,9 +1,40 @@
 # Release History
 
-## 12.20.0 (Unreleased)
+## 12.23.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.23.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.22.0 (2024-08-06)
+
+### Other Changes
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.21.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.21.0b1
+- Added new `chars` keyword to the `StorageStreamDownloader.read` method to support reading an arbitrary number of
+characters from the stream rather than bytes. This can only be used when `encoding` is specified on `download_blob`
+but can help prevent decoding errors in certain scenarios.
+
+## 12.21.0b1 (2024-06-11)
+
+### Features Added
+- Added support for service version 2024-08-04.
+
+## 12.20.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.20.0b1
 
 ## 12.20.0b1 (2024-04-16)
 

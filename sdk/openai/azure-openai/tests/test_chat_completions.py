@@ -11,15 +11,13 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import (
     AZURE,
     OPENAI,
-    AZURE_AD,
+    AZURE_KEY,
     GPT_4_AZURE,
-    GPT_4_AZURE_AD,
     GPT_4_OPENAI,
     configure,
     GA,
     PREVIEW,
     ENV_AZURE_OPENAI_SEARCH_ENDPOINT,
-    ENV_AZURE_OPENAI_SEARCH_KEY,
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
@@ -29,7 +27,32 @@ class TestChatCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE_KEY, GA), (AZURE_KEY, PREVIEW)]
+    )
+    def test_azure_api_key(self, client, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020?"}
+        ]
+
+        completion = client.chat.completions.create(messages=messages, **kwargs)
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_chat_completion(self, client, api_type, api_version, **kwargs):
         messages = [
@@ -698,11 +721,11 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_chat_completion_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+            {"role": "user", "content": "What languages have libraries you know about for Azure OpenAI?"}
         ]
 
         completion = client.chat.completions.create(
@@ -715,14 +738,13 @@ class TestChatCompletions(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }
                 ],
             },
-            **kwargs
+            model="gpt-4-0613"
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -737,11 +759,11 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.context["intent"]
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_streamed_chat_completions_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+            {"role": "user", "content": "What languages have libraries you know about for Azure OpenAI?"}
         ]
 
         response = client.chat.completions.create(
@@ -754,15 +776,14 @@ class TestChatCompletions(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }
                 ],
             },
             stream=True,
-            **kwargs
+            model="gpt-4-0613"
         )
         for chunk in response:
             assert chunk.id
@@ -789,12 +810,11 @@ class TestChatCompletions(AzureRecordedTestCase):
         ]
 
         completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
-        completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
+        if api_type != GPT_4_OPENAI:  # bug in openai where system_fingerprint is not always returned
+            assert completion.system_fingerprint
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_json_response(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -804,7 +824,6 @@ class TestChatCompletions(AzureRecordedTestCase):
         completion = client.chat.completions.create(messages=messages, response_format={ "type": "json_object" }, **kwargs)
         assert completion.id
         assert completion.object == "chat.completion"
-        assert completion.system_fingerprint
         assert completion.model
         assert completion.created
         assert completion.usage.completion_tokens is not None
@@ -828,8 +847,8 @@ class TestChatCompletions(AzureRecordedTestCase):
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
-        assert content_filter_result["custom_blocklists"][0]["filtered"] is True
-        assert content_filter_result["custom_blocklists"][0]["id"].startswith("CustomBlockList")
+        assert content_filter_result["custom_blocklists"]["filtered"] is True
+        assert content_filter_result["custom_blocklists"]["details"][0]["id"].startswith("CustomBlockList")
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
@@ -1110,7 +1129,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_logprobs(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

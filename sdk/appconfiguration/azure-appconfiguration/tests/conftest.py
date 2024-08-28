@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from devtools_testutils import add_general_regex_sanitizer, test_proxy, set_bodiless_matcher
+from devtools_testutils import add_general_regex_sanitizer, test_proxy, set_bodiless_matcher, remove_batch_sanitizers
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -38,3 +38,10 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=client_secret, value="client-secret")
     tenant_id = os.environ.get("APPCONFIGURATION_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3447: $.key
+    #  - AZSDK3490: $..etag
+    #  - AZSDK3493: $..name
+    #  - AZSDK4001: host name -> Sanitized
+    remove_batch_sanitizers(["AZSDK3447", "AZSDK3490", "AZSDK3493", "AZSDK4001"])

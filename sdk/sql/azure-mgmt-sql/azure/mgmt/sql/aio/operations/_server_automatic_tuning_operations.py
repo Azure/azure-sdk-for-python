@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -60,7 +60,6 @@ class ServerAutomaticTuningOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerAutomaticTuning or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79,21 +78,20 @@ class ServerAutomaticTuningOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.ServerAutomaticTuning] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -105,13 +103,9 @@ class ServerAutomaticTuningOperations:
         deserialized = self._deserialize("ServerAutomaticTuning", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/automaticTuning/current"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -135,7 +129,6 @@ class ServerAutomaticTuningOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerAutomaticTuning or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -146,7 +139,7 @@ class ServerAutomaticTuningOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -159,11 +152,10 @@ class ServerAutomaticTuningOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested automatic tuning resource state. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerAutomaticTuning or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -174,7 +166,7 @@ class ServerAutomaticTuningOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerAutomaticTuning, IO],
+        parameters: Union[_models.ServerAutomaticTuning, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServerAutomaticTuning:
         """Update automatic tuning options on server.
@@ -185,12 +177,8 @@ class ServerAutomaticTuningOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested automatic tuning resource state. Is either a
-         ServerAutomaticTuning type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAutomaticTuning or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ServerAutomaticTuning type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAutomaticTuning or IO[bytes]
         :return: ServerAutomaticTuning or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -218,7 +206,7 @@ class ServerAutomaticTuningOperations:
         else:
             _json = self._serialize.body(parameters, "ServerAutomaticTuning")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -226,16 +214,15 @@ class ServerAutomaticTuningOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -247,10 +234,6 @@ class ServerAutomaticTuningOperations:
         deserialized = self._deserialize("ServerAutomaticTuning", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/automaticTuning/current"
-    }
+        return deserialized  # type: ignore

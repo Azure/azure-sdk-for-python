@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -28,6 +29,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import KeyVaultClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,7 +46,7 @@ def build_key_vault_get_certificates_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,7 +71,7 @@ def build_key_vault_delete_certificate_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +96,7 @@ def build_key_vault_set_certificate_contacts_request(**kwargs: Any) -> HttpReque
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -112,7 +117,7 @@ def build_key_vault_get_certificate_contacts_request(**kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +136,7 @@ def build_key_vault_delete_certificate_contacts_request(**kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -152,7 +157,7 @@ def build_key_vault_get_certificate_issuers_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,7 +181,7 @@ def build_key_vault_set_certificate_issuer_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +210,7 @@ def build_key_vault_update_certificate_issuer_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -233,7 +238,7 @@ def build_key_vault_get_certificate_issuer_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +264,7 @@ def build_key_vault_delete_certificate_issuer_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -286,7 +291,7 @@ def build_key_vault_create_certificate_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -315,7 +320,7 @@ def build_key_vault_import_certificate_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -343,7 +348,7 @@ def build_key_vault_get_certificate_versions_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -371,7 +376,7 @@ def build_key_vault_get_certificate_policy_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -398,7 +403,7 @@ def build_key_vault_update_certificate_policy_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -427,7 +432,7 @@ def build_key_vault_update_certificate_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -456,7 +461,7 @@ def build_key_vault_get_certificate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -484,7 +489,7 @@ def build_key_vault_update_certificate_operation_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -512,7 +517,7 @@ def build_key_vault_get_certificate_operation_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -538,7 +543,7 @@ def build_key_vault_delete_certificate_operation_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +570,7 @@ def build_key_vault_merge_certificate_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -593,7 +598,7 @@ def build_key_vault_backup_certificate_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -618,7 +623,7 @@ def build_key_vault_restore_certificate_request(**kwargs: Any) -> HttpRequest:  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -641,7 +646,7 @@ def build_key_vault_get_deleted_certificates_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -666,7 +671,7 @@ def build_key_vault_get_deleted_certificate_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -692,7 +697,7 @@ def build_key_vault_purge_deleted_certificate_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -718,7 +723,7 @@ def build_key_vault_recover_deleted_certificate_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -739,6 +744,7 @@ def build_key_vault_recover_deleted_certificate_request(  # pylint: disable=name
 
 
 class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=too-many-public-methods
+
     @distributed_trace
     def get_certificates(
         self,
@@ -762,7 +768,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          provisioned. Default value is None.
         :paramtype include_pending: bool
         :return: An iterator like instance of CertificateItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.CertificateItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.CertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -772,7 +778,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -859,10 +865,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: DeletedCertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedCertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -919,12 +925,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param contacts: The contacts for the key vault certificate. Required.
-        :type contacts: ~azure.keyvault.v7_5.models.Contacts
+        :type contacts: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Contacts
-        :rtype: ~azure.keyvault.v7_5.models.Contacts
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -945,7 +951,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: Contacts
-        :rtype: ~azure.keyvault.v7_5.models.Contacts
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -962,15 +968,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param contacts: The contacts for the key vault certificate. Is either a Contacts type or a
          IO[bytes] type. Required.
-        :type contacts: ~azure.keyvault.v7_5.models.Contacts or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type contacts: ~azure.keyvault.v7_6_preview_1.models.Contacts or IO[bytes]
         :return: Contacts
-        :rtype: ~azure.keyvault.v7_5.models.Contacts
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1036,10 +1039,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :return: Contacts
-        :rtype: ~azure.keyvault.v7_5.models.Contacts
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1093,10 +1096,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :return: Contacts
-        :rtype: ~azure.keyvault.v7_5.models.Contacts
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1156,7 +1159,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of CertificateIssuerItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.CertificateIssuerItem]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.CertificateIssuerItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1166,7 +1170,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1259,12 +1263,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          identifiable or sensitive information. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Required.
-        :type parameter: ~azure.keyvault.v7_5.models.CertificateIssuerSetParameters
+        :type parameter: ~azure.keyvault.v7_6_preview_1.models.CertificateIssuerSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1295,7 +1299,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1320,15 +1324,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Is either a CertificateIssuerSetParameters
          type or a IO[bytes] type. Required.
-        :type parameter: ~azure.keyvault.v7_5.models.CertificateIssuerSetParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameter: ~azure.keyvault.v7_6_preview_1.models.CertificateIssuerSetParameters or
+         IO[bytes]
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1405,12 +1407,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter. Required.
-        :type parameter: ~azure.keyvault.v7_5.models.CertificateIssuerUpdateParameters
+        :type parameter: ~azure.keyvault.v7_6_preview_1.models.CertificateIssuerUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1439,7 +1441,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1462,15 +1464,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter. Is either a
          CertificateIssuerUpdateParameters type or a IO[bytes] type. Required.
-        :type parameter: ~azure.keyvault.v7_5.models.CertificateIssuerUpdateParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameter: ~azure.keyvault.v7_6_preview_1.models.CertificateIssuerUpdateParameters or
+         IO[bytes]
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1540,10 +1540,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1600,10 +1600,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :return: IssuerBundle
-        :rtype: ~azure.keyvault.v7_5.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1670,12 +1670,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateCreateParameters
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1706,7 +1706,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1731,15 +1731,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Is either a
          CertificateCreateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateCreateParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateCreateParameters or
+         IO[bytes]
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1820,12 +1818,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateImportParameters
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateImportParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1858,7 +1856,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1885,15 +1883,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Is either a
          CertificateImportParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateImportParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateImportParameters or
+         IO[bytes]
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1967,7 +1963,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of CertificateItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.CertificateItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.CertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1977,7 +1973,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2063,10 +2059,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate in a given key vault. Required.
         :type certificate_name: str
         :return: CertificatePolicy
-        :rtype: ~azure.keyvault.v7_5.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2131,12 +2127,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate. Required.
-        :type certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
+        :type certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificatePolicy
-        :rtype: ~azure.keyvault.v7_5.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2165,7 +2161,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificatePolicy
-        :rtype: ~azure.keyvault.v7_5.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2188,15 +2184,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate. Is either a CertificatePolicy type
          or a IO[bytes] type. Required.
-        :type certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy or IO[bytes]
         :return: CertificatePolicy
-        :rtype: ~azure.keyvault.v7_5.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2277,12 +2270,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
         :param parameters: The parameters for certificate update. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateUpdateParameters
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2315,7 +2308,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2342,15 +2335,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_version: str
         :param parameters: The parameters for certificate update. Is either a
          CertificateUpdateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateUpdateParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateUpdateParameters or
+         IO[bytes]
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2425,10 +2416,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          not specified, the latest version of the certificate is returned. Required.
         :type certificate_version: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2494,12 +2485,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_operation: The certificate operation response. Required.
-        :type certificate_operation: ~azure.keyvault.v7_5.models.CertificateOperationUpdateParameter
+        :type certificate_operation:
+         ~azure.keyvault.v7_6_preview_1.models.CertificateOperationUpdateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2528,7 +2520,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2551,16 +2543,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param certificate_operation: The certificate operation response. Is either a
          CertificateOperationUpdateParameter type or a IO[bytes] type. Required.
-        :type certificate_operation: ~azure.keyvault.v7_5.models.CertificateOperationUpdateParameter or
-         IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type certificate_operation:
+         ~azure.keyvault.v7_6_preview_1.models.CertificateOperationUpdateParameter or IO[bytes]
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2631,10 +2620,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2694,10 +2683,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: CertificateOperation
-        :rtype: ~azure.keyvault.v7_5.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2763,12 +2752,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param parameters: The parameters to merge certificate. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateMergeParameters
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateMergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2798,7 +2787,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2822,15 +2811,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to merge certificate. Is either a CertificateMergeParameters
          type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateMergeParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateMergeParameters or IO[bytes]
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2902,10 +2888,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: BackupCertificateResult
-        :rtype: ~azure.keyvault.v7_5.models.BackupCertificateResult
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.BackupCertificateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2967,12 +2953,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param parameters: The parameters to restore the certificate. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateRestoreParameters
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2993,7 +2979,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3010,15 +2996,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param parameters: The parameters to restore the certificate. Is either a
          CertificateRestoreParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_5.models.CertificateRestoreParameters or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :type parameters: ~azure.keyvault.v7_6_preview_1.models.CertificateRestoreParameters or
+         IO[bytes]
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3099,7 +3083,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          provisioned. Default value is None.
         :paramtype include_pending: bool
         :return: An iterator like instance of DeletedCertificateItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.DeletedCertificateItem]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.DeletedCertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3109,7 +3094,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3196,10 +3181,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: DeletedCertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedCertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3262,7 +3247,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3319,10 +3304,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the deleted certificate. Required.
         :type certificate_name: str
         :return: CertificateBundle
-        :rtype: ~azure.keyvault.v7_5.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_6_preview_1.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

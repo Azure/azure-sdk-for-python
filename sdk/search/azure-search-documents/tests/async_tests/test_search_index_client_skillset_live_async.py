@@ -8,7 +8,7 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 from azure.search.documents.indexes.models import (
     EntityLinkingSkill,
@@ -28,8 +28,8 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_skillset_crud(self, api_key, endpoint):
-        client = SearchIndexerClient(endpoint, api_key, retry_backoff_factor=60)
+    async def test_skillset_crud(self, endpoint):
+        client = SearchIndexerClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_create_skillset(client)
             await self._test_get_skillset(client)

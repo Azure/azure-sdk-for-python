@@ -92,15 +92,6 @@ class ChangeFeedClient(object):
             str or dict[str, str] or None
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the BlobServiceClient using account_key as credential.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:

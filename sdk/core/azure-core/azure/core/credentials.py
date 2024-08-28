@@ -12,10 +12,12 @@ class AccessToken(NamedTuple):
 
     token: str
     expires_on: int
+    refresh_on: Optional[int] = None
 
 
 AccessToken.token.__doc__ = """The token string."""
 AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
+AccessToken.refresh_on.__doc__ = """When the token should be refreshed in Unix time."""
 
 
 @runtime_checkable

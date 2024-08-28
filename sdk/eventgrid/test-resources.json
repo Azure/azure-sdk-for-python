@@ -21,14 +21,25 @@
           "description": "The application client ID used to run tests."
         }
       },
-      "testApplicationSecret": {
+      "serviceBusEndpointSuffix": {
         "type": "string",
+        "defaultValue": ".servicebus.windows.net",
         "metadata": {
-          "description": "The application client secret used to run tests."
+            "description": "The url suffix to use when creating eventhubs connection strings."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "The location of the resources. By default, this is the same as the resource group."
         }
       }
     },
     "variables": {
+      "namespaceName": "[format('{0}-2', parameters('baseName'))]",
+      "topicName": "testtopic1",
+      "subscriptionName": "testsubscription1",
       "apiVersion": "2022-06-15",
       "eventGridTopicName": "[concat(parameters('baseName'), 'topic')]",
       "eventGridDomainName": "[concat(parameters('baseName'), 'domain')]",
@@ -41,8 +52,215 @@
       "partnerChannelName": "[concat(parameters('baseName'), 'partner-channel')]",
       "partnerTopicName": "[concat(parameters('baseName'), 'partner-topic')]",
       "eventGridDataSenderRoleId": "d5a91429-5739-47e2-a06b-3470a27159e7",
+      "eventGridDataContributorRoleId": "1d8c3fe3-8864-474b-8749-01e3783e8157",
+      "ehVersion": "2017-04-01",
+      "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "eventHubsDataOwnerRoleId": "f526a384-b230-433a-b45c-95f59c4a2dec",
+      "eventHubsNamespace": "[concat('eh-', parameters('baseName'))]",
+      "eventHubName": "[concat('eh-', parameters('baseName'), '-hub')]",
+      "eventHubAuthRuleName": "[concat('eh-', parameters('baseName'), '-hub-auth-rule')]",
+      "serviceBusNamespace": "[concat('sb-', parameters('baseName'))]",
+      "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
+      "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
+      "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
+      "queueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-queue-auth')]",
+      "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
+      "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
+      "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
+      "defaultSASKeyName": "RootManageSharedAccessKey",
+      "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace'), variables('defaultSASKeyName'))]",
+      "sbVersion": "2017-04-01",
+      "serviceBusDataOwnerRoleId": "090c5cfd-751d-490a-894a-3ce6f1109419"
     },
     "resources": [
+      {
+        "type": "Microsoft.EventGrid/namespaces",
+        "apiVersion": "2024-06-01-preview",
+        "name": "[variables('namespaceName')]",
+        "location": "[resourceGroup().location]",
+        "sku": {
+          "name": "Standard",
+          "capacity": 1
+        },
+        "properties": {
+          "isZoneRedundant": true,
+          "publicNetworkAccess": "Enabled"
+        }
+      },
+      {
+        "apiVersion": "[variables('sbVersion')]",
+        "name": "[variables('serviceBusNamespace')]",
+        "type": "Microsoft.ServiceBus/Namespaces",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard"
+        },
+        "resources": [
+          {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusTopicName')]",
+              "type": "Topics",
+              "dependsOn": [
+                  "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace'))]"
+              ],
+              "properties": {
+                  "path": "[variables('serviceBusTopicName')]"
+              },
+              "resources": [{
+                  "apiVersion": "[variables('sbVersion')]",
+                  "name": "[variables('serviceBusSubscriptionName')]",
+                  "type": "Subscriptions",
+                  "dependsOn": [
+                      "[variables('serviceBusTopicName')]"
+                  ],
+                  "properties": {}
+              }]
+          },
+          {
+            "type": "Queues",
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('serviceBusQueueName')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+            ],
+            "properties": {
+              "lockDuration": "PT5M",
+              "maxSizeInMegabytes": 1024,
+              "requiresDuplicateDetection": false,
+              "requiresSession": false,
+              "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+              "deadLetteringOnMessageExpiration": false,
+              "duplicateDetectionHistoryTimeWindow": "PT10M",
+              "maxDeliveryCount": 10,
+              "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+              "enablePartitioning": false,
+              "enableExpress": false
+            },
+            "resources": [
+              {
+                "apiVersion": "[variables('sbVersion')]",
+                "name": "[variables('queueAuthorizationRuleName')]",
+                "type": "authorizationRules",
+                "dependsOn": [
+                    "[variables('serviceBusQueueName')]"
+                ],
+                "properties": {
+                    "Rights": ["Manage", "Send", "Listen"]
+                }
+              }
+            ]
+          },
+          {
+            "type": "Queues",
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('serviceBusSessionQueueName')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+            ],
+            "properties": {
+              "lockDuration": "PT5M",
+              "maxSizeInMegabytes": 1024,
+              "requiresDuplicateDetection": false,
+              "requiresSession": true,
+              "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+              "deadLetteringOnMessageExpiration": false,
+              "duplicateDetectionHistoryTimeWindow": "PT10M",
+              "maxDeliveryCount": 10,
+              "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+              "enablePartitioning": false,
+              "enableExpress": false
+            },
+            "resources": [
+              {
+                "apiVersion": "[variables('sbVersion')]",
+                "name": "[variables('sessionQueueAuthorizationRuleName')]",
+                "type": "authorizationRules",
+                "dependsOn": [
+                    "[variables('serviceBusSessionQueueName')]"
+                ],
+                "properties": {
+                    "Rights": ["Manage", "Send", "Listen"]
+                }
+              }
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "apiVersion": "[variables('ehVersion')]",
+        "name": "[variables('eventHubsNamespace')]",
+        "type": "Microsoft.EventHub/Namespaces",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard",
+          "tier": "Standard"
+        },
+        "resources": [
+          {
+              "type": "Microsoft.EventHub/namespaces/eventhubs",
+              "apiVersion": "[variables('ehVersion')]",
+              "name": "[concat(variables('eventHubsNamespace'), '/', variables('eventHubName'))]",
+              "location": "[parameters('location')]",
+              "dependsOn": [
+                  "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubsNamespace'))]"
+              ],
+              "properties": {
+                  "messageRetentionInDays": 7,
+                  "partitionCount": 1
+              },
+          "resources": [
+              {
+                "apiVersion": "[variables('ehVersion')]",
+                "name": "[variables('eventHubAuthRuleName')]",
+                "type": "authorizationRules",
+                "dependsOn": [
+                    "[variables('eventHubName')]"
+                ],
+                "properties": {
+                    "Rights": ["Manage", "Send", "Listen"]
+                }
+              }
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.EventGrid/namespaces/topics",
+        "apiVersion": "2024-06-01-preview",
+        "name": "[format('{0}/{1}', variables('namespaceName'), variables('topicName'))]",
+        "properties": {
+          "publisherType": "Custom",
+          "inputSchema": "CloudEventSchemaV1_0",
+          "eventRetentionInDays": 1
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.EventGrid/namespaces/topics/eventSubscriptions",
+        "apiVersion": "2024-06-01-preview",
+        "name": "[format('{0}/{1}/{2}', variables('namespaceName'), variables('topicName'), variables('subscriptionName'))]",
+        "properties": {
+          "deliveryConfiguration": {
+            "deliveryMode": "Queue",
+            "queue": {
+              "receiveLockDurationInSeconds": 60,
+              "maxDeliveryCount": 10,
+              "eventTimeToLive": "P1D"
+            }
+          },
+          "eventDeliverySchema": "CloudEventSchemaV1_0",
+          "filtersConfiguration": {
+            "includedEventTypes": []
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.EventGrid/namespaces/topics', variables('namespaceName'), variables('topicName'))]"
+        ]
+      },
       {
         "type": "Microsoft.EventGrid/topics",
         "apiVersion": "[variables('apiVersion')]",
@@ -172,8 +390,53 @@
           "principalId": "[parameters('testApplicationOid')]",
           "scope": "[resourceGroup().id]"
         }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2019-04-01-preview",
+        "name": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('eventGridDataContributorRoleId'))]",
+        "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('eventGridDataContributorRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]",
+          "scope": "[resourceGroup().id]"
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2019-04-01-preview",
+        "name": "[guid(resourceGroup().id, deployment().name, parameters('baseName'), variables('eventHubsDataOwnerRoleId'), parameters('testApplicationOid'))]",
+        "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('eventHubsDataOwnerRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]",
+          "scope": "[resourceGroup().id]"
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2019-04-01-preview",
+        "name": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('serviceBusDataOwnerRoleId'))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.ServiceBus/Namespaces', variables('serviceBusNamespace'))]"
+        ],
+        "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('serviceBusDataOwnerRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]",
+          "scope": "[resourceGroup().id]"
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2019-04-01-preview",
+        "name": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('contributorRoleId'))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.ServiceBus/Namespaces', variables('serviceBusNamespace'))]"
+        ],
+        "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]",
+          "scope": "[resourceGroup().id]"
+        }
       }
-
     ],
     "outputs": {
       "EVENTGRID_TOPIC_KEY": {
@@ -227,6 +490,42 @@
       "EVENTGRID_PARTNER_CHANNEL_NAME": {
         "type": "string",
         "value": "[variables('partnerChannelName')]"
-      }
+      },
+      "EVENTGRID_KEY": {
+        "type": "string",
+        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2024-06-01-preview').key1]"
+      },
+      "EVENTGRID_ENDPOINT": {
+        "type": "string",
+        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2024-06-01-preview').topicsConfiguration.hostname)]"
+      },
+      "EVENTGRID_TOPIC_NAME": {
+        "type": "string",
+        "value": "[variables('topicName')]"
+      },
+      "EVENTGRID_EVENT_SUBSCRIPTION_NAME": {
+        "type": "string",
+        "value": "[variables('subscriptionName')]"
+      },
+      "RESOURCE_GROUP": {
+        "type": "string",
+        "value": "[resourceGroup().name]"
+      },
+      "AZURE_SUBSCRIPTION_ID": {
+        "type": "string",
+        "value": "[subscription().subscriptionId]"
+      },
+      "EVENT_HUB_NAMESPACE": {
+        "type": "string",
+        "value": "[variables('eventHubsNamespace')]"
+    },
+      "EVENT_HUB_HOSTNAME": {
+        "type": "string",
+        "value": "[concat(variables('eventHubsNamespace'), parameters('serviceBusEndpointSuffix'))]"
+    },
+    "SERVICEBUS_FULLY_QUALIFIED_NAMESPACE": {
+      "type": "string",
+      "value": "[concat(variables('serviceBusNamespace'), parameters('serviceBusEndpointSuffix'))]"
+    }
     }
   }

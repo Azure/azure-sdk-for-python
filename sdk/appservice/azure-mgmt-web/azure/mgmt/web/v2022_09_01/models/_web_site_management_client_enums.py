@@ -664,6 +664,7 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ARRAY = "Array"
     OBJECT = "Object"
     SECURE_OBJECT = "SecureObject"
+    INT_ENUM = "Int"
 
 
 class ProviderOsTypeSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1002,13 +1003,13 @@ class UpgradePreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No preference on when this App Service Environment will be upgraded"""
     EARLY = "Early"
     """This App Service Environment will be upgraded before others in the same region that have
-    #: Upgrade Preference 'Late'"""
+    Upgrade Preference 'Late'"""
     LATE = "Late"
     """This App Service Environment will be upgraded after others in the same region that have Upgrade
-    #: Preference 'Early'"""
+    Preference 'Early'"""
     MANUAL = "Manual"
     """ASEv3 only. Once an upgrade is available, this App Service Environment will wait 10 days for
-    #: the upgrade to be manually initiated. After 10 days the upgrade will begin automatically"""
+    the upgrade to be manually initiated. After 10 days the upgrade will begin automatically"""
 
 
 class UsageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

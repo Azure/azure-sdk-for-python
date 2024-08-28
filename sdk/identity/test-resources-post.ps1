@@ -29,9 +29,6 @@ $workingFolder = $webappRoot;
 
 Write-Host "Working directory: $workingFolder"
 
-az login --service-principal -u $DeploymentOutputs['IDENTITY_CLIENT_ID'] -p $DeploymentOutputs['IDENTITY_CLIENT_SECRET'] --tenant $DeploymentOutputs['IDENTITY_TENANT_ID']
-az account set --subscription $DeploymentOutputs['IDENTITY_SUBSCRIPTION_ID']
-
 Write-Host "Sleeping for a bit to ensure container registry is ready."
 Start-Sleep -s 60
 
@@ -140,7 +137,3 @@ az container create -g $($DeploymentOutputs['IDENTITY_RESOURCE_GROUP']) -n $($De
      IDENTITY_STORAGE_NAME_USER_ASSIGNED=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_2']) `
      IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID=$($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID']) `
      FUNCTIONS_CUSTOMHANDLER_PORT=80
-
-if ($CI) {
-    az logout
-}

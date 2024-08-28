@@ -1,5 +1,19 @@
 # Release History
 
+## 11.6.0b5 (Unreleased)
+
+### Features Added
+
+- `SearchIndexClient`.`get_search_client` inherits the API version.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the issue that we missed ODATA header when using Entra ID auth.
+
+### Other Changes
+
 ## 11.6.0b4 (2024-05-07)
 
 ### Features Added

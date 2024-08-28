@@ -194,6 +194,12 @@ CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
 CONNECTION_RESOURCE_ID_KEY = "ResourceId"
 
+# Deprecated tag keys that cause workspace patch operations to fail
+# Patch operations are used by the workspace begin_upcate operation,
+# but not begin_create_or_update. Once the former is replaced with the
+# latter, we can remove this list.
+WORKSPACE_PATCH_REJECTED_KEYS = ["AttachKeyVaultToWorkspace", "AttachAppInsightsToWorkspace"]
+
 
 class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum that captures keys URL types returned from querying a workspace's discovery url."""
@@ -948,6 +954,24 @@ class InferenceServerType:
 
 class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
+
+
+class DataIndexTypes:
+    """DataIndexTypes is an enumeration of values for the types out indexes which can be written to by DataIndex."""
+
+    ACS = "acs"
+    """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
+    FAISS = "faiss"
+    """Faiss index type."""
+
+
+class IndexInputType:
+    """An enumeration of values for the types of input data for an index."""
+
+    GIT = "git"
+    LOCAL = "local"
 
 
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

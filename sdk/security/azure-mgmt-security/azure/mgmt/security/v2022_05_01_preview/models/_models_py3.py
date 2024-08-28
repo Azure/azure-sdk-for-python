@@ -31,7 +31,7 @@ class EnvironmentData(_serialization.Model):
     AWSEnvironmentData, AzureDevOpsScopeEnvironmentData, GcpProjectEnvironmentData,
     GithubScopeEnvironmentData
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar environment_type: The type of the environment data. Required. Known values are:
      "AwsAccount", "GcpProject", "GithubScope", and "AzureDevOpsScope".
@@ -65,7 +65,7 @@ class EnvironmentData(_serialization.Model):
 class AWSEnvironmentData(EnvironmentData):
     """The aws connector environment data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar environment_type: The type of the environment data. Required. Known values are:
      "AwsAccount", "GcpProject", "GithubScope", and "AzureDevOpsScope".
@@ -102,7 +102,7 @@ class AwsOrganizationalData(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AwsOrganizationalDataMember, AwsOrganizationalDataMaster
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -134,7 +134,7 @@ class AwsOrganizationalData(_serialization.Model):
 class AwsOrganizationalDataMaster(AwsOrganizationalData):
     """The awsOrganization data for the master account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -178,7 +178,7 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData):
 class AwsOrganizationalDataMember(AwsOrganizationalData):
     """The awsOrganization data for the member account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -212,7 +212,7 @@ class AwsOrganizationalDataMember(AwsOrganizationalData):
 class AzureDevOpsScopeEnvironmentData(EnvironmentData):
     """The AzureDevOps scope connector's environment data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar environment_type: The type of the environment data. Required. Known values are:
      "AwsAccount", "GcpProject", "GithubScope", and "AzureDevOpsScope".
@@ -309,7 +309,7 @@ class CloudOffering(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -359,7 +359,7 @@ class CspmMonitorAwsOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -404,7 +404,7 @@ class CspmMonitorAwsOffering(CloudOffering):
         self.native_cloud_connection = native_cloud_connection
 
 
-class CspmMonitorAwsOfferingNativeCloudConnection(_serialization.Model):
+class CspmMonitorAwsOfferingNativeCloudConnection(_serialization.Model):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -429,7 +429,7 @@ class CspmMonitorAzureDevOpsOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -462,7 +462,7 @@ class CspmMonitorGcpOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -507,7 +507,7 @@ class CspmMonitorGcpOffering(CloudOffering):
         self.native_cloud_connection = native_cloud_connection
 
 
-class CspmMonitorGcpOfferingNativeCloudConnection(_serialization.Model):
+class CspmMonitorGcpOfferingNativeCloudConnection(_serialization.Model):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar workload_identity_provider_id: The GCP workload identity provider id for the offering.
@@ -546,7 +546,7 @@ class CspmMonitorGithubOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -579,7 +579,7 @@ class DefenderFoDatabasesAwsOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -624,7 +624,7 @@ class DefenderFoDatabasesAwsOffering(CloudOffering):
         self.arc_auto_provisioning = arc_auto_provisioning
 
 
-class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):
+class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -634,7 +634,7 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):
     :ivar service_principal_secret_metadata: Metadata of Service Principal secret for
      autoprovisioning.
     :vartype service_principal_secret_metadata:
-     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata  # pylint: disable=line-too-long
     """
 
     _attribute_map = {
@@ -664,7 +664,7 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):
         :keyword service_principal_secret_metadata: Metadata of Service Principal secret for
          autoprovisioning.
         :paramtype service_principal_secret_metadata:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.enabled = enabled
@@ -672,7 +672,9 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):
         self.service_principal_secret_metadata = service_principal_secret_metadata
 
 
-class DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata(_serialization.Model):
+class DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Metadata of Service Principal secret for autoprovisioning.
 
     :ivar expiry_date: expiration date of service principal secret.
@@ -716,7 +718,7 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -744,7 +746,7 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
     :ivar container_vulnerability_assessment_task: The container vulnerability assessment task
      configuration.
     :vartype container_vulnerability_assessment_task:
-     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask
+     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask  # pylint: disable=line-too-long
     :ivar enable_container_vulnerability_assessment: Enable container vulnerability assessment
      feature.
     :vartype enable_container_vulnerability_assessment: bool
@@ -825,11 +827,11 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
         :keyword container_vulnerability_assessment: The container vulnerability assessment
          configuration.
         :paramtype container_vulnerability_assessment:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessment
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessment  # pylint: disable=line-too-long
         :keyword container_vulnerability_assessment_task: The container vulnerability assessment task
          configuration.
         :paramtype container_vulnerability_assessment_task:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask  # pylint: disable=line-too-long
         :keyword enable_container_vulnerability_assessment: Enable container vulnerability assessment
          feature.
         :paramtype enable_container_vulnerability_assessment: bool
@@ -856,7 +858,7 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
         self.scuba_external_id = scuba_external_id
 
 
-class DefenderForContainersAwsOfferingCloudWatchToKinesis(_serialization.Model):
+class DefenderForContainersAwsOfferingCloudWatchToKinesis(_serialization.Model):  # pylint: disable=name-too-long
     """The cloudwatch to kinesis connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS used by CloudWatch to transfer data into
@@ -878,7 +880,9 @@ class DefenderForContainersAwsOfferingCloudWatchToKinesis(_serialization.Model):
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForContainersAwsOfferingContainerVulnerabilityAssessment(_serialization.Model):
+class DefenderForContainersAwsOfferingContainerVulnerabilityAssessment(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The container vulnerability assessment configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -898,7 +902,9 @@ class DefenderForContainersAwsOfferingContainerVulnerabilityAssessment(_serializ
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask(_serialization.Model):
+class DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The container vulnerability assessment task configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -918,7 +924,7 @@ class DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask(_seri
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForContainersAwsOfferingKinesisToS3(_serialization.Model):
+class DefenderForContainersAwsOfferingKinesisToS3(_serialization.Model):  # pylint: disable=name-too-long
     """The kinesis to s3 connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS used by Kinesis to transfer data into S3.
@@ -938,7 +944,7 @@ class DefenderForContainersAwsOfferingKinesisToS3(_serialization.Model):
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForContainersAwsOfferingKubernetesScubaReader(_serialization.Model):
+class DefenderForContainersAwsOfferingKubernetesScubaReader(_serialization.Model):  # pylint: disable=name-too-long
     """The kubernetes to scuba connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature used for reading data.
@@ -958,7 +964,7 @@ class DefenderForContainersAwsOfferingKubernetesScubaReader(_serialization.Model
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForContainersAwsOfferingKubernetesService(_serialization.Model):
+class DefenderForContainersAwsOfferingKubernetesService(_serialization.Model):  # pylint: disable=name-too-long
     """The kubernetes service connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature used for provisioning
@@ -985,7 +991,7 @@ class DefenderForContainersGcpOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -1050,7 +1056,7 @@ class DefenderForContainersGcpOffering(CloudOffering):
          ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersGcpOfferingNativeCloudConnection
         :keyword data_pipeline_native_cloud_connection: The native cloud connection configuration.
         :paramtype data_pipeline_native_cloud_connection:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection  # pylint: disable=line-too-long
         :keyword audit_logs_auto_provisioning_flag: Is audit logs data collection enabled.
         :paramtype audit_logs_auto_provisioning_flag: bool
         :keyword defender_agent_auto_provisioning_flag: Is Microsoft Defender for Cloud Kubernetes
@@ -1069,7 +1075,9 @@ class DefenderForContainersGcpOffering(CloudOffering):
         self.policy_agent_auto_provisioning_flag = policy_agent_auto_provisioning_flag
 
 
-class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(_serialization.Model):
+class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The data collection service account email address in GCP
@@ -1105,7 +1113,7 @@ class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(_seriali
         self.workload_identity_provider_id = workload_identity_provider_id
 
 
-class DefenderForContainersGcpOfferingNativeCloudConnection(_serialization.Model):
+class DefenderForContainersGcpOfferingNativeCloudConnection(_serialization.Model):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The service account email address in GCP for this
@@ -1145,7 +1153,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -1160,7 +1168,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
      ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingArcAutoProvisioning
     :ivar defender_for_databases_arc_auto_provisioning: The native cloud connection configuration.
     :vartype defender_for_databases_arc_auto_provisioning:
-     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning
+     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -1197,7 +1205,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
         :keyword defender_for_databases_arc_auto_provisioning: The native cloud connection
          configuration.
         :paramtype defender_for_databases_arc_auto_provisioning:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.offering_type: str = "DefenderForDatabasesGcp"
@@ -1205,7 +1213,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
         self.defender_for_databases_arc_auto_provisioning = defender_for_databases_arc_auto_provisioning
 
 
-class DefenderForDatabasesGcpOfferingArcAutoProvisioning(_serialization.Model):
+class DefenderForDatabasesGcpOfferingArcAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1242,7 +1250,9 @@ class DefenderForDatabasesGcpOfferingArcAutoProvisioning(_serialization.Model):
         self.configuration = configuration
 
 
-class DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration(_serialization.Model):
+class DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Configuration for ARC autoprovisioning.
 
     :ivar client_id: The Azure service principal client id for agent onboarding.
@@ -1276,7 +1286,9 @@ class DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration(_serializa
         self.agent_onboarding_service_account_numeric_id = agent_onboarding_service_account_numeric_id
 
 
-class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(_serialization.Model):
+class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The service account email address in GCP for this
@@ -1316,7 +1328,7 @@ class DefenderForServersAwsOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -1417,7 +1429,7 @@ class DefenderForServersAwsOffering(CloudOffering):
         self.vm_scanners = vm_scanners
 
 
-class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):
+class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1427,7 +1439,7 @@ class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):
     :ivar service_principal_secret_metadata: Metadata of Service Principal secret for
      autoprovisioning.
     :vartype service_principal_secret_metadata:
-     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+     ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata  # pylint: disable=line-too-long
     """
 
     _attribute_map = {
@@ -1457,7 +1469,7 @@ class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):
         :keyword service_principal_secret_metadata: Metadata of Service Principal secret for
          autoprovisioning.
         :paramtype service_principal_secret_metadata:
-         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+         ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.enabled = enabled
@@ -1465,7 +1477,9 @@ class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):
         self.service_principal_secret_metadata = service_principal_secret_metadata
 
 
-class DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata(_serialization.Model):
+class DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Metadata of Service Principal secret for autoprovisioning.
 
     :ivar expiry_date: expiration date of service principal secret.
@@ -1504,7 +1518,7 @@ class DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMeta
         self.parameter_name_in_store = parameter_name_in_store
 
 
-class DefenderForServersAwsOfferingDefenderForServers(_serialization.Model):
+class DefenderForServersAwsOfferingDefenderForServers(_serialization.Model):  # pylint: disable=name-too-long
     """The Defender for servers connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -1524,7 +1538,7 @@ class DefenderForServersAwsOfferingDefenderForServers(_serialization.Model):
         self.cloud_role_arn = cloud_role_arn
 
 
-class DefenderForServersAwsOfferingMdeAutoProvisioning(_serialization.Model):
+class DefenderForServersAwsOfferingMdeAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The Microsoft Defender for Endpoint autoprovisioning configuration.
 
     :ivar enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
@@ -1570,7 +1584,7 @@ class DefenderForServersAwsOfferingSubPlan(_serialization.Model):
         self.type = type
 
 
-class DefenderForServersAwsOfferingVaAutoProvisioning(_serialization.Model):
+class DefenderForServersAwsOfferingVaAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The Vulnerability Assessment autoprovisioning configuration.
 
     :ivar enabled: Is Vulnerability Assessment auto provisioning enabled.
@@ -1607,7 +1621,9 @@ class DefenderForServersAwsOfferingVaAutoProvisioning(_serialization.Model):
         self.configuration = configuration
 
 
-class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(_serialization.Model):
+class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """configuration for Vulnerability Assessment autoprovisioning.
 
     :ivar type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
@@ -1663,7 +1679,7 @@ class DefenderForServersAwsOfferingVmScanners(_serialization.Model):
         self.configuration = configuration
 
 
-class DefenderForServersAwsOfferingVmScannersConfiguration(_serialization.Model):
+class DefenderForServersAwsOfferingVmScannersConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """configuration for Microsoft Defender for Server VM scanning.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -1707,7 +1723,7 @@ class DefenderForServersGcpOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -1799,7 +1815,7 @@ class DefenderForServersGcpOffering(CloudOffering):
         self.sub_plan = sub_plan
 
 
-class DefenderForServersGcpOfferingArcAutoProvisioning(_serialization.Model):
+class DefenderForServersGcpOfferingArcAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1836,7 +1852,9 @@ class DefenderForServersGcpOfferingArcAutoProvisioning(_serialization.Model):
         self.configuration = configuration
 
 
-class DefenderForServersGcpOfferingArcAutoProvisioningConfiguration(_serialization.Model):
+class DefenderForServersGcpOfferingArcAutoProvisioningConfiguration(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Configuration for ARC autoprovisioning.
 
     :ivar client_id: The Azure service principal client id for agent onboarding.
@@ -1870,7 +1888,7 @@ class DefenderForServersGcpOfferingArcAutoProvisioningConfiguration(_serializati
         self.agent_onboarding_service_account_numeric_id = agent_onboarding_service_account_numeric_id
 
 
-class DefenderForServersGcpOfferingDefenderForServers(_serialization.Model):
+class DefenderForServersGcpOfferingDefenderForServers(_serialization.Model):  # pylint: disable=name-too-long
     """The Defender for servers connection configuration.
 
     :ivar workload_identity_provider_id: The workload identity provider id in GCP for this feature.
@@ -1904,7 +1922,7 @@ class DefenderForServersGcpOfferingDefenderForServers(_serialization.Model):
         self.service_account_email_address = service_account_email_address
 
 
-class DefenderForServersGcpOfferingMdeAutoProvisioning(_serialization.Model):
+class DefenderForServersGcpOfferingMdeAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The Microsoft Defender for Endpoint autoprovisioning configuration.
 
     :ivar enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
@@ -1950,7 +1968,7 @@ class DefenderForServersGcpOfferingSubPlan(_serialization.Model):
         self.type = type
 
 
-class DefenderForServersGcpOfferingVaAutoProvisioning(_serialization.Model):
+class DefenderForServersGcpOfferingVaAutoProvisioning(_serialization.Model):  # pylint: disable=name-too-long
     """The Vulnerability Assessment autoprovisioning configuration.
 
     :ivar enabled: Is Vulnerability Assessment auto provisioning enabled.
@@ -1987,7 +2005,9 @@ class DefenderForServersGcpOfferingVaAutoProvisioning(_serialization.Model):
         self.configuration = configuration
 
 
-class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(_serialization.Model):
+class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """configuration for Vulnerability Assessment autoprovisioning.
 
     :ivar type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
@@ -2065,7 +2085,7 @@ class GcpOrganizationalData(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GcpOrganizationalDataMember, GcpOrganizationalDataOrganization
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -2097,7 +2117,7 @@ class GcpOrganizationalData(_serialization.Model):
 class GcpOrganizationalDataMember(GcpOrganizationalData):
     """The gcpOrganization data for the member account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -2145,7 +2165,7 @@ class GcpOrganizationalDataMember(GcpOrganizationalData):
 class GcpOrganizationalDataOrganization(GcpOrganizationalData):
     """The gcpOrganization data for the parent account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Known values are: "Member" and "Organization".
@@ -2240,7 +2260,7 @@ class GcpProjectDetails(_serialization.Model):
 class GcpProjectEnvironmentData(EnvironmentData):
     """The GCP project connector environment data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar environment_type: The type of the environment data. Required. Known values are:
      "AwsAccount", "GcpProject", "GithubScope", and "AzureDevOpsScope".
@@ -2286,7 +2306,7 @@ class GcpProjectEnvironmentData(EnvironmentData):
 class GithubScopeEnvironmentData(EnvironmentData):
     """The github scope connector's environment data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar environment_type: The type of the environment data. Required. Known values are:
      "AwsAccount", "GcpProject", "GithubScope", and "AzureDevOpsScope".
@@ -2313,7 +2333,7 @@ class InformationProtectionAwsOffering(CloudOffering):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offering_type: The type of the security offering. Required. Known values are:
      "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
@@ -2358,7 +2378,7 @@ class InformationProtectionAwsOffering(CloudOffering):
         self.information_protection = information_protection
 
 
-class InformationProtectionAwsOfferingInformationProtection(_serialization.Model):
+class InformationProtectionAwsOfferingInformationProtection(_serialization.Model):  # pylint: disable=name-too-long
     """The native cloud connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -2632,7 +2652,7 @@ class SecurityConnectorsList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of security connectors under the given scope. Required.
     :vartype value: list[~azure.mgmt.security.v2022_05_01_preview.models.SecurityConnector]

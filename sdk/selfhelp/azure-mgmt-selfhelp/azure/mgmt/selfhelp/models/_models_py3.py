@@ -422,7 +422,8 @@ class DiscoveryNlpRequest(_serialization.Model):
 
     :ivar issue_summary: Natural language description of the issue. Required.
     :vartype issue_summary: str
-    :ivar resource_id: ARM resource Id of the resource that is having the issue.
+    :ivar resource_id: ARM resource Id of the resource that is having the issue. Only applicable
+     for Discovery Solution NLP Subscription Scope.
     :vartype resource_id: str
     :ivar service_id: ARM service Id of the service that is having the issue. For more information
      on service Id see https://learn.microsoft.com/rest/api/support/services/list?tabs=HTTP.
@@ -454,7 +455,8 @@ class DiscoveryNlpRequest(_serialization.Model):
         """
         :keyword issue_summary: Natural language description of the issue. Required.
         :paramtype issue_summary: str
-        :keyword resource_id: ARM resource Id of the resource that is having the issue.
+        :keyword resource_id: ARM resource Id of the resource that is having the issue. Only applicable
+         for Discovery Solution NLP Subscription Scope.
         :paramtype resource_id: str
         :keyword service_id: ARM service Id of the service that is having the issue. For more
          information on service Id see

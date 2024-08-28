@@ -21,13 +21,13 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_map_tile():
     # [START get_map_tile]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render.models import TilesetID
+    from azure.maps.render import TilesetID
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
@@ -45,6 +45,7 @@ def get_map_tile():
         file.write(next(result))
         file.close()
     # [END get_map_tile]
+
 
 if __name__ == '__main__':
     get_map_tile()

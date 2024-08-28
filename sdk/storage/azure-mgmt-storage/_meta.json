@@ -1,12 +1,12 @@
 {
-  "commit": "a3089b2764df11b10a8a43e2a5a33dbe4d3653ca",
+  "commit": "43f10d3b8bacd5fc6b01254b5050c613f26c3573",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.13.19",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/storage/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/storage/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.19 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/storage/resource-manager/readme.md",
   "package-2023-01": "2023-07-20 11:56:40 -0700 3e6b4ddca225530c27273d0f816466a905c0151b Microsoft.Storage/stable/2023-01-01/table.json",
   "package-2022-09": "2022-11-13 19:43:16 -0800 da0cfefaa0e6c237e1e3819f1cb2e11d7606878d Microsoft.Storage/stable/2022-09-01/table.json",
@@ -28,5 +28,6 @@
   "package-2017-06": "2019-06-26 12:38:19 -0400 26df0a691d94445b2c96d348f5ecc31f6f9a2099 Microsoft.Storage/stable/2017-06-01/storage.json",
   "package-2016-12": "2020-05-21 10:20:08 +0200 db0f437ba79086e20570d648fe932c4266e7a7ed Microsoft.Storage/stable/2016-12-01/storage.json",
   "package-2016-01": "2019-06-26 12:38:19 -0400 26df0a691d94445b2c96d348f5ecc31f6f9a2099 Microsoft.Storage/stable/2016-01-01/storage.json",
-  "package-2015-06": "2019-06-26 12:38:19 -0400 26df0a691d94445b2c96d348f5ecc31f6f9a2099 Microsoft.Storage/stable/2015-06-15/storage.json"
+  "package-2015-06": "2019-06-26 12:38:19 -0400 26df0a691d94445b2c96d348f5ecc31f6f9a2099 Microsoft.Storage/stable/2015-06-15/storage.json",
+  "package-2023-05": "2024-06-26 09:32:01 -0700 db377f47cf7bf53bf077aa42967112a9783980d5 Microsoft.Storage/stable/2023-05-01/storageTaskAssignments.json"
 }

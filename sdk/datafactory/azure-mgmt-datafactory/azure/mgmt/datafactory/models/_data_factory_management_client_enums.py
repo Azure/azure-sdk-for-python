@@ -37,6 +37,13 @@ class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnum
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class AmazonRdsForSqlAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+
+
 class AvroCompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AvroCompressionCodec."""
 
@@ -64,6 +71,33 @@ class AzureSearchIndexWriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnum
 
     MERGE = "Merge"
     UPLOAD = "Upload"
+
+
+class AzureSqlDatabaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlDWAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlMIAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class AzureStorageAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -240,6 +274,7 @@ class DynamicsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OFFICE365 = "Office365"
     IFD = "Ifd"
     AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
+    ACTIVE_DIRECTORY = "Active Directory"
 
 
 class DynamicsDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -278,6 +313,7 @@ class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FIELD = "Field"
     UNARY = "Unary"
     BINARY = "Binary"
+    N_ARY = "NAry"
 
 
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -308,10 +344,11 @@ class GlobalParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
+    INT_ENUM = "Int"
 
 
 class GoogleAdWordsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -553,9 +590,10 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Notebook parameter type."""
 
     STRING = "string"
-    INT_ENUM = "int"
+    INT = "int"
     FLOAT = "float"
     BOOL = "bool"
+    INT_ENUM = "int"
 
 
 class NotebookReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -603,11 +641,12 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
+    INT_ENUM = "Int"
 
 
 class PhoenixAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -693,8 +732,9 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
-    IN_ENUM = "In"
+    IN = "In"
     NOT_IN = "NotIn"
+    IN_ENUM = "In"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -809,7 +849,7 @@ class ScriptActivityParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the query. Type: string."""
+    """The type of the ScriptActivityScriptBlock."""
 
     QUERY = "Query"
     NON_QUERY = "NonQuery"
@@ -924,6 +964,14 @@ class SqlPartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class SqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
 class SqlWriteBehaviorEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify the write behavior when copying data into sql."""
 
@@ -960,12 +1008,13 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Stored procedure parameter type."""
 
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     INT64 = "Int64"
     DECIMAL = "Decimal"
     GUID = "Guid"
     BOOLEAN = "Boolean"
     DATE = "Date"
+    INT_ENUM = "Int"
 
 
 class SybaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

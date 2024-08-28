@@ -79,6 +79,7 @@ setup(
     },
     install_requires=[
         "isodate>=0.6.1",
+        "typing-extensions>=4.6.0",
         {%- if need_msrestazure %}
         "msrestazure>=0.4.32",
         {%- endif %}

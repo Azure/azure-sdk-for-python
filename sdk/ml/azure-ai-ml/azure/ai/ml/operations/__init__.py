@@ -27,7 +27,7 @@ from ._online_deployment_operations import OnlineDeploymentOperations
 from ._online_endpoint_operations import OnlineEndpointOperations
 from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
-from ._connections_operations import ConnectionsOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
 from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from ._evaluator_operations import EvaluatorOperations
@@ -49,7 +49,7 @@ __all__ = [
     "DataOperations",
     "EnvironmentOperations",
     "ComponentOperations",
-    "ConnectionsOperations",
+    "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
     "WorkspaceOutboundRuleOperations",

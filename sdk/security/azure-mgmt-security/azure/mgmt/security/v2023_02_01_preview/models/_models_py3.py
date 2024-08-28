@@ -508,7 +508,7 @@ class HealthReportsList(_serialization.Model):
 class Issue(_serialization.Model):
     """The issue that caused the resource to by unhealthy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar issue_key: The unique issue key. Required.
     :vartype issue_key: str

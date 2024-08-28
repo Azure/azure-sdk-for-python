@@ -53,8 +53,34 @@ def create_metrics_query_client_sovereign_cloud():
     # [END create_metrics_query_client_sovereign_cloud]
 
 
+def create_metrics_client():
+    # [START create_metrics_client]
+    from azure.identity import DefaultAzureCredential
+    from azure.monitor.query import MetricsClient
+
+    credential = DefaultAzureCredential()
+    client = MetricsClient("https://eastus.metrics.monitor.azure.com", credential)
+    # [END create_metrics_client]
+
+
+def create_metrics_client_sovereign_cloud():
+    # [START create_metrics_client_sovereign_cloud]
+    from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+    from azure.monitor.query import MetricsClient
+
+    credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+    client = MetricsClient(
+        "https://usgovvirginia.metrics.monitor.azure.us",
+        credential,
+        audience="https://metrics.monitor.azure.us",
+    )
+    # [END create_metrics_client_sovereign_cloud]
+
+
 if __name__ == '__main__':
     create_logs_query_client()
     create_logs_query_client_sovereign_cloud()
     create_metrics_query_client()
     create_metrics_query_client_sovereign_cloud()
+    create_metrics_client()
+    create_metrics_client_sovereign_cloud()

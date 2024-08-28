@@ -63,7 +63,7 @@ class TestEvaluator(AzureRecordedTestCase):
         assert "is-evaluator" in model.properties and model.properties["is-evaluator"] == "true"
         assert re.match(LONG_URI_REGEX_FORMAT, model.path)
 
-        model = client.evaluators.get(model.name, "3")
+        model = client.evaluators.get(name=model.name, version="3")
         assert model.name == model_name
         assert model.version == "3"
         assert model.description == "This is evaluator."
@@ -93,7 +93,7 @@ class TestEvaluator(AzureRecordedTestCase):
         assert model.stage == "Production"
         assert re.match(LONG_URI_REGEX_FORMAT, model.path)
 
-        model = client.evaluators.get(model.name, "3")
+        model = client.evaluators.get(name=model.name, version="3")
         assert model.name == model_name
         assert model.version == "3"
         assert model.description == "This is evaluator."
@@ -108,7 +108,7 @@ class TestEvaluator(AzureRecordedTestCase):
         for version in ["1", "2", "3", "4"]:
             model = _load_flow(model_name, version=version)
             client.evaluators.create_or_update(model)
-            assert client.evaluators.get(model_name, label="latest").version == version
+            assert client.evaluators.get(name=model_name, label="latest").version == version
 
     @pytest.mark.skip(
         "Skipping test for archive and restore as we have removed it from interface. "

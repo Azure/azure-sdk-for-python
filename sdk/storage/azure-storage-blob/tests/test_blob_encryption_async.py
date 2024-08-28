@@ -15,7 +15,6 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobType
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -35,6 +34,8 @@ TEST_CONTAINER_PREFIX = 'encryption_container'
 TEST_BLOB_PREFIXES = {'BlockBlob': 'encryption_block_blob',
                       'PageBlob': 'encryption_page_blob',
                       'AppendBlob': 'foo'}
+_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, but encryption is not supported' + \
+                                           ' for this method.'
 # ------------------------------------------------------------------------------
 
 
@@ -177,7 +178,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        blob = await self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -256,7 +257,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        blob = await self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         self.bsc.key_encryption_key.kid = 'Invalid'
@@ -859,6 +860,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
 
         data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))

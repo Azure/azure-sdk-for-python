@@ -209,10 +209,8 @@ def discover_targeted_packages(
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
 
-    # apply package-specific exclusions only if we have gotten more than one
-    if len(collected_packages) > 1:
-        if not include_inactive:
-            collected_packages = apply_inactive_filter(collected_packages)
+    if not include_inactive:
+        collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)

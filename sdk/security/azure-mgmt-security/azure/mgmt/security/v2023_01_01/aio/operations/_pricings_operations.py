@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._pricings_operations import build_get_request, build_list_request, build_update_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -56,12 +61,11 @@ class PricingsOperations:
     async def list(self, **kwargs: Any) -> _models.PricingList:
         """Lists Microsoft Defender for Cloud pricing configurations in the subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PricingList or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01.models.PricingList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -75,19 +79,18 @@ class PricingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.PricingList] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -99,11 +102,9 @@ class PricingsOperations:
         deserialized = self._deserialize("PricingList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(self, pricing_name: str, **kwargs: Any) -> _models.Pricing:
@@ -111,12 +112,11 @@ class PricingsOperations:
 
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Pricing or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01.models.Pricing
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -130,20 +130,19 @@ class PricingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.Pricing] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             pricing_name=pricing_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -155,11 +154,9 @@ class PricingsOperations:
         deserialized = self._deserialize("Pricing", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -174,7 +171,6 @@ class PricingsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Pricing or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01.models.Pricing
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -182,40 +178,37 @@ class PricingsOperations:
 
     @overload
     async def update(
-        self, pricing_name: str, pricing: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, pricing_name: str, pricing: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Pricing:
         """Updates a provided Microsoft Defender for Cloud pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
         :param pricing: Pricing object. Required.
-        :type pricing: IO
+        :type pricing: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Pricing or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01.models.Pricing
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def update(self, pricing_name: str, pricing: Union[_models.Pricing, IO], **kwargs: Any) -> _models.Pricing:
+    async def update(
+        self, pricing_name: str, pricing: Union[_models.Pricing, IO[bytes]], **kwargs: Any
+    ) -> _models.Pricing:
         """Updates a provided Microsoft Defender for Cloud pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
-        :param pricing: Pricing object. Is either a Pricing type or a IO type. Required.
-        :type pricing: ~azure.mgmt.security.v2023_01_01.models.Pricing or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param pricing: Pricing object. Is either a Pricing type or a IO[bytes] type. Required.
+        :type pricing: ~azure.mgmt.security.v2023_01_01.models.Pricing or IO[bytes]
         :return: Pricing or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01.models.Pricing
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -238,23 +231,22 @@ class PricingsOperations:
         else:
             _json = self._serialize.body(pricing, "Pricing")
 
-        request = build_update_request(
+        _request = build_update_request(
             pricing_name=pricing_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -266,8 +258,6 @@ class PricingsOperations:
         deserialized = self._deserialize("Pricing", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}"}
+        return deserialized  # type: ignore

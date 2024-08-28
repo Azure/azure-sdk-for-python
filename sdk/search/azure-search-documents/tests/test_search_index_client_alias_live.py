@@ -10,7 +10,7 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes import SearchIndexClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 from azure.search.documents.indexes.models import (
     AnalyzeTextOptions,
     CorsOptions,
@@ -28,8 +28,8 @@ class TestSearchClientAlias(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_alias(self, endpoint, api_key):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+    def test_alias(self, endpoint):
+        client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
         aliases = ["resort", "motel"]
         index_name = next(client.list_index_names())
         self._test_list_aliases_empty(client)

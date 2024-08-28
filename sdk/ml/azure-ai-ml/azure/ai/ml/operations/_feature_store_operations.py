@@ -19,7 +19,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope, WorkspaceKind
 from azure.ai.ml.entities import (
-    Connection,
+    WorkspaceConnection,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     ManagedNetworkProvisionStatus,
@@ -407,7 +407,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_offline_store_connection:
                     offline_store_connection_name_new = f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    offline_store_connection = Connection(
+                    offline_store_connection = WorkspaceConnection(
                         name=offline_store_connection_name_new,
                         type=offline_store.type,
                         target=offline_store.target,
@@ -433,7 +433,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_online_store_connection:
                     online_store_connection_name_new = f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    online_store_connection = Connection(
+                    online_store_connection = WorkspaceConnection(
                         name=online_store_connection_name_new,
                         type=online_store.type,
                         target=online_store.target,

@@ -13,7 +13,7 @@ from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
 
-HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5}
+HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5, ApiVersion.V7_6_PREVIEW_1}
 
 
 def get_attestation_token(attestation_uri):
@@ -100,9 +100,9 @@ class KeysClientPreparer(AzureRecordedTestCase):
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
-            os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
-            os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ.get("KEYVAULT_CLIENT_SECRET", "")  # Empty for user auth
+            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
+            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
+            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
 
     def _skip_if_not_configured(self, is_hsm):
         if self.is_live and is_hsm and self.managed_hsm_url is None:

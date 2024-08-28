@@ -29,10 +29,11 @@ python -m pip install azure-ai-documentintelligence
 ```
 
 This table shows the relationship between SDK versions and supported API service versions:
-|SDK version|Supported API service version
-|-|-
-|1.0.0b1 | 2023-10-31-preview
-|1.0.0b2 | 2024-02-29-preview
+
+|SDK version|Supported API service version|
+|-|-|
+|1.0.0b1 | 2023-10-31-preview|
+|1.0.0b2 | 2024-02-29-preview|
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -212,6 +213,17 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
 
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def _format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
@@ -233,33 +245,58 @@ for page in result.pages:
 
     if page.lines:
         for line_idx, line in enumerate(page.lines):
-            words = get_words(page, line)
+            words = []
+            if page.words:
+                for word in page.words:
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                    if _in_span(word, line.spans):
+                        words.append(word)
             print(
                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{line.polygon}'"
+                f"within bounding polygon '{_format_polygon(line.polygon)}'"
             )
-
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
+
+if result.paragraphs:
+    print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+    # Sort all paragraphs by span's offset to read in the right order.
+    result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+    print("-----Print sorted paragraphs-----")
+    for paragraph in result.paragraphs:
+        if not paragraph.bounding_regions:
+            print(f"Found paragraph with role: '{paragraph.role}' within N/A bounding region")
+        else:
+            print(f"Found paragraph with role: '{paragraph.role}' within")
+            print(
+                ", ".join(
+                    f" Page #{region.page_number}: {_format_polygon(region.polygon)} bounding region"
+                    for region in paragraph.bounding_regions
+                )
+            )
+        print(f"...with content: '{paragraph.content}'")
+        print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
 if result.tables:
     for table_idx, table in enumerate(result.tables):
         print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
-                    print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'"
+                    )
 
 print("----------------------------------------")
 ```
@@ -277,6 +314,24 @@ Select the General Document Model by passing `model_id="prebuilt-document"` into
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def _format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(
+        f"Page #{region.page_number}: {_format_polygon(region.polygon)}" for region in bounding_regions
+    )
+
+def _format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -301,11 +356,14 @@ print("----Key-value pairs found in document----")
 if result.key_value_pairs:
     for kv_pair in result.key_value_pairs:
         if kv_pair.key:
-            print(f"Key '{kv_pair.key.content}' found within " f"'{kv_pair.key.bounding_regions}' bounding regions")
+            print(
+                f"Key '{kv_pair.key.content}' found within "
+                f"'{_format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+            )
         if kv_pair.value:
             print(
                 f"Value '{kv_pair.value.content}' found within "
-                f"'{kv_pair.value.bounding_regions}' bounding regions\n"
+                f"'{_format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
             )
 
 for page in result.pages:
@@ -314,20 +372,22 @@ for page in result.pages:
 
     if page.lines:
         for line_idx, line in enumerate(page.lines):
-            words = get_words(page.words, line)
+            words = []
+            if page.words:
+                for word in page.words:
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                    if _in_span(word, line.spans):
+                        words.append(word)
             print(
                 f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                f"bounding polygon '{line.polygon}'"
+                f"bounding polygon '{_format_polygon(line.polygon)}'"
             )
-
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of "
+                f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of "
                 f"{selection_mark.confidence}"
             )
 
@@ -336,13 +396,15 @@ if result.tables:
         print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
                     print(
-                        f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                        f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'\n"
                     )
 print("----------------------------------------")
 ```
@@ -363,6 +425,9 @@ For example, to analyze fields from a sales receipt, use the prebuilt receipt mo
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def _format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -411,23 +476,23 @@ if receipts.documents:
                     item_total_price = item.get("valueObject").get("TotalPrice")
                     if item_total_price:
                         print(
-                            f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "
+                            f"......Total Item Price: {_format_price(item_total_price.get('valueCurrency'))} has confidence: "
                             f"{item_total_price.confidence}"
                         )
             subtotal = receipt.fields.get("Subtotal")
             if subtotal:
                 print(
-                    f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
+                    f"Subtotal: {_format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
                 )
             tax = receipt.fields.get("TotalTax")
             if tax:
-                print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
+                print(f"Total tax: {_format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
             tip = receipt.fields.get("Tip")
             if tip:
-                print(f"Tip: {format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
+                print(f"Tip: {_format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
             total = receipt.fields.get("Total")
             if total:
-                print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
+                print(f"Total: {_format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
 ```
 
@@ -479,12 +544,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -500,6 +566,20 @@ For best results, you should only analyze documents of the same document type th
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def _print_table(header_names, table_data):
+    # Print a two-dimensional array like a table.
+    max_len_list = []
+    for i in range(len(header_names)):
+        col_values = list(map(lambda row: len(str(row[i])), table_data))
+        col_values.append(len(str(header_names[i])))
+        max_len_list.append(max(col_values))
+
+    row_format_str = "".join(map(lambda len: f"{{:<{len + 4}}}", max_len_list))
+
+    print(row_format_str.format(*header_names))
+    for row in table_data:
+        print(row_format_str.format(*row))
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -529,23 +609,20 @@ if result.documents:
 
     # Extract table cell values
     SYMBOL_OF_TABLE_TYPE = "array"
+    SYMBOL_OF_OBJECT_TYPE = "object"
     KEY_OF_VALUE_OBJECT = "valueObject"
     KEY_OF_CELL_CONTENT = "content"
 
     for doc in result.documents:
         if not doc.fields is None:
             for field_name, field_value in doc.fields.items():
-                # "MaintenanceLog" is the table field name which you labeled. Table cell information store as array in document field.
-                if (
-                    field_name == "MaintenanceLog"
-                    and field_value.type == SYMBOL_OF_TABLE_TYPE
-                    and field_value.value_array
-                ):
+                # Dynamic Table cell information store as array in document field.
+                if field_value.type == SYMBOL_OF_TABLE_TYPE and field_value.value_array:
                     col_names = []
                     sample_obj = field_value.value_array[0]
                     if KEY_OF_VALUE_OBJECT in sample_obj:
                         col_names = list(sample_obj[KEY_OF_VALUE_OBJECT].keys())
-                    print("----Extracting Table Cell Values----")
+                    print("----Extracting Dynamic Table Cell Values----")
                     table_rows = []
                     for obj in field_value.value_array:
                         if KEY_OF_VALUE_OBJECT in obj:
@@ -557,7 +634,41 @@ if result.documents:
                             )
                             row_data = list(map(extract_value_by_col_name, col_names))
                             table_rows.append(row_data)
-                    print_table(col_names, table_rows)
+                    _print_table(col_names, table_rows)
+
+                elif (
+                    field_value.type == SYMBOL_OF_OBJECT_TYPE
+                    and KEY_OF_VALUE_OBJECT in field_value
+                    and field_value[KEY_OF_VALUE_OBJECT] is not None
+                ):
+                    rows_by_columns = list(field_value[KEY_OF_VALUE_OBJECT].values())
+                    is_fixed_table = all(
+                        (
+                            rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
+                            and Counter(list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys()))
+                            == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
+                        )
+                        for rows_of_column in rows_by_columns
+                    )
+
+                    # Fixed Table cell information store as object in document field.
+                    if is_fixed_table:
+                        print("----Extracting Fixed Table Cell Values----")
+                        col_names = list(field_value[KEY_OF_VALUE_OBJECT].keys())
+                        row_dict: dict = {}
+                        for rows_of_column in rows_by_columns:
+                            rows = rows_of_column[KEY_OF_VALUE_OBJECT]
+                            for row_key in list(rows.keys()):
+                                if row_key in row_dict:
+                                    row_dict[row_key].append(rows[row_key].get(KEY_OF_CELL_CONTENT))
+                                else:
+                                    row_dict[row_key] = [
+                                        row_key,
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT),
+                                    ]
+
+                        col_names.insert(0, "")
+                        _print_table(col_names, list(row_dict.values()))
 
 print("------------------------------------")
 ```
@@ -627,12 +738,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -644,11 +756,6 @@ account_details = document_intelligence_admin_client.get_resource_info()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
-)
-neural_models = account_details.custom_neural_document_model_builds
-print(
-    f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
-    f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
 )
 ```
 

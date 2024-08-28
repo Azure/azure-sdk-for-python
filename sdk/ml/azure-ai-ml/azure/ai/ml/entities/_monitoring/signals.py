@@ -1016,7 +1016,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         calculate the custom metrics.
     :paramtype component_id: str
     :keyword connection: Specify connection with environment variables and secret configs.
-    :paramtype connection: Optional[~azure.ai.ml.entities.Connection]
+    :paramtype connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
     :keyword properties: A dictionary of custom properties for the signal.

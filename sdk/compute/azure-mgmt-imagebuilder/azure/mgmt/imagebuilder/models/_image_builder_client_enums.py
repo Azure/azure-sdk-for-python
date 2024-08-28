@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AutoRunState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enabling this field will trigger an automatic build on image template creation or update."""
+
+    AUTO_RUN_ENABLED = "Enabled"
+    """Autorun is enabled"""
+    AUTO_RUN_DISABLED = "Disabled"
+    """Autorun is disabled"""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 

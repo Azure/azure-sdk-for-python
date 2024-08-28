@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.entities._autogen_entities.models import AzureOpenAIDeployment
 
-from ._connections_operations import ConnectionsOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
 
 module_logger = logging.getLogger(__name__)
 
@@ -29,11 +29,11 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient2020404Preview,
-        connections_operations: ConnectionsOperations,
+        connections_operations: WorkspaceConnectionsOperations,
     ):
         super().__init__(operation_scope, operation_config)
         self._service_client = service_client.connection
-        self._connections_operations = connections_operations
+        self._workspace_connections_operations = connections_operations
 
     def list(self, connection_name: str, **kwargs) -> Iterable[AzureOpenAIDeployment]:
         """List Azure OpenAI deployments of the workspace.
@@ -43,7 +43,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
         :return: A list of Azure OpenAI deployments
         :rtype: ~typing.Iterable[~azure.ai.ml.entities.AzureOpenAIDeployment]
         """
-        connection = self._connections_operations.get(connection_name)
+        connection = self._workspace_connections_operations.get(connection_name)
 
         def _from_rest_add_connection_name(obj):
             from_rest_deployment = AzureOpenAIDeployment._from_rest_object(obj)

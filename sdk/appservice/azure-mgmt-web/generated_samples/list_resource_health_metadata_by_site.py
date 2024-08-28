@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.web import WebSiteManagementClient
 
 """
@@ -29,14 +30,15 @@ def main():
         subscription_id="4adb32ad-8327-4cbb-b775-b84b4465bb38",
     )
 
-    response = client.resource_health_metadata.list_by_site(
+    response = client.resource_health_metadata.list_by_site_slot(
         resource_group_name="Default-Web-NorthCentralUS",
         name="newsiteinnewASE-NCUS",
+        slot="Production",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/ListResourceHealthMetadataBySite.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/ListResourceHealthMetadataBySite.json
 if __name__ == "__main__":
     main()

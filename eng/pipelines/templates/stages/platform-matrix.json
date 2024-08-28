@@ -8,7 +8,7 @@
     "Agent": {
       "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" },
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
-      "macos-11": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
+      "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
     },
     "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
     "CoverageArg": "--disablecov",

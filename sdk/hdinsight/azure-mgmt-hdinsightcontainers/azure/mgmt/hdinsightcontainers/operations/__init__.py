@@ -8,13 +8,16 @@
 
 from ._cluster_pools_operations import ClusterPoolsOperations
 from ._cluster_pool_available_upgrades_operations import ClusterPoolAvailableUpgradesOperations
+from ._cluster_pool_upgrade_histories_operations import ClusterPoolUpgradeHistoriesOperations
 from ._clusters_operations import ClustersOperations
 from ._cluster_available_upgrades_operations import ClusterAvailableUpgradesOperations
+from ._cluster_upgrade_histories_operations import ClusterUpgradeHistoriesOperations
 from ._cluster_jobs_operations import ClusterJobsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
 from ._available_cluster_pool_versions_operations import AvailableClusterPoolVersionsOperations
 from ._available_cluster_versions_operations import AvailableClusterVersionsOperations
+from ._cluster_libraries_operations import ClusterLibrariesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -23,13 +26,16 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ClusterPoolsOperations",
     "ClusterPoolAvailableUpgradesOperations",
+    "ClusterPoolUpgradeHistoriesOperations",
     "ClustersOperations",
     "ClusterAvailableUpgradesOperations",
+    "ClusterUpgradeHistoriesOperations",
     "ClusterJobsOperations",
     "LocationsOperations",
     "Operations",
     "AvailableClusterPoolVersionsOperations",
     "AvailableClusterVersionsOperations",
+    "ClusterLibrariesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

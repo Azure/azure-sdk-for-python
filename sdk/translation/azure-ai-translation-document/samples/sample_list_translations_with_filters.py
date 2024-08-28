@@ -22,7 +22,6 @@ USAGE:
 """
 
 
-
 def sample_list_translations_with_filters():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
@@ -40,11 +39,11 @@ def sample_list_translations_with_filters():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     # set your filters
-    '''
+    """
         Note:
             these are just sample values for the filters!
             please comment/uncomment/change what you are interested in using.
-    '''
+    """
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Canceled", "Failed"]
@@ -82,5 +81,5 @@ def display_translation_info(translation):
     print(f"{translation.documents_canceled_count} canceled\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_list_translations_with_filters()

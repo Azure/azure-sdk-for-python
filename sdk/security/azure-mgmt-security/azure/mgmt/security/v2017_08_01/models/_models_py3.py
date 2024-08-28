@@ -133,7 +133,7 @@ class ComplianceResultList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of compliance results. Required.
     :vartype value: list[~azure.mgmt.security.v2017_08_01.models.ComplianceResult]

@@ -1,5 +1,11 @@
 # Release History
 
+## 23.1.1 (2024-05-08)
+
+### Other Changes
+
+  - Remove `2023-04-01` for PolicyClient to avoid breaking change caused by wrong swagger.
+
 ## 23.1.0 (2024-05-06)
 
 ### Features Added

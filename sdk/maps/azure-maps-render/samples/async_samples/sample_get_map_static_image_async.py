@@ -18,7 +18,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_map_static_image_async():
     # [START get_map_static_image_async]
@@ -28,8 +28,12 @@ async def get_map_static_image_async():
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_render_client:
-        result = await maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
+        result = await maps_render_client.get_map_static_image(
+            zoom=10,
+            bounding_box_private=[13.228, 52.4559, 13.5794, 52.629]
+        )
     # [END get_map_static_image_async]
+
 
 if __name__ == '__main__':
    asyncio.run(get_map_static_image_async())

@@ -989,8 +989,26 @@ class TestComponent:
                 "mock_param1": {"type": "AnyFile", "optional": False},
                 "mock_param2": {"type": "AnyFile", "optional": False},
             },
+            "aether": {"module_type": "ScrapingCloud", "ref_id": "mock_ref_id"},
             "outputs": {"job_info": {"type": "AnyFile"}},
             "type": "AetherBridgeComponent",
             "command": "mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}",
             "_source": "YAML.COMPONENT",
+        }
+
+    def test_spark_component_special_type(self):
+        yaml_path = "./tests/test_configs/internal/spark-component-special-type/spec.yaml"
+        component: InternalSparkComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec["inputs"] == {
+            "file_input1": {"datastore_mode": "hdfs", "description": "The data to be read.", "type": "path"},
+            "file_input2": {"datastore_mode": "hdfs", "description": "The data to be read.", "type": "path"},
+            "number_input": {
+                "description": "The number to be used in the computation.",
+                "max": "3.0",
+                "min": "0.0",
+                "type": "number",
+            },
+            "string_input": {"description": "The string to be used in the computation.", "type": "string"},
         }

@@ -178,7 +178,7 @@ def test_device_code_credential():
         requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
             # expected requests: discover tenant, start device code flow, poll for completion
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            get_discovery_response(),
             mock_response(
                 json_payload={
                     "device_code": "_",
@@ -209,7 +209,7 @@ def test_device_code_credential():
         disable_instance_discovery=True,
     )
 
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.timezone.utc)
     token = credential.get_token("scope")
     assert token.token == expected_token
 
@@ -237,7 +237,7 @@ def test_tenant_id():
         requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
             # expected requests: discover tenant, start device code flow, poll for completion
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            get_discovery_response(),
             mock_response(
                 json_payload={
                     "device_code": "_",
@@ -269,7 +269,6 @@ def test_tenant_id():
         additionally_allowed_tenants=["*"],
     )
 
-    now = datetime.datetime.utcnow()
     token = credential.get_token("scope", tenant_id="tenant_id")
     assert token.token == expected_token
 

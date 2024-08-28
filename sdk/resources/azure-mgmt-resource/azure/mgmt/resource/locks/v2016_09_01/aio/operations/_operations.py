@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -49,6 +50,10 @@ from ...operations._operations import (
     build_management_locks_list_by_scope_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -88,7 +93,7 @@ class AuthorizationOperationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -183,14 +188,14 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource group level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group to lock. Required.
         :type resource_group_name: str
         :param lock_name: The lock name. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
@@ -215,14 +220,14 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource group level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group to lock. Required.
         :type resource_group_name: str
         :param lock_name: The lock name. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
         :type parameters: IO[bytes]
@@ -245,14 +250,14 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource group level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group to lock. Required.
         :type resource_group_name: str
         :param lock_name: The lock name. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
          IO[bytes] type. Required.
@@ -262,7 +267,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -327,7 +332,7 @@ class ManagementLocksOperations:
     ) -> None:
         """Deletes a management lock at the resource group level.
 
-        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        To delete management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -339,7 +344,7 @@ class ManagementLocksOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -392,7 +397,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -517,7 +522,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -589,7 +594,7 @@ class ManagementLocksOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -639,7 +644,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -698,7 +703,7 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource level or any level below the resource.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -715,7 +720,7 @@ class ManagementLocksOperations:
         :param resource_name: The name of the resource to lock. Required.
         :type resource_name: str
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: Parameters for creating or updating a  management lock. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
@@ -744,7 +749,7 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource level or any level below the resource.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -761,7 +766,7 @@ class ManagementLocksOperations:
         :param resource_name: The name of the resource to lock. Required.
         :type resource_name: str
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: Parameters for creating or updating a  management lock. Required.
         :type parameters: IO[bytes]
@@ -788,7 +793,7 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the resource level or any level below the resource.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -805,7 +810,7 @@ class ManagementLocksOperations:
         :param resource_name: The name of the resource to lock. Required.
         :type resource_name: str
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: Parameters for creating or updating a  management lock. Is either a
          ManagementLockObject type or a IO[bytes] type. Required.
@@ -815,7 +820,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -891,7 +896,7 @@ class ManagementLocksOperations:
     ) -> None:
         """Deletes the management lock of a resource or any level below the resource.
 
-        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        To delete management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -913,7 +918,7 @@ class ManagementLocksOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -986,7 +991,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1045,12 +1050,12 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the subscription level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
@@ -1069,12 +1074,12 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the subscription level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
         :type parameters: IO[bytes]
@@ -1093,12 +1098,12 @@ class ManagementLocksOperations:
         """Creates or updates a management lock at the subscription level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
-        management locks, you must have access to Microsoft.Authorization/\ * or
+        management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
-         contain <, > %, &, :, \, ?, /, or any control characters. Required.
+         contain <, > %, &, :, \\, ?, /, or any control characters. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
          IO[bytes] type. Required.
@@ -1108,7 +1113,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1172,7 +1177,7 @@ class ManagementLocksOperations:
     ) -> None:
         """Deletes the management lock at the subscription level.
 
-        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        To delete management locks, you must have access to Microsoft.Authorization/\\ * or
         Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
         Administrator are granted those actions.
 
@@ -1182,7 +1187,7 @@ class ManagementLocksOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1230,7 +1235,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1295,7 +1300,7 @@ class ManagementLocksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1397,7 +1402,7 @@ class ManagementLocksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1485,7 +1490,7 @@ class ManagementLocksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1574,7 +1579,7 @@ class ManagementLocksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

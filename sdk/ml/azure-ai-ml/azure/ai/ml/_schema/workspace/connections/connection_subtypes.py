@@ -20,11 +20,11 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     AadCredentialConfigurationSchema,
 )
 from azure.ai.ml.entities import AadCredentialConfiguration
-from .connection import ConnectionSchema
+from .workspace_connection import WorkspaceConnectionSchema
 
 
 # pylint: disable-next=name-too-long
-class AzureBlobStoreConnectionSchema(ConnectionSchema):
+class AzureBlobStoreConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_BLOB, casing_transform=camel_to_snake, required=True
@@ -52,7 +52,7 @@ class AzureBlobStoreConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
+class MicrosoftOneLakeConnectionSchema(WorkspaceConnectionSchema):
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
     )
@@ -93,7 +93,7 @@ class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureOpenAIConnectionSchema(ConnectionSchema):
+class AzureOpenAIConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_OPEN_AI, casing_transform=camel_to_snake, required=True
@@ -112,7 +112,7 @@ class AzureOpenAIConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureAIServicesConnectionSchema(ConnectionSchema):
+class AzureAIServicesConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionTypes.AZURE_AI_SERVICES, casing_transform=camel_to_snake, required=True
@@ -129,7 +129,7 @@ class AzureAIServicesConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureAISearchConnectionSchema(ConnectionSchema):
+class AzureAISearchConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionTypes.AZURE_SEARCH, casing_transform=camel_to_snake, required=True
@@ -145,7 +145,7 @@ class AzureAISearchConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureContentSafetyConnectionSchema(ConnectionSchema):
+class AzureContentSafetyConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionTypes.AZURE_CONTENT_SAFETY, casing_transform=camel_to_snake, required=True
@@ -161,7 +161,7 @@ class AzureContentSafetyConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureSpeechServicesConnectionSchema(ConnectionSchema):
+class AzureSpeechServicesConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionTypes.AZURE_SPEECH_SERVICES, casing_transform=camel_to_snake, required=True
@@ -176,7 +176,7 @@ class AzureSpeechServicesConnectionSchema(ConnectionSchema):
         return AzureSpeechServicesConnection(**data)
 
 
-class APIKeyConnectionSchema(ConnectionSchema):
+class APIKeyConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.API_KEY, casing_transform=camel_to_snake, required=True
@@ -192,7 +192,7 @@ class APIKeyConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class OpenAIConnectionSchema(ConnectionSchema):
+class OpenAIConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.OPEN_AI, casing_transform=camel_to_snake, required=True
@@ -207,7 +207,7 @@ class OpenAIConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class SerpConnectionSchema(ConnectionSchema):
+class SerpConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(allowed_values=ConnectionCategory.SERP, casing_transform=camel_to_snake, required=True)
     api_key = fields.Str(required=True)
@@ -220,7 +220,7 @@ class SerpConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class ServerlessConnectionSchema(ConnectionSchema):
+class ServerlessConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.SERVERLESS, casing_transform=camel_to_snake, required=True
