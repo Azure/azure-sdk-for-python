@@ -55,10 +55,3 @@ jobs:
 
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
-
-    # - task: PythonScript@0
-    #   displayName: 'Generate Health Status Report'
-    #   inputs:
-    #     scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
-    #   env:
-    #     GH_TOKEN: $(azuresdk-github-pat)

@@ -35,14 +35,14 @@ health_report_path = pathlib.Path(__file__).parent
 GIT_TOKEN = os.environ["GH_TOKEN"]
 auth = Auth.Token(GIT_TOKEN)
 github = Github(auth=auth)
-# repo = github.get_repo("Azure/azure-sdk-for-python")
+repo = github.get_repo("Azure/azure-sdk-for-python")
 
 # Azure DevOps
 if not in_ci():
     DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
     token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
 else:
-    token = os.getenv("System.AccessToken") or os.getenv("SYSTEM_ACCESSTOKEN")
+    token =os.environ["SYSTEM_ACCESSTOKEN"]
 AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 DEVOPS_TASK_STATUS = typing.Literal[
     "abandoned",
@@ -656,7 +656,7 @@ def report_sla_and_total_issues(
 
     tracked_labels = map_codeowners_to_label(libraries)
     today = datetime.datetime.now(datetime.UTC)
-    repo = github.get_repo("Azure/azure-sdk-for-python")
+
     filter_labels = ["issue-addressed", "needs-author-feedback", "feature-request"]
     issues = list(repo.get_issues(state="open", labels=["customer-reported", "Client"]))
     record_total_customer_reported_issues(libraries, tracked_labels, issues)
@@ -876,11 +876,10 @@ if __name__ == "__main__":
     elif args.format == "html":
         write_to_html(libraries)
 
-    # if in_ci():
-    #     repo = github.get_repo("Azure/azure-sdk-for-python")
-    #     repo.create_file(
-    #         path="scripts/repo_health_status_report/health_report.csv",
-    #         message="Update health report",
-    #         content=open("health_report.csv", "rb").read(),
-    #         branch="python-sdk-health-report-data-source",
-    #     )
+    if in_ci():
+        repo.create_file(
+            path="scripts/repo_health_status_report/health_report.csv",
+            message="Update health report",
+            content=open("health_report.csv", "rb").read(),
+            branch="python-sdk-health-report",
+        )
