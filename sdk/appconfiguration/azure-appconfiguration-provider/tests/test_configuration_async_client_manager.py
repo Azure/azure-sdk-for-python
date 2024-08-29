@@ -49,8 +49,11 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_called_once_with(endpoint, connection_string, "", 0, 0)
 
-        mock_find_auto_failover_endpoints.reset_mock()
-        mock_client.reset_mock()
+    @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_connection_string")
+    def test_create_client_manager_connection_string_failover(self, mock_client, mock_find_auto_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+        connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
@@ -92,8 +95,10 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_called_once_with(endpoint, "fake-credential", "", 0, 0)
 
-        mock_find_auto_failover_endpoints.reset_mock()
-        mock_client.reset_mock()
+    @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_create_client_manager_endpoint_failover(self, mock_client, mock_find_auto_failover_endpoints):
+        endpoint = "https://fake.endpoint"
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
