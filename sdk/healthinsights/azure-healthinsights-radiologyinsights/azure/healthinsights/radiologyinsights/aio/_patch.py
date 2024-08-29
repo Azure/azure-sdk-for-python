@@ -6,7 +6,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from copy import deepcopy
 from typing import Any, Callable, Dict, IO, TYPE_CHECKING, List, Optional, TypeVar, Union, cast, overload, MutableMapping
 
 from azure.core import AsyncPipelineClient
@@ -18,8 +17,8 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ._operations._operations import RadiologyInsightsClientOperationsMixin as _RadiologyInsightsClientOperationsMixin  # pylint: disable=line-too-long
-from ._configuration import RadiologyInsightsClientConfiguration
+
+from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
 from .._serialization import Deserializer, Serializer
 
 from .. import models as _models
@@ -33,9 +32,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-    class RadiologyInsightsClient(
-        _RadiologyInsightsClientOperationsMixin
-    ):  # pylint: disable=client-accepts-api-version-keyword
+    class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-keyword
         """RadiologyInsightsClient.
 
         :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
@@ -52,30 +49,8 @@ if TYPE_CHECKING:
         Retry-After header is present.
         """
 
-        def __init__(
-            self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-        ) -> None:
-            _endpoint = "{endpoint}/health-insights"
-            self._config = RadiologyInsightsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-            _policies = kwargs.pop("policies", None)
-            if _policies is None:
-                _policies = [
-                    policies.RequestIdPolicy(**kwargs),
-                    self._config.headers_policy,
-                    self._config.user_agent_policy,
-                    self._config.proxy_policy,
-                    policies.ContentDecodePolicy(**kwargs),
-                    self._config.redirect_policy,
-                    self._config.retry_policy,
-                    self._config.authentication_policy,
-                    self._config.custom_hook_policy,
-                    self._config.logging_policy,
-                    policies.DistributedTracingPolicy(**kwargs),
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                    self._config.http_logging_policy,
-                ]
-            self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
+        def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+            self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
             self._serialize = Serializer()
             self._deserialize = Deserializer()
             self._serialize.client_side_validation = False
@@ -190,10 +165,10 @@ if TYPE_CHECKING:
             content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
             cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
             polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-            lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+            lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
             cont_token: Optional[str] = kwargs.pop("continuation_token", None)
             if cont_token is None:
-                raw_result = self._infer_radiology_insights_initial(
+                raw_result = self._client._infer_radiology_insights_initial(
                     id=id,
                     resource=resource,
                     expand=expand,
@@ -220,7 +195,7 @@ if TYPE_CHECKING:
                 return deserialized
 
             path_format_arguments = {
-                "endpoint": self._serialize.url("self._client._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                "endpoint": self._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
             }
 
             if polling is True:
