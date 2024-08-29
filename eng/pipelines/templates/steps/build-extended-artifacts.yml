@@ -80,20 +80,20 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'packages_extended'
-
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
       arguments: >
-        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)/packages_extended"
+        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
         -ArtifactsList '${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json
       pwsh: true
       workingDirectory: $(Pipeline.Workspace)
     displayName: Update package properties with namespaces
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages_extended'
 
   - pwsh: |
       $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
