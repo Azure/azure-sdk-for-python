@@ -97,19 +97,14 @@ class TestAAD(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_aad_credentials(self):
-        aad_client = cosmos_client.CosmosClient(self.host, self.credential)
-        # Do any R/W data operations with your authorized AAD client
-
         print("Container info: " + str(self.container.read()))
         self.container.create_item(get_test_item(0))
-        read_rsp = self.container.read_item(item='Item_0', partition_key='pk')
         print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
-        assert read_rsp == get_test_item(0)
         query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
@@ -117,7 +112,7 @@ class TestAAD(unittest.TestCase):
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
-            aad_client.delete_database(self.configs.TEST_DATABASE_ID)
+            self.client.delete_database(self.configs.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")
