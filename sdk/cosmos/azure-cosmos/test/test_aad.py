@@ -13,7 +13,6 @@ from azure.core.credentials import AccessToken
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def _remove_padding(encoded_string):
