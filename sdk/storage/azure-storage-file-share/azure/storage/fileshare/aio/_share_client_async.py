@@ -855,7 +855,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype:  ~azure.core.async_paging.AsyncItemPaged[DirectoryProperties and FileProperties]
+        :rtype: ~azure.core.paging.ItemPaged[Union[DirectoryProperties, FileProperties]]
 
         .. admonition:: Example:
 

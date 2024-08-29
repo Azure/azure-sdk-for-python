@@ -7,9 +7,7 @@
 
 import uuid
 
-from typing import (
-    Union, Optional, Any, TYPE_CHECKING
-)
+from typing import Union, Optional, Any, TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError

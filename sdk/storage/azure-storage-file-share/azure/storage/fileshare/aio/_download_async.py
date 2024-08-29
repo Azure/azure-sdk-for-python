@@ -12,8 +12,8 @@ import warnings
 from io import BytesIO
 from itertools import islice
 from typing import (
-    Any, AsyncIterator, Awaitable, Generator,
-    Callable, cast, IO, Optional, Tuple,
+    Any, AsyncIterator, Awaitable, Callable,
+    cast, Generator, IO, Optional, Tuple,
     TYPE_CHECKING
 )
 

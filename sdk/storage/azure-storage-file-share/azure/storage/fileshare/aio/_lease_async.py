@@ -7,10 +7,7 @@
 
 import uuid
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TypeVar, TYPE_CHECKING
-)
+from typing import Union, Optional, Any, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -19,7 +16,6 @@ from .._shared.response_handlers import return_response_headers, process_storage
 from .._generated.aio.operations import FileOperations, ShareOperations
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from azure.storage.fileshare.aio import ShareClient, ShareFileClient
 
 
@@ -66,7 +62,7 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         raise TypeError("Async lease must use 'async with'.")
 
     def __exit__(self, *args: Any):
-        self.release()
+        raise TypeError("Async lease must use 'async with'.")
 
     async def __aenter__(self):
         return self

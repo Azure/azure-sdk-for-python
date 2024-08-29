@@ -533,7 +533,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.paging.ItemPaged[DirectoryProperties and FileProperties]
+        :rtype: ~azure.core.paging.ItemPaged[Union[DirectoryProperties, FileProperties]]
 
         .. admonition:: Example:
 
