@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import RadiologyInsightsClientOperationsMixin
+from ._operations import RadiologyInsightsClientOperationsMixin
 
 
 from ._patch import patch_sdk as _patch_sdk
