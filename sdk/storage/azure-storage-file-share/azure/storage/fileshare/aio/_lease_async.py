@@ -58,12 +58,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         else:
             raise TypeError("Lease must use ShareFileClient or ShareClient.")
 
-    def __enter__(self):
-        raise TypeError("Async lease must use 'async with'.")
-
-    def __exit__(self, *args: Any):
-        raise TypeError("Async lease must use 'async with'.")
-
     async def __aenter__(self):
         return self
 
