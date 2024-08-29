@@ -118,7 +118,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @danielav7
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms
@@ -378,7 +378,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/                                           @GrahamMThomas @danielszaniszlo
+/sdk/healthdataaiservices/                                           @GrahamMThomas
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer

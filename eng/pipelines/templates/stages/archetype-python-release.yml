@@ -195,7 +195,12 @@ stages:
                       - checkout: self
 
                       - pwsh: |
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}
+                          if (Test-Path "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}") {
+                            Get-ChildItem -Recurse "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}"
+                          }
+                          else {
+                            New-Item -ItemType Directory -Force -Path "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}"
+                          }
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
 

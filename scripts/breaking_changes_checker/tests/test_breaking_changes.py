@@ -447,6 +447,25 @@ def test_removed_operation_group():
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
 
+
+def test_async_breaking_changes_cleanup():
+    breaking_changes = [
+        ("Message", "RemovedOrRenamedClassMethod", "azure.contoso.aio.operations", "Foo", "foo"),
+        ("Message", "RemovedOrRenamedClassMethod", "azure.contoso.operations", "Foo", "foo"),
+        ("Message", "ChangedParameterOrdering", "azure.contoso", "FooClient", "from_connection_string"),
+    ]
+
+    # create dummy BreakingChangesTracker instance
+    bct = BreakingChangesTracker({}, {}, {}, "azure-contoso")
+    bct.breaking_changes = breaking_changes
+
+    bct.run_async_breaking_cleanup()
+
+    assert len(bct.breaking_changes) == 2
+    assert bct.breaking_changes[0] == ("Message", "RemovedOrRenamedClassMethod", "azure.contoso.operations", "Foo", "foo")
+    assert bct.breaking_changes[1] == ("Message", "ChangedParameterOrdering", "azure.contoso", "FooClient", "from_connection_string")
+
+
 def test_removed_overload():
     stable = {
         "azure.contoso": {
