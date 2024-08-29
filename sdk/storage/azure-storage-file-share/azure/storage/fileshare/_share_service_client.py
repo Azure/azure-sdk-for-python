@@ -254,9 +254,6 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Sets file share service properties.
         """
-        if all(parameter is None for parameter in [hour_metrics, minute_metrics, cors, protocol]):
-            raise ValueError("set_service_properties should be called with at least one parameter")
-
         timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
