@@ -8,12 +8,6 @@ import pytest
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
-    ClassificationPrimaryMetrics,
-    JobBase,
-    LogVerbosity,
-    MLTableJobInput,
-)
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     NlpParameterSubspace as RestNlpParameterSubspace,
@@ -30,6 +24,12 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import TextNer as RestTextNer
+from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
+    ClassificationPrimaryMetrics,
+    JobBase,
+    LogVerbosity,
+    MLTableJobInput,
+)
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
 from azure.ai.ml.automl import (
