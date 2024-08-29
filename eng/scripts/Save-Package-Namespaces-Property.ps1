@@ -18,7 +18,7 @@ is the same as the artifact's name but artifact name in the file's name will hav
 .PARAMETER ArtifactsList
 The list of artifacts to gather namespaces for, this is only done for libraries that are
 producing docs.
--ArtifactsList '${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json
+-ArtifactsList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json)
 #>
 [CmdletBinding()]
 Param (
