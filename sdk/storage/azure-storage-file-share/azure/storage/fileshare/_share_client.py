@@ -9,7 +9,7 @@ from typing import (
     Any, cast, Dict, Literal, Optional, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Never, Self
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -304,7 +304,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         """
         kwargs['lease_duration'] = kwargs.pop('lease_duration', -1)
         lease_id = kwargs.pop('lease_id', None)
-        lease = ShareLeaseClient(cast(Never, self), lease_id=lease_id)
+        lease = ShareLeaseClient(self, lease_id=lease_id)
         lease.acquire(**kwargs)
         return lease
 
