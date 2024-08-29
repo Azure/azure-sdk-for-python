@@ -13,6 +13,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, policies
 from azure.core.credentials import AzureKeyCredential
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod, AsyncNoPolling
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -189,10 +190,10 @@ if TYPE_CHECKING:
             content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
             cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
             polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-            lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
+            lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
             cont_token: Optional[str] = kwargs.pop("continuation_token", None)
             if cont_token is None:
-                raw_result = self._client._infer_radiology_insights_initial(
+                raw_result = self._infer_radiology_insights_initial(
                     id=id,
                     resource=resource,
                     expand=expand,
@@ -208,9 +209,9 @@ if TYPE_CHECKING:
             def get_long_running_output(pipeline_response):
                 response_headers = {}
                 response = pipeline_response.http_response
-                response_headers['x-ms-request-id']=self._client._deserialize('str', response.headers.get('x-ms-request-id'))
-                response_headers['Operation-Location']=self._client._deserialize('str', response.headers.get('Operation-Location'))
-                deserialized = _deserialize(
+                response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+                response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+                deserialized = self._deserialize(
                     _models.RadiologyInsightsInferenceResult,
                     response.json().get("result")
                 )
@@ -218,9 +219,8 @@ if TYPE_CHECKING:
                     return cls(pipeline_response, deserialized, response_headers) # type: ignore
                 return deserialized
 
-
             path_format_arguments = {
-                "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
+                "endpoint": self._serialize.url("self._client._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             }
 
             if polling is True:
@@ -235,12 +235,12 @@ if TYPE_CHECKING:
                 return AsyncLROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
                     polling_method=polling_method,
                     continuation_token=cont_token,
-                    client=self._client._client,
+                    client=self._client,
                     deserialization_callback=get_long_running_output
                 )
         
             return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
-                self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore
+                self._client, raw_result, get_long_running_output, polling_method  # type: ignore
             )
 
 __all__: List[str] = [
