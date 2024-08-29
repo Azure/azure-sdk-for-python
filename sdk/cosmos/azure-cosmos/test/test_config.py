@@ -35,8 +35,8 @@ class TestConfig(object):
     connectionPolicy.DisableSSLVerification = True
     is_emulator = host == local_host
     is_live._cache = True if not is_emulator else False
-    credential = get_credential()
-    credential_async = get_credential(is_async=True)
+    credential =  masterKey if is_emulator else get_credential()
+    credential_async = masterKey if is_emulator else get_credential(is_async=True)
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
