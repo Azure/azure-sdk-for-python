@@ -1,22 +1,19 @@
 <#
 .SYNOPSIS
-Given an artifact staging directory, loop through all of the PackageInfo files
-in the PackageInfo subdirectory and compute the namespaces if they don't already
-exist. Yes, they're called packages in Java but namespaces are being used to keep
-code that processes them common amongst the languages.
+Given an artifact staging directory and the artifacts list, loop through all artifacts
+that docs that aren't skipping docs creation and add the namespace to the PackageInfo
+json file.
 
 .DESCRIPTION
-Given an artifact staging directory, loop through all of the PackageInfo files
-in the PackageInfo subdirectory. For each PackageInfo file, find its corresponding
-javadoc jar file and use that to compute the namespace information.
+Given an artifact staging directory and the artifacts list, loop through all artifacts
+that docs that aren't skipping docs creation and add the namespace to the PackageInfo
+json file. This is done using the .whl file from the build.
 
 .PARAMETER ArtifactStagingDirectory
 The root directory of the staged artifacts. The PackageInfo files will be in the
-PackageInfo subdirectory. The artifacts root directories are GroupId based, meaning
-any artifact with that GroupId will be in a subdirectory. For example: Most Spring
-libraries are com.azure.spring and their javadoc jars will be under that subdirectory
-but azure-spring-data-cosmos' GroupId is com.azure and its javadoc jar will be under
-com.azure.
+PackageInfo subdirectory. The whl files are going to be in the subdirectory which
+is the same as the artifact's name but artifact name in the file's name will have
+ underscores instead of dashes.
 
 .PARAMETER ArtifactsList
 The list of artifacts to gather namespaces for, this is only done for libraries that are
