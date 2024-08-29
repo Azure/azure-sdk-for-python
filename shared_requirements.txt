@@ -71,4 +71,4 @@ dnspython
 promptflow-core
 promptflow-devkit
 numpy
-jsonpath_ng
+jsonpath-ng
