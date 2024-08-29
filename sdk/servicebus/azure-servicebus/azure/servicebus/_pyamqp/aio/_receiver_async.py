@@ -16,7 +16,7 @@ from ..performatives import (
     DispositionFrame,
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
-from ..error import AMQPException, ErrorCondition
+from ..error import AMQPLinkError, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,7 +113,7 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if delivery_tag not in self._received_delivery_tags:
-            raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
+            raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
 
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
