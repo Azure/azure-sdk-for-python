@@ -83,8 +83,7 @@ resource accountName_roleDefinitionId 'Microsoft.DocumentDB/databaseAccounts/sql
       {
         dataActions: [
           'Microsoft.DocumentDB/databaseAccounts/readMetadata'
-          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/*'
-          'Microsoft.DocumentDB/databaseAccounts/throughputSettings/*'
+          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*'
         ]
       }
     ]
