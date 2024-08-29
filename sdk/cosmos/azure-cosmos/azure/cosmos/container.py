@@ -611,7 +611,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
-            if self.__is_prefix_partitionkey(partition_key_value):
+            if self.__is_prefix_partitionkey(partition_key):
                 kwargs["isPrefixPartitionQuery"] = True
                 properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]

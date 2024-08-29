@@ -51,6 +51,7 @@ from .. import _base as base
 from .._base import _set_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
+from .._change_feed.change_feed_state import ChangeFeedState
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
@@ -2813,8 +2814,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
 
-            if options.get("changeFeedState") is not None:
-                await options.get("changeFeedState").populate_request_headers_async(self._routing_map_provider, headers)
+            change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
+            if change_feed_state is not None:
+                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers)
 
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             if response_hook:

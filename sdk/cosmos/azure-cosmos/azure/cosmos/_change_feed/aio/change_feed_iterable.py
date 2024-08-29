@@ -21,12 +21,11 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any, Optional, Callable, Tuple, List, AsyncIterator, Awaitable
+from typing import Dict, Any, Optional, Callable, Tuple, List, Awaitable, Union
 
 from azure.core.async_paging import AsyncPageIterator
 
-from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2, \
-    ChangeFeedFetcher
+from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
 
@@ -60,7 +59,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         self._options = options
         self._fetch_function = fetch_function
         self._collection_link = collection_link
-        self._change_feed_fetcher: Optional[ChangeFeedFetcher] = None
+        self._change_feed_fetcher: Optional[Union[ChangeFeedFetcherV1, ChangeFeedFetcherV2]] = None
 
         if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
@@ -90,9 +89,9 @@ class ChangeFeedIterable(AsyncPageIterator):
 
     async def _unpack(
             self,
-            block: AsyncIterator[List[Dict[str, Any]]]
-    ) -> Tuple[Optional[str], AsyncIterator[List[Dict[str, Any]]]]:
-        continuation = None
+            block: List[Dict[str, Any]]
+    ) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+        continuation: Optional[str] = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
 

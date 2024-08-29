@@ -499,34 +499,6 @@ class ContainerProxy:
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
-        """Get a sorted list of items that were changed in the entire container,
-         in the order in which they were modified.
-
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword start_time: The start time to start processing chang feed items.
-            Beginning: Processing the change feed items from the beginning of the change feed.
-            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[Dict[str, Any]]
-        """
-        ...
-
-    @overload
-    def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
@@ -602,6 +574,34 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         # pylint: enable=line-too-long
+        ...
+
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed in the entire container,
+         in the order in which they were modified.
+
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+        """
         ...
 
     @distributed_trace

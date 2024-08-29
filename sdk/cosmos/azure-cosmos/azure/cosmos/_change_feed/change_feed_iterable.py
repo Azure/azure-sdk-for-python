@@ -21,7 +21,7 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any, Tuple, List, Optional, Callable, cast
+from typing import Dict, Any, Tuple, List, Optional, Callable, cast, Union
 
 from azure.core.paging import PageIterator
 
@@ -57,7 +57,7 @@ class ChangeFeedIterable(PageIterator):
         self._options = options
         self._fetch_function = fetch_function
         self._collection_link = collection_link
-        self._change_feed_fetcher: Optional[ChangeFeedFetcher] = None
+        self._change_feed_fetcher: Optional[Union[ChangeFeedFetcherV1, ChangeFeedFetcherV2]] = None
 
         if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
