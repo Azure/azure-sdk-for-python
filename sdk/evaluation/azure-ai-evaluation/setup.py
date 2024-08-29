@@ -67,12 +67,11 @@ setup(
     install_requires=[
         "promptflow-devkit>=1.15.0",
         "promptflow-core>=1.15.0",
-        "aiohttp_retry>=2.8.3",
         "websocket-client>=1.2.0",
         "jsonpath_ng>=1.5.0",
-        "urllib3>1.26.17",
         "numpy>=1.22",
         "pyjwt>=2.8.0",
+        "azure-identity",
         "azure-core>=1.30.2",
     ],
     extras_require={
