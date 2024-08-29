@@ -85,6 +85,16 @@ steps:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
 
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
+      arguments: >
+        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)/packages_extended"
+        -ArtifactsList '${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with namespaces
+
   - pwsh: |
       $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
