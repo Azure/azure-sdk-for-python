@@ -535,6 +535,10 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
+class ResumeOkStatusCode(_model_base.Model):
+    """The capacity was successfully resumed."""
+
+
 class RpSku(_model_base.Model):
     """Represents the SKU name and Azure pricing tier for Microsoft Fabric capacity resource.
 
@@ -640,6 +644,10 @@ class RpSkuDetailsForNewResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class SuspendOkStatusCode(_model_base.Model):
+    """The capacity was successfully suspended."""
 
 
 class SystemData(_model_base.Model):

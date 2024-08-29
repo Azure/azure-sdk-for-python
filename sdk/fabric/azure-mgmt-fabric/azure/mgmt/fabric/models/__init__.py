@@ -19,9 +19,11 @@ from ._models import FabricCapacityUpdateProperties
 from ._models import Operation
 from ._models import OperationDisplay
 from ._models import Resource
+from ._models import ResumeOkStatusCode
 from ._models import RpSku
 from ._models import RpSkuDetailsForExistingResource
 from ._models import RpSkuDetailsForNewResource
+from ._models import SuspendOkStatusCode
 from ._models import SystemData
 from ._models import TrackedResource
 
@@ -50,9 +52,11 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "Resource",
+    "ResumeOkStatusCode",
     "RpSku",
     "RpSkuDetailsForExistingResource",
     "RpSkuDetailsForNewResource",
+    "SuspendOkStatusCode",
     "SystemData",
     "TrackedResource",
     "ActionType",

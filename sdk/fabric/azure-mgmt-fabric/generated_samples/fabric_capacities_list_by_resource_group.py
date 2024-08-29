@@ -27,7 +27,7 @@ from azure.mgmt.fabric import FabricMgmtClient
 def main():
     client = FabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="548B7FB7-3B2A-4F46-BB02-66473F1FC22C",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.fabric_capacities.list_by_resource_group(
