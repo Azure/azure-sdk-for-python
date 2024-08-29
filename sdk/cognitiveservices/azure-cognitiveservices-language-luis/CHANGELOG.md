@@ -1,5 +1,11 @@
 # Release History
 
+## 0.7.1 (2024-08-15)
+
+### Other Changes
+
+- This package is no longer being maintained. Use the [azure-ai-language-conversations](https://pypi.org/project/azure-ai-language-conversations/) package instead.
+
 ## 0.7.0 (2020-06-15)
 
 *Authoring*

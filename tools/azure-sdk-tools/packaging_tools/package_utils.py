@@ -2,7 +2,8 @@ import os
 from typing import Optional
 from pathlib import Path
 import logging
-from subprocess import check_call, check_output, CalledProcessError
+from subprocess import check_call, CalledProcessError, getoutput
+from .generate_utils import return_origin_path
 
 from .change_log import main as change_log_main
 
@@ -21,22 +22,22 @@ def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
     )
 
 
+@return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
+    os.chdir(package_folder)
     cmd = "tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
     if lastest_pypi_version:
         cmd += "--latest-pypi-version"
     try:
-        output = check_output(cmd, cwd=package_folder, shell=True)
+        _LOGGER.info(f"Run breaking change detector with command: {cmd}")
+        output = getoutput(cmd)
     except CalledProcessError as e:
-        _LOGGER.warning(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
-    result = [l for l in output.decode("utf-8").split(os.linesep)]
+    _LOGGER.info(f"Breaking change detector output: {output}")
+    result = [l for l in output.split("\n")]
     begin = result.index("===== changelog start =====")
     end = result.index("===== changelog end =====")
-    if begin == -1 or end == -1:
-        warn_info = "Failed to get changelog from breaking change detector"
-        _LOGGER.warning(warn_info)
-        raise Exception(warn_info)
     return "\n".join(result[begin + 1 : end]).strip()
 
 
