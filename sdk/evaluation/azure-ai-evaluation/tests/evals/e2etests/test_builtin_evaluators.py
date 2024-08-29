@@ -25,7 +25,7 @@ from azure.ai.evaluation.evaluators import (
     ViolenceEvaluator,
 )
 from azure.ai.evaluation.evaluators._eci._eci import ECIEvaluator
-from promptflow.recording.record_mode import is_replay
+from devtools_testutils import is_live
 
 
 @pytest.mark.usefixtures("recording_injection", "vcr_recording")
@@ -194,8 +194,7 @@ class TestBuiltInEvaluators:
         eval_fn = ViolenceEvaluator(project_scope, azure_cred)
         # Doing this is replay mode breaks causes mismatch between scrubbed recordings
         # and the actual request made.
-        # Using not is_replay() because is_live doesn't apply to recording mode?
-        if not is_replay():
+        if is_live():
             # Warning, live testing fails due to unstable region.
             # We need a use a new region.
             project_scope["project_name"] = "pf-evals-ws-westus2"
@@ -413,9 +412,7 @@ class TestBuiltInEvaluators:
         assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
         assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
 
-    @pytest.mark.skipif(
-        not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    )
+    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_protected_material_evaluator(self, project_scope, azure_cred):
         ip_eval = ProtectedMaterialEvaluator(project_scope, credential=azure_cred)
         good_result = ip_eval(
@@ -460,9 +457,7 @@ class TestBuiltInEvaluators:
         assert problem_question["protected_material_label"]
         assert "material was found" in problem_question["protected_material_reason"]
 
-    @pytest.mark.skipif(
-        not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    )
+    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_eci_evaluator(self, project_scope, azure_cred):
         eci_eval = ECIEvaluator(project_scope, credential=azure_cred)
         unrelated_result = eci_eval(
@@ -473,9 +468,7 @@ class TestBuiltInEvaluators:
         assert not unrelated_result["ECI_label"]
         assert "geometry question" in unrelated_result["ECI_reason"]
 
-    # @pytest.mark.skipif(
-    #    not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    # )
+    # @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_xpia_evaluator(self, project_scope, azure_cred):
 
         xpia_eval = IndirectAttackEvaluator(project_scope, credential=azure_cred)

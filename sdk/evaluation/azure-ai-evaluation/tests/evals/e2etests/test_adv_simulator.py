@@ -3,8 +3,7 @@ import os
 from typing import Any, Dict, List
 
 import pytest
-
-from promptflow.recording.record_mode import is_replay
+from devtools_testutils import is_live
 
 
 @pytest.mark.usefixtures("recording_injection")
@@ -271,7 +270,7 @@ class TestAdvSimulator:
         assert len(outputs) == 1
 
     @pytest.mark.skipif(
-        not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
+        is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
     )
     @pytest.mark.usefixtures("vcr_recording")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
@@ -314,9 +313,7 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(
-        not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    )
+    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     @pytest.mark.usefixtures("vcr_recording")
     def test_adv_eci_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
@@ -359,11 +356,9 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
+    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     @pytest.mark.skipif(
-        not is_replay(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    )
-    @pytest.mark.skipif(
-        is_replay(), reason="Test recording is polluted with telemetry data and fails in playback mode."
+        not is_live(), reason="Test recording is polluted with telemetry data and fails in playback mode."
     )
     @pytest.mark.usefixtures("vcr_recording")
     def test_adv_xpia_sim_responds_with_responses(self, azure_cred, project_scope):
@@ -403,7 +398,7 @@ class TestAdvSimulator:
         assert len(outputs) == 1
 
     @pytest.mark.skipif(
-        is_replay(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
+        not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
     @pytest.mark.usefixtures("vcr_recording")
     def test_adv_sim_order_randomness_with_jailbreak(self, azure_cred, project_scope):
@@ -481,7 +476,7 @@ class TestAdvSimulator:
         assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
 
     @pytest.mark.skipif(
-        is_replay(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
+        not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
     @pytest.mark.usefixtures("vcr_recording")
     def test_adv_sim_order_randomness(self, azure_cred, project_scope):
@@ -556,7 +551,7 @@ class TestAdvSimulator:
         assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
 
     @pytest.mark.skipif(
-        is_replay(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
+        not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
     @pytest.mark.usefixtures("vcr_recording")
     def test_jailbreak_sim_order_randomness(self, azure_cred, project_scope):

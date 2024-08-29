@@ -12,11 +12,7 @@ from azure.ai.evaluation.evaluate._evaluate import evaluate
 from azure.ai.evaluation.evaluators._f1_score._f1_score import F1ScoreEvaluator
 from promptflow.tracing import _start_trace
 
-try:
-    from promptflow.recording.record_mode import is_live
-except ModuleNotFoundError:
-    # The file is being imported by the local test
-    pass
+from devtools_testutils import is_live
 
 
 @pytest.fixture

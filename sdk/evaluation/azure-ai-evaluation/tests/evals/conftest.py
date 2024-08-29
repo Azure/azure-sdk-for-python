@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict
 from unittest.mock import patch
 
+from ci_tools.variables import in_ci
+from devtools_testutils import is_live
 import pytest
 from pytest_mock import MockerFixture
 
@@ -16,7 +18,6 @@ from promptflow.tracing._integrations._openai_injector import inject_openai_api
 
 try:
     from promptflow.recording.local import recording_array_reset
-    from promptflow.recording.record_mode import is_in_ci_pipeline, is_live, is_record, is_replay
 except ImportError as e:
     print(f"Failed to import promptflow-recording: {e}")
     # Run test in empty mode if promptflow-recording is not installed
@@ -24,17 +25,6 @@ except ImportError as e:
     def recording_array_reset():
         pass
 
-    def is_in_ci_pipeline():
-        return False
-
-    def is_live():
-        return False
-
-    def is_record():
-        return False
-
-    def is_replay():
-        return False
 
 
 # Import of optional packages
@@ -49,18 +39,6 @@ PROMPTFLOW_ROOT = Path(__file__) / "../../../.."
 CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation/connections.json").resolve().absolute().as_posix()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/recordings").resolve()
 
-
-def pytest_configure():
-    pytest.is_live = is_live()
-    pytest.is_record = is_record()
-    pytest.is_replay = is_replay()
-    pytest.is_in_ci_pipeline = is_in_ci_pipeline()
-
-    print()
-    print(f"pytest.is_live: {pytest.is_live}")
-    print(f"pytest.is_record: {pytest.is_record}")
-    print(f"pytest.is_replay: {pytest.is_replay}")
-    print(f"pytest.is_in_ci_pipeline: {pytest.is_in_ci_pipeline}")
 
 
 @pytest.fixture
@@ -138,8 +116,7 @@ def non_azure_openai_model_config() -> dict:
 
 @pytest.fixture
 def project_scope(request) -> dict:
-    if is_replay() and "vcr_recording" in request.fixturenames:
-        from promptflow.recording.azure import SanitizedValues
+    if not is_live() and "vcr_recording" in request.fixturenames:
 
         return {
             "subscription_id": SanitizedValues.SUBSCRIPTION_ID,
@@ -234,13 +211,12 @@ def recording_injection(mocker: MockerFixture):
     try:
         yield
     finally:
-        if pytest.is_replay or pytest.is_record:
+        if not is_live():
             from promptflow.recording.local import RecordStorage
 
             RecordStorage.get_instance().delete_lock_file()
-        if pytest.is_live:
+        else:
             from promptflow.recording.local import delete_count_lock_file
-
             delete_count_lock_file()
         recording_array_reset()
 
@@ -261,7 +237,7 @@ def setup_recording_injection_if_enabled():
             patches.append(patcher)
             patcher.start()
 
-    if is_replay() or is_record():
+    if not is_live():
         from promptflow.recording.local import RecordStorage, inject_async_with_recording, inject_sync_with_recording
         from promptflow.recording.record_mode import check_pydantic_v2
 
@@ -275,7 +251,7 @@ def setup_recording_injection_if_enabled():
         }
         start_patches(patch_targets)
 
-    if is_live() and is_in_ci_pipeline():
+    if is_live() and in_ci():
         from promptflow.recording.local import inject_async_with_recording, inject_sync_with_recording
 
         patch_targets = {
@@ -339,8 +315,7 @@ def azure_cred():
 def user_object_id() -> str:
     if not AZURE_INSTALLED:
         return ""
-    if pytest.is_replay:
-        from promptflow.recording.azure import SanitizedValues
+    if not is_live():
 
         return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
@@ -353,8 +328,7 @@ def user_object_id() -> str:
 def tenant_id() -> str:
     if not AZURE_INSTALLED:
         return ""
-    if pytest.is_replay:
-        from promptflow.recording.azure import SanitizedValues
+    if not is_live():
 
         return SanitizedValues.TENANT_ID
     credential = get_cred()
@@ -365,7 +339,7 @@ def tenant_id() -> str:
 
 @pytest.fixture(scope=package_scope_in_live_mode())
 def variable_recorder():
-    if pytest.is_record or pytest.is_replay:
+    if not is_live():
         from promptflow.recording.azure import VariableRecorder
 
         yield VariableRecorder()
@@ -381,7 +355,7 @@ def vcr_recording(request: pytest.FixtureRequest, user_object_id: str, tenant_id
     If the test mode is "record" or "replay", this fixture will locate a YAML (recording) file
     based on the test file, class and function name, write to (record) or read from (replay) the file.
     """
-    if pytest.is_record or pytest.is_replay:
+    if not is_live():
         from promptflow.recording.azure import PFAzureIntegrationTestRecording
 
         recording = PFAzureIntegrationTestRecording.from_test_case(
