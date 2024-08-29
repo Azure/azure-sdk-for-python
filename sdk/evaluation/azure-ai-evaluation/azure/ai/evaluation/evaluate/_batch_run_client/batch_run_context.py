@@ -24,8 +24,8 @@ class BatchRunContext:
 
     :param client: The client to run in the context.
     :type client: Union[
-        ~promptflow.evals.evaluate.code_client.CodeClient,
-        ~promptflow.evals.evaluate.proxy_client.ProxyClient
+        ~azure.ai.evaluation.evaluate.code_client.CodeClient,
+        ~azure.ai.evaluation.evaluate.proxy_client.ProxyClient
     ]
     """
 

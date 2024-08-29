@@ -11,7 +11,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import jinja2
 
-from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RetryClient
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+from .._model_tools import LLMBase, OpenAIChatCompletionsModel
 from .constants import ConversationRole
 
 
@@ -23,7 +25,7 @@ class ConversationTurn:
 
     :param role: The role of the participant in the conversation. Accepted values are
         "user" and "assistant".
-    :type role: ~promptflow.evals.synthetic._conversation.constants.ConversationRole
+    :type role: ~azure.ai.evaluation.synthetic._conversation.constants.ConversationRole
     :param name: The name of the participant in the conversation.
     :type name: Optional[str]
     :param message: The message exchanged in the conversation. Defaults to an empty string.
@@ -33,6 +35,7 @@ class ConversationTurn:
     :param request: The request.
     :type request: Optional[Any]
     """
+
     role: "ConversationRole"
     name: Optional[str] = None
     message: str = ""
@@ -87,11 +90,11 @@ class ConversationBot:
     A conversation chat bot with a specific name, persona and a sentence that can be used as a conversation starter.
 
     :param role: The role of the bot in the conversation, either "user" or "assistant".
-    :type role: ~promptflow.evals.synthetic._conversation.constants.ConversationRole
+    :type role: ~azure.ai.evaluation.synthetic._conversation.constants.ConversationRole
     :param model: The LLM model to use for generating responses.
     :type model: Union[
-        ~promptflow.evals.synthetic._model_tools.LLMBase,
-        ~promptflow.evals.synthetic._model_tools.OpenAIChatCompletionsModel
+        ~azure.ai.evaluation.synthetic._model_tools.LLMBase,
+        ~azure.ai.evaluation.synthetic._model_tools.OpenAIChatCompletionsModel
     ]
     :param conversation_template: A Jinja2 template describing the conversation to generate the prompt for the LLM
     :type conversation_template: str
@@ -140,7 +143,7 @@ class ConversationBot:
 
     async def generate_response(
         self,
-        session: RetryClient,
+        session: AsyncHttpPipeline,
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
@@ -148,8 +151,8 @@ class ConversationBot:
         """
         Prompt the ConversationBot for a response.
 
-        :param session: The aiohttp session to use for the request.
-        :type session: RetryClient
+        :param session: AsyncHttpPipeline to use for the request.
+        :type session: AsyncHttpPipeline
         :param conversation_history: The turns in the conversation so far.
         :type conversation_history: List[ConversationTurn]
         :param max_history: Parameters used to query GPT-4 model.
@@ -229,6 +232,7 @@ class CallbackConversationBot(ConversationBot):
     :param kwargs: Optional keyword arguments to pass to the parent class.
     :type kwargs: Any
     """
+
     def __init__(
         self,
         callback: Callable,
@@ -245,7 +249,7 @@ class CallbackConversationBot(ConversationBot):
 
     async def generate_response(
         self,
-        session: "RetryClient",
+        session: AsyncHttpPipeline,
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,

@@ -1,7 +1,3 @@
-# ---------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# ---------------------------------------------------------
-
 from .adversarial_scenario import AdversarialScenario
 from .adversarial_simulator import AdversarialSimulator
 from .jailbreak_adversarial_simulator import JailbreakAdversarialSimulator

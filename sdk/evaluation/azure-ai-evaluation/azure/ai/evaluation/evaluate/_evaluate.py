@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 import inspect
 import os
 import re
@@ -44,7 +43,7 @@ def _aggregate_metrics(df, evaluators) -> Dict[str, float]:
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("promptflow.evals.evaluators.")
+                and module.__name__.startswith("azure.ai.evaluation.evaluators.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):

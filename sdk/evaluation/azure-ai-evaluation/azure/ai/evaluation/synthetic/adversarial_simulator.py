@@ -8,17 +8,18 @@ import logging
 import random
 from typing import Any, Callable, Dict, List
 
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.identity import DefaultAzureCredential
 from tqdm import tqdm
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
-from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
+from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario, _UnstableAdverarialScenario
 
 from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
     AdversarialTemplateHandler,
-    AsyncHTTPClientWithRetry,
     ManagedIdentityAPITokenManager,
     ProxyChatCompletionsModel,
     RAIClient,
@@ -104,6 +105,8 @@ class AdversarialSimulator:
     async def __call__(
         self,
         *,
+        # Note: the scenario input also accepts inputs from _PrivateAdversarialScenario, but that's
+        # not stated since those values are nominally for internal use only.
         scenario: AdversarialScenario,
         target: Callable,
         max_conversation_turns: int = 1,
@@ -120,9 +123,9 @@ class AdversarialSimulator:
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
          example:
 
-         - :py:const:`promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
-         - :py:const:`promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
-        :paramtype scenario: promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario
+         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
             This function should be asynchronous and accept a dictionary representing the adversarial input.
         :paramtype target: Callable
@@ -181,12 +184,16 @@ class AdversarialSimulator:
                 }
             ]
         """
+
         # validate the inputs
         if scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
             max_conversation_turns = 2
         else:
             max_conversation_turns = max_conversation_turns * 2
-        if scenario not in AdversarialScenario.__members__.values():
+        if not (
+            scenario in AdversarialScenario.__members__.values()
+            or scenario in _UnstableAdverarialScenario.__members__.values()
+        ):
             raise ValueError("Invalid adversarial scenario")
         self._ensure_service_dependencies()
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
@@ -285,19 +292,21 @@ class AdversarialSimulator:
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters
         )
         bots = [user_bot, system_bot]
-        asyncHttpClient = AsyncHTTPClientWithRetry(
-            n_retry=api_call_retry_limit,
-            retry_timeout=api_call_retry_sleep_sec,
-            logger=logger,
+        session = get_async_http_client().with_policies(
+            retry_policy=AsyncRetryPolicy(
+                retry_total=api_call_retry_limit,
+                retry_backoff_factor=api_call_retry_sleep_sec,
+                retry_mode=RetryMode.Fixed,
+            )
         )
+
         async with semaphore:
-            async with asyncHttpClient.client as session:
-                _, conversation_history = await simulate_conversation(
-                    bots=bots,
-                    session=session,
-                    turn_limit=max_conversation_turns,
-                    api_call_delay_sec=api_call_delay_sec,
-                )
+            _, conversation_history = await simulate_conversation(
+                bots=bots,
+                session=session,
+                turn_limit=max_conversation_turns,
+                api_call_delay_sec=api_call_delay_sec,
+            )
         return self._to_chat_protocol(conversation_history=conversation_history, template_parameters=parameters)
 
     def _get_user_proxy_completion_model(self, template_key, template_parameters):

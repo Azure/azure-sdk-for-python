@@ -110,9 +110,9 @@ class JailbreakAdversarialSimulator:
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
          example:
 
-         - :py:const:`promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
-         - :py:const:`promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
-        :paramtype scenario: promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario
+         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
             This function should be asynchronous and accept a dictionary representing the adversarial input.
         :paramtype target: Callable

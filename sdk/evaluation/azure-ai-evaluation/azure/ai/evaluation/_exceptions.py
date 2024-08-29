@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""This includes enums and classes for exceptions for use in promptflow-evals."""
+"""This includes enums and classes for exceptions for use in azure-ai-evaluation."""
 
 from enum import Enum
 
@@ -53,7 +53,7 @@ class ErrorTarget(Enum):
 
 
 class PromptflowEvalsException(AzureError):
-    """The base class for all exceptions raised in promptflow-evals. If there is a need to define a custom
+    """The base class for all exceptions raised in pazure-ai-evaluation. If there is a need to define a custom
     exception type, that custom exception type should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
@@ -61,9 +61,9 @@ class PromptflowEvalsException(AzureError):
     :param internal_message: The error message without any personal data. This will be pushed to telemetry logs.
     :type internal_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ~promptflow.evals._exceptions.ErrorTarget
+    :type target: ~azure.ai.evaluation._exceptions.ErrorTarget
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ~promptflow.evals._exceptionsErrorCategory
+    :type error_category: ~azure.ai.evaluation._exceptionsErrorCategory
     :param error: The original exception if any.
     :type error: Exception
     """
