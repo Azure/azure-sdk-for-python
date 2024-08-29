@@ -877,9 +877,10 @@ if __name__ == "__main__":
         write_to_html(libraries)
 
     if in_ci():
+        path = "scripts/repo_health_status_report/health_report.csv"
         repo.create_file(
-            path="scripts/repo_health_status_report/health_report.csv",
+            path=path,
             message="Update health report",
-            content=open("health_report.csv", "rb").read(),
+            content=open(path, "rb").read(),
             branch="python-sdk-health-report",
         )
