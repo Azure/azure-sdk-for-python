@@ -11,6 +11,7 @@ extends:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
+        TEST_PYAMQP: 'false'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'
