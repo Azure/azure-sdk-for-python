@@ -13,6 +13,7 @@ from azure.core.credentials import AccessToken
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy
+from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def _remove_padding(encoded_string):
@@ -97,7 +98,7 @@ class TestAAD(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
