@@ -325,34 +325,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
-        """Get a sorted list of items that were changed in the entire container,
-         in the order in which they were modified,
-
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword start_time:The start time to start processing chang feed items.
-            Beginning: Processing the change feed items from the beginning of the change feed.
-            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
-        """
-        ...
-
-    @overload
-    def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
@@ -430,6 +402,34 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         ...
 
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed in the entire container,
+         in the order in which they were modified,
+
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time:The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
+        ...
+
     @distributed_trace
     def query_items_change_feed(
             self,
@@ -496,7 +496,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = args[3]
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.get('partition_key'))
+            change_feed_state_context["partitionKey"] =\
+                self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
             change_feed_state_context["partitionKeyFeedRange"] =\
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
@@ -1315,7 +1316,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
-        :param bool force_refresh:
+        :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: List[str]

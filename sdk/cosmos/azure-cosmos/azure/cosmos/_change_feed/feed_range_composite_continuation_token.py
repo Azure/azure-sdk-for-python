@@ -48,7 +48,7 @@ class FeedRangeCompositeContinuation:
         self._feed_range = feed_range
         self._continuation = continuation
         self._current_token = self._continuation[0]
-        self._initial_no_result_range = None
+        self._initial_no_result_range: Optional[Range] = None
 
     @property
     def current_token(self) -> CompositeContinuationToken:

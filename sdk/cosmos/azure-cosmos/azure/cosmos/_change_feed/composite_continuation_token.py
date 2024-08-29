@@ -49,7 +49,7 @@ class CompositeContinuationToken:
         return self._feed_range
 
     @property
-    def token(self) -> str:
+    def token(self) -> Optional[str]:
         return self._token
 
     def update_token(self, etag) -> None:

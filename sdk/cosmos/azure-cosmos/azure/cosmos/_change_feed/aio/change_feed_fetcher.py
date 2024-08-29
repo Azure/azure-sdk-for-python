@@ -25,7 +25,7 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Callable, Tuple, Awaitable
+from typing import Dict, Any, List, Callable, Tuple, Awaitable, cast
 
 from azure.cosmos import http_constants, exceptions
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
@@ -166,7 +166,7 @@ class ChangeFeedFetcherV2(object):
             # there is any items in the response or not.
             if fetched_items:
                 self._change_feed_state.apply_server_response_continuation(
-                    response_headers.get(continuation_key))
+                    cast(str, response_headers.get(continuation_key)))
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 break
 
@@ -177,7 +177,7 @@ class ChangeFeedFetcherV2(object):
             # then we will read from the next feed range until we have looped through all physical partitions
             self._change_feed_state.apply_not_modified_response()
             self._change_feed_state.apply_server_response_continuation(
-                response_headers.get(continuation_key))
+                cast(str, response_headers.get(continuation_key)))
 
             if (self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
                     and is_s_time_first_fetch):

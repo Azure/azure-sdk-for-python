@@ -165,8 +165,12 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                 else:
                     queryRange = currentProvidedRange
 
-                overlappingRanges = await PartitionKeyRangeCache.get_overlapping_ranges(self,
-                                                                                        collection_link, queryRange, **kwargs)
+                overlappingRanges =\
+                    await PartitionKeyRangeCache.get_overlapping_ranges(
+                        self,
+                        collection_link,
+                        [queryRange],
+                        **kwargs)
                 assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
                     queryRange
                 )

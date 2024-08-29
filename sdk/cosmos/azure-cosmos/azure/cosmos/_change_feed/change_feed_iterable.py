@@ -21,11 +21,11 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any, Tuple, List, Optional, Callable
+from typing import Dict, Any, Tuple, List, Optional, Callable, cast
 
 from azure.core.paging import PageIterator
 
-from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
+from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2, ChangeFeedFetcher
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
 
@@ -57,7 +57,7 @@ class ChangeFeedIterable(PageIterator):
         self._options = options
         self._fetch_function = fetch_function
         self._collection_link = collection_link
-        self._change_feed_fetcher = None
+        self._change_feed_fetcher: Optional[ChangeFeedFetcher] = None
 
         if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
@@ -84,8 +84,8 @@ class ChangeFeedIterable(PageIterator):
 
         super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-    def _unpack(self, block) -> Tuple[str, List[Dict[str, Any]]]:
-        continuation = None
+    def _unpack(self, block: List[Dict[str, Any]]) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+        continuation: Optional[str] = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
 
@@ -104,6 +104,7 @@ class ChangeFeedIterable(PageIterator):
         if self._change_feed_fetcher is None:
             self._initialize_change_feed_fetcher()
 
+        assert self._change_feed_fetcher is not None
         block = self._change_feed_fetcher.fetch_next_block()
         if not block:
             raise StopIteration
@@ -114,7 +115,7 @@ class ChangeFeedIterable(PageIterator):
         change_feed_state = \
             ChangeFeedState.from_json(
                 self._collection_link,
-                self._options.get("containerRID"),
+                cast(str, self._options.get("containerRID")),
                 change_feed_state_context)
 
         self._options["changeFeedState"] = change_feed_state

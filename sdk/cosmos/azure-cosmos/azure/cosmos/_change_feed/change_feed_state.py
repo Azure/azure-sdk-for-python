@@ -331,7 +331,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def apply_not_modified_response(self) -> None:
         self._continuation.apply_not_modified_response()
 
-    def get_feed_range_gone_error(self, over_lapping_ranges: list[Dict[str, Any]]) -> CosmosHttpResponseError:
+    def get_feed_range_gone_error(self, over_lapping_ranges: List[Dict[str, Any]]) -> CosmosHttpResponseError:
         formatted_message =\
             (f"Status code: {StatusCodes.GONE} "
              f"Sub-status: {SubStatusCodes.PARTITION_KEY_RANGE_GONE}. "

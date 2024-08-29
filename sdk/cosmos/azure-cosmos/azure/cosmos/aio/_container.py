@@ -655,7 +655,8 @@ class ContainerProxy:
             feed_options["maxItemCount"] = kwargs.pop('max_item_count')
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.get("partition_key"))
+            change_feed_state_context["partitionKey"] =\
+                self._set_partition_key(cast(PartitionKeyType, kwargs.get("partition_key")))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
@@ -1247,7 +1248,7 @@ class ContainerProxy:
     ) -> List[str]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
-        :param bool force_refresh:
+        :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: List[str]

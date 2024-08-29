@@ -21,12 +21,12 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from collections.abc import Awaitable
-from typing import Dict, Any, Optional, Callable, Tuple, List, AsyncIterator
+from typing import Dict, Any, Optional, Callable, Tuple, List, AsyncIterator, Awaitable
 
 from azure.core.async_paging import AsyncPageIterator
 
-from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
+from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2, \
+    ChangeFeedFetcher
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
 
@@ -60,7 +60,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         self._options = options
         self._fetch_function = fetch_function
         self._collection_link = collection_link
-        self._change_feed_fetcher = None
+        self._change_feed_fetcher: Optional[ChangeFeedFetcher] = None
 
         if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
@@ -88,7 +88,10 @@ class ChangeFeedIterable(AsyncPageIterator):
 
         super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-    async def _unpack(self, block) -> Tuple[str, AsyncIterator[List[Dict[str, Any]]]]:
+    async def _unpack(
+            self,
+            block: AsyncIterator[List[Dict[str, Any]]]
+    ) -> Tuple[Optional[str], AsyncIterator[List[Dict[str, Any]]]]:
         continuation = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
@@ -107,6 +110,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         if self._change_feed_fetcher is None:
             await self._initialize_change_feed_fetcher()
 
+        assert self._change_feed_fetcher is not None
         block = await self._change_feed_fetcher.fetch_next_block()
         if not block:
             raise StopAsyncIteration

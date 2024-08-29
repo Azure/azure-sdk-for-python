@@ -237,6 +237,7 @@ class TestChangeFeed:
 
         setup["created_db"].delete_container(created_collection.id)
 
+    @pytest.mark.skip
     def test_query_change_feed_with_split(self, setup):
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"),

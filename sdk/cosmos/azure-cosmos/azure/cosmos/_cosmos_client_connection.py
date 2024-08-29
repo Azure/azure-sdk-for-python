@@ -57,7 +57,6 @@ from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._base import _set_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
-from ._change_feed.change_feed_state import ChangeFeedState
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._range_partition_resolver import RangePartitionResolver
@@ -3026,7 +3025,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
             if options.get("changeFeedState") is not None:
-                options.pop("changeFeedState").populate_request_headers(self._routing_map_provider, headers)
+                options.get("changeFeedState").populate_request_headers(self._routing_map_provider, headers)
 
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers

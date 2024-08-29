@@ -25,7 +25,7 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Callable, Tuple
+from typing import Dict, Any, List, Callable, Tuple, cast
 
 from azure.cosmos import _retry_utility, http_constants, exceptions
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
@@ -87,7 +87,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             self._change_feed_state.apply_server_response_continuation(
-                response_headers.get(continuation_key))
+                cast(str, response_headers.get(continuation_key)))
 
             if fetched_items:
                 break
@@ -158,7 +158,7 @@ class ChangeFeedFetcherV2(object):
             # In change feed queries, the continuation token is always populated.
             if fetched_items:
                 self._change_feed_state.apply_server_response_continuation(
-                    response_headers.get(continuation_key))
+                    cast(str, response_headers.get(continuation_key)))
                 self._change_feed_state._continuation._move_to_next_token()
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 break
@@ -170,7 +170,7 @@ class ChangeFeedFetcherV2(object):
             # then we will read from the next feed range until we have looped through all physical partitions
             self._change_feed_state.apply_not_modified_response()
             self._change_feed_state.apply_server_response_continuation(
-                response_headers.get(continuation_key))
+                cast(str, response_headers.get(continuation_key)))
 
             if (self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
                     and is_s_time_first_fetch):
