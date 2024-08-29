@@ -965,7 +965,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 description=state[1],
                 info=state[2]
             )
-            except:
+            except: # pylint: disable=bare-except
                 # Other unknown errors, no state available
                 self._process_receive_error(
                     message_delivery,

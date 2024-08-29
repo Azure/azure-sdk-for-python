@@ -522,7 +522,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             expired = True
                             await receiver._handler._close_link_async()
                             # await receiver._handler._link.detach(close=True,
-                            #                                     error= AMQPError(ErrorCondition.InternalError, 'The drain response was not received', None))
+                            # error= AMQPError(ErrorCondition.InternalError,
+                            # 'The drain response was not received', None))
                             break
 
                         # if you have received the drain -> break out of the loop
@@ -585,21 +586,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             message._settled = True
 
     @staticmethod
-    def check_live(receiver):
-        # pylint: disable=protected-access
-        if receiver._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-
-    @staticmethod
-    async def check_if_exception_is_retriable(receiver, error):
+    async def check_if_exception_is_retriable_async(receiver, error):
         """
         Check if exception is retriable.
         :param ServiceBusReceiver receiver: The receiver.
         :param Exception error: The error.
         """
+        # pylint: disable=protected-access
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
             # the receiver should no longer be used and should create a new session receiver
@@ -614,3 +607,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 raise error
         except AttributeError:
             pass
+
+    @staticmethod
+    def check_live(receiver):
+        # pylint: disable=protected-access
+        if receiver._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )

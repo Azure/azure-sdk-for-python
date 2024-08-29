@@ -835,7 +835,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except TimeoutError as te:
             raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
         except AMQPException as ae:
-            from .._common.constants import ERROR_CODE_SESSION_LOCK_LOST
             if (
                 ae.condition == ErrorCondition.IllegalState
             ):
@@ -851,7 +850,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
-        
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
@@ -1131,7 +1129,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                             expired = True
                             receiver._handler._close_link()
                             # receiver._handler._link.detach(close=True,
-                            #                                error=AMQPError(ErrorCondition.InternalError, "Drain response not received", None))
+                            # error=AMQPError(ErrorCondition.InternalError,
+                            # "Drain response not received", None))
                             break
 
                         # if you have received the drain -> break out of the loop
@@ -1192,6 +1191,22 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             message._settled = True
 
     @staticmethod
+    def check_if_exception_is_retriable(receiver, error):
+        # pylint: disable=protected-access
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a
+            # session receiver is running, the receiver should no longer be used and
+            # should create a new session receiver instance to receive from session.
+            # There are pitfalls WRT both next session IDs, and the diversity of session
+            # failure modes, that motivates us to disallow this.
+            if receiver._session and receiver._running and \
+                isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
+                receiver._session._lock_lost = True  # type: ignore
+                raise error
+        except AttributeError:
+            pass
+
+    @staticmethod
     def check_live(receiver):
         # pylint: disable=protected-access
         if receiver._shutdown.is_set():
@@ -1199,17 +1214,3 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 "The handler has already been shutdown. Please use ServiceBusClient to "
                 "create a new instance."
             )
-
-    @staticmethod
-    def check_if_exception_is_retriable(receiver, error):
-        try:
-            # If SessionLockLostError or ServiceBusConnectionError happen when a
-            # session receiver is running, the receiver should no longer be used and
-            # should create a new session receiver instance to receive from session.
-            # There are pitfalls WRT both next session IDs, and the diversity of session
-            # failure modes, that motivates us to disallow this.
-            if receiver._session and receiver._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
-                receiver._session._lock_lost = True  # type: ignore
-                raise error
-        except AttributeError:
-            pass

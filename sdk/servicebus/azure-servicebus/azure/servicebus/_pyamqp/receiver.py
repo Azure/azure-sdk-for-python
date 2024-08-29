@@ -14,7 +14,7 @@ from .link import Link
 from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPLinkError, ErrorCondition, AMQPException
+from .error import ErrorCondition, AMQPException
 
 if TYPE_CHECKING:
     from .message import _MessageDelivery
@@ -45,7 +45,7 @@ class PendingDisposition(object):
                 )
         self.settled = True
 
-class ReceiverLink(Link):
+class ReceiverLink(Link): # pylint:disable=too-many-instance-attributes
     def __init__(self, session, handle, source_address, **kwargs):
         name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Receiver
@@ -125,6 +125,7 @@ class ReceiverLink(Link):
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
+                    delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None

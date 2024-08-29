@@ -1273,7 +1273,8 @@ try:
                 # should create a new session receiver instance to receive from session.
                 # There are pitfalls WRT both next session IDs, and the diversity of session
                 # failure modes, that motivates us to disallow this.
-                if receiver._session and receiver._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
+                if receiver._session and receiver._running and isinstance(error,
+                        (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
                     receiver._session._lock_lost = True  # type: ignore
                     # Only close for uamqp, we let pyamqp close the connection via the retry loop.
                     receiver._close_handler()

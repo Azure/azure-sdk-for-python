@@ -21,9 +21,7 @@ from ._transport._pyamqp_transport import PyamqpTransport
 
 from ._common._configuration import Configuration
 from .exceptions import (
-    ServiceBusConnectionError,
     OperationTimeoutError,
-    SessionLockLostError,
 )
 from ._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from ._common.constants import (

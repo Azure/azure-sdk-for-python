@@ -372,7 +372,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def check_if_exception_is_retriable(receiver, error):
+    async def check_if_exception_is_retriable_async(receiver, error):
         """
         Check if exception is retriable.
         :param ServiceBusReceiver receiver: The receiver.

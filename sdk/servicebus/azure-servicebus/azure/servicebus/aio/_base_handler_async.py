@@ -22,8 +22,6 @@ from .._common.constants import (
     MANAGEMENT_PATH_SUFFIX,
 )
 from ..exceptions import (
-    ServiceBusConnectionError,
-    SessionLockLostError,
     OperationTimeoutError,
 )
 
@@ -186,7 +184,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
         )
 
-        await self._amqp_transport.check_if_exception_is_retriable(self, error)
+        await self._amqp_transport.check_if_exception_is_retriable_async(self, error)
 
         if error._shutdown_handler:
             await self._close_handler()

@@ -49,7 +49,6 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
-from .exceptions import ServiceBusConnectionError, SessionLockLostError
 
 if TYPE_CHECKING:
     try:

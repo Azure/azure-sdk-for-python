@@ -58,7 +58,6 @@ from .._common.tracing import (
     SPAN_NAME_PEEK,
 )
 from ._async_utils import create_authentication
-from ..exceptions import ServiceBusConnectionError, SessionLockLostError
 
 if TYPE_CHECKING:
     try:

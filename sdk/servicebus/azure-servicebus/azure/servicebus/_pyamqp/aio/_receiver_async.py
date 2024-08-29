@@ -48,7 +48,7 @@ class PendingDisposition(object):
                 )
         self.settled = True
 
-class ReceiverLink(Link):
+class ReceiverLink(Link): # pylint:disable=too-many-instance-attributes
     def __init__(self, session, handle, source_address, **kwargs):
         name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Receiver
@@ -99,12 +99,12 @@ class ReceiverLink(Link):
     async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
-        async with self._drain_lock:   
+        async with self._drain_lock:
             self._still_receiving = True
         self.received_delivery_id = frame[1] # delivery_id
         # If more is false --> this is the last frame of the message
         if not frame[5]:
-            async with self._drain_lock:  
+            async with self._drain_lock:
                 self._still_receiving = False
             self.delivery_count += 1
             self.current_link_credit -= 1
