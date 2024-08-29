@@ -45,7 +45,7 @@ if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
 
 Write-Host ""
 Write-Host "ArtifactsList:"
-$ArtifactsList | Format-Table -Property GroupId, Name | Out-String | Write-Host
+$ArtifactsList | Format-Table -Property Name | Out-String | Write-Host
 
 $packageInfoDirectory = Join-Path $ArtifactStagingDirectory "PackageInfo"
 
