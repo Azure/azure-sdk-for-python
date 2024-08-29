@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import unittest
+import time
 from unittest.mock import patch, call
 from azure.appconfiguration.provider.aio._client_manager import ConfigurationClientManager
 
@@ -59,6 +60,12 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
         assert manager is not None
+        int = 0
+        while (len(manager._replica_clients) < 2):
+            if (int > 30):
+                break
+            time.sleep(1)
+            int += 1
         assert len(manager._replica_clients) == 2
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         connection_string2 = "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret"
@@ -104,6 +111,12 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
         assert manager is not None
+        int = 0
+        while (len(manager._replica_clients) < 2):
+            if (int > 30):
+                break
+            time.sleep(1)
+            int += 1
         assert len(manager._replica_clients) == 2
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_has_calls(
