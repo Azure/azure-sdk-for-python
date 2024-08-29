@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
+from azure.cosmos import DatabaseProxy, ContainerProxy
 
 
 def _remove_padding(encoded_string):

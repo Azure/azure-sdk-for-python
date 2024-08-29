@@ -11,7 +11,6 @@ import pytest
 from azure.core.credentials import AccessToken
 
 import test_config
-from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 
 
