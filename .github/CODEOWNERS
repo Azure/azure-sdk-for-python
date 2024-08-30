@@ -842,4 +842,8 @@
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
+# Add approvers for typespec-python emitter version updates
+/eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
+/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
+
 /pylintrc                                                            @l0lawrence
