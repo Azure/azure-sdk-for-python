@@ -287,7 +287,8 @@ def get_pipelines(
 
 def record_check_result(task: dict[str, str], type: str, pipeline: PipelineResultsUnion):
     pipeline.update({type: CheckStatus(status=task["result"])})
-    pipeline[type]["log"] = task["log"]["url"]
+    if task["log"]:
+        pipeline[type]["log"] = task["log"].get("url")
 
 
 def record_test_result(
@@ -876,11 +877,11 @@ if __name__ == "__main__":
     elif args.format == "html":
         write_to_html(libraries)
 
-    if in_ci():
-        path = "scripts/repo_health_status_report/health_report.csv"
-        repo.create_file(
-            path=path,
-            message="Update health report",
-            content=open(path, "rb").read(),
-            branch="python-sdk-health-report",
-        )
+    # if in_ci():
+    #     path = "scripts/repo_health_status_report/health_report.csv"
+    #     repo.create_file(
+    #         path=path,
+    #         message="Update health report",
+    #         content=open(path, "rb").read(),
+    #         branch="python-sdk-health-report",
+    #     )
