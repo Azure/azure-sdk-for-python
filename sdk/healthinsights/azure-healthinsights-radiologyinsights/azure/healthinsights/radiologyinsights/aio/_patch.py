@@ -32,28 +32,29 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-    class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-keyword
-        """RadiologyInsightsClient.
 
-        :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-        https://westus2.api.cognitive.microsoft.com). Required.
-        :type endpoint: str
-        :param credential: Credential used to authenticate requests to the service. Is either a
-        AzureKeyCredential type or a TokenCredential type. Required.
-        :type credential: ~azure.core.credentials.AzureKeyCredential or
-        ~azure.core.credentials_async.AsyncTokenCredential
-        :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
-        Note that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-        Retry-After header is present.
-        """
+class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-keyword
+    """RadiologyInsightsClient.
 
-        def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
-            self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
-            self._serialize = Serializer()
-            self._deserialize = Deserializer()
-            self._serialize.client_side_validation = False
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+    https://westus2.api.cognitive.microsoft.com). Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+    AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+    ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
+    Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+    Retry-After header is present.
+    """
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+        self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
 
         @overload  # type: ignore[override]
         async def begin_infer_radiology_insights(
@@ -217,6 +218,7 @@ if TYPE_CHECKING:
             return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
                 self._client, raw_result, get_long_running_output, polling_method  # type: ignore
             )
+
 
 __all__: List[str] = [
     "RadiologyInsightsClient"
