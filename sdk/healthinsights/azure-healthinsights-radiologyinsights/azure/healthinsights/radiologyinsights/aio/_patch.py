@@ -169,7 +169,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._client._infer_radiology_insights_initial(
+            raw_result = await self._client._infer_radiology_insights_initial(
                 id=id,
                 resource=resource,
                 expand=expand,
