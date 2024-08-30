@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy, ContainerProxy
+from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
 
 
 def _remove_padding(encoded_string):
@@ -109,6 +109,13 @@ class TestAAD(unittest.TestCase):
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
         self.container.delete_item(item='Item_0', partition_key='pk')
+
+        # Attempting to do management operations will return a 403 Forbidden exception
+        try:
+            self.client.delete_database(self.configs.TEST_DATABASE_ID)
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 403
+            print("403 error assertion success")
 
 
 if __name__ == "__main__":
