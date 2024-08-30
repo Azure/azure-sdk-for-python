@@ -29,7 +29,6 @@ from ci_tools.environment_exclusions import (
 )
 
 IGNORE_PACKAGES.append("azure-openai")
-health_report_path = pathlib.Path(__file__).parent
 
 # Github
 GIT_TOKEN = os.environ["GH_TOKEN"]
