@@ -59,7 +59,6 @@ This script is a single point of access to replace relative requirements within 
     for package in targeted_packages:
         dev_requirements_path = os.path.join(package, "dev_requirements.txt")
 
-        breakpoint()
         replace_dev_reqs(test_tools_path, package, args.wheel_dir)
         replace_dev_reqs(dependency_tools_path, package, args.wheel_dir)
         replace_dev_reqs(dev_requirements_path, package, args.wheel_dir)
