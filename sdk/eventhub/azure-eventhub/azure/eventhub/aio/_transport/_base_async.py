@@ -79,7 +79,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     USER_AGENT_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["user-agent"]]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal[b'x-opt-partition-key']]
 
-
     @staticmethod
     @abstractmethod
     def build_message(**kwargs: Any) -> Union["uamqp_Message", "pyamqp_Message"]:

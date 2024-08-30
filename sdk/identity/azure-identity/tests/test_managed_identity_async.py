@@ -821,9 +821,9 @@ async def test_service_fabric_tenant_id():
 
 @pytest.mark.asyncio
 async def test_azure_arc(tmpdir):
-    """Azure Arc 2019-11-01"""
+    """Azure Arc 2020-06-01"""
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -877,7 +877,7 @@ async def test_azure_arc(tmpdir):
 @pytest.mark.asyncio
 async def test_azure_arc_tenant_id(tmpdir):
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -946,7 +946,7 @@ async def test_azure_arc_client_id():
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_too_large(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -981,7 +981,7 @@ async def test_azure_arc_key_too_large(tmp_path):
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_not_exist(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -1010,7 +1010,7 @@ async def test_azure_arc_key_not_exist(tmp_path):
 
 @pytest.mark.asyncio
 async def test_azure_arc_key_invalid(tmp_path):
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -1213,3 +1213,24 @@ async def test_token_exchange_tenant_id(tmpdir):
         credential = ManagedIdentityCredential(transport=transport)
         token = await credential.get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token
+
+
+def test_validate_identity_config():
+    ManagedIdentityCredential()
+    ManagedIdentityCredential(client_id="foo")
+    ManagedIdentityCredential(identity_config={"foo": "bar"})
+    ManagedIdentityCredential(identity_config={"client_id": "foo"})
+    ManagedIdentityCredential(identity_config={"object_id": "foo"})
+    ManagedIdentityCredential(identity_config={"resource_id": "foo"})
+    ManagedIdentityCredential(identity_config={"foo": "bar"}, client_id="foo")
+
+    with pytest.raises(ValueError):
+        ManagedIdentityCredential(identity_config={"client_id": "foo"}, client_id="foo")
+    with pytest.raises(ValueError):
+        ManagedIdentityCredential(identity_config={"object_id": "bar"}, client_id="bar")
+    with pytest.raises(ValueError):
+        ManagedIdentityCredential(identity_config={"resource_id": "bar"}, client_id="bar")
+    with pytest.raises(ValueError):
+        ManagedIdentityCredential(identity_config={"object_id": "bar", "resource_id": "foo"})
+    with pytest.raises(ValueError):
+        ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})

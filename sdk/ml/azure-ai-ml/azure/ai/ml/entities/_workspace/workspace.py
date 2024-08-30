@@ -8,13 +8,13 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+    FeatureStoreSettings as RestFeatureStoreSettings,
+    ManagedNetworkSettings as RestManagedNetwork,
+    ManagedServiceIdentity as RestManagedServiceIdentity,
     ServerlessComputeSettings as RestServerlessComputeSettings,
+    Workspace as RestWorkspace,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -132,7 +132,6 @@ class Workspace(Resource):
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
-
         # Workspaces have subclasses that are differentiated by the 'kind' field in the REST API.
         # Now that this value is occasionally surfaced (for sub-class YAML specifications)
         # We've switched to using 'type' in the SDK for consistency's sake with other polymorphic classes.
@@ -316,7 +315,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
-
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -333,6 +331,14 @@ class Workspace(Resource):
         mlflow_tracking_uri = None
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+
+        # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
+        allow_roleassignment_on_rg = None
+        if hasattr(rest_obj, "allow_role_assignment_on_rg"):
+            allow_roleassignment_on_rg = rest_obj.allow_role_assignment_on_rg
+        system_datastores_auth_mode = None
+        if hasattr(rest_obj, "system_datastores_auth_mode"):
+            system_datastores_auth_mode = rest_obj.system_datastores_auth_mode
 
         # TODO: remove this once it is included in API response
         managed_network = None
@@ -386,10 +392,10 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
-            system_datastores_auth_mode=rest_obj.system_datastores_auth_mode,
+            system_datastores_auth_mode=system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
-            allow_roleassignment_on_rg=rest_obj.allow_roleassignment_on_rg,
+            allow_roleassignment_on_rg=allow_roleassignment_on_rg,
             hub_id=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
             serverless_compute=serverless_compute,
@@ -436,7 +442,7 @@ class Workspace(Resource):
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            allow_roleassignment_on_rg=self.allow_roleassignment_on_rg,
+            allow_role_assignment_on_rg=self.allow_roleassignment_on_rg,  # diff due to swagger restclient casing diff
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )

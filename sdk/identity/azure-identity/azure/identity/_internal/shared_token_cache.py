@@ -5,7 +5,7 @@
 import abc
 import platform
 import time
-from typing import Any, Iterable, List, Mapping, Optional, cast
+from typing import Any, Iterable, List, Mapping, Optional, cast, Dict
 from urllib.parse import urlparse
 import msal
 
@@ -96,6 +96,10 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
         self._cae_cache = kwargs.pop("_cae_cache", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
@@ -153,9 +157,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         :rtype: list[CacheItem]
         """
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         items = []
-        for item in cache.find(credential_type):
+        for item in cache.search(credential_type):
             environment = item.get("environment")
             if environment in self._environment_aliases:
                 items.append(item)
@@ -228,9 +232,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         if "home_account_id" not in account:
             return None
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
                 query={"home_account_id": account["home_account_id"]},
@@ -249,9 +253,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         if "home_account_id" not in account:
             return []
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]
@@ -267,3 +271,18 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         :rtype: bool
         """
         return platform.system() in {"Darwin", "Linux", "Windows"}
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None

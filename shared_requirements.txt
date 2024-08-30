@@ -67,4 +67,8 @@ uamqp
 yarl
 azure-identity
 openai
-wrapt
+dnspython
+promptflow-core
+promptflow-devkit
+numpy
+jsonpath-ng

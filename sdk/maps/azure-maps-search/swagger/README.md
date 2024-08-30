@@ -29,7 +29,7 @@ We automatically hardcode in that this is `python`.
 ## Basic Information
 
 ```yaml
-tag: 1.0-preview
+tag: package-2023-06
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Search/readme.md
 output-folder: ../azure/maps/search/_generated
 namespace: azure.maps.search

@@ -7,7 +7,7 @@
 
 from breaking_changes_tracker import RegexSuppression
 
-RUN_BREAKING_CHANGES_PACKAGES = []
+RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*"]
 
 
 # See Readme for ignore format
@@ -22,6 +22,8 @@ IGNORE_BREAKING_CHANGES = {
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "*", "maxpagesize"),
+        # msrest model bases on vendored _serialization.model instead of msrest.Model which no longer has "validate"
+        ("RemovedOrRenamedClassMethod", "*", "*", "validate"),
         # Changes due to not using msrest anymore
         ("RemovedOrRenamedClassMethod", "*", "*", "as_dict"),
         ("RemovedOrRenamedClassMethod", "*", "*", "deserialize"),

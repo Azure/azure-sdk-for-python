@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.1 (Unreleased)
+## 1.6.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.1 (2024-07-30)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36482](https://github.com/Azure/azure-sdk-for-python/pull/36482))
 
 ## 1.6.0 (2024-06-06)
 

@@ -26,6 +26,8 @@ jobs:
     maxParallel: 5
   pool:
     vmImage: 'ubuntu-20.04'
+  variables:
+    Codeql.Enabled: false
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -91,6 +93,7 @@ jobs:
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
         export TEST_FOLDER=$(TEST_FOLDER)
+        export ISSUE_OWNER=$(ISSUE_OWNER)
 
         # run
         cd azure-sdk-for-python

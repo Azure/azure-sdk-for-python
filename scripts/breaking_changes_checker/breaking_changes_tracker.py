@@ -8,8 +8,10 @@
 import jsondiff
 import re
 from enum import Enum
-from typing import Any, Dict, List, Union, Optional, NamedTuple
+from typing import Any, Dict, List, Union
 from copy import deepcopy
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+from _models import ChangesChecker, Suppression
 
 
 class RegexSuppression(NamedTuple):
@@ -18,13 +20,6 @@ class RegexSuppression(NamedTuple):
     def match(self, compare_value: str) -> bool:
         return re.search(self.value, compare_value)
 
-
-class Suppression(NamedTuple):
-    change_type: str
-    module: str
-    class_name: Optional[str] = None
-    function_name: Optional[str] = None
-    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
@@ -43,65 +38,62 @@ class BreakingChangeType(str, Enum):
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
+    REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
 
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
-        "The client '{}.{}' was deleted or renamed in the current version"
+        "Deleted or renamed client '{}'"
     REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
-        "The '{}.{}' client method '{}' was deleted or renamed in the current version"
+        "Deleted or renamed client method '{}.{}'"
     REMOVED_OR_RENAMED_CLASS_MSG = \
-        "The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
+        "Deleted or renamed model '{}'"
     REMOVED_OR_RENAMED_CLASS_METHOD_MSG = \
-        "The '{}.{}' method '{}' was deleted or renamed in the current version"
+        "Deleted or renamed method '{}.{}'"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
+        "Deleted or renamed function '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "The '{}.{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
+        "'{}.{}' method deleted or renamed its parameter '{}' of kind '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
+        "'{}' function deleted or renamed its parameter '{}' of kind '{}'"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
+        "'{}.{}' method inserted a '{}' parameter '{}'"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
-        "The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
+        "'{}' function inserted a '{}' parameter '{}'"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
-        "The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
+        "'{}' deleted or renamed client instance variable '{}'"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
-        "The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
-        "in the current version"
+        "'{}' model deleted or renamed its instance variable '{}'"
     REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
-        "The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
+        "Deleted or renamed enum value '{}.{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "'{}.{}' method parameter '{}' changed default value from '{}' to '{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "'{}' function parameter '{}' changed default value from '{}' to '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "The class '{}.{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
-        "the current version"
+        "'{}.{}' removed default method value '{}' from its parameter '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had default value '{}' removed from its parameter '{}' in " \
-        "the current version"
+        "'{}' function removed default value '{}' from its parameter '{}'"
     CHANGED_PARAMETER_ORDERING_MSG = \
-        "The class '{}.{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
+        "'{}.{}' method re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
-        "the current version"
+        "'{}' function re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_MSG = \
-        "The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "'{}.{}' method changed its parameter '{}' from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "'{}' function changed its parameter '{}' from '{}' to '{}'"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
-        "The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
+        "'{}.{}' method changed from '{}' to '{}'"
     CHANGED_FUNCTION_KIND_MSG = \
-        "The function '{}.{}' changed from '{}' to '{}' in the current version."
+        "Changed function '{}' from '{}' to '{}'"
     REMOVED_OR_RENAMED_MODULE_MSG = \
-        "The '{}' module was deleted or renamed in the current version"
+        "Deleted or renamed module '{}'"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
-        "The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
-        "the current version"
+        "'{}.{}' method changed from accepting keyword arguments to not accepting them"
     REMOVED_FUNCTION_KWARGS_MSG = \
-        "The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
-        "the current version"
+        "'{}' function changed from accepting keyword arguments to not accepting them"
+    REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
+        "Deleted or renamed client operation group '{}.{}'"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -114,10 +106,28 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        checkers: List[ChangesChecker] = kwargs.get("checkers", [])
+        for checker in checkers:
+            if not isinstance(checker, ChangesChecker):
+                raise TypeError(f"Checker {checker} does not implement ChangesChecker protocol")
+        self.checkers = checkers
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
+        self.run_async_cleanup(self.breaking_changes)
+
+    # Remove duplicate reporting of changes that apply to both sync and async package components
+    def run_async_cleanup(self, changes_list: List) -> None:
+        # Create a list of all sync changes
+        non_aio_changes = [bc for bc in changes_list if "aio" not in bc[2]]
+        # Remove any aio change if there is a sync change that is the same
+        for change in non_aio_changes:
+            for c in changes_list:
+                if "aio" in c[2]:
+                    if change[1] == c[1] and change[3:] == c[3:]:
+                        changes_list.remove(c)
+                        break
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
@@ -131,6 +141,8 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
+        for checker in self.checkers:
+            self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
@@ -471,38 +483,47 @@ class BreakingChangesTracker:
                     )
 
     def check_class_instance_attribute_removed_or_renamed(self, components: Dict) -> None:
+        deleted_props = []
         for prop in components.get("properties", []):
             if isinstance(prop, jsondiff.Symbol):
-                deleted_props = []
                 if prop.label == "delete":
                     deleted_props = components["properties"][prop]
                 elif prop.label == "replace":
                     deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
 
-                for property in deleted_props:
-                    bc = None
-                    if self.class_name.endswith("Client"):
+        for property in deleted_props:
+            bc = None
+            if self.class_name.endswith("Client"):
+                property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+                # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
+                if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
                         bc = (
-                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                            self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
+                            BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
                             self.module_name, self.class_name, property
                         )
-                    elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
-                        if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
-                            and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
-                            bc = (
-                                self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
-                                BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
-                                self.module_name, self.class_name, property
-                            )
-                    else:
-                        bc = (
-                            self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
-                            BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                            self.module_name, self.class_name, property
-                        )
-                    if bc:
-                        self.breaking_changes.append(bc)
+                else:
+                    bc = (
+                        self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                        self.module_name, self.class_name, property
+                    )
+            elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
+                if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
+                    and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
+                    bc = (
+                        self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
+                        self.module_name, self.class_name, property
+                    )
+            else:
+                bc = (
+                    self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
+                    BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
+                    self.module_name, self.class_name, property
+                )
+            if bc:
+                self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self.class_name, jsondiff.Symbol):
@@ -625,9 +646,13 @@ class BreakingChangesTracker:
 
         formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
-            msg, *args = bc
+            msg, bc_type, module_name, *args = bc
+            if bc_type == BreakingChangeType.REMOVED_OR_RENAMED_MODULE:
+                # For module-level changes, the module name is the first argument
+                formatted += f"({bc_type}): " + msg.format(module_name) + "\n"
+                continue
             # For simple breaking changes reporting, prepend the change code to the message
-            msg = "({}): " + msg + "\n"
+            msg = f"({bc_type}): " + msg + "\n"
             formatted += msg.format(*args)
         
         formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"

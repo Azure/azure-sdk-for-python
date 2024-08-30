@@ -2,4 +2,6 @@
 
 ## 1.0.0b1 (2024-07-01)
 
-- Initial version
+### Other Changes
+
+  - Initial version

@@ -1,20 +1,34 @@
 # Release History
 
-## 1.3.0b4 (Unreleased)
+## 1.3.0 (Unreleased)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
 
-### Breaking Changes
+- `V2022_10` has been added to `ApiVersion` and set as the default API version.
+  - `Json` and `Custom` have been added to supported formats in `SchemaFormat`.
+- Sync and async `JsonSchemaEncoder` have been added under `azure.schemaregistry.encoder.jsonencoder`.
+- `InvalidContentError` have been added under `azure.schemaregistry.encoder.jsonencoder` for use with the `JsonSchemaEncoder`.
+- `MessageContent`, `OutboundMessageContent`,`InboundMessageContent`, and `SchemaContentValidate` have been added under `azure.schemaregistry` as protocols for use with the `JsonSchemaEncoder` and/or future encoder implementations.
 
 ### Bugs Fixed
 
+- Fixed a bug in sync/async `register_schema` and `get_schema_properties` that did not accept case insensitive strings as an argument to the `format` parameter.
+
 ### Other Changes
+
+- Updated azure-core minimum dependency to 1.28.0.
+- Added support for Python 3.11 and 3.12.
+- The following features have been temporarily pulled out and will be added back in future previews as we work towards a stable release:
+  - `V2023_07_01` in `ApiVersion`.
+    - `PROTOBUF` in `SchemaFormat`.
 
 ## 1.3.0b3 (2023-11-09)
 
 ### Features Added
 
-- `V2023_07_01` has been added to `ApiVersion` and set as the default api version.
+- `V2023_07_01` has been added to `ApiVersion` and set as the default API version.
   - `Protobuf` has been added to supported formats in `SchemaFormat`.
 
 ### Other Changes

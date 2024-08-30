@@ -5,10 +5,13 @@ extends:
     parameters:
       ServiceDirectory: translation
       TestTimeoutInMinutes: 200
+      UseFederatedAuth: true
       Clouds: Public # Skipping INT, re-enable when environment fixed
       CloudConfig:
         Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           Location: 'westus3'
         Int:
           # We run tests in Dogfood for the service team. This cloud config is just used to validate the service deployment
@@ -17,9 +20,6 @@ extends:
           MatrixFilters:
             - PythonVersion=3.11.*
       EnvVars:
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_TEST_RUN_LIVE: 'true'
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

@@ -9,7 +9,6 @@ The following environment variable will need to be set for the tests to access t
 
 ```
 TRANSLATION_DOCUMENT_TEST_ENDPOINT=<translation-endpoint>
-TRANSLATION_DOCUMENT_TEST_API_KEY=<translation-key>
 TRANSLATION_DOCUMENT_STORAGE_NAME=<storage-blob-account-name>
 TRANSLATION_DOCUMENT_STORAGE_KEY=<storage-shared-key>
 ```
