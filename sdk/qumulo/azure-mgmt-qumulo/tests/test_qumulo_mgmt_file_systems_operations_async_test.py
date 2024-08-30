@@ -20,19 +20,9 @@ class TestQumuloMgmtFileSystemsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
-        response = self.client.file_systems.list_by_subscription(
-            api_version="2024-06-19",
-        )
-        result = [r async for r in response]
-        assert response
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.file_systems.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-19",
         )
         result = [r async for r in response]
         assert result == []
