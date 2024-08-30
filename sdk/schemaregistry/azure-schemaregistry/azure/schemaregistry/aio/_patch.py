@@ -18,6 +18,7 @@ from typing import (
     Dict,
 )
 from functools import partial
+from typing_extensions import Self
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
 ###### Wrapper Class ######
 
 
-class SchemaRegistryClient(object):
+class SchemaRegistryClient:
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
 
@@ -78,11 +79,11 @@ class SchemaRegistryClient(object):
             **kwargs,
         )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self._generated_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._generated_client.__aexit__(*args)
 
     async def close(self) -> None:

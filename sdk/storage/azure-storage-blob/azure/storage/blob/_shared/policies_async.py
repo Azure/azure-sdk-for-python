@@ -10,12 +10,12 @@ import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .policies import is_retry, StorageRetryPolicy
+from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -42,6 +42,20 @@ async def retry_hook(settings, **kwargs):
                 **kwargs)
 
 
+async def is_checksum_retry(response):
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        try:
+            await response.http_response.read()  # Load the body in memory and close the socket
+        except (StreamClosedError, StreamConsumedError):
+            pass
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.content))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
+    return False
+
+
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
     def __init__(self, **kwargs):  # pylint: disable=unused-argument
@@ -64,9 +78,8 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-        await response.http_response.load_body()
+        will_retry = is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response)
 
-        will_retry = is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)
@@ -112,7 +125,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         while retries_remaining:
             try:
                 response = await self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
+                if is_retry(response, retry_settings['mode']) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,

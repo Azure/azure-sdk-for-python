@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any, Mapping
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
@@ -15,6 +15,22 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def validate_identity_config(client_id: Optional[str], identity_config: Optional[Mapping[str, str]]) -> None:
+    if identity_config:
+        if client_id:
+            if any(key in identity_config for key in ("object_id", "resource_id", "client_id")):
+                raise ValueError(
+                    "identity_config must not contain 'object_id', 'resource_id', or 'client_id' when 'client_id' is "
+                    "provided as a keyword argument."
+                )
+        # Only one of these keys should be present if one is present.
+        valid_keys = {"object_id", "resource_id", "client_id"}
+        if len(identity_config.keys() & valid_keys) > 1:
+            raise ValueError(
+                f"identity_config must not contain more than one of the following keys: {', '.join(valid_keys)}"
+            )
 
 
 class ManagedIdentityCredential:
@@ -42,8 +58,11 @@ class ManagedIdentityCredential:
             :caption: Create a ManagedIdentityCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self._credential = None  # type: Optional[TokenCredential]
+    def __init__(
+        self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
+    ) -> None:
+        validate_identity_config(client_id, identity_config)
+        self._credential: Optional[TokenCredential] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -51,28 +70,32 @@ class ManagedIdentityCredential:
                     _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
                     from .service_fabric import ServiceFabricCredential
 
-                    self._credential = ServiceFabricCredential(**kwargs)
+                    self._credential = ServiceFabricCredential(
+                        client_id=client_id, identity_config=identity_config, **kwargs
+                    )
                 else:
                     _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
                     from .app_service import AppServiceCredential
 
-                    self._credential = AppServiceCredential(**kwargs)
+                    self._credential = AppServiceCredential(
+                        client_id=client_id, identity_config=identity_config, **kwargs
+                    )
             elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
                 _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
                 from .azure_arc import AzureArcCredential
 
-                self._credential = AzureArcCredential(**kwargs)
+                self._credential = AzureArcCredential(client_id=client_id, identity_config=identity_config, **kwargs)
         elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use Azure ML managed identity", self.__class__.__name__)
                 from .azure_ml import AzureMLCredential
 
-                self._credential = AzureMLCredential(**kwargs)
+                self._credential = AzureMLCredential(client_id=client_id, identity_config=identity_config, **kwargs)
             else:
                 _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
                 from .cloud_shell import CloudShellCredential
 
-                self._credential = CloudShellCredential(**kwargs)
+                self._credential = CloudShellCredential(client_id=client_id, identity_config=identity_config, **kwargs)
         elif (
             all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
             and not exclude_workload_identity
@@ -80,21 +103,21 @@ class ManagedIdentityCredential:
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
-            client_id = kwargs.pop("client_id", None) or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-            if not client_id:
+            workload_client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            if not workload_client_id:
                 raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
 
             self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                client_id=client_id,
+                client_id=workload_client_id,
                 file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                **kwargs
+                **kwargs,
             )
         else:
             from .imds import ImdsCredential
 
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
-            self._credential = ImdsCredential(**kwargs)
+            self._credential = ImdsCredential(client_id=client_id, identity_config=identity_config, **kwargs)
 
     def __enter__(self) -> "ManagedIdentityCredential":
         if self._credential:

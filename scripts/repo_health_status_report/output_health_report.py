@@ -36,6 +36,7 @@ GIT_TOKEN = os.environ["GH_TOKEN"]
 auth = Auth.Token(GIT_TOKEN)
 github = Github(auth=auth)
 repo = github.get_repo("Azure/azure-sdk-for-python")
+health_report_path = pathlib.Path(__file__).parent
 
 # Azure DevOps
 if not in_ci():
@@ -657,7 +658,6 @@ def report_sla_and_total_issues(
 
     tracked_labels = map_codeowners_to_label(libraries)
     today = datetime.datetime.now(datetime.UTC)
-
     filter_labels = ["issue-addressed", "needs-author-feedback", "feature-request"]
     issues = list(repo.get_issues(state="open", labels=["customer-reported", "Client"]))
     record_total_customer_reported_issues(libraries, tracked_labels, issues)

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict, cast, Union
+from typing import Any, Optional, Dict, cast, Union, Mapping
 import abc
 import time
 import logging
@@ -23,10 +23,12 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
     """Base class for managed identity client wrapping MSAL ManagedIdentityClient."""
 
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, **kwargs: Any) -> None:
-        self._settings = kwargs
+    def __init__(
+        self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
+    ) -> None:
+        self._settings = {"client_id": client_id, "identity_config": identity_config or {}}
         self._client = MsalClient(**kwargs)
-        managed_identity = self.get_managed_identity(**kwargs)
+        managed_identity = self.get_managed_identity()
         self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)
 
     def __enter__(self) -> "MsalManagedIdentityClient":
@@ -56,20 +58,17 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         error_message = self.get_unavailable_message(error_desc)
         raise CredentialUnavailableError(error_message)
 
-    def get_managed_identity(
-        self, **kwargs: Any
-    ) -> Union[msal.UserAssignedManagedIdentity, msal.SystemAssignedManagedIdentity]:
+    def get_managed_identity(self) -> Union[msal.UserAssignedManagedIdentity, msal.SystemAssignedManagedIdentity]:
         """
         Get the managed identity configuration.
-        :keyword str client_id: The client ID of the user-assigned managed identity.
-        :keyword dict identity_config: The identity configuration.
 
         :rtype: msal.UserAssignedManagedIdentity or msal.SystemAssignedManagedIdentity
         :return: The managed identity configuration.
         """
-        if "client_id" in kwargs and kwargs["client_id"]:
-            return msal.UserAssignedManagedIdentity(client_id=kwargs["client_id"])
-        identity_config = kwargs.pop("identity_config", None) or {}
+
+        if "client_id" in self._settings and self._settings["client_id"]:
+            return msal.UserAssignedManagedIdentity(client_id=self._settings["client_id"])
+        identity_config = cast(Dict, self._settings.get("identity_config")) or {}
         if "client_id" in identity_config and identity_config["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=identity_config["client_id"])
         if "resource_id" in identity_config and identity_config["resource_id"]:
@@ -154,5 +153,5 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
     def __setstate__(self, state: Dict[str, Any]) -> None:  # pylint:disable=client-method-name-no-double-underscore
         self.__dict__.update(state)
         # Re-create the unpickable entries
-        managed_identity = self.get_managed_identity(**self._settings)
+        managed_identity = self.get_managed_identity()
         self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)

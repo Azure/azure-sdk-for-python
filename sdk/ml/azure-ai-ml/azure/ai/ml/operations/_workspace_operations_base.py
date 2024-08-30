@@ -11,8 +11,8 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -59,7 +59,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient072024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -345,7 +345,9 @@ class WorkspaceOperationsBase(ABC):
             system_datastores_auth_mode=kwargs.get(
                 "system_datastores_auth_mode", workspace.system_datastores_auth_mode
             ),
-            allow_roleassignment_on_rg=kwargs.get("allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg),
+            allow_role_assignment_on_rg=kwargs.get(
+                "allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg
+            ),  # diff due to swagger restclient casing diff
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
@@ -654,6 +656,7 @@ class WorkspaceOperationsBase(ABC):
 
         if workspace.public_network_access:
             _set_val(param["publicNetworkAccess"], workspace.public_network_access)
+            _set_val(param["associatedResourcePNA"], workspace.public_network_access)
 
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
@@ -756,6 +759,11 @@ class WorkspaceOperationsBase(ABC):
         managed_network = None
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()
+            if workspace.managed_network.isolation_mode in [
+                IsolationMode.ALLOW_INTERNET_OUTBOUND,
+                IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
+            ]:
+                _set_val(param["associatedResourcePNA"], "Disabled")
         else:
             managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
         _set_obj_val(param["managedNetwork"], managed_network)

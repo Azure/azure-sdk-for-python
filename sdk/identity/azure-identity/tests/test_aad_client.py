@@ -107,6 +107,9 @@ def test_request_url(authority):
     client.obtain_token_by_authorization_code("scope", "code", "uri")
     client.obtain_token_by_refresh_token("scope", "refresh token")
 
+    # obtain_token_by_refresh_token is client_secret safe
+    client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
