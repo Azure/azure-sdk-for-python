@@ -441,7 +441,7 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
 
-    if "mgmt" in package_name:
+    if "azure-mgmt-" in package_name:
         stable = report_azure_mgmt_versioned_module(stable)
         current = report_azure_mgmt_versioned_module(current)
 
@@ -484,9 +484,10 @@ def report_azure_mgmt_versioned_module(code_report):
         # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
         # If the module has a version, it will be in the form of: azure.mgmt.<service>.<version> or azure.mgmt.<service>.<version>.<submodule>
         if len(split_module) >= 4:
-            is_versioned = re.search(r"v\d{4}_\d{2}_\d{2}", split_module[3])
-            if is_versioned:
-                split_module.pop(3)
+            for i in range(3, len(split_module)):
+                if re.search(r"v\d{4}_\d{2}_\d{2}", split_module[i]):
+                    split_module.pop(i)
+                    break
         return ".".join(split_module)
 
     sorted_modules = sorted(code_report.keys())
