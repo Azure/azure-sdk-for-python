@@ -306,6 +306,7 @@ class JobPreparer(AzureMgmtPreparer):
                 for v in e.error.values:
                     message += "\n{}: {}".format(v.key, v.value)
                 raise AzureTestError(message)
+            add_general_regex_sanitizer(regex=name, value=self.moniker)
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
