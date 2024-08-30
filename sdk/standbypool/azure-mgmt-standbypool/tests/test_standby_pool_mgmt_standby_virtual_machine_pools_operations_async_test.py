@@ -24,7 +24,6 @@ class TestStandbyPoolMgmtStandbyVirtualMachinePoolsOperationsAsync(AzureMgmtReco
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.standby_virtual_machine_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
         )
         result = [r async for r in response]
         assert result == []
