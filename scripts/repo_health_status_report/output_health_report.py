@@ -879,7 +879,7 @@ if __name__ == "__main__":
 
     if in_ci():
         path = "scripts/repo_health_status_report/health_report.csv"
-        content = repo.get_contents(path)
+        content = repo.get_contents(path, ref="python-sdk-health-report")
         repo.update_file(
             path=path,
             message="Update health report",
