@@ -53,7 +53,7 @@
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 # PRLabel: %Evaluation
-/sdk/evaluation/                                                     @luigiw @needuv @singankit @kdestin @diondrapeck @MilesHolland @nagkumar91 @w-javed
+/sdk/evaluation/                                                     @Azure/azure-sdk-write-evaluation
 
 # ServiceLabel: %AgriFood
 # PRLabel: %AgriFood
