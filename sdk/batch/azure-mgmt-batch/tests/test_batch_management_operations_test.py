@@ -21,9 +21,7 @@ class TestBatchManagementOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list(self, resource_group):
-        response = self.client.operations.list(
-            api_version="2024-07-01",
-        )
+        response = self.client.operations.list()
         result = [r for r in response]
         assert result
         
