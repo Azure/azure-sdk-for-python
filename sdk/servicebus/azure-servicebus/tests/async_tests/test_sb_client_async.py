@@ -662,14 +662,23 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
+        # ensure regular connection_verify works
         certfile = certifi.where()
         client = ServiceBusClient(hostname, credential, connection_verify=certfile, uamqp_transport=uamqp_transport)
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+        # invalid cert file to connection_verify should fail
+        client = ServiceBusClient(hostname, credential, connection_verify="fakecertfile.pem", uamqp_transport=uamqp_transport)
+        async with client:
+            with pytest.raises(ServiceBusError):
+                async with client.get_queue_sender(servicebus_queue.name) as sender:
+                    await sender.send_messages(ServiceBusMessage("foo"))
+
         # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
         if not uamqp_transport or not sys.platform.startswith('darwin'):
+            # invalid custom endpoint should fail
             fake_addr = "fakeaddress.com:1111"
             client = ServiceBusClient(
                 hostname,
