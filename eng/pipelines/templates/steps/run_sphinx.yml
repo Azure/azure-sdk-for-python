@@ -11,7 +11,7 @@ steps:
 
   - pwsh: |
       Get-ChildItem $RepoRoot -Filter "$Toxenv-*.log" | ForEach-Object { Write-Host "Output for $($_.Name)"; Get-Content $_.FullName }
-    display: Dump Sphinx Logs
+    displayName: Dump Sphinx Logs
     condition: failed()
 
   - pwsh: |
