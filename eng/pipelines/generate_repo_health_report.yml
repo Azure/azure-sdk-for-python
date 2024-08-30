@@ -1,0 +1,24 @@
+jobs:
+  - job: 'Generate_Health_Status_Report'
+    displayName: 'Generate Health Status Report'
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+    
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.11'
+        inputs:
+          versionSpec: '3.11'
+
+      - script: |
+          python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          GH_TOKEN: $(azuresdk-github-pat)
+        inputs:
+          scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
+        displayName: 'Generate Health Status Report'
