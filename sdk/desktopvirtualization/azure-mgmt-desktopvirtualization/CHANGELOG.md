@@ -1,5 +1,69 @@
 # Release History
 
+## 2.0.0 (2024-09-23)
+
+### Features Added
+
+  - The 'DesktopVirtualizationMgmtClient' client had operation group 'app_attach_package_info' added in the current version
+  - The 'DesktopVirtualizationMgmtClient' client had operation group 'app_attach_package' added in the current version
+  - The model or publicly exposed class 'ExpandMsixImage' had property 'certificate_name' added in the current version
+  - The model or publicly exposed class 'ExpandMsixImage' had property 'certificate_expiry' added in the current version
+  - The model or publicly exposed class 'HostPool' had property 'app_attach_package_references' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnection' had property 'group_ids' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'group_ids' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'private_endpoint' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'private_link_service_connection_state' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'provisioning_state' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'id' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'name' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'type' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'additional_properties' added in the current version
+  - The model or publicly exposed class 'Resource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'AppAttachPackage' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageArchitectures' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageInfoProperties' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageList' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackagePatch' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackagePatchProperties' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageProperties' was added in the current version
+  - The model or publicly exposed class 'ErrorAdditionalInfo' was added in the current version
+  - The model or publicly exposed class 'ErrorDetail' was added in the current version
+  - The model or publicly exposed class 'ErrorResponse' was added in the current version
+  - The model or publicly exposed class 'FailHealthCheckOnStagingFailure' was added in the current version
+  - The model or publicly exposed class 'ImportPackageInfoRequest' was added in the current version
+  - The model or publicly exposed class 'PackageTimestamped' was added in the current version
+  - The model or publicly exposed class 'ProvisioningState' was added in the current version
+  - The model or publicly exposed class 'RegistrationTokenList' was added in the current version
+  - The model or publicly exposed class 'RegistrationTokenMinimal' was added in the current version
+  - The model or publicly exposed class 'TrackedResource' was added in the current version
+  - The 'HostPoolsOperations' method 'list_registration_tokens' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageInfoOperations' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageOperations' was added in the current version
+
+### Breaking Changes
+
+  - The model or publicly exposed class 'Application' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'ApplicationGroup' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'ApplicationGroup' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+  - The model or publicly exposed class 'Desktop' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'HostPool' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'HostPool' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+  - The model or publicly exposed class 'MSIXPackage' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'id' deleted or renamed in the current version
+  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'name' deleted or renamed in the current version
+  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'type' deleted or renamed in the current version
+  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'location' deleted or renamed in the current version
+  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'tags' deleted or renamed in the current version
+  - The class 'ResourceModelWithAllowedPropertySet' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+  - The model or publicly exposed class 'ScalingPlan' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'ScalingPlan' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+  - The model or publicly exposed class 'ScalingPlanPersonalSchedule' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'ScalingPlanPooledSchedule' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'SessionHost' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'UserSession' had its instance variable 'system_data' deleted or renamed in the current version
+  - The model or publicly exposed class 'Workspace' had its instance variable 'system_data' deleted or renamed in the current version
+  - The class 'Workspace' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+
 ## 1.1.0 (2023-10-23)
 
 ### Features Added
