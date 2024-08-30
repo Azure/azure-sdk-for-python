@@ -11,6 +11,7 @@ the total runtime.
 param(
     $TargetingString,
     $RepoRoot,
+    $Check = "sphinx"
     $ServiceDirectory = "",
     $WheelDirectory = ""
 )
@@ -21,12 +22,12 @@ $packages = $TargetingString -split ","
 
 foreach ($package in $packages) {
     $jobs += Start-Job -ScriptBlock {
-        param($Pkg, $ScriptPath, $RepoRoot, $ServiceParam, $WheelParam)
-        $log = Join-Path $RepoRoot "sphinx-$Pkg.log"
-        Write-Host "& python $ScriptPath $Pkg --toxenv=sphinx --service `"$ServiceParam`" -w `"$WheelParam`" --disablecov 2>&1 >> $log"
-        & python $ScriptPath $Pkg --toxenv=sphinx --service "$ServiceParam" -w "$WheelParam" --disablecov 2>&1 >> $log
+        param($Pkg, $ScriptPath, $RepoRoot, $Toxenv, $ServiceParam, $WheelParam)
+        $log = Join-Path $RepoRoot "$Toxenv-$Pkg.log"
+        Write-Host "& python $ScriptPath $Pkg --toxenv=$Toxenv --service `"$ServiceParam`" -w `"$WheelParam`" --disablecov 2>&1 >> $log"
+        & python $ScriptPath $Pkg --toxenv=$Toxenv --service "$ServiceParam" -w "$WheelParam" --disablecov 2>&1 >> $log
         return $LASTEXITCODE
-    } -ArgumentList $package, $pythonScript, $RepoRoot, $ServiceDirectory, $WheelDirectory
+    } -ArgumentList $package, $pythonScript, $RepoRoot, $Check, $ServiceDirectory, $WheelDirectory
 }
 
 $jobs | ForEach-Object { $_ | Wait-Job }
@@ -35,12 +36,16 @@ $exitCodes = $jobs | ForEach-Object { $_ | Receive-Job }
 $nonZeroExit = $exitCodes | Where-Object { $_ -ne 0 }
 $jobs | ForEach-Object { $_ | Remove-Job }
 
+Get-ChildItem $RepoRoot -Filter "$Toxenv-*.log" `
+    | ForEach-Object {
+        Write-Host "Output for $($_.Name)"
+        Get-Content $_.FullName
+      }
+
 if ($nonZeroExit) {
     Write-Host "One or more scripts failed with a non-zero exit code."
-    Get-ChildItem $RepoRoot -Filter "sphinx-*.log" | ForEach-Object { Get-Content $_.FullName }
     exit 1
 } else {
     Write-Host "All scripts completed successfully."
-    Get-ChildItem $RepoRoot -Filter "sphinx-*.log" | ForEach-Object { Get-Content $_.FullName }
     exit 0
 }
