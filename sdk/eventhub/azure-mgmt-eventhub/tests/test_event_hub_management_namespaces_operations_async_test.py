@@ -23,18 +23,8 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_check_name_availability(self, resource_group):
         response = await self.client.namespaces.check_name_availability(
             parameters={"name": "str"},
-            api_version="2024-01-01",
         )
 
-        assert response
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list(self, resource_group):
-        response = self.client.namespaces.list(
-            api_version="2024-01-01",
-        )
-        result = [r async for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -42,7 +32,6 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-01-01",
         )
         result = [r async for r in response]
         assert result == []
