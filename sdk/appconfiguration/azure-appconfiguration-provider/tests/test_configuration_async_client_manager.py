@@ -61,8 +61,8 @@ class TestConfigurationClientManager(unittest.TestCase):
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
         assert manager is not None
         int = 0
-        while (len(manager._replica_clients) < 2):
-            if (int > 30):
+        while len(manager._replica_clients) < 2:
+            if int > 30:
                 break
             time.sleep(1)
             int += 1
@@ -112,8 +112,8 @@ class TestConfigurationClientManager(unittest.TestCase):
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
         assert manager is not None
         int = 0
-        while (len(manager._replica_clients) < 2):
-            if (int > 30):
+        while len(manager._replica_clients) < 2:
+            if int > 30:
                 break
             time.sleep(1)
             int += 1
