@@ -15,7 +15,7 @@ jobs:
           python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
         displayName: 'Prep Environment'
 
-      - task: AzurePowerShell@5
+      - task: PythonScript@0
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           GH_TOKEN: $(azuresdk-github-pat)
