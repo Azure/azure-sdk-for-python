@@ -1076,6 +1076,8 @@ class BlobSasPermissions(object):
         Create or write content, properties, metadata, or block list. Snapshot
         or lease the blob. Resize the blob (page blob only). Use the blob as the
         destination of a copy operation within the same account.
+    :param bool list:
+        List the blob versions.
     :param bool delete:
         Delete the blob.
     :param bool delete_previous_version:
@@ -1102,6 +1104,8 @@ class BlobSasPermissions(object):
     """Write a new blob, snapshot a blob, or copy a blob to a new blob."""
     write: bool = False
     """The write permission for Blob SAS."""
+    list: bool = False
+    """The list permission for Blob SAS."""
     delete: bool = False
     """The delete permission for Blob SAS."""
     delete_previous_version: bool = False
@@ -1123,6 +1127,7 @@ class BlobSasPermissions(object):
         self, read: bool = False,
         add: bool = False,
         create: bool = False,
+        list: bool = False,
         write: bool = False,
         delete: bool = False,
         delete_previous_version: bool = False,
@@ -1133,6 +1138,7 @@ class BlobSasPermissions(object):
         self.add = add
         self.create = create
         self.write = write
+        self.list = list
         self.delete = delete
         self.delete_previous_version = delete_previous_version
         self.permanent_delete = kwargs.pop('permanent_delete', False)
@@ -1144,6 +1150,7 @@ class BlobSasPermissions(object):
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
+                     ('l' if self.list else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('y' if self.permanent_delete else '') +
@@ -1159,7 +1166,7 @@ class BlobSasPermissions(object):
     def from_string(cls, permission: str) -> "BlobSasPermissions":
         """Create a BlobSasPermissions from a string.
 
-        To specify read, add, create, write, or delete permissions you need only to
+        To specify read, add, create, list, write, or delete permissions you need only to
         include the first letter of the word in the string. E.g. For read and
         write permissions, you would provide a string "rw".
 
@@ -1172,6 +1179,7 @@ class BlobSasPermissions(object):
         p_add = 'a' in permission
         p_create = 'c' in permission
         p_write = 'w' in permission
+        p_list = 'l' in permission
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
         p_permanent_delete = 'y' in permission
@@ -1180,7 +1188,7 @@ class BlobSasPermissions(object):
         p_execute = 'e' in permission
         p_set_immutability_policy = 'i' in permission
 
-        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
+        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, list=p_list, delete=p_delete,
                      delete_previous_version=p_delete_previous_version, tag=p_tag, permanent_delete=p_permanent_delete,
                      move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
