@@ -44,7 +44,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $isNewSdk = ($pkgInfo[2] -eq "True")
     $pkgDirectoryPath = $pkgInfo[3]
 
-    $additionalDependentPackages = $pkgInfo[4] -Split ","
+    $additionalValidationPackages = $pkgInfo[4] -Split ","
 
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
@@ -59,7 +59,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $pkgProp.IsNewSdk = $isNewSdk
     $pkgProp.SdkType = $sdkType
     $pkgProp.ArtifactName = $packageName
-    $pkgProp.DependentPackages = $additionalDependentPackages
+    $pkgProp.AdditionalValidationPackages = $additionalValidationPackages
     $allPackageProps += $pkgProp
   }
   return $allPackageProps
