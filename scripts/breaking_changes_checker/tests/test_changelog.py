@@ -366,3 +366,52 @@ def test_added_operation_group():
     assert args == ['azure.contoso', 'ContosoClient', 'foo']
     msg, _, *args = bc.features_added[1]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+
+
+def test_ignore_changes():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations"
+                        },
+                        "zip": {
+                            "attr_type": "bool"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    IGNORE = {
+        "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
+    }
+    diff = jsondiff.diff(stable, current)
+    bc = ChangelogTracker(stable, current, diff, "azure-contoso", ignore=IGNORE)
+    bc.run_checks()
+    bc.report_changes()
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
