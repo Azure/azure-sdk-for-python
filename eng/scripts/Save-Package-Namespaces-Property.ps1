@@ -23,7 +23,7 @@ producing docs.
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)]
-    [string] $ArtifactStagingDirectory,
+    [string] $ArtifactStagingDirectory
 )
 
 $ArtifactsList = $ArtifactsList | Where-Object -Not "skipPublishDocMs"
