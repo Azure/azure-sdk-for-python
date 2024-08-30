@@ -72,13 +72,13 @@ class BreakingChangesTracker:
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
         "'{}' function re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_MSG = \
-        "'{}.{}' changed its method parameter '{}' from '{}' to '{}'"
+        "'{}.{}' method changed its parameter '{}' from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "'{}' function changed its parameter '{}' from '{}' to '{}'"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
-        "'{}.{}' method changed from '{}' to '{}'."
+        "'{}.{}' method changed from '{}' to '{}'"
     CHANGED_FUNCTION_KIND_MSG = \
-        "Changed function '{}' from '{}' to '{}'."
+        "Changed function '{}' from '{}' to '{}'"
     REMOVED_OR_RENAMED_MODULE_MSG = \
         "Deleted or renamed module '{}'"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \

@@ -452,7 +452,7 @@ def test_async_features_added_cleanup():
     ct = ChangelogTracker({}, {}, {}, "azure-contoso")
     ct.features_added = features_added
 
-    ct.run_async_changelog_cleanup()
+    ct.run_async_cleanup(ct.features_added)
 
     assert len(ct.features_added) == 2
     assert ct.features_added[0] == ("Message", "AddedClient", "azure.contoso", "FooClient", "foo")
