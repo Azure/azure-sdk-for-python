@@ -51,7 +51,7 @@ class EmailWithAttachmentSample(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body<img src=\"cid:myinlineimage\" /></h1></html>"
+                "html": "<html>This is the body<br /><img src=\"cid:my-inline-image\" /></html>"
             },
             "recipients": {
                 "to": [
@@ -67,7 +67,7 @@ class EmailWithAttachmentSample(object):
                     "name": "inline_image.gif",
                     "contentType": "image/gif",
                     "contentInBase64": file_bytes_b64.decode(),
-                    "contentId": "myinlineimage"
+                    "contentId": "my-inline-image"
                 }
             ]
         }

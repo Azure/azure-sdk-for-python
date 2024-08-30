@@ -103,7 +103,7 @@ class TestEmailClient(AzureRecordedTestCase):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body<img src=\"cid:my-inline-image\" /></h1></html>"
+                "html": "<html>This is the body<br /><img src=\"cid:my-inline-image\" /></html>"
             },
             "recipients": {
                 "to": [
