@@ -24,8 +24,6 @@ producing docs.
 Param (
     [Parameter(Mandatory = $True)]
     [string] $ArtifactStagingDirectory,
-    [Parameter(Mandatory=$true)]
-    [array] $ArtifactsList
 )
 
 $ArtifactsList = $ArtifactsList | Where-Object -Not "skipPublishDocMs"
@@ -43,19 +41,15 @@ if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
     exit 1
 }
 
-Write-Host ""
-Write-Host "ArtifactsList:"
-$ArtifactsList | Format-Table -Property Name | Out-String | Write-Host
-
 $packageInfoDirectory = Join-Path $ArtifactStagingDirectory "PackageInfo"
-
 $foundError = $false
-# At this point the packageInfo files should have been already been created.
-# The only thing being done here is adding or updating namespaces for libraries
-# that will be producing docs.
-foreach($artifact in $ArtifactsList) {
+$artifacts = Get-ChildItem -Path $packageInfoDirectory -File -Filter "*.json"
+$artifacts | Format-Table -Property Name | Out-String | Write-Host
+
+# by this point, the PackageInfo folder will have a json file for each artifact
+# we simply need to read each file, get the appropriate metadata, and add the namespaces if necessary
+foreach($packageInfoFile in $artifacts) {
     # Get the version from the packageInfo file
-    $packageInfoFile = Join-Path $packageInfoDirectory "$($artifact.Name).json"
     Write-Host "processing $($packageInfoFile.FullName)"
     $packageInfo = ConvertFrom-Json (Get-Content $packageInfoFile -Raw)
     $version = $packageInfo.Version
