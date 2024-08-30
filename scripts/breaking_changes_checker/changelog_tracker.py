@@ -47,6 +47,7 @@ class ChangelogTracker(BreakingChangesTracker):
     def run_checks(self) -> None:
         self.run_non_breaking_change_diff_checks()
         super().run_checks()
+        self.run_async_cleanup(self.features_added)
 
     def run_non_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
