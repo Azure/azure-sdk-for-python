@@ -285,7 +285,7 @@ class MLClient:
         )
         app_insights_handler_kwargs: Dict[str, Tuple] = {"app_insights_handler": app_insights_handler}
 
-        base_url = _get_base_url_from_metadata(cloud_name=cloud_name)
+        base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
         self._kwargs = kwargs
 

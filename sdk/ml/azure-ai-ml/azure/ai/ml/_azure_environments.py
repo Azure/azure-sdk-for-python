@@ -8,6 +8,7 @@ import logging
 import os
 from typing import Dict, List, Optional
 
+from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
 from azure.ai.ml.exceptions import MlException
 from azure.core.rest import HttpRequest
@@ -130,16 +131,19 @@ def _set_cloud(cloud_name: Optional[str] = None):
         cloud_name = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud_name
 
-
-def _get_base_url_from_metadata(cloud_name: Optional[str] = None) -> str:
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False) -> str:
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
     :type cloud_name: Optional[str]
+    :param is_local_mfe: Whether is local Management Front End. Defaults to False.
+    :type is_local_mfe: bool
     :return: base url for a cloud
     :rtype: str
     """
-    base_url = os.getenv(ArmConstants.DEVELOPER_URL_MFE_ENV_VAR)  # same as _get_mfe_url_override
+    base_url = None
+    if is_local_mfe:
+        base_url = _get_mfe_url_override()
     if base_url is None:
         cloud_details = _get_cloud_details(cloud_name)
         base_url = str(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT)).strip("/")
