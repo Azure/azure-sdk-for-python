@@ -19,6 +19,6 @@ jobs:
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           GH_TOKEN: $(azuresdk-github-pat)
-        script: |
-            python scripts/repo_health_status_report/output_health_report.py
+        inputs:
+          scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
         displayName: 'Generate Health Status Report'
