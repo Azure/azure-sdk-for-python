@@ -16,7 +16,6 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ._serialization import Deserializer, Serializer
 from . import models as _models
 from ._model_base import _deserialize
 from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
@@ -50,9 +49,6 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
 
     @overload  # type: ignore[override]
     def begin_infer_radiology_insights(
@@ -194,7 +190,6 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
                 return cls(pipeline_response, deserialized, response_headers) # type: ignore
             return deserialized
 
-
         path_format_arguments = {
             "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),# pylint: disable=protected-access
         }
@@ -238,7 +233,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True), # pylint: disable=line-too-long, protected-access
+            "endpoint": self._client._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True), # pylint: disable=line-too-long, protected-access
         }
 
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments) # pylint: disable=protected-access
@@ -253,6 +248,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
 
 __all__: List[str] = ["RadiologyInsightsClient"]  # Add all objects you want publicly available to users at this package level # pylint: disable=line-too-long
 
