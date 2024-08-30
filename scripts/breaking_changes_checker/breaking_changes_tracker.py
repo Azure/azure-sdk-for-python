@@ -60,9 +60,9 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
         "Deleted or renamed enum value '{}.{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "'{}.{}' had method parameter '{}' default value changed from '{}' to '{}'"
+        "'{}.{}' method parameter '{}' changed default value from '{}' to '{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "'{}' function had its parameter '{}' default value changed from '{}' to '{}'"
+        "'{}' function parameter '{}' changed default value from '{}' to '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
         "'{}.{}' removed default method value '{}' from its parameter '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
@@ -70,7 +70,7 @@ class BreakingChangesTracker:
     CHANGED_PARAMETER_ORDERING_MSG = \
         "'{}.{}' method re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "'{}' function had its parameters re-ordered from '{}' to '{}'"
+        "'{}' function re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_MSG = \
         "'{}.{}' changed its method parameter '{}' from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
