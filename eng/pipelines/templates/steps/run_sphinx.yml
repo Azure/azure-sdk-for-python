@@ -7,6 +7,12 @@ steps:
   - pwsh: |
       python ./scripts/devops_tasks/replace_requirements.py --service "${{ parameters.ServiceDirectory }}" -w "${{ parameters.WheelDirectory }}" $(TargetingString)
     displayName: Pre-Build Dev Requirements
+    timeoutInMinutes: 15
+
+  - pwsh: |
+      Get-ChildItem $RepoRoot -Filter "$Toxenv-*.log" | ForEach-Object { Write-Host "Output for $($_.Name)"; Get-Content $_.FullName }
+    display: Dump Sphinx Logs
+    condition: failed()
 
   - pwsh: |
       ./eng/scripts/invoke-tox-parallel.ps1 `
