@@ -8,12 +8,14 @@ DESCRIPTION:
     the load_client() function, imported from azure.ai.inference.aio.
     In this sample, we get an asynchronous embeddings client and do one embeddings call.
 
+    The load_client() function only works with Serverless API or Managed Compute endpoints.
+
 USAGE:
     python sample_load_client_async.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_EMBEDDINGS_ENDPOINT - Your endpoint URL, in the form 
-        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+        https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.

@@ -6,7 +6,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as R
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     JobBase,
     LogVerbosity,
-    MLTableJobInput,
     NlpFixedParameters,
     NlpParameterSubspace,
     NlpSweepSettings,
@@ -20,6 +19,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as R
 from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
+from azure.ai.ml._restclient.v2024_01_01_preview.models import MLTableJobInput
 from azure.ai.ml._utils.utils import to_iso_duration_format_mins
 from azure.ai.ml.automl import text_ner
 from azure.ai.ml.constants._common import AssetTypes
