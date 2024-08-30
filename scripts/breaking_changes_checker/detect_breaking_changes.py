@@ -350,6 +350,9 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
     public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
     # Check for method overloads on a class
     for func in public_func_nodes:
+        if func.name not in cls_methods:
+            _LOGGER.debug(f"Skipping overloads check for method {func.name}.")
+            continue
         if "overloads" not in cls_methods[func.name]:
             cls_methods[func.name]["overloads"] = []
         is_async = False
@@ -437,6 +440,11 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = json.load(fd)
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
+
+    if "mgmt" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
     diff = jsondiff.diff(stable, current)
     checker = BreakingChangesTracker(
         stable,
@@ -467,6 +475,29 @@ def remove_json_files(pkg_dir: str) -> None:
     if os.path.isfile(current_json):
         os.remove(current_json)
     _LOGGER.info("cleaning up")
+
+
+def report_azure_mgmt_versioned_module(code_report):
+    
+    def parse_module_name(module):
+        split_module = module.split(".")
+        # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
+        # If the module has a version, it will be in the form of: azure.mgmt.<service>.<version> or azure.mgmt.<service>.<version>.<submodule>
+        if len(split_module) >= 4:
+            is_versioned = re.search(r"v\d{4}_\d{2}_\d{2}", split_module[3])
+            if is_versioned:
+                split_module.pop(3)
+        return ".".join(split_module)
+
+    sorted_modules = sorted(code_report.keys())
+    merged_report = {}
+    for module in sorted_modules:
+        non_version_module_name = parse_module_name(module)
+        if non_version_module_name not in merged_report:
+            merged_report[non_version_module_name] = code_report[module]
+            continue
+        merged_report[non_version_module_name].update(code_report[module])
+    return merged_report
 
 
 def main(
