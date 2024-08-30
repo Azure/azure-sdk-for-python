@@ -879,9 +879,11 @@ if __name__ == "__main__":
 
     if in_ci():
         path = "scripts/repo_health_status_report/health_report.csv"
-        repo.create_file(
+        content = repo.get_contents(path)
+        repo.update_file(
             path=path,
             message="Update health report",
             content=open(path, "rb").read(),
             branch="python-sdk-health-report",
+            sha=content.sha
         )
