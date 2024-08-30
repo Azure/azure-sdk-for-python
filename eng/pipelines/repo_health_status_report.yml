@@ -9,7 +9,7 @@ jobs:
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.11'
         inputs:
-        versionSpec: '3.11'
+          versionSpec: '3.11'
 
       - script: |
           python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
