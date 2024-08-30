@@ -5,6 +5,10 @@ parameters:
 # `$(TargetingString)` is set by a prior resolution step.
 steps:
   - pwsh: |
+      python ./scripts/devops_tasks/replace_requirements.py --service "${{ parameters.ServiceDirectory }}" -w "${{ parameters.WheelDirectory }}" $(TargetingString)
+    displayName: Pre-Build Dev Requirements
+
+  - pwsh: |
       ./eng/scripts/invoke-sphinx-parallel.ps1 `
         -TargetingString "$(TargetingString)" `
         -RepoRoot "$(Build.Sourcesdirectory)" `
