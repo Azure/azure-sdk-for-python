@@ -17,10 +17,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-
 from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
-from .._serialization import Deserializer, Serializer
-
 from .. import models as _models
 
 
@@ -52,9 +49,6 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
         self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
 
     @overload  # type: ignore[override]
     async def begin_infer_radiology_insights(
@@ -185,9 +179,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            deserialized = self._deserialize(
+            response_headers['x-ms-request-id']=self._client._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['Operation-Location']=self._client._deserialize('str', response.headers.get('Operation-Location'))
+            deserialized = self._client._deserialize(
                 _models.RadiologyInsightsInferenceResult,
                 response.json().get("result")
             )
@@ -196,7 +190,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
         }
 
         if polling is True:
@@ -241,7 +235,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._client._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
