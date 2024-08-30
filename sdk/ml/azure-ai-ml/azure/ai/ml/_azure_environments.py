@@ -131,6 +131,7 @@ def _set_cloud(cloud_name: Optional[str] = None):
         cloud_name = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud_name
 
+
 def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False) -> str:
     """Retrieve the base url for a cloud from the metadata in SDK.
 
