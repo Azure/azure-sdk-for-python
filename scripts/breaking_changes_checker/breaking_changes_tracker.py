@@ -38,55 +38,55 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
         "Deleted or renamed client '{}'"
     REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
-        "'{}' client deleted or renamed method '{}'"
+        "Deleted or renamed client method '{}.{}'"
     REMOVED_OR_RENAMED_CLASS_MSG = \
-        "Deleted or renamed '{}' model"
+        "Deleted or renamed model '{}'"
     REMOVED_OR_RENAMED_CLASS_METHOD_MSG = \
-        "Deleted or renamed '{}.{}' method"
+        "Deleted or renamed method '{}.{}'"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
-        "Deleted or renamed publicly exposed function '{}'"
+        "Deleted or renamed function '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "'{}.{}' had its method parameter '{}' of kind '{}' deleted or renamed"
+        "'{}.{}' method deleted or renamed its method parameter '{}' of kind '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "Function '{}' had its parameter '{}' of kind '{}' deleted or renamed"
+        "'{}' function deleted or renamed its parameter '{}' of kind '{}'"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "'{}' method '{}' had a '{}' parameter '{}' inserted"
+        "'{}.{}' method inserted a '{}' parameter '{}'"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
-        "Function '{}' had a '{}' parameter '{}' inserted"
+        "'{}' function inserted a '{}' parameter '{}'"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
-        "'{}' had client instance variable '{}' deleted or renamed"
+        "'{}' deleted or renamed client instance variable '{}'"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
-        "Model '{}' had its instance variable '{}' deleted or renamed"
+        "'{}' model deleted or renamed its instance variable '{}'"
     REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
-        "Deleted or renamed the '{}.{}' enum value"
+        "Deleted or renamed enum value '{}.{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "Model '{}.{}' had method parameter '{}' default value changed from '{}' to '{}'"
+        "'{}.{}' had method parameter '{}' default value changed from '{}' to '{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "Publicly exposed function '{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "'{}' function had its parameter '{}' default value changed from '{}' to '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "'{}.{}' had default method value '{}' removed from its parameter '{}'"
+        "'{}.{}' removed default method value '{}' from its parameter '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "Publicly exposed function '{}' had default value '{}' removed from its parameter '{}'"
+        "'{}' function removed default value '{}' from its parameter '{}'"
     CHANGED_PARAMETER_ORDERING_MSG = \
-        "'{}.{}' method had its parameters re-ordered from '{}' to '{}'"
+        "'{}.{}' method re-ordered its parameters from '{}' to '{}'"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "Publicly exposed function '{}' had its parameters re-ordered from '{}' to '{}'"
+        "'{}' function had its parameters re-ordered from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_MSG = \
-        "'{}.{}' had its method parameter '{}' changed from '{}' to '{}'"
+        "'{}.{}' changed its method parameter '{}' from '{}' to '{}'"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
-        "Function '{}' had its parameter '{}' changed from '{}' to '{}'"
+        "'{}' function changed its parameter '{}' from '{}' to '{}'"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "'{}.{}' method changed from '{}' to '{}'."
     CHANGED_FUNCTION_KIND_MSG = \
-        "Function '{}' changed from '{}' to '{}'."
+        "Changed function '{}' from '{}' to '{}'."
     REMOVED_OR_RENAMED_MODULE_MSG = \
-        "Deleted or renamed '{}' module"
+        "Deleted or renamed module '{}'"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
         "'{}.{}' method changed from accepting keyword arguments to not accepting them"
     REMOVED_FUNCTION_KWARGS_MSG = \
-        "Function '{}' changed from accepting keyword arguments to not accepting them"
+        "'{}' function changed from accepting keyword arguments to not accepting them"
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
-        "Deleted or renamed '{}.{}' client operation group"
+        "Deleted or renamed client operation group '{}.{}'"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
