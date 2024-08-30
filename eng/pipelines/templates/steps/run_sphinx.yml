@@ -9,7 +9,7 @@ steps:
     displayName: Pre-Build Dev Requirements
 
   - pwsh: |
-      ./eng/scripts/invoke-sphinx-parallel.ps1 `
+      ./eng/scripts/invoke-tox-parallel.ps1 `
         -TargetingString "$(TargetingString)" `
         -RepoRoot "$(Build.Sourcesdirectory)" `
         -ServiceDirectory "${{ parameters.ServiceDirectory }}" `
