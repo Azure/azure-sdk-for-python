@@ -11,7 +11,7 @@ the total runtime.
 param(
     $TargetingString,
     $RepoRoot,
-    $Check = "sphinx"
+    $Check = "sphinx",
     $ServiceDirectory = "",
     $WheelDirectory = ""
 )
