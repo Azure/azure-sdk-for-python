@@ -46,7 +46,7 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "Deleted or renamed function '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "'{}.{}' method deleted or renamed its method parameter '{}' of kind '{}'"
+        "'{}.{}' method deleted or renamed its parameter '{}' of kind '{}'"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
         "'{}' function deleted or renamed its parameter '{}' of kind '{}'"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
