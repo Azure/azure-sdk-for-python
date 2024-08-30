@@ -12,6 +12,7 @@ import pytest
 import hmac
 import hashlib
 import base64
+import certifi
 from urllib.parse import quote as url_parse_quote
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, AccessToken
@@ -661,11 +662,11 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
-        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem", uamqp_transport=uamqp_transport)
+        certfile = certifi.where()
+        client = ServiceBusClient(hostname, credential, connection_verify=certfile, uamqp_transport=uamqp_transport)
         async with client:
-            with pytest.raises(ServiceBusError):
-                async with client.get_queue_sender(servicebus_queue.name) as sender:
-                    await sender.send_messages(ServiceBusMessage("foo"))
+            async with client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(ServiceBusMessage("foo"))
 
         # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
         if not uamqp_transport or not sys.platform.startswith('darwin'):
@@ -686,7 +687,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 hostname,
                 credential,
                 custom_endpoint_address=fake_addr,
-                connection_verify="cacert.pem",
+                connection_verify=certfile,
                 retry_total=0,
                 uamqp_transport=uamqp_transport,
             )
