@@ -121,7 +121,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
         $lookupKey = ($pkg.DirectoryPath).Replace($RepoRoot, "").SubString(1)
         $lookup[$lookupKey] = $pkg
-        Write-Host "Saving lookup key $lookupKey for $pkg"
 
         foreach ($file in $targetedFiles)
         {
@@ -131,7 +130,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
                 $packagesWithChanges += $pkg
 
                 if ($pkg.AdditionalValidationPackages) {
-                    Write-Host ($pkg.AdditionalValidationPackages -join ",")
                     $additionalValidationPackages += $pkg.AdditionalValidationPackages
                 }
             }
@@ -140,7 +138,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
 
     foreach ($addition in $additionalValidationPackages) {
         $key = $addition.Replace($RepoRoot, "").SubString(1)
-        Write-Host "Processing $addition to see if we have metadata about it: $key"
 
         if ($lookup[$key]) {
             $packagesWithChanges += $lookup[$key]
