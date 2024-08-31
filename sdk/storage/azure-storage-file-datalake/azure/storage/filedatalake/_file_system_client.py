@@ -8,7 +8,6 @@
 import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
-from urllib.parse import quote, unquote
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -19,7 +18,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error, is_file_path
-from ._file_system_client_helpers import _format_url
+from ._file_system_client_helpers import _format_url, _undelete_path_options
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
 from ._models import (
@@ -38,7 +37,7 @@ from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._models import PathProperties
+    from ._models import AccessPolicy, PathProperties
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -488,10 +487,10 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_file_system_access_policy(
-            self, signed_identifiers,  # type: Dict[str, AccessPolicy]
-            public_access=None,  # type: Optional[Union[str, PublicAccess]]
-            **kwargs
-    ):  # type: (...) -> Dict[str, Union[str, datetime]]
+        self, signed_identifiers: Dict[str, "AccessPolicy"],
+        public_access: Optional[Union[str, "PublicAccess"]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Sets the permissions for the specified file system or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a file system may be accessed publicly.
@@ -528,12 +527,14 @@ class FileSystemClient(StorageAccountHostsMixin):
         :returns: File System-updated property dict (Etag and last modified).
         :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
         """
-        return self._container_client.set_container_access_policy(signed_identifiers,
-                                                                  public_access=public_access, **kwargs)
+        return self._container_client.set_container_access_policy(
+            signed_identifiers,
+            public_access=public_access,
+            **kwargs
+        )
 
     @distributed_trace
-    def get_file_system_access_policy(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def get_file_system_access_policy(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the permissions for the specified file system.
         The permissions indicate whether file system data may be accessed publicly.
 
@@ -609,10 +610,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace
-    def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                         metadata=None,  # type: Optional[Dict[str, str]]
-                         **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    def create_directory(
+        self, directory: Union[DirectoryProperties, str],
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> DataLakeDirectoryClient:
         """
         Create directory
 
@@ -701,9 +703,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         return directory_client
 
     @distributed_trace
-    def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                         **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    def delete_directory(  # pylint: disable=delete-operation-wrong-return-type
+        self, directory: Union[DirectoryProperties, str],
+        **kwargs: Any
+    ) -> DataLakeDirectoryClient:
         """
         Marks the specified path for deletion.
 
@@ -755,9 +758,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         return directory_client
 
     @distributed_trace
-    def create_file(self, file,  # type: Union[FileProperties, str]
-                    **kwargs):
-        # type: (...) -> DataLakeFileClient
+    def create_file(
+        self, file: Union[FileProperties, str],
+        **kwargs: Any
+    ) -> DataLakeFileClient:
         """
         Create file
 
@@ -854,9 +858,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         return file_client
 
     @distributed_trace
-    def delete_file(self, file,  # type: Union[FileProperties, str]
-                    **kwargs):
-        # type: (...) -> DataLakeFileClient
+    def delete_file(  # pylint: disable=delete-operation-wrong-return-type
+        self, file: Union[FileProperties, str],
+        **kwargs: Any
+    ) -> DataLakeFileClient:
         """
         Marks the specified file for deletion.
 
@@ -907,21 +912,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(**kwargs)
         return file_client
 
-    def _undelete_path_options(self, deleted_path_name, deletion_id):
-        quoted_path = quote(unquote(deleted_path_name.strip('/')))
-
-        url_and_token = self.url.replace('.dfs.', '.blob.').split('?')
-        try:
-            url = url_and_token[0] + '/' + quoted_path + url_and_token[1]
-        except IndexError:
-            url = url_and_token[0] + '/' + quoted_path
-
-        undelete_source = quoted_path + f'?deletionid={deletion_id}' if deletion_id else None
-
-        return quoted_path, url, undelete_source
-
-    def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
-        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+    def _undelete_path(
+        self, deleted_path_name: str,
+        deletion_id: str,
+        **kwargs: Any
+    ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]:
         """Restores soft-deleted path.
 
         Operation will only be successful if used within the specified number of days
@@ -943,14 +938,18 @@ class FileSystemClient(StorageAccountHostsMixin):
         :returns: Returns the DataLake client for the restored soft-deleted path.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
-        _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
+        _, url, undelete_source = _undelete_path_options(deleted_path_name, deletion_id, self.url)
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline)
+            url,
+            filesystem=self.file_system_name,
+            path=deleted_path_name,
+            pipeline=pipeline
+        )
         try:
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
             if is_file:
@@ -959,8 +958,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _get_root_directory_client(self):
-        # type: () -> DataLakeDirectoryClient
+    def _get_root_directory_client(self) -> DataLakeDirectoryClient:
         """Get a client to interact with the root directory.
 
         :returns: A DataLakeDirectoryClient.
@@ -968,9 +966,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
-    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
-                             ):
-        # type: (...) -> DataLakeDirectoryClient
+    def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient:
         """Get a client to interact with the specified directory.
 
         The directory need not already exist.
@@ -991,9 +987,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        try:
+        if isinstance(directory, DirectoryProperties):
             directory_name = directory.get('name')
-        except AttributeError:
+        else:
             directory_name = str(directory)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
@@ -1005,9 +1001,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts)
 
-    def get_file_client(self, file_path  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(self, file_path: Union[FileProperties, str]) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -1028,9 +1022,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
-        try:
+        if isinstance(file_path, FileProperties):
             file_path = file_path.get('name')
-        except AttributeError:
+        else:
             file_path = str(file_path)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
@@ -1042,8 +1036,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     @distributed_trace
-    def list_deleted_paths(self, **kwargs):
-        # type: (Any) -> ItemPaged[DeletedPathProperties]
+    def list_deleted_paths(self, **kwargs: Any) -> ItemPaged[DeletedPathProperties]:
         """Returns a generator to list the deleted (file or directory) paths under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
