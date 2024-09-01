@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
-# pylint: disable=super-init-not-called, too-many-lines
+# pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
+
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -25,6 +25,113 @@ from azure.storage.blob._generated.models import Logging as GenLogging, Metrics 
 
 from ._shared.models import DictMixin
 from ._shared.parser import _filetime_to_datetime, _rfc_1123_to_datetime
+
+
+class RetentionPolicy(GenRetentionPolicy):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    :param bool enabled:
+        Indicates whether a retention policy is enabled for the storage service.
+        The default value is False.
+    :param int days:
+        Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted. If enabled=True, the number of days must be specified.
+    """
+
+    def __init__(self, enabled=False, days=None):
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
+
+class Metrics(GenMetrics):
+    """A summary of request statistics grouped by API in hour or minute aggregates.
+
+    :keyword str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :keyword bool enabled:
+        Indicates whether metrics are enabled for the Datalake service.
+        The default value is `False`.
+    :keyword bool include_apis:
+        Indicates whether metrics should generate summary statistics for called API operations.
+    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
+        Determines how long the associated data should persist. If not specified the retention
+        policy will be disabled by default.
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', '1.0')
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
+
+class CorsRule(GenCorsRule):
+    """CORS is an HTTP feature that enables a web application running under one
+    domain to access resources in another domain. Web browsers implement a
+    security restriction known as same-origin policy that prevents a web page
+    from calling APIs in a different domain; CORS provides a secure way to
+    allow one domain (the origin domain) to call APIs in another domain.
+
+    :param List[str] allowed_origins:
+        A list of origin domains that will be allowed via CORS, or "*" to allow
+        all domains. The list of must contain at least one entry. Limited to 64
+        origin domains. Each allowed origin can have up to 256 characters.
+    :param List[str] allowed_methods:
+        A list of HTTP methods that are allowed to be executed by the origin.
+        The list of must contain at least one entry. For Azure Storage,
+        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
+    :keyword List[str] allowed_headers:
+        Defaults to an empty list. A list of headers allowed to be part of
+        the cross-origin request. Limited to 64 defined headers and 2 prefixed
+        headers. Each header can be up to 256 characters.
+    :keyword List[str] exposed_headers:
+        Defaults to an empty list. A list of response headers to expose to CORS
+        clients. Limited to 64 defined headers and two prefixed headers. Each
+        header can be up to 256 characters.
+    :keyword int max_age_in_seconds:
+        The number of seconds that the client/browser should cache a
+        preflight response.
+    """
+
+    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+        self.allowed_origins = ','.join(allowed_origins)
+        self.allowed_methods = ','.join(allowed_methods)
+        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
+        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
+        )
 
 
 class FileSystemProperties(DictMixin):
@@ -114,7 +221,7 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.filedatalake.FileSystemProperties)
+    :vartype current_page: List[~azure.storage.filedatalake.FileSystemProperties]
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only file systems whose names
@@ -945,7 +1052,7 @@ class AccessControlChanges(DictMixin):
         Contains counts of paths changed within single batch.
     :ivar ~azure.storage.filedatalake.AccessControlChangeCounters aggregate_counters:
         Contains counts of paths changed from start of the operation.
-    :ivar list(~azure.storage.filedatalake.AccessControlChangeFailure) batch_failures:
+    :ivar List[~azure.storage.filedatalake.AccessControlChangeFailure] batch_failures:
         List of path entries that failed to update Access Control List within single batch.
     :ivar str continuation:
         An opaque continuation token that may be used to resume the operations in case of failures.
@@ -1014,67 +1121,6 @@ class AnalyticsLogging(GenLogging):
         )
 
 
-class Metrics(GenMetrics):
-    """A summary of request statistics grouped by API in hour or minute aggregates.
-
-    :keyword str version:
-        The version of Storage Analytics to configure. The default value is 1.0.
-    :keyword bool enabled:
-        Indicates whether metrics are enabled for the Datalake service.
-        The default value is `False`.
-    :keyword bool include_apis:
-        Indicates whether metrics should generate summary statistics for called API operations.
-    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
-        Determines how long the associated data should persist. If not specified the retention
-        policy will be disabled by default.
-    """
-
-    def __init__(self, **kwargs):
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            version=generated.version,
-            enabled=generated.enabled,
-            include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
-        )
-
-
-class RetentionPolicy(GenRetentionPolicy):
-    """The retention policy which determines how long the associated data should
-    persist.
-
-    :param bool enabled:
-        Indicates whether a retention policy is enabled for the storage service.
-        The default value is False.
-    :param int days:
-        Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted. If enabled=True, the number of days must be specified.
-    """
-
-    def __init__(self, enabled=False, days=None):
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
-        if self.enabled and (self.days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            enabled=generated.enabled,
-            days=generated.days,
-        )
-
-
 class StaticWebsite(GenStaticWebsite):
     """The properties that enable an account to host a static website.
 
@@ -1109,50 +1155,4 @@ class StaticWebsite(GenStaticWebsite):
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
             default_index_document_path=generated.default_index_document_path
-        )
-
-
-class CorsRule(GenCorsRule):
-    """CORS is an HTTP feature that enables a web application running under one
-    domain to access resources in another domain. Web browsers implement a
-    security restriction known as same-origin policy that prevents a web page
-    from calling APIs in a different domain; CORS provides a secure way to
-    allow one domain (the origin domain) to call APIs in another domain.
-
-    :param list(str) allowed_origins:
-        A list of origin domains that will be allowed via CORS, or "*" to allow
-        all domains. The list of must contain at least one entry. Limited to 64
-        origin domains. Each allowed origin can have up to 256 characters.
-    :param list(str) allowed_methods:
-        A list of HTTP methods that are allowed to be executed by the origin.
-        The list of must contain at least one entry. For Azure Storage,
-        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :keyword list(str) allowed_headers:
-        Defaults to an empty list. A list of headers allowed to be part of
-        the cross-origin request. Limited to 64 defined headers and 2 prefixed
-        headers. Each header can be up to 256 characters.
-    :keyword list(str) exposed_headers:
-        Defaults to an empty list. A list of response headers to expose to CORS
-        clients. Limited to 64 defined headers and two prefixed headers. Each
-        header can be up to 256 characters.
-    :keyword int max_age_in_seconds:
-        The number of seconds that the client/browser should cache a
-        preflight response.
-    """
-
-    def __init__(self, allowed_origins, allowed_methods, **kwargs):
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
-
-    @classmethod
-    def _from_generated(cls, generated):
-        return cls(
-            [generated.allowed_origins],
-            [generated.allowed_methods],
-            allowed_headers=[generated.allowed_headers],
-            exposed_headers=[generated.exposed_headers],
-            max_age_in_seconds=generated.max_age_in_seconds,
         )
