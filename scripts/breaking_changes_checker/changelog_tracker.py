@@ -31,7 +31,7 @@ class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLASS_METHOD_MSG = \
         "Model `{}` added method `{}`"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "Model `{}` added parameter `{}` in the `{}` method"
+        "Model `{}` added parameter `{}` in method `{}`"
     ADDED_FUNCTION_PARAMETER_MSG = \
         "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
