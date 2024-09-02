@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from copy import deepcopy
-from typing import Any, Callable, Dict, IO, TYPE_CHECKING, List, Optional, Awaitable, TypeVar, Union, cast, overload, MutableMapping
+from typing import Any, Callable, Dict, IO, TYPE_CHECKING, List, Optional, Awaitable, TypeVar, Union, cast, overload, MutableMapping  # pylint: disable=line-too-long
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
@@ -48,7 +48,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
     Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:  # pylint: disable=line-too-long
         self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
 
     @overload  # type: ignore[override]
@@ -161,10 +161,10 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)  # pylint: disable=protected-access
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._client._infer_radiology_insights_initial(
+            raw_result = await self._client._infer_radiology_insights_initial(  # pylint: disable=protected-access
                 id=id,
                 resource=resource,
                 expand=expand,
@@ -179,8 +179,8 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id'] = self._client._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['Operation-Location'] = self._client._deserialize('str', response.headers.get('Operation-Location'))
+            response_headers['x-ms-request-id'] = self._client._deserialize('str', response.headers.get('x-ms-request-id'))  # pylint: disable=protected-access
+            response_headers['Operation-Location'] = self._client._deserialize('str', response.headers.get('Operation-Location'))  # pylint: disable=protected-access
             deserialized = _deserialize(
                 _models.RadiologyInsightsInferenceResult,
                 response.json().get("result")
@@ -190,7 +190,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),  # pylint: disable=protected-access
         }
 
         if polling is True:
@@ -208,9 +208,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-    
+
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
-            self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore
+            self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore  # pylint: disable=protected-access
         )
 
     def send_request(
@@ -235,10 +235,10 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._client._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._client._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),  # pylint: disable=line-too-long, protected-access
         }
 
-        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)  # pylint: disable=protected-access
         return self.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
