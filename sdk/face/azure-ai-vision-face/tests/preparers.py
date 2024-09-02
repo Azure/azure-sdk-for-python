@@ -48,13 +48,14 @@ FacePreparer = functools.partial(
     EnvironmentVariableLoader,
     "face",
     azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    azure_face_api_name="fakeaccountname",
     azure_face_api_account_key="fakeaccountkey",
 )
 
 FaceClientPreparer = functools.partial(ClientPreparer, Client.FaceClient)
+FaceAdministrationClientPreparer = functools.partial(ClientPreparer, Client.FaceAdministrationClient, client_kwargs={"client_env_name": "administration_client"})
 FaceSessionClientPreparer = functools.partial(ClientPreparer, Client.FaceSessionClient)
 
 # Async client
 AsyncFaceClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceClient)
+AsyncFaceAdministrationClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceAdministrationClient, client_kwargs={"client_env_name": "administration_client"})
 AsyncFaceSessionClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceSessionClient)
