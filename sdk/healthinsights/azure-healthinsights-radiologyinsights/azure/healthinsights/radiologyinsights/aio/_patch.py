@@ -18,6 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
+from .._model_base import _deserialize
 from .. import models as _models
 
 
@@ -178,9 +179,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id']=self._client._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['Operation-Location']=self._client._deserialize('str', response.headers.get('Operation-Location'))
-            deserialized = self._client._deserialize(
+            response_headers['x-ms-request-id'] = self._client._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['Operation-Location'] = self._client._deserialize('str', response.headers.get('Operation-Location'))
+            deserialized = _deserialize(
                 _models.RadiologyInsightsInferenceResult,
                 response.json().get("result")
             )
@@ -209,7 +210,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
             )
     
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+            self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     def send_request(
@@ -238,7 +239,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         }
 
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+        return self.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
