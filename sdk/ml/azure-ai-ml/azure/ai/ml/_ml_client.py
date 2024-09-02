@@ -533,11 +533,7 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name or registry_reference
-                else self._service_client_08_2023_preview
-            ),
+            self._service_client_08_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
@@ -551,11 +547,7 @@ class MLClient:
         self._evaluators = EvaluatorOperations(
             self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name or registry_reference
-                else self._service_client_08_2023_preview
-            ),
+            self._service_client_08_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,

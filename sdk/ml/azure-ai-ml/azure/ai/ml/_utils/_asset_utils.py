@@ -48,6 +48,10 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.operations import(
+    RegistryModelContainersOperations,
+    RegistryModelVersionsOperations,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataVersionBaseData,
     ModelVersionData,
@@ -889,12 +893,14 @@ def _archive_or_restore(
         "DataVersionsOperations",
         "EnvironmentVersionsOperations",
         "ModelVersionsOperations",
+        "RegistryModelVersionsOperations",
         "ComponentVersionsOperations",
     ],
     container_operation: Union[
         "DataContainersOperations",
         "EnvironmentContainersOperations",
         "ModelContainersOperations",
+        "RegistryModelContainersOperations",
         "ComponentContainersOperations",
     ],
     is_archived: bool,
@@ -918,23 +924,29 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = (
-            version_operation.get(
+        if(registry_name and isinstance(version_operation, RegistryModelVersionsOperations)):
+            version_resource = version_operation.get(
+                model_name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            version_resource.properties.is_archived = is_archived
+            version_operation.begin_create_or_update(
+                model_name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=version_resource,
+            )
+        elif(registry_name):
+            version_resource = version_operation.get(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
             )
-            if registry_name
-            else version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-            )
-        )
-        version_resource.properties.is_archived = is_archived
-        (  # pylint: disable=expression-not-assigned
+            version_resource.properties.is_archived = is_archived
             version_operation.begin_create_or_update(
                 name=name,
                 version=version,
@@ -942,46 +954,61 @@ def _archive_or_restore(
                 registry_name=registry_name,
                 body=version_resource,
             )
-            if registry_name
-            else version_operation.create_or_update(
+        else:
+            version_resource = version_operation.get(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                body=version_resource,
             )
+            version_resource.properties.is_archived = is_archived
+            version_operation.create_or_update(
+            name=name,
+            version=version,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            body=version_resource,
         )
     else:
-        container_resource = (
-            container_operation.get(
-                name=name,
+        if(registry_name and isinstance(container_operation, RegistryModelContainersOperations)):
+            container_resource = container_operation.get(
+                    model_name=name,
+                    resource_group_name=resource_group_name,
+                    registry_name=registry_name,
+            )   
+            container_resource.properties.is_archived = is_archived
+            container_operation.create_or_update(
+                model_name=name,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
+                body=container_resource,
             )
-            if registry_name
-            else container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-            )
-        )
-        container_resource.properties.is_archived = is_archived
-        (  # pylint: disable=expression-not-assigned
+        elif(registry_name):
+            container_resource = container_operation.get(
+                    name=name,
+                    resource_group_name=resource_group_name,
+                    registry_name=registry_name,
+                )
+            container_resource.properties.is_archived = is_archived
             container_operation.create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=container_resource,
             )
-            if registry_name
-            else container_operation.create_or_update(
+        else:
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
+            container_resource.properties.is_archived = is_archived
+            container_operation.create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 body=container_resource,
             )
-        )
-
 
 def _resolve_label_to_asset(
     assetOperations: Union[

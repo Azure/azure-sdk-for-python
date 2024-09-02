@@ -54,11 +54,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources (ServiceClient082023Preview).
+    :type service_client: ~azure.ai.ml._restclient.v2023_08_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -72,7 +69,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
@@ -192,8 +189,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_op._model_versions_operation.list(
-                        name=name,
+                    self._model_op._registry_model_versions_operation.list(
+                        model_name=name,
                         registry_name=self._model_op._registry_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         properties=properties_str,
