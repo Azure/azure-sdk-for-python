@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.containerservice import ContainerServiceClient
@@ -76,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-05-01/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-07-01/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
 if __name__ == "__main__":
     main()
