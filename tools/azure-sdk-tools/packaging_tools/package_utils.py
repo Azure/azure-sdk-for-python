@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 from pathlib import Path
 import logging
 from subprocess import check_call, CalledProcessError, getoutput
@@ -67,7 +67,17 @@ def change_log_generate(
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
-            return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
+            # report item will be used in .yaml so each line must start/with "'" or """
+            changelog: str = change_log_new(
+                str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable)
+            )
+            changelog_items: List[str] = changelog.split("\n")
+            for idx in range(len(changelog_items)):
+                content = changelog_items[idx].strip("- ")
+                if content.startswith("'"):
+                    changelog_items[idx] = f'  - "{content}"'
+            return "\n".join(changelog_items)
+
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
 
