@@ -35,17 +35,17 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
     """RadiologyInsightsClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-    https://westus2.api.cognitive.microsoft.com). Required.
+        https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-    AzureKeyCredential type or a TokenCredential type. Required.
+        AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-    ~azure.core.credentials_async.AsyncTokenCredential
+        ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
-    Note that overriding this default value may result in unsupported behavior.
+        Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-    Retry-After header is present.
+        Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:  # pylint: disable=line-too-long
@@ -103,7 +103,8 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
-        :raises ~azure.core.exceptions.HttpResponseError:"""
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload  # type: ignore[override]
     async def begin_infer_radiology_insights(
@@ -130,7 +131,8 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
-        :raises ~azure.core.exceptions.HttpResponseError:"""
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async  # type: ignore[override]
     async def begin_infer_radiology_insights(
@@ -154,7 +156,10 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :paramtype expand: list[str]
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
-        :raises ~azure.core.exceptions.HttpResponseError:"""
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        """
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
