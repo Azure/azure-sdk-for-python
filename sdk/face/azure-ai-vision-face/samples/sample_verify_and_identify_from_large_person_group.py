@@ -66,25 +66,21 @@ class VerifyAndIdentifyFromLargePersonGroup:
 
             # Add person and faces into the LargePersonGroup
             self.logger.info("Add person and faces into the LargePersonGroup")
-            
+
             person1 = face_admin_client.large_person_group.create_person(
                 large_person_group_id, name="Bill", user_data="Dad"
             )
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person1.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_1)),
                 user_data="Dad-1",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person1.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_2)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_2)),
                 user_data="Dad-2",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
@@ -95,18 +91,14 @@ class VerifyAndIdentifyFromLargePersonGroup:
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person2.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)),
                 user_data="Mom-1",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person2.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)),
                 user_data="Mom-2",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
@@ -117,18 +109,14 @@ class VerifyAndIdentifyFromLargePersonGroup:
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person3.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_1)),
                 user_data="Son-1",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
             face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person3.person_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_2)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_2)),
                 user_data="Son-2",
                 detection_model=FaceDetectionModel.DETECTION_03,
             )
@@ -139,9 +127,7 @@ class VerifyAndIdentifyFromLargePersonGroup:
             poller.wait()
 
             # Detect face from 'DAD_3'
-            dad_3_image = helpers.get_image_path(
-                TestImages.IMAGE_FAMILY_1_DAD_3
-            )
+            dad_3_image = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_3)
             detect_result = face_client.detect(
                 helpers.read_file_content(dad_3_image),
                 detection_model=FaceDetectionModel.DETECTION_03,
@@ -155,25 +141,20 @@ class VerifyAndIdentifyFromLargePersonGroup:
             # Verify the face with the person in LargePersonGroup
             self.logger.info("Verify the face with Bill")
             verify_result = face_client.verify_from_large_person_group(
-                face_id=face_id,
-                large_person_group_id=large_person_group_id,
-                person_id=person1.person_id
+                face_id=face_id, large_person_group_id=large_person_group_id, person_id=person1.person_id
             )
             self.logger.info(beautify_json(verify_result.as_dict()))
 
             self.logger.info("Verify the face with Clare")
             verify_result = face_client.verify_from_large_person_group(
-                face_id=face_id,
-                large_person_group_id=large_person_group_id,
-                person_id=person2.person_id
+                face_id=face_id, large_person_group_id=large_person_group_id, person_id=person2.person_id
             )
             self.logger.info(beautify_json(verify_result.as_dict()))
 
             # Identify the face from the LargePersonGroup
             self.logger.info("Identify the face from the LargePersonGroup")
             identify_result = face_client.identify_from_large_person_group(
-                face_ids=[face_id],
-                large_person_group_id=large_person_group_id
+                face_ids=[face_id], large_person_group_id=large_person_group_id
             )
             self.logger.info(beautify_json(identify_result[0].as_dict()))
 

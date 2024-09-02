@@ -107,58 +107,42 @@ class FindSimilarFaces:
             self.logger.info(f"Add faces into the LargeFaceList {large_face_list_id}")
             face_admin_client.large_face_list.add_face(
                 large_face_list_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)),
                 detection_model=FaceDetectionModel.DETECTION_02,
                 user_data="Lady1-1",
             )
             face_admin_client.large_face_list.add_face(
                 large_face_list_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)),
                 detection_model=FaceDetectionModel.DETECTION_02,
                 user_data="Lady1-2",
             )
             face_admin_client.large_face_list.add_face(
                 large_face_list_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_1)),
                 detection_model=FaceDetectionModel.DETECTION_02,
                 user_data="Lady2-1",
             )
             face_admin_client.large_face_list.add_face(
                 large_face_list_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_2)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_2)),
                 detection_model=FaceDetectionModel.DETECTION_02,
                 user_data="Lady2-2",
             )
             face_admin_client.large_face_list.add_face(
                 large_face_list_id,
-                helpers.read_file_content(
-                    helpers.get_image_path(TestImages.IMAGE_FAMILY_3_LADY_1)
-                ),
+                helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_3_LADY_1)),
                 detection_model=FaceDetectionModel.DETECTION_02,
                 user_data="Lady3-1",
             )
 
             # The LargeFaceList should be trained to make it ready for find similar operation.
-            self.logger.info(
-                f"Train the LargeFaceList {large_face_list_id}, and wait until the operation completes."
-            )
-            poller = face_admin_client.large_face_list.begin_train(
-                large_face_list_id, polling_interval=30
-            )
+            self.logger.info(f"Train the LargeFaceList {large_face_list_id}, and wait until the operation completes.")
+            poller = face_admin_client.large_face_list.begin_train(large_face_list_id, polling_interval=30)
             poller.wait()  # Keep polling until the "Train" operation completes.
 
             # Detect face from 'IMAGE_FINDSIMILAR'
-            find_similar_file_path = helpers.get_image_path(
-                TestImages.IMAGE_FINDSIMILAR
-            )
+            find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
             detect_result = face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
@@ -168,9 +152,7 @@ class FindSimilarFaces:
 
             assert len(detect_result) == 1
             face_id = str(detect_result[0].face_id)
-            self.logger.info(
-                f"Detect 1 face from the file '{find_similar_file_path}': {face_id}"
-            )
+            self.logger.info(f"Detect 1 face from the file '{find_similar_file_path}': {face_id}")
 
             # Call Find Similar
             find_similar_result = face_client.find_similar_from_large_face_list(
