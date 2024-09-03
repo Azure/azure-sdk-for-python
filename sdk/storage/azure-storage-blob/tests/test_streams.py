@@ -96,6 +96,19 @@ def _build_structured_message(
 
 
 class TestStructuredMessageEncodeStream:
+    def test_close(self):
+        inner = BytesIO()
+        stream = StructuredMessageEncodeStream(inner, 0, StructuredMessageProperties.NONE)
+        assert not stream.closed
+        assert not inner.closed
+
+        stream.close()
+        assert stream.closed
+        assert inner.closed
+
+        with pytest.raises(ValueError):
+            stream.read(0)
+
     def test_read_past_end(self):
         data = os.urandom(10)
         inner_stream = BytesIO(data)
@@ -324,11 +337,10 @@ class TestStructuredMessageEncodeStream:
     @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
     def test_seek_reverse_random(self, flags):
         data = os.urandom(1024)
-        inner_stream = BytesIO(data)
         expected = _build_structured_message(data, 500, flags)[0].getvalue()
 
         for _ in range(10):
-            inner_stream.seek(0)
+            inner_stream = BytesIO(data)
             sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=500)
 
             initial_read = random.randint(5, len(data))

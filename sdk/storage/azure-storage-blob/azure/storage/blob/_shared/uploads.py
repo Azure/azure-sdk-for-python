@@ -19,7 +19,14 @@ from .import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
 from .streams import IterStreamer, StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64, calculate_md5, ChecksumAlgorithm, combine_crc64, get_crc64_bytes
+from .validation import (
+    calculate_crc64,
+    calculate_md5,
+    ChecksumAlgorithm,
+    combine_crc64,
+    get_crc64_bytes,
+    SM_HEADER_V1_CRC64
+)
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -135,20 +142,21 @@ def upload_data_chunks(
     else:
         chunks = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
 
-    chunks.sort(key=lambda c: c.offset)
-    # If there is a crc64, do overall crc check
-    if chunks[0].crc64 is not None:
-        combined = combine_crc64([(c.crc64, c.length) for c in chunks])
-        if combined != uploader.overall_crc64:
-            raise ValueError("Checksum mismatch detected during upload. Any data written may be invalid.")
+    if chunks:
+        chunks.sort(key=lambda c: c.offset)
+        # If there is a crc64, do overall crc check
+        if chunks[0].crc64 is not None:
+            combined = combine_crc64([(c.crc64, c.length) for c in chunks])
+            if combined != uploader.overall_crc64:
+                raise ValueError("Checksum mismatch detected during upload. Any data written may be invalid.")
 
-    # If chunks have an id, return list of ids
-    if chunks[0].id is not None:
-        return [c.id for c in chunks]
-    # Else, return the response headers for the last chunk that had a response. (Page Blobs can have empty responses)
-    for c in reversed(chunks):
-        if c.response_headers:
-            return c.response_headers
+        # If chunks have an id, return list of ids
+        if chunks[0].id is not None:
+            return [c.id for c in chunks]
+        # Else, return response headers for the last chunk that had a response. (Page Blobs can have empty responses)
+        for c in reversed(chunks):
+            if c.response_headers:
+                return c.response_headers
     return {}
 
 
@@ -181,11 +189,11 @@ def upload_substream_blocks(
                 executor.submit(with_current_context(uploader.process_substream_block), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
-            range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
+            chunks = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
-        range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
-    if any(range_ids):
-        return sorted(range_ids)
+        chunks = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
+    if any(chunks):
+        return sorted(chunks)
     return []
 
 
@@ -199,14 +207,11 @@ class ChunkInfo:
     response_headers: Dict[str, Any] = {}
     """The response headers from the upload chunk operation."""
 
-    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
+    def __init__(self, offset: int, length: int, md5: Optional[bytes] = None, crc64: Optional[int] = None):
         self.offset = offset
-        self.length = len(data)
-
-        if checksum_algorithm == ChecksumAlgorithm.MD5:
-            self.md5 = calculate_md5(data)
-        if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64(data, 0)
+        self.length = length
+        self.md5 = md5
+        self.crc64 = crc64
 
     @property
     def crc64_bytes(self) -> Optional[bytes]:
@@ -253,7 +258,8 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def get_chunk_streams(self) -> Generator[Tuple[bytes, ChunkInfo], None, None]:
         index = 0
-        while True:
+        last_chunk = False
+        while not last_chunk:
             data = b""
             read_size = self.chunk_size
 
@@ -271,25 +277,27 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if temp == b"" or len(data) == self.chunk_size:
                     break
 
-            # Content validation and encryption cannot be enabled at the same time,
-            # so this is safe to do here, before encryption
-            if self.validate_content == ChecksumAlgorithm.CRC64:
-                self.overall_crc64 = calculate_crc64(data, self.overall_crc64)
-
             if len(data) == self.chunk_size:
                 if self.padder:
                     data = self.padder.update(data)
                 if self.encryptor:
                     data = self.encryptor.update(data)
-                yield data, ChunkInfo(index, data, self.validate_content)
             else:
                 if self.padder:
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
-                if data:
-                    yield data, ChunkInfo(index, data, self.validate_content)
-                break
+                last_chunk = True
+
+            if data:
+                md5, crc64 = None, None
+                if self.validate_content == ChecksumAlgorithm.CRC64:
+                    crc64 = calculate_crc64(data, 0)
+                    self.overall_crc64 = calculate_crc64(data, self.overall_crc64)
+                elif self.validate_content == ChecksumAlgorithm.MD5:
+                    md5 = calculate_md5(data)
+
+                yield data, ChunkInfo(index, len(data), md5, crc64)
             index += len(data)
 
     def process_chunk(self, chunk_data: Tuple[bytes, ChunkInfo]) -> ChunkInfo:
@@ -329,15 +337,12 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             yield index, SubStream(self.stream, index, length, lock)
 
     def process_substream_block(self, block_data):
-        return self._upload_substream_block_with_progress(block_data[0], block_data[1])
+        range_id = self._upload_substream_block(block_data[0], block_data[1])
+        self._update_progress(len(block_data))
+        return range_id
 
     def _upload_substream_block(self, index, block_stream):
         raise NotImplementedError("Must be implemented by child class.")
-
-    def _upload_substream_block_with_progress(self, index, block_stream):
-        range_id = self._upload_substream_block(index, block_stream)
-        self._update_progress(len(block_stream))
-        return range_id
 
     def set_response_properties(self, resp):
         self.etag = resp.etag
@@ -372,11 +377,20 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
+            data_length = len(block_stream)
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                block_stream = StructuredMessageEncodeStream(
+                    block_stream,
+                    len(block_stream),
+                    StructuredMessageProperties.CRC64)
+
             block_id = f'BlockId{(index//self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
                 block_stream,
+                structured_body_type=SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None,
+                structured_content_length=data_length if self.validate_content == ChecksumAlgorithm.CRC64 else None,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options
@@ -485,10 +499,19 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 
     def _upload_substream_block(self, index, block_stream):
         try:
+            data_length = len(block_stream)
+            if self.validate_content == ChecksumAlgorithm.CRC64:
+                block_stream = StructuredMessageEncodeStream(
+                    block_stream,
+                    len(block_stream),
+                    StructuredMessageProperties.CRC64)
+
             self.service.append_data(
                 body=block_stream,
                 position=index,
                 content_length=len(block_stream),
+                structured_body_type=SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None,
+                structured_content_length=data_length if self.validate_content == ChecksumAlgorithm.CRC64 else None,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,

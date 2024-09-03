@@ -72,10 +72,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
-        response = file.upload_data(data, overwrite=True, validate_content=a, raw_request_hook=assert_method)
+        file.upload_data(data, overwrite=True, validate_content=a, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = file.download_file()
+        assert content.read() == data
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -91,15 +92,34 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
-        response = file.upload_data(
-            data,
-            overwrite=True,
-            validate_content=a,
-            chunk_size=1024,
-            raw_request_hook=assert_method)
+        file.upload_data(data, overwrite=True, validate_content=a, chunk_size=1024, raw_request_hook=assert_method)
 
         # Assert
-        assert response
+        content = file.download_file()
+        assert content.read() == data
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_upload_data_substream(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.file_system._config.min_large_chunk_upload_threshold = 1  # Set less than chunk size to enable substream
+        file = self.file_system.get_file_client(self._get_file_reference())
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        data = b'abc' * 512 + b'abcde'
+        io = BytesIO(data)
+
+        # Act
+        file.upload_data(io, overwrite=True, validate_content=a, chunk_size=512, raw_request_hook=assert_method)
+
+        # Assert
+        content = file.download_file()
+        assert content.read() == data
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content

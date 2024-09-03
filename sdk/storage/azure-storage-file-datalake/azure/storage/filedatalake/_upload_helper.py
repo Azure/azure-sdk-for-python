@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from azure.core.exceptions import HttpResponseError
 
 from ._deserialize import (
     process_storage_error)
@@ -10,7 +11,7 @@ from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import (
     upload_data_chunks,
     DataLakeFileChunkUploader, upload_substream_blocks)
-from ...core.exceptions import HttpResponseError
+from ._shared.validation import ChecksumAlgorithm
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -68,10 +69,12 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             modified_access_conditions.if_modified_since = None
             modified_access_conditions.if_unmodified_since = None
 
-        use_original_upload_path = file_settings.use_byte_buffer or \
-            validate_content or chunk_size < file_settings.min_large_chunk_upload_threshold or \
-            hasattr(stream, 'seekable') and not stream.seekable() or \
-            not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+        use_original_upload_path = (file_settings.use_byte_buffer or
+                                    (validate_content and validate_content != ChecksumAlgorithm.CRC64) or
+                                    chunk_size < file_settings.min_large_chunk_upload_threshold or
+                                    (hasattr(stream, 'seekable') and not stream.seekable()) or
+                                    not hasattr(stream, 'seek') or
+                                    not hasattr(stream, 'tell'))
 
         if use_original_upload_path:
             upload_data_chunks(
