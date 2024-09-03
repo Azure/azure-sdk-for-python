@@ -15,6 +15,22 @@
 ### Other Changes
 
 - Updated the API version to "2024-09-01-preview"
+- Below models were renamed
+  - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
+  - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
+  - `azure.search.documents.indexes.models.ScalarQuantizationCompressionConfiguration` -> `azure.search.documents.indexes.models.ScalarQuantizationCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionConfiguration` -> `azure.search.documents.indexes.models.VectorSearchCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionTargetDataType` -> `azure.search.documents.indexes.models.VectorSearchCompressionTarget`
+- Below properties were renamed
+  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.name` -> `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.vectorizer_name`
+  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_id` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_name`
+  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_uri` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_url`
+  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.azure_open_ai_parameters` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.parameters`
+  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.name` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.vectorizer_name`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.user_assigned_identity` -> `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.resource_id`
+  - `azure.search.documents.indexes.models.VectorSearchProfile.compression_configuration_name` -> `azure.search.documents.indexes.models.VectorSearchProfile.compression_name`
+  - `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer` -> `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer_name`
+  - `azure.search.documents.indexes.models.VectorSearchVectorizer.name` -> `azure.search.documents.indexes.models.VectorSearchVectorizer.vectorizer_name`
 
 ## 11.6.0b4 (2024-05-07)
 
