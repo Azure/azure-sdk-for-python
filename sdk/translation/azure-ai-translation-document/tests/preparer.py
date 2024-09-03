@@ -32,8 +32,6 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         if not self.is_live:
             self.client_kwargs["polling_interval"] = 0
 
-        client = self.client_cls(
-            doctranslation_test_endpoint, get_credential(), **self.client_kwargs
-        )
+        client = self.client_cls(doctranslation_test_endpoint, get_credential(), **self.client_kwargs)
         kwargs.update({"client": client})
         return kwargs

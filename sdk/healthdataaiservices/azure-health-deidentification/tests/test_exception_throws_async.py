@@ -29,9 +29,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
                 location=storage_location,
                 prefix="no_files_in_this_folder",
             ),
-            target_location=TargetStorageLocation(
-                location=storage_location, prefix=self.OUTPUT_PATH
-            ),
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )

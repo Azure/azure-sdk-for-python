@@ -102,41 +102,6 @@ class FabricCapacitiesOperations:
         :return: FabricCapacity. The FabricCapacity is compatible with MutableMapping
         :rtype: ~azure.mgmt.fabric.models.FabricCapacity
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -291,73 +256,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -387,41 +285,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -451,41 +314,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace_async
@@ -511,73 +339,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -729,59 +490,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                properties = {
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -811,41 +519,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -875,41 +548,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace_async
@@ -935,59 +573,6 @@ class FabricCapacitiesOperations:
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                properties = {
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -1168,41 +753,6 @@ class FabricCapacitiesOperations:
         :return: An iterator like instance of FabricCapacity
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1288,41 +838,6 @@ class FabricCapacitiesOperations:
         :return: An iterator like instance of FabricCapacity
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.FabricCapacity]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "properties": {
-                        "administration": {
-                            "members": [
-                                "str"
-                            ]
-                        },
-                        "provisioningState": "str",
-                        "state": "str"
-                    },
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    },
-                    "id": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1436,7 +951,7 @@ class FabricCapacitiesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -1446,8 +961,9 @@ class FabricCapacitiesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.iter_bytes()
 
@@ -1550,7 +1066,7 @@ class FabricCapacitiesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -1560,8 +1076,9 @@ class FabricCapacitiesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.iter_bytes()
 
@@ -1650,22 +1167,6 @@ class FabricCapacitiesOperations:
          MutableMapping
         :rtype: ~azure.mgmt.fabric.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @overload
@@ -1685,16 +1186,6 @@ class FabricCapacitiesOperations:
          MutableMapping
         :rtype: ~azure.mgmt.fabric.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @overload
@@ -1714,16 +1205,6 @@ class FabricCapacitiesOperations:
          MutableMapping
         :rtype: ~azure.mgmt.fabric.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @distributed_trace_async
@@ -1741,22 +1222,6 @@ class FabricCapacitiesOperations:
          MutableMapping
         :rtype: ~azure.mgmt.fabric.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1835,18 +1300,6 @@ class FabricCapacitiesOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.RpSkuDetailsForExistingResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "resourceType": "str",
-                    "sku": {
-                        "name": "str",
-                        "tier": "str"
-                    }
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1934,18 +1387,6 @@ class FabricCapacitiesOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.RpSkuDetailsForNewResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "locations": [
-                        "str"
-                    ],
-                    "name": "str",
-                    "resourceType": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2048,23 +1489,6 @@ class Operations:
         :return: An iterator like instance of Operation
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "actionType": "str",
-                    "display": {
-                        "description": "str",
-                        "operation": "str",
-                        "provider": "str",
-                        "resource": "str"
-                    },
-                    "isDataAction": bool,
-                    "name": "str",
-                    "origin": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}

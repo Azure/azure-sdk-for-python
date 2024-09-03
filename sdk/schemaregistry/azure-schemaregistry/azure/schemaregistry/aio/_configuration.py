@@ -28,13 +28,13 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
     :type fully_qualified_namespace: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2022-10".
+    :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, fully_qualified_namespace: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2022-10")
+        api_version: str = kwargs.pop("api_version", "2023-07-01")
 
         if fully_qualified_namespace is None:
             raise ValueError("Parameter 'fully_qualified_namespace' must not be None.")
