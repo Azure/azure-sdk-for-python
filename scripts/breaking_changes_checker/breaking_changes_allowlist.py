@@ -32,5 +32,10 @@ IGNORE_BREAKING_CHANGES = {
         ("RemovedOrRenamedPositionalParam", "*", "*", "as_dict", "key_transformer"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "as_dict"),
         ("RemovedFunctionKwargs", "*", "*", "as_dict"),
+        # operation group can't be instantiated independently so don't need check for it
+        ("RemovedOrRenamedPositionalParam", "*", "__init__", "client", "positional_or_keyword"),
+        ("RemovedOrRenamedPositionalParam", "*", "__init__", "config", "positional_or_keyword"),
+        ("RemovedOrRenamedPositionalParam", "*", "__init__", "serializer", "positional_or_keyword"),
+        ("RemovedOrRenamedPositionalParam", "*", "__init__", "deserializer", "positional_or_keyword"),
     ]
 }
