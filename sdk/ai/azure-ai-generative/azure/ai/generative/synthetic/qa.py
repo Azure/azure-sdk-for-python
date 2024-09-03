@@ -23,13 +23,15 @@ except ImportError as e:
     raise e
 
 try:
-    import pkg_resources  # type: ignore[import]
-
-    openai_version_str = pkg_resources.get_distribution("openai").version
-    openai_version = pkg_resources.parse_version(openai_version_str)
+    from importlib.metadata import version
+    from packaging.version import parse
     import openai
+    
+    openai_version_str = version("openai")
+    openai_version = parse(openai_version_str)
+    
 
-    if openai_version >= pkg_resources.parse_version("1.0.0"):
+    if openai_version >= parse("1.0.0"):
         _RETRY_ERRORS: Tuple = (openai.APIConnectionError, openai.APIError, openai.APIStatusError)
     else:
         _RETRY_ERRORS: Tuple = (  # type: ignore[no-redef]
@@ -56,7 +58,7 @@ def _completion_with_retries(*args, **kwargs):
     n = 1
     while True:
         try:
-            if openai_version >= pkg_resources.parse_version("1.0.0"):
+            if openai_version >= parse("1.0.0"):
                 if kwargs["api_type"].lower() == "azure":
                     from openai import AzureOpenAI
 
@@ -103,7 +105,7 @@ async def _completion_with_retries_async(*args, **kwargs):
     n = 1
     while True:
         try:
-            if openai_version >= pkg_resources.parse_version("1.0.0"):
+            if openai_version >= parse("1.0.0"):
                 if kwargs["api_type"].lower() == "azure":
                     from openai import AsyncAzureOpenAI
 
