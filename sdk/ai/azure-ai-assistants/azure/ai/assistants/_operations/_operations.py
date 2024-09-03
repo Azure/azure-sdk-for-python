@@ -603,11 +603,13 @@ def build_assistants_create_thread_and_run_request(**kwargs: Any) -> HttpRequest
 
 def build_assistants_get_run_step_request(thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/threads/{threadId}/runs/{runId}/steps/{stepId}"
+    _url = "/openai/threads/{threadId}/runs/{runId}/steps/{stepId}"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
@@ -616,10 +618,13 @@ def build_assistants_get_run_step_request(thread_id: str, run_id: str, step_id: 
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_list_run_steps_request(
@@ -635,10 +640,11 @@ def build_assistants_list_run_steps_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/threads/{threadId}/runs/{runId}/steps"
+    _url = "/openai/threads/{threadId}/runs/{runId}/steps"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
@@ -647,6 +653,7 @@ def build_assistants_list_run_steps_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -668,12 +675,14 @@ def build_assistants_list_files_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/files"
+    _url = "/openai/files"
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if purpose is not None:
         _params["purpose"] = _SERIALIZER.query("purpose", purpose, "str")
 
@@ -685,75 +694,95 @@ def build_assistants_list_files_request(
 
 def build_assistants_upload_file_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/files"
+    _url = "/openai/files"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/files/{fileId}"
+    _url = "/openai/files/{fileId}"
     path_format_arguments = {
         "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_get_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/files/{fileId}"
+    _url = "/openai/files/{fileId}"
     path_format_arguments = {
         "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_get_file_content_request(  # pylint: disable=name-too-long
     file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/files/{fileId}/content"
+    _url = "/openai/files/{fileId}/content"
     path_format_arguments = {
         "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_list_vector_stores_request(  # pylint: disable=name-too-long
@@ -767,12 +796,14 @@ def build_assistants_list_vector_stores_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores"
+    _url = "/openai/vector_stores"
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -790,85 +821,105 @@ def build_assistants_list_vector_stores_request(  # pylint: disable=name-too-lon
 
 def build_assistants_create_vector_store_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores"
+    _url = "/openai/vector_stores"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_get_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}"
+    _url = "/openai/vector_stores/{vectorStoreId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_modify_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}"
+    _url = "/openai/vector_stores/{vectorStoreId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_delete_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}"
+    _url = "/openai/vector_stores/{vectorStoreId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_list_vector_store_files_request(  # pylint: disable=name-too-long
@@ -884,10 +935,11 @@ def build_assistants_list_vector_store_files_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/files"
+    _url = "/openai/vector_stores/{vectorStoreId}/files"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
@@ -895,6 +947,7 @@ def build_assistants_list_vector_store_files_request(  # pylint: disable=name-to
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
     if limit is not None:
@@ -916,35 +969,42 @@ def build_assistants_create_vector_store_file_request(  # pylint: disable=name-t
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/files"
+    _url = "/openai/vector_stores/{vectorStoreId}/files"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_get_vector_store_file_request(  # pylint: disable=name-too-long
     vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
+    _url = "/openai/vector_stores/{vectorStoreId}/files/{fileId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
         "fileId": _SERIALIZER.url("file_id", file_id, "str"),
@@ -952,21 +1012,26 @@ def build_assistants_get_vector_store_file_request(  # pylint: disable=name-too-
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_delete_vector_store_file_request(  # pylint: disable=name-too-long
     vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
+    _url = "/openai/vector_stores/{vectorStoreId}/files/{fileId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
         "fileId": _SERIALIZER.url("file_id", file_id, "str"),
@@ -974,45 +1039,55 @@ def build_assistants_delete_vector_store_file_request(  # pylint: disable=name-t
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_create_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/file_batches"
+    _url = "/openai/vector_stores/{vectorStoreId}/file_batches"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_get_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}"
+    _url = "/openai/vector_stores/{vectorStoreId}/file_batches/{batchId}"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
         "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
@@ -1020,21 +1095,26 @@ def build_assistants_get_vector_store_file_batch_request(  # pylint: disable=nam
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_cancel_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/cancel"
+    _url = "/openai/vector_stores/{vectorStoreId}/file_batches/{batchId}/cancel"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
         "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
@@ -1042,10 +1122,13 @@ def build_assistants_cancel_vector_store_file_batch_request(  # pylint: disable=
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disable=name-too-long
@@ -1062,10 +1145,11 @@ def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/files"
+    _url = "/openai/vector_stores/{vectorStoreId}/file_batches/{batchId}/files"
     path_format_arguments = {
         "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
         "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
@@ -1074,6 +1158,7 @@ def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disa
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
     if limit is not None:
@@ -3919,11 +4004,11 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     def get_run_step(self, thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> _models.RunStep:
         """Gets a single run step from a thread run.
 
-        :param thread_id: The ID of the thread that was run. Required.
+        :param thread_id: Required.
         :type thread_id: str
-        :param run_id: The ID of the specific run to retrieve the step from. Required.
+        :param run_id: Required.
         :type run_id: str
-        :param step_id: The ID of the step to retrieve information about. Required.
+        :param step_id: Required.
         :type step_id: str
         :return: RunStep. The RunStep is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.RunStep
@@ -3946,6 +4031,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             thread_id=thread_id,
             run_id=run_id,
             step_id=step_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -3994,9 +4080,9 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     ) -> _models.OpenAIPageableListOfRunStep:
         """Gets a list of run steps from a thread run.
 
-        :param thread_id: The ID of the thread that was run. Required.
+        :param thread_id: Required.
         :type thread_id: str
-        :param run_id: The ID of the run to list steps from. Required.
+        :param run_id: Required.
         :type run_id: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
@@ -4039,6 +4125,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             order=order,
             after=after,
             before=before,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4079,8 +4166,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     ) -> _models.FileListResponse:
         """Gets a list of previously uploaded files.
 
-        :keyword purpose: A value that, when provided, limits list results to files matching the
-         corresponding purpose. Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Default value is None.
         :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
         :return: FileListResponse. The FileListResponse is compatible with MutableMapping
@@ -4102,6 +4188,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_list_files_request(
             purpose=purpose,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4153,13 +4240,12 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword file: The file data (not filename) to upload. Required.
+        :keyword file: Required.
         :paramtype file: ~azure.ai.assistants._vendor.FileType
-        :keyword purpose: The intended purpose of the file. Known values are: "fine-tune",
-         "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
-         Required.
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
-        :keyword filename: A filename to associate with the uploaded data. Default value is None.
+        :keyword filename: Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
@@ -4180,13 +4266,12 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         :param body: Is one of the following types: JSON Required.
         :type body: JSON
-        :keyword file: The file data (not filename) to upload. Required.
+        :keyword file: Required.
         :paramtype file: ~azure.ai.assistants._vendor.FileType
-        :keyword purpose: The intended purpose of the file. Known values are: "fine-tune",
-         "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
-         Required.
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
-        :keyword filename: A filename to associate with the uploaded data. Default value is None.
+        :keyword filename: Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
@@ -4218,6 +4303,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_assistants_upload_file_request(
+            api_version=self._config.api_version,
             files=_files,
             data=_data,
             headers=_headers,
@@ -4279,6 +4365,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_delete_file_request(
             file_id=file_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4338,6 +4425,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_get_file_request(
             file_id=file_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4373,13 +4461,13 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+    def get_file_content(self, file_id: str, **kwargs: Any) -> _models.FileContentResponse:
         """Returns information about a specific file. Does not retrieve file content.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: bytes
-        :rtype: bytes
+        :return: FileContentResponse. The FileContentResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.FileContentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -4393,10 +4481,11 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[_models.FileContentResponse] = kwargs.pop("cls", None)
 
         _request = build_assistants_get_file_content_request(
             file_id=file_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4424,7 +4513,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(bytes, response.json(), format="base64")
+            deserialized = _deserialize(_models.FileContentResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4434,7 +4523,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["limit", "order", "after", "before", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
     )
     def list_vector_stores(
         self,
@@ -4486,6 +4575,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             order=order,
             after=after,
             before=before,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4592,7 +4682,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["content_type", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "content_type", "accept"]},
     )
     def create_vector_store(
         self,
@@ -4660,6 +4750,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_create_vector_store_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4698,7 +4789,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "accept"]},
     )
     def get_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStore:
         """Returns the vector store object matching the specified ID.
@@ -4724,6 +4815,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_get_vector_store_request(
             vector_store_id=vector_store_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4829,7 +4921,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "content_type", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "content_type", "accept"]},
     )
     def modify_vector_store(
         self,
@@ -4887,6 +4979,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_modify_vector_store_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4925,7 +5018,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "accept"]},
     )
     def delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
         """Deletes the vector store object matching the specified ID.
@@ -4952,6 +5045,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
 
         _request = build_assistants_delete_vector_store_request(
             vector_store_id=vector_store_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -4990,7 +5084,16 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @api_version_validation(
         method_added_on="2024-05-01-preview",
         params_added_on={
-            "2024-05-01-preview": ["vector_store_id", "filter", "limit", "order", "after", "before", "accept"]
+            "2024-05-01-preview": [
+                "api_version",
+                "vector_store_id",
+                "filter",
+                "limit",
+                "order",
+                "after",
+                "before",
+                "accept",
+            ]
         },
     )
     def list_vector_store_files(
@@ -5052,6 +5155,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             order=order,
             after=after,
             before=before,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -5153,7 +5257,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "content_type", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "content_type", "accept"]},
     )
     def create_vector_store_file(
         self,
@@ -5209,6 +5313,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_create_vector_store_file_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -5247,7 +5352,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "file_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "file_id", "accept"]},
     )
     def get_vector_store_file(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFile:
         """Retrieves a vector store file.
@@ -5276,6 +5381,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_get_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -5313,7 +5419,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "file_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "file_id", "accept"]},
     )
     def delete_vector_store_file(
         self, vector_store_id: str, file_id: str, **kwargs: Any
@@ -5347,6 +5453,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -5448,7 +5555,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "content_type", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "content_type", "accept"]},
     )
     def create_vector_store_file_batch(
         self,
@@ -5504,6 +5611,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_create_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -5542,7 +5650,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "batch_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "batch_id", "accept"]},
     )
     def get_vector_store_file_batch(
         self, vector_store_id: str, batch_id: str, **kwargs: Any
@@ -5573,6 +5681,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_get_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -5610,7 +5719,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["vector_store_id", "batch_id", "accept"]},
+        params_added_on={"2024-05-01-preview": ["api_version", "vector_store_id", "batch_id", "accept"]},
     )
     def cancel_vector_store_file_batch(
         self, vector_store_id: str, batch_id: str, **kwargs: Any
@@ -5642,6 +5751,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         _request = build_assistants_cancel_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -5681,6 +5791,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         method_added_on="2024-05-01-preview",
         params_added_on={
             "2024-05-01-preview": [
+                "api_version",
                 "vector_store_id",
                 "batch_id",
                 "filter",
@@ -5755,6 +5866,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
             order=order,
             after=after,
             before=before,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )

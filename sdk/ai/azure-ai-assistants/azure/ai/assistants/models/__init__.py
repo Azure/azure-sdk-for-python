@@ -17,6 +17,7 @@ from ._models import CodeInterpreterToolResource
 from ._models import CreateCodeInterpreterToolResourceOptions
 from ._models import CreateFileSearchToolResourceVectorStoreOptions
 from ._models import CreateToolResourcesOptions
+from ._models import FileContentResponse
 from ._models import FileDeletionStatus
 from ._models import FileListResponse
 from ._models import FileSearchToolDefinition
@@ -146,6 +147,7 @@ __all__ = [
     "CreateCodeInterpreterToolResourceOptions",
     "CreateFileSearchToolResourceVectorStoreOptions",
     "CreateToolResourcesOptions",
+    "FileContentResponse",
     "FileDeletionStatus",
     "FileListResponse",
     "FileSearchToolDefinition",
