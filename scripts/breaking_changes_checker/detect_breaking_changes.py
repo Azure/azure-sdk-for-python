@@ -21,7 +21,7 @@ import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
@@ -445,10 +445,11 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         package_name,
         checkers = [
             MethodOverloadsChecker(),
-        ]
+        ],
+        ignore = IGNORE_BREAKING_CHANGES
     )
     if changelog:
-        checker = ChangelogTracker(stable, current, diff, package_name)
+        checker = ChangelogTracker(stable, current, diff, package_name, ignore = IGNORE_BREAKING_CHANGES)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
