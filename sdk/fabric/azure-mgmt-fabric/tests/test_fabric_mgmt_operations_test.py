@@ -24,4 +24,3 @@ class TestFabricMgmtOperations(AzureMgmtRecordedTestCase):
         response = self.client.operations.list()
         result = [r for r in response]
         assert result
-        

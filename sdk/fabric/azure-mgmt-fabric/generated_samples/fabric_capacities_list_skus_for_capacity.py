@@ -15,7 +15,7 @@ from azure.mgmt.fabric import FabricMgmtClient
     pip install azure-identity
     pip install azure-mgmt-fabric
 # USAGE
-    python fabric_capacities_suspend.py
+    python fabric_capacities_list_skus_for_capacity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,13 +27,15 @@ from azure.mgmt.fabric import FabricMgmtClient
 def main():
     client = FabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="548B7FB7-3B2A-4F46-BB02-66473F1FC22C",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.fabric_capacities.begin_suspend(
+    response = client.fabric_capacities.list_skus_for_capacity(
         resource_group_name="TestRG",
         capacity_name="azsdktest",
-    ).result()
+    )
+    for item in response:
+        print(item)
 
 
 if __name__ == "__main__":
