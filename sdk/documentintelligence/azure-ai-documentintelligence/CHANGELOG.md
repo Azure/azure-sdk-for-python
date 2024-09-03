@@ -22,6 +22,7 @@
 - Added property `allow_overwrite` to model `BuildDocumentClassifierRequest`.
 - Added properties `allow_overwrite` and `max_training_hours` to model `BuildDocumentModelRequest`.
 - Added properties `classifier_id`, `split` and `doc_types` to model `ComposeDocumentModelRequest`.
+- Added support for getting `operation_id` in operation `begin_analyze_document()`, and added its new return type `AnalyzeDocumentLROPoller` and `AsyncAnalyzeDocumentLROPoller`.
 
 ### Breaking Changes
 - Removed support for extracting lists from analyzed documents:
