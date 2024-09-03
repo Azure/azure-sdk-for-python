@@ -195,6 +195,8 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
+* [Extract figures from documents](#analyze-result-figures "Extract figures from documents")
+* [Analyze document in PDF output](#analyze-result-pdf "Analyze document in PDF output")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
@@ -299,6 +301,80 @@ if result.tables:
                     )
 
 print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+### Extract figures from documents
+
+Extract figures from the document as cropped images.
+
+<!-- SNIPPET:sample_analyze_result_figures.analyze_result_figures -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.FIGURES],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.operation_id
+
+if result.figures:
+     for figure in result.figures:
+        response = document_intelligence_client.get_analyze_result_figure(
+            model_id=result.model_id, result_id=operation_id, figure_id=figure.id
+        )
+        with open(f"{figure.id}.png", "wb") as writer:
+            writer.writelines(response)
+```
+
+<!-- END SNIPPET -->
+
+### Analyze document in PDF output
+
+Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
+
+_Note: For now, this feature is only supported by `prebuilt-read`. All other modelIds will return error._
+
+<!-- SNIPPET:sample_analyze_result_pdf.analyze_result_pdf -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-read",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.PDF],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.operation_id
+
+response = document_intelligence_client.get_analyze_result_pdf(
+    model_id=result.model_id, result_id=operation_id
+)
+with open("analyze_result.pdf", "wb") as writer:
+    writer.writelines(response)
 ```
 
 <!-- END SNIPPET -->
