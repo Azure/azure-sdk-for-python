@@ -89,9 +89,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         self._operation_scope = self._model_op._operation_scope
         self._datastore_operation = self._model_op._datastore_operation
 
-    @monitor_with_activity(
-        ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
         self, model: Union[Model, WorkspaceAssetReference], **kwargs: Any
     ) -> Model:  # TODO: Are we going to implement job_name?
@@ -110,9 +108,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         model.properties.update(_get_evaluator_properties())
         return self._model_op.create_or_update(model)
 
-    def _raise_if_not_evaluator(
-        self, properties: Optional[Dict[str, Any]], message: str
-    ) -> None:
+    def _raise_if_not_evaluator(self, properties: Optional[Dict[str, Any]], message: str) -> None:
         """
         :param properties: The properties of a model.
         :type properties: dict[str, str]
@@ -128,14 +124,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             )
 
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
-    def get(
-        self,
-        name: str,
-        *,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs,
-    ) -> Model:
+    def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -160,13 +149,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         return model
 
     @monitor_with_activity(ops_logger, "Evaluator.Download", ActivityType.PUBLICAPI)
-    def download(
-        self,
-        name: str,
-        version: str,
-        download_path: Union[PathLike, str] = ".",
-        **kwargs: Any,
-    ) -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".", **kwargs: Any) -> None:
         """Download files related to a model.
 
         :param name: Name of the model.
@@ -226,9 +209,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                 ),
             )
         # ModelContainer object does not carry properties.
-        raise UnsupportedOperationError(
-            "list on evaluation operations without name provided"
-        )
+        raise UnsupportedOperationError("list on evaluation operations without name provided")
         # TODO: Implement filtering of the ModelContainerOperations list output
         # return cast(
         #     Iterable[Model], (
