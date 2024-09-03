@@ -143,9 +143,41 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: false
+        RunApiStubGen: true
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Build_Documentation'
+    displayName: Build Docs
+    dependsOn:
+      - 'Build_Linux'
+      - 'Build_Windows'
+      - 'Build_MacOS'
+
+    timeoutInMinutes: 90
+
+    pool:
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
+      os: linux
+
+    steps:
+    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
+    - template: ../steps/build-extended-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        RunApiStubGen: false
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))

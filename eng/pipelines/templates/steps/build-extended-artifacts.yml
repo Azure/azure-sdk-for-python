@@ -8,16 +8,18 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
-  - name: BuildDocs
-    type: boolean
-    default: true
   - name: Artifacts
     type: object
     default: []
   - name: DevFeedName
     type: string
     default: 'public/azure-sdk-for-python'
-
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: RunApiStubGen
+    type: boolean
+    default: true
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -52,43 +54,43 @@ steps:
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
-  - template: /eng/pipelines/templates/steps/run_sphinx.yml
-    parameters:
-      ServiceDirectory: "${{ parameters.ServiceDirectory }}"
-      WheelDirectory: "$(Build.ArtifactStagingDirectory)"
+  - ${{ if eq(parameters.BuildDocs, 'true') }}:
+    - template: /eng/pipelines/templates/steps/run_sphinx.yml
+      parameters:
+        ServiceDirectory: "${{ parameters.ServiceDirectory }}"
+        WheelDirectory: "$(Build.ArtifactStagingDirectory)"
 
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
-    displayName: Reset PIP Index For APIStubGen
-
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+  - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
+    - template: /eng/pipelines/templates/steps/run_apistub.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - task: Powershell@2
-    inputs:
-      filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
-      arguments: >
-        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
-      pwsh: true
-      workingDirectory: $(Pipeline.Workspace)
-    displayName: Update package properties with namespaces
+  - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
+        arguments: >
+          -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Update package properties with namespaces
 
-  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'packages_extended'
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'packages_extended'
 
-  - pwsh: |
-      $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
-      Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
-    displayName: Check if docs directory exists
+  - ${{ if eq(parameters.BuildDocs, 'true') }}:
+    - pwsh: |
+        $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
+        Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
+      displayName: Check if docs directory exists
 
-  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
-      ArtifactName: 'documentation'
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+        CustomCondition: eq(variables['DirectoryExists'], 'True')
+        ArtifactName: 'documentation'
