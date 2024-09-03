@@ -27,9 +27,11 @@ from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadi
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
+
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
-    @overload # type: ignore[override]
+    @overload  # type: ignore[override]
     async def begin_infer_radiology_insights(
         self,
         id: str,
@@ -152,8 +154,8 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 headers=_headers,
                 params=_params,
                 **kwargs
-            )# type: ignore
-        kwargs.pop('error_map', None)
+            )  # type: ignore
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
@@ -165,12 +167,11 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
 
             deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
             if cls:
-                return cls(pipeline_response, deserialized, response_headers) # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -187,11 +188,12 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
 
 def patch_sdk():
     """Do not remove from this file.

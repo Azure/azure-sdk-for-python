@@ -246,7 +246,7 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     with orchestration mode 'Flexible'.
     """
 
-    ENUM_2020_11_01 = "2020-11-01"
+    V2020_11_01 = "2020-11-01"
     """Initial version supported. Later versions are supported as well."""
 
 

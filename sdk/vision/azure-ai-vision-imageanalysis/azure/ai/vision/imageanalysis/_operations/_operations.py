@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -173,119 +175,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "metadata": {
-                        "height": 0,
-                        "width": 0
-                    },
-                    "modelVersion": "str",
-                    "captionResult": {
-                        "confidence": 0.0,
-                        "text": "str"
-                    },
-                    "denseCaptionsResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "confidence": 0.0,
-                                "text": "str"
-                            }
-                        ]
-                    },
-                    "objectsResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "tags": [
-                                    {
-                                        "confidence": 0.0,
-                                        "name": "str"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "peopleResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "confidence": 0.0
-                            }
-                        ]
-                    },
-                    "readResult": {
-                        "blocks": [
-                            {
-                                "lines": [
-                                    {
-                                        "boundingPolygon": [
-                                            {
-                                                "x": 0,
-                                                "y": 0
-                                            }
-                                        ],
-                                        "text": "str",
-                                        "words": [
-                                            {
-                                                "boundingPolygon": [
-                                                    {
-                                                        "x":
-                                                          0,
-                                                        "y":
-                                                          0
-                                                    }
-                                                ],
-                                                "confidence": 0.0,
-                                                "text": "str"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "smartCropsResult": {
-                        "values": [
-                            {
-                                "aspectRatio": 0.0,
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                }
-                            }
-                        ]
-                    },
-                    "tagsResult": {
-                        "values": [
-                            {
-                                "confidence": 0.0,
-                                "name": "str"
-                            }
-                        ]
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -329,7 +218,10 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -433,124 +325,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                image_url = {
-                    "url": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "metadata": {
-                        "height": 0,
-                        "width": 0
-                    },
-                    "modelVersion": "str",
-                    "captionResult": {
-                        "confidence": 0.0,
-                        "text": "str"
-                    },
-                    "denseCaptionsResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "confidence": 0.0,
-                                "text": "str"
-                            }
-                        ]
-                    },
-                    "objectsResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "tags": [
-                                    {
-                                        "confidence": 0.0,
-                                        "name": "str"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "peopleResult": {
-                        "values": [
-                            {
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "confidence": 0.0
-                            }
-                        ]
-                    },
-                    "readResult": {
-                        "blocks": [
-                            {
-                                "lines": [
-                                    {
-                                        "boundingPolygon": [
-                                            {
-                                                "x": 0,
-                                                "y": 0
-                                            }
-                                        ],
-                                        "text": "str",
-                                        "words": [
-                                            {
-                                                "boundingPolygon": [
-                                                    {
-                                                        "x":
-                                                          0,
-                                                        "y":
-                                                          0
-                                                    }
-                                                ],
-                                                "confidence": 0.0,
-                                                "text": "str"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "smartCropsResult": {
-                        "values": [
-                            {
-                                "aspectRatio": 0.0,
-                                "boundingBox": {
-                                    "h": 0,
-                                    "w": 0,
-                                    "x": 0,
-                                    "y": 0
-                                }
-                            }
-                        ]
-                    },
-                    "tagsResult": {
-                        "values": [
-                            {
-                                "confidence": 0.0,
-                                "name": "str"
-                            }
-                        ]
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -599,7 +373,10 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

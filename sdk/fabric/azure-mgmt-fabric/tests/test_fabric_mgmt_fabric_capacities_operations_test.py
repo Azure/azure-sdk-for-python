@@ -16,7 +16,7 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.live_test_only
 class TestFabricMgmtFabricCapacitiesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(FabricMgmtClient)     
+        self.client = self.create_mgmt_client(FabricMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy

@@ -19,6 +19,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -29,9 +31,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ..models import _models
-from ..models import _enums
-from .. import _model_base
+from .. import _model_base, models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import (
@@ -260,7 +260,7 @@ def build_document_translation_get_documents_status_request(  # pylint: disable=
 
 
 def build_document_translation_get_supported_formats_request(  # pylint: disable=name-too-long
-    *, type: Optional[Union[str, _enums.FileFormatType]] = None, **kwargs: Any
+    *, type: Optional[Union[str, _models._enums.FileFormatType]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -317,9 +317,9 @@ def build_single_document_translation_document_translate_request(  # pylint: dis
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    def _start_translation_initial(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    def _start_translation_initial(
+        self, body: Union[_models._models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -332,7 +332,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -353,7 +353,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -361,22 +361,27 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_start_translation(  # pylint: disable=protected-access
-        self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models._models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
-        # pylint: disable=line-too-long
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document
@@ -399,7 +404,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         destination, it will be overwritten. The targetUrl for each target language
         must be unique.
 
-        :param body: Required.
+        :param body: Translation job submission batch request. Required.
         :type body: ~azure.ai.translation.document.models._models.StartTranslationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -407,64 +412,6 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "inputs": [
-                        {
-                            "source": {
-                                "sourceUrl": "str",  # Location of the folder /
-                                  container or single file with your documents. Required.
-                                "filter": {
-                                    "prefix": "str",  # Optional. A
-                                      case-sensitive prefix string to filter documents in the source
-                                      path for translation.  For example, when using a Azure storage
-                                      blob Uri, use the prefix to restrict sub folders for translation.
-                                    "suffix": "str"  # Optional. A case-sensitive
-                                      suffix string to filter documents in the source path for
-                                      translation.  This is most often use for file extensions.
-                                },
-                                "language": "str",  # Optional. Language code If none
-                                  is specified, we will perform auto detect on the document.
-                                "storageSource": "str"  # Optional. Storage Source.
-                                  "AzureBlob"
-                            },
-                            "targets": [
-                                {
-                                    "language": "str",  # Target Language.
-                                      Required.
-                                    "targetUrl": "str",  # Location of the folder
-                                      / container with your documents. Required.
-                                    "category": "str",  # Optional. Category /
-                                      custom system for translation request.
-                                    "glossaries": [
-                                        {
-                                            "format": "str",  # Format.
-                                              Required.
-                                            "glossaryUrl": "str",  #
-                                              Location of the glossary.  We will use the file extension
-                                              to extract the formatting if the format parameter is not
-                                              supplied.  If the translation language pair is not
-                                              present in the glossary, it will not be applied.
-                                              Required.
-                                            "storageSource": "str",  #
-                                              Optional. Storage Source. "AzureBlob"
-                                            "version": "str"  # Optional.
-                                              Optional Version.  If not specified, default is used.
-                                        }
-                                    ],
-                                    "storageSource": "str"  # Optional. Storage
-                                      Source. "AzureBlob"
-                                }
-                            ],
-                            "storageType": "str"  # Optional. Storage type of the input
-                              documents source string. Known values are: "Folder" and "File".
-                        }
-                    ]
-                }
         """
 
     @overload
@@ -493,7 +440,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         destination, it will be overwritten. The targetUrl for each target language
         must be unique.
 
-        :param body: Required.
+        :param body: Translation job submission batch request. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -529,7 +476,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         destination, it will be overwritten. The targetUrl for each target language
         must be unique.
 
-        :param body: Required.
+        :param body: Translation job submission batch request. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -541,9 +488,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
     @distributed_trace
     def begin_start_translation(
-        self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models._models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
-        # pylint: disable=line-too-long
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document
@@ -566,70 +512,13 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         destination, it will be overwritten. The targetUrl for each target language
         must be unique.
 
-        :param body: Is one of the following types: StartTranslationDetails, JSON, IO[bytes] Required.
+        :param body: Translation job submission batch request. Is one of the following types:
+         StartTranslationDetails, JSON, IO[bytes] Required.
         :type body: ~azure.ai.translation.document.models._models.StartTranslationDetails or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "inputs": [
-                        {
-                            "source": {
-                                "sourceUrl": "str",  # Location of the folder /
-                                  container or single file with your documents. Required.
-                                "filter": {
-                                    "prefix": "str",  # Optional. A
-                                      case-sensitive prefix string to filter documents in the source
-                                      path for translation.  For example, when using a Azure storage
-                                      blob Uri, use the prefix to restrict sub folders for translation.
-                                    "suffix": "str"  # Optional. A case-sensitive
-                                      suffix string to filter documents in the source path for
-                                      translation.  This is most often use for file extensions.
-                                },
-                                "language": "str",  # Optional. Language code If none
-                                  is specified, we will perform auto detect on the document.
-                                "storageSource": "str"  # Optional. Storage Source.
-                                  "AzureBlob"
-                            },
-                            "targets": [
-                                {
-                                    "language": "str",  # Target Language.
-                                      Required.
-                                    "targetUrl": "str",  # Location of the folder
-                                      / container with your documents. Required.
-                                    "category": "str",  # Optional. Category /
-                                      custom system for translation request.
-                                    "glossaries": [
-                                        {
-                                            "format": "str",  # Format.
-                                              Required.
-                                            "glossaryUrl": "str",  #
-                                              Location of the glossary.  We will use the file extension
-                                              to extract the formatting if the format parameter is not
-                                              supplied.  If the translation language pair is not
-                                              present in the glossary, it will not be applied.
-                                              Required.
-                                            "storageSource": "str",  #
-                                              Optional. Storage Source. "AzureBlob"
-                                            "version": "str"  # Optional.
-                                              Optional Version.  If not specified, default is used.
-                                        }
-                                    ],
-                                    "storageSource": "str"  # Optional. Storage
-                                      Source. "AzureBlob"
-                                }
-                            ],
-                            "storageType": "str"  # Optional. Storage type of the input
-                              documents source string. Known values are: "Folder" and "File".
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -640,9 +529,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_translation_initial(  # type: ignore
+            raw_result = self._start_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -682,8 +572,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.TranslationStatus"]:
-        # pylint: disable=line-too-long
+    ) -> Iterable["_models._models.TranslationStatus"]:
         """Returns a list of batch requests submitted and the status for each request.
 
         Returns a list of batch requests submitted and the status for each
@@ -781,54 +670,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models._models.TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TranslationStatus]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models._models.TranslationStatus]] = kwargs.pop(  # pylint: disable=protected-access
             "cls", None
         )
 
@@ -887,7 +734,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TranslationStatus], deserialized["value"])
+            list_of_elem = _deserialize(List[_models._models.TranslationStatus], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -896,14 +743,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # type: ignore[annotation-unchecked] # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -914,8 +759,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
     @distributed_trace
     def get_document_status(  # pylint: disable=protected-access
         self, id: str, document_id: str, **kwargs: Any
-    ) -> _models.DocumentStatus:
-        # pylint: disable=line-too-long
+    ) -> _models._models.DocumentStatus:
         """Returns the status for a specific document.
 
         Returns the translation status for a specific document based on the request Id
@@ -928,43 +772,6 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :return: DocumentStatus. The DocumentStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models._models.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Document Id. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "progress": 0.0,  # Progress of the translation if available. Required.
-                    "sourcePath": "str",  # Location of the source document. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "to": "str",  # To language. Required.
-                    "characterCharged": 0,  # Optional. Character charged by the API.
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    },
-                    "path": "str"  # Optional. Location of the document or folder.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -977,7 +784,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DocumentStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.DocumentStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_get_document_status_request(
             id=id,
@@ -1000,7 +807,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1008,7 +818,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.DocumentStatus, response.json()  # pylint: disable=protected-access
+                _models._models.DocumentStatus, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -1019,8 +829,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
     @distributed_trace
     def get_translation_status(  # pylint: disable=protected-access
         self, id: str, **kwargs: Any
-    ) -> _models.TranslationStatus:
-        # pylint: disable=line-too-long
+    ) -> _models._models.TranslationStatus:
         """Returns the status for a document translation request.
 
         Returns the status for a document translation request.
@@ -1033,48 +842,6 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models._models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1087,7 +854,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_get_translation_status_request(
             id=id,
@@ -1109,7 +876,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1117,7 +887,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.TranslationStatus, response.json()  # pylint: disable=protected-access
+                _models._models.TranslationStatus, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -1128,8 +898,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
     @distributed_trace
     def cancel_translation(  # pylint: disable=protected-access
         self, id: str, **kwargs: Any
-    ) -> _models.TranslationStatus:
-        # pylint: disable=line-too-long
+    ) -> _models._models.TranslationStatus:
         """Cancel a currently processing or queued translation.
 
         Cancel a currently processing or queued translation.
@@ -1146,48 +915,6 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models._models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1200,7 +927,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_cancel_translation_request(
             id=id,
@@ -1222,7 +949,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1230,7 +960,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.TranslationStatus, response.json()  # pylint: disable=protected-access
+                _models._models.TranslationStatus, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -1251,8 +981,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.DocumentStatus"]:
-        # pylint: disable=line-too-long
+    ) -> Iterable["_models._models.DocumentStatus"]:
         """Returns the status for all documents in a batch document translation request.
 
         Returns the status for all documents in a batch document translation request.
@@ -1346,49 +1075,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models._models.DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Document Id. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "progress": 0.0,  # Progress of the translation if available. Required.
-                    "sourcePath": "str",  # Location of the source document. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "to": "str",  # To language. Required.
-                    "characterCharged": 0,  # Optional. Character charged by the API.
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    },
-                    "path": "str"  # Optional. Location of the document or folder.
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DocumentStatus]] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[List[_models._models.DocumentStatus]] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1446,7 +1138,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentStatus], deserialized["value"])
+            list_of_elem = _deserialize(List[_models._models.DocumentStatus], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1455,14 +1147,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(   # type: ignore[annotation-unchecked] # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1472,8 +1162,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
     @distributed_trace
     def get_supported_formats(  # pylint: disable=protected-access
-        self, *, type: Optional[Union[str, _enums.FileFormatType]] = None, **kwargs: Any
-    ) -> _models.SupportedFileFormats:
+        self, *, type: Optional[Union[str, _models._enums.FileFormatType]] = None, **kwargs: Any
+    ) -> _models._models.SupportedFileFormats:
         """Returns a list of supported document formats.
 
         The list of supported formats supported by the Document Translation
@@ -1487,32 +1177,6 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :return: SupportedFileFormats. The SupportedFileFormats is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models._models.SupportedFileFormats
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "value": [
-                        {
-                            "contentTypes": [
-                                "str"  # Supported Content-Types for this format.
-                                  Required.
-                            ],
-                            "fileExtensions": [
-                                "str"  # Supported file extension for this format.
-                                  Required.
-                            ],
-                            "format": "str",  # Name of the format. Required.
-                            "defaultVersion": "str",  # Optional. Default version if none
-                              is specified.
-                            "type": "str",  # Optional. Supported Type for this format.
-                            "versions": [
-                                "str"  # Optional. Supported Version.
-                            ]
-                        }
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1525,7 +1189,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SupportedFileFormats] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.SupportedFileFormats] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         _request = build_document_translation_get_supported_formats_request(
             type=type,
@@ -1547,7 +1211,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1555,7 +1222,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.SupportedFileFormats, response.json()  # pylint: disable=protected-access
+                _models._models.SupportedFileFormats, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -1583,7 +1250,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
         Use this API to submit a single translation request to the Document Translation Service.
 
-        :param body: Required.
+        :param body: Document Translate Request Content. Required.
         :type body: ~azure.ai.translation.document.models.DocumentTranslateContent
         :keyword target_language: Specifies the language of the output document.
          The target language must be one of the supported languages included in the translation scope.
@@ -1610,15 +1277,6 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "document": filetype,
-                    "glossary": [filetype]
-                }
         """
 
     @overload
@@ -1636,7 +1294,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
         Use this API to submit a single translation request to the Document Translation Service.
 
-        :param body: Required.
+        :param body: Document Translate Request Content. Required.
         :type body: JSON
         :keyword target_language: Specifies the language of the output document.
          The target language must be one of the supported languages included in the translation scope.
@@ -1680,7 +1338,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
         Use this API to submit a single translation request to the Document Translation Service.
 
-        :param body: Is either a DocumentTranslateContent type or a JSON type. Required.
+        :param body: Document Translate Request Content. Is either a DocumentTranslateContent type or a
+         JSON type. Required.
         :type body: ~azure.ai.translation.document.models.DocumentTranslateContent or JSON
         :keyword target_language: Specifies the language of the output document.
          The target language must be one of the supported languages included in the translation scope.
@@ -1707,15 +1366,6 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "document": filetype,
-                    "glossary": [filetype]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1760,7 +1410,10 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1768,6 +1421,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         deserialized = response.iter_bytes()
 

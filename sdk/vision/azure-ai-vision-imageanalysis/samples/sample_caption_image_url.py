@@ -44,10 +44,7 @@ def sample_caption_image_url():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.

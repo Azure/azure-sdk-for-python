@@ -27,18 +27,26 @@ class AnalyzeTextOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ImageCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Image analyze category."""
+    """The harm category supported in Image content analysis."""
 
     HATE = "Hate"
+    """The harm category for Image - Hate."""
     SELF_HARM = "SelfHarm"
+    """The harm category for Image - SelfHarm."""
     SEXUAL = "Sexual"
+    """The harm category for Image - Sexual."""
     VIOLENCE = "Violence"
+    """The harm category for Image - Violence."""
 
 
 class TextCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text analyze category."""
+    """The harm category supported in Text content analysis."""
 
     HATE = "Hate"
+    """The harm category for Text - Hate."""
     SELF_HARM = "SelfHarm"
+    """The harm category for Text - SelfHarm."""
     SEXUAL = "Sexual"
+    """The harm category for Text - Sexual."""
     VIOLENCE = "Violence"
+    """The harm category for Text - Violence."""

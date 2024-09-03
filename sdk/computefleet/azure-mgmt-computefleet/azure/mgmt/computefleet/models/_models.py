@@ -467,7 +467,6 @@ class CapacityReservationProfile(_model_base.Model):
 class ComputeProfile(_model_base.Model):
     """Compute Profile to use for running user's workloads.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar base_virtual_machine_profile: Base Virtual Machine Profile Properties to be specified
      according to
@@ -784,7 +783,6 @@ class TrackedResource(Resource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -832,7 +830,6 @@ class Fleet(TrackedResource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -896,7 +893,6 @@ class FleetProperties(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", "Deleting", and "Migrating".
@@ -1131,7 +1127,6 @@ class InnerError(_model_base.Model):
 class KeyVaultSecretReference(_model_base.Model):
     """Describes a reference to Key Vault Secret.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
     :vartype secret_url: str
@@ -1343,7 +1338,6 @@ class ManagedServiceIdentity(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -1654,7 +1648,6 @@ class PatchSettings(_model_base.Model):
 class Plan(_model_base.Model):
     """Plan for the resource.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: A user defined name of the 3rd Party Artifact that is being procured. Required.
     :vartype name: str
@@ -2545,7 +2538,6 @@ class VirtualMachineScaleSet(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: The compute RP resource id of the virtualMachineScaleSet
     "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}".
@@ -2578,7 +2570,6 @@ class VirtualMachineScaleSet(_model_base.Model):
 class VirtualMachineScaleSetDataDisk(_model_base.Model):
     """Describes a virtual machine scale set data disk.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -2929,7 +2920,6 @@ class VirtualMachineScaleSetHardwareProfile(_model_base.Model):
 class VirtualMachineScaleSetIPConfiguration(_model_base.Model):
     """Describes a virtual machine scale set network profile's IP configuration.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The IP configuration name. Required.
     :vartype name: str
@@ -3147,7 +3137,6 @@ class VirtualMachineScaleSetManagedDiskParameters(_model_base.Model):  # pylint:
 class VirtualMachineScaleSetNetworkConfiguration(_model_base.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's network configurations.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The network configuration name. Required.
     :vartype name: str
@@ -3213,7 +3202,6 @@ class VirtualMachineScaleSetNetworkConfigurationProperties(
 ):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Describes a virtual machine scale set network profile's IP configuration.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
@@ -3357,7 +3345,6 @@ class VirtualMachineScaleSetNetworkProfile(_model_base.Model):
 class VirtualMachineScaleSetOSDisk(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a virtual machine scale set operating system disk.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -3641,7 +3628,6 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_model_base.Model):  # 
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress
     configuration.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
@@ -3686,7 +3672,6 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_model_base.Model):  # 
 class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_model_base.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
      vm index
@@ -3920,7 +3905,6 @@ class VMGalleryApplication(_model_base.Model):
     """Specifies the required information to reference a compute gallery application
     version.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar tags: Optional, Specifies a passthrough value for more generic context.
     :vartype tags: str
@@ -3989,7 +3973,6 @@ class VmSizeProfile(_model_base.Model):
     """Specifications about a VM Size. This will also contain the corresponding rank and weight in
     future.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The Sku name (e.g. 'Standard_DS1_v2'). Required.
     :vartype name: str

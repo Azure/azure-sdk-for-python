@@ -48,16 +48,10 @@ async def sample_caption_image_file_async():
         image_data = f.read()
 
     # Create an asynchronous Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Get a caption for the image, asynchronously.
-    result = await client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.CAPTION]
-    )
+    result = await client.analyze(image_data=image_data, visual_features=[VisualFeatures.CAPTION])
 
     await client.close()
 

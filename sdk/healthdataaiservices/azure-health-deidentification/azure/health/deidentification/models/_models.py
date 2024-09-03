@@ -70,7 +70,6 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of a job. Required.
     :vartype name: str
@@ -277,92 +276,6 @@ class DocumentLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_model_base.Model):
-    """The error object.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.health.deidentification.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.health.deidentification.models.InnerError
-    """
-
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error. As per Microsoft One API
-    guidelines -
-    https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar innererror: Inner error.
-    :vartype innererror: ~azure.health.deidentification.models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """Inner error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class JobSummary(_model_base.Model):
     """Summary metrics of a job.
 
@@ -511,7 +424,6 @@ class PhiTaggerResult(_model_base.Model):
 class SourceStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str
@@ -598,7 +510,6 @@ class StringIndex(_model_base.Model):
 class TargetStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str

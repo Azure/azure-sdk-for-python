@@ -15,12 +15,10 @@ from ._models import Environment
 from ._models import EnvironmentDefinition
 from ._models import EnvironmentDefinitionParameter
 from ._models import EnvironmentType
-from ._models import Error
 from ._models import HardwareProfile
 from ._models import ImageReference
-from ._models import InnerError
-from ._models import OSDisk
-from ._models import OperationDetails
+from ._models import OperationStatus
+from ._models import OsDisk
 from ._models import Pool
 from ._models import Project
 from ._models import RemoteConnection
@@ -35,8 +33,8 @@ from ._enums import EnvironmentProvisioningState
 from ._enums import EnvironmentTypeStatus
 from ._enums import HibernateSupport
 from ._enums import LocalAdministratorStatus
-from ._enums import OSType
-from ._enums import OperationStatus
+from ._enums import OperationState
+from ._enums import OsType
 from ._enums import ParameterType
 from ._enums import PoolHealthStatus
 from ._enums import PowerState
@@ -58,12 +56,10 @@ __all__ = [
     "EnvironmentDefinition",
     "EnvironmentDefinitionParameter",
     "EnvironmentType",
-    "Error",
     "HardwareProfile",
     "ImageReference",
-    "InnerError",
-    "OSDisk",
-    "OperationDetails",
+    "OperationStatus",
+    "OsDisk",
     "Pool",
     "Project",
     "RemoteConnection",
@@ -77,8 +73,8 @@ __all__ = [
     "EnvironmentTypeStatus",
     "HibernateSupport",
     "LocalAdministratorStatus",
-    "OSType",
-    "OperationStatus",
+    "OperationState",
+    "OsType",
     "ParameterType",
     "PoolHealthStatus",
     "PowerState",

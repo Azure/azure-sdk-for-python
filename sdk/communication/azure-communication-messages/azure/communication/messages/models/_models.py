@@ -11,10 +11,12 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
-from ._enums import (CommunicationMessageKind,
-                    CommunicationMessagesChannel,
-                    MessageTemplateBindingsKind,
-                    MessageTemplateValueKind)
+from ._enums import (
+    CommunicationMessageKind,
+    CommunicationMessagesChannel,
+    MessageTemplateBindingsKind,
+    MessageTemplateValueKind,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,7 +27,7 @@ class NotificationContent(_model_base.Model):
     """Details of the message to send.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageNotificationContent, TemplateNotificationContent, TextNotificationContent
+    MediaNotificationContent, TemplateNotificationContent, TextNotificationContent
 
     All required parameters must be populated in order to send to server.
 
@@ -48,7 +50,6 @@ class NotificationContent(_model_base.Model):
     """The type discriminator describing a notification type. Required. Known values are: \"text\",
      \"image\", and \"template\"."""
 
-
     @overload
     def __init__(
         self,
@@ -56,8 +57,7 @@ class NotificationContent(_model_base.Model):
         channel_registration_id: str,
         to: List[str],
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -66,12 +66,12 @@ class NotificationContent(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class ImageNotificationContent(NotificationContent, discriminator='image'):
-    """A request to send a media image notification.
+class MediaNotificationContent(NotificationContent, discriminator="image"):
+    """A request to send a media notification.
 
     All required parameters must be populated in order to send to server.
 
@@ -84,7 +84,7 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
     :vartype kind: str or ~azure.communication.messages.models.IMAGE
     :ivar content: Optional text content.
     :vartype content: str
-    :ivar media_uri: A media url for the image file. Required if the type is one of the supported media
+    :ivar media_uri: A media url for the file. Required if the type is one of the supported media
      types, e.g. image. Required.
     :vartype media_uri: str
     """
@@ -97,7 +97,6 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
     """A media url for the file. Required if the type is one of the supported media types, e.g. image.
      Required."""
 
-
     @overload
     def __init__(
         self,
@@ -106,8 +105,7 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
         to: List[str],
         media_uri: str,
         content: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -116,14 +114,13 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.IMAGE, **kwargs)
 
 
 class MessageReceipt(_model_base.Model):
     """Receipt of the sending one message.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The message id. Required.
     :vartype message_id: str
@@ -136,15 +133,13 @@ class MessageReceipt(_model_base.Model):
     to: str = rest_field()
     """The native external platform user identifier of the recipient. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         message_id: str,
         to: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -153,7 +148,7 @@ class MessageReceipt(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -183,7 +178,6 @@ class MessageTemplate(_model_base.Model):
     bindings: Optional["_models.MessageTemplateBindings"] = rest_field()
     """The binding object to link values to the template specific locations."""
 
-
     @overload
     def __init__(
         self,
@@ -192,8 +186,7 @@ class MessageTemplate(_model_base.Model):
         language: str,
         template_values: Optional[List["_models.MessageTemplateValue"]] = None,
         bindings: Optional["_models.MessageTemplateBindings"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -202,7 +195,7 @@ class MessageTemplate(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -222,14 +215,12 @@ class MessageTemplateBindings(_model_base.Model):
     kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a template bindings type. Required. \"whatsApp\""""
 
-
     @overload
     def __init__(
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -238,7 +229,7 @@ class MessageTemplateBindings(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -265,15 +256,13 @@ class MessageTemplateValue(_model_base.Model):
     """The type discriminator describing a template parameter type. Required. Known values are:
      \"text\", \"image\", \"document\", \"video\", \"location\", and \"quickAction\"."""
 
-
     @overload
     def __init__(
         self,
         *,
         name: str,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -282,11 +271,11 @@ class MessageTemplateValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
+class MessageTemplateDocument(MessageTemplateValue, discriminator="document"):
     """The message template's document value information.
 
     All required parameters must be populated in order to send to server.
@@ -312,7 +301,6 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
     file_name: Optional[str] = rest_field(name="fileName")
     """The [optional] filename of the media file."""
 
-
     @overload
     def __init__(
         self,
@@ -321,8 +309,7 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
         url: str,
         caption: Optional[str] = None,
         file_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -331,11 +318,11 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.DOCUMENT, **kwargs)
 
 
-class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
+class MessageTemplateImage(MessageTemplateValue, discriminator="image"):
     """The message template's image value information.
 
     All required parameters must be populated in order to send to server.
@@ -361,7 +348,6 @@ class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
     file_name: Optional[str] = rest_field(name="fileName")
     """The [optional] filename of the media file."""
 
-
     @overload
     def __init__(
         self,
@@ -370,8 +356,7 @@ class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
         url: str,
         caption: Optional[str] = None,
         file_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -380,8 +365,9 @@ class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.IMAGE, **kwargs)
+
 
 class MessageTemplateItem(_model_base.Model):
     """The message template as returned from the service.
@@ -391,7 +377,6 @@ class MessageTemplateItem(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The template's name. Required.
     :vartype name: str
@@ -417,7 +402,6 @@ class MessageTemplateItem(_model_base.Model):
     kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a template type. Required. \"whatsApp\""""
 
-
     @overload
     def __init__(
         self,
@@ -425,8 +409,7 @@ class MessageTemplateItem(_model_base.Model):
         language: str,
         status: Union[str, "_models.MessageTemplateStatus"],
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -435,11 +418,11 @@ class MessageTemplateItem(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
+class MessageTemplateLocation(MessageTemplateValue, discriminator="location"):
     """The message template's location value information.
 
     All required parameters must be populated in order to send to server.
@@ -469,7 +452,6 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
     longitude: float = rest_field()
     """The longitude of the location. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -479,8 +461,7 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
         longitude: float,
         location_name: Optional[str] = None,
         address: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -489,11 +470,11 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.LOCATION, **kwargs)
 
 
-class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickAction'):
+class MessageTemplateQuickAction(MessageTemplateValue, discriminator="quickAction"):
     """The message template's quick action value information.
 
     All required parameters must be populated in order to send to server.
@@ -516,7 +497,6 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickActio
     payload: Optional[str] = rest_field()
     """The [Optional] quick action payload."""
 
-
     @overload
     def __init__(
         self,
@@ -524,8 +504,7 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickActio
         name: str,
         text: Optional[str] = None,
         payload: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -534,11 +513,11 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickActio
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.QUICK_ACTION, **kwargs)
 
 
-class MessageTemplateText(MessageTemplateValue, discriminator='text'):
+class MessageTemplateText(MessageTemplateValue, discriminator="text"):
     """The message template's text value information.
 
     All required parameters must be populated in order to send to server.
@@ -556,15 +535,13 @@ class MessageTemplateText(MessageTemplateValue, discriminator='text'):
     text: str = rest_field()
     """The text value. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         name: str,
         text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -573,11 +550,11 @@ class MessageTemplateText(MessageTemplateValue, discriminator='text'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.TEXT, **kwargs)
 
 
-class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
+class MessageTemplateVideo(MessageTemplateValue, discriminator="video"):
     """The message template's video value information.
 
     All required parameters must be populated in order to send to server.
@@ -603,7 +580,6 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
     file_name: Optional[str] = rest_field(name="fileName")
     """The [optional] filename of the media file."""
 
-
     @overload
     def __init__(
         self,
@@ -612,8 +588,7 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
         url: str,
         caption: Optional[str] = None,
         file_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -622,14 +597,13 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.VIDEO, **kwargs)
 
 
 class SendMessageResult(_model_base.Model):
     """Result of the send message operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar receipts: Receipts of the send message operation. Required.
     :vartype receipts: list[~azure.communication.messages.models.MessageReceipt]
@@ -638,14 +612,12 @@ class SendMessageResult(_model_base.Model):
     receipts: List["_models.MessageReceipt"] = rest_field()
     """Receipts of the send message operation. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         receipts: List["_models.MessageReceipt"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -654,11 +626,11 @@ class SendMessageResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class TemplateNotificationContent(NotificationContent, discriminator='template'):
+class TemplateNotificationContent(NotificationContent, discriminator="template"):
     """A request to send a template notification.
 
     All required parameters must be populated in order to send to server.
@@ -679,7 +651,6 @@ class TemplateNotificationContent(NotificationContent, discriminator='template')
     template: "_models.MessageTemplate" = rest_field()
     """The template object used to create templates. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -687,8 +658,7 @@ class TemplateNotificationContent(NotificationContent, discriminator='template')
         channel_registration_id: str,
         to: List[str],
         template: "_models.MessageTemplate",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -697,11 +667,11 @@ class TemplateNotificationContent(NotificationContent, discriminator='template')
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.TEMPLATE, **kwargs)
 
 
-class TextNotificationContent(NotificationContent, discriminator='text'):
+class TextNotificationContent(NotificationContent, discriminator="text"):
     """A request to send a text notification.
 
     All required parameters must be populated in order to send to server.
@@ -722,7 +692,6 @@ class TextNotificationContent(NotificationContent, discriminator='text'):
     content: str = rest_field()
     """Message content. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -730,8 +699,7 @@ class TextNotificationContent(NotificationContent, discriminator='text'):
         channel_registration_id: str,
         to: List[str],
         content: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -740,16 +708,17 @@ class TextNotificationContent(NotificationContent, discriminator='text'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.TEXT, **kwargs)
 
-class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='whatsApp'):
+
+class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="whatsApp"):
     """The template bindings for WhatsApp.
 
     All required parameters must be populated in order to send to server.
 
     :ivar kind: MessageTemplateBindings is whatsApp. Required. The WhatsApp template type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
     :ivar header: The header template bindings.
     :vartype header:
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsComponent]
@@ -764,7 +733,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsButton]
     """
 
-    kind: Literal[MessageTemplateBindingsKind.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[MessageTemplateBindingsKind.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
     """MessageTemplateBindings is whatsApp. Required. The WhatsApp template type."""
     header: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = rest_field()
     """The header template bindings."""
@@ -775,7 +744,6 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
     buttons: Optional[List["_models.WhatsAppMessageTemplateBindingsButton"]] = rest_field()
     """The button template bindings."""
 
-
     @overload
     def __init__(
         self,
@@ -784,8 +752,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
         body: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = None,
         footer: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = None,
         buttons: Optional[List["_models.WhatsAppMessageTemplateBindingsButton"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -794,8 +761,9 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATSAPP, **kwargs)
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATS_APP, **kwargs)
+
 
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
     """The template bindings component button for WhatsApp.
@@ -814,15 +782,13 @@ class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
     ref_value: str = rest_field(name="refValue")
     """The name of the referenced item in the template values. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         sub_type: Union[str, "_models.WhatsAppMessageButtonSubType"],
         ref_value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -831,8 +797,9 @@ class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
 
 class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
     """The template bindings component for WhatsApp.
@@ -846,14 +813,12 @@ class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
     ref_value: str = rest_field(name="refValue")
     """The name of the referenced item in the template values. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         ref_value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -862,15 +827,15 @@ class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
-class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp'):
+
+class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp"):
     """The WhatsApp-specific template response contract.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The template's name. Required.
     :vartype name: str
@@ -885,15 +850,14 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
     :vartype content: any
     :ivar kind: Message template response type is whatsApp. Required. The WhatsApp communication
      messages channel type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
     """
 
     content: Optional[Any] = rest_field()
     """WhatsApp platform's template content. This is the payload returned from WhatsApp API."""
-    kind: Literal[CommunicationMessagesChannel.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[CommunicationMessagesChannel.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
     """Message template response type is whatsApp. Required. The WhatsApp communication messages
      channel type."""
-
 
     @overload
     def __init__(
@@ -902,8 +866,7 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
         language: str,
         status: Union[str, "_models.MessageTemplateStatus"],
         content: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -912,5 +875,5 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, kind=CommunicationMessagesChannel.WHATSAPP, **kwargs)
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=CommunicationMessagesChannel.WHATS_APP, **kwargs)

@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 class AcceptJobOfferResult(_model_base.Model):
     """Response containing ids for the worker, job, and assignment from an accepted offer.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: Id of job assignment that assigns a worker that has accepted an offer to a
      job. Required.
@@ -55,8 +54,7 @@ class AcceptJobOfferResult(_model_base.Model):
         assignment_id: str,
         job_id: str,
         worker_id: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -75,7 +73,6 @@ class DistributionMode(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BestWorkerMode, LongestIdleMode, RoundRobinMode
 
-    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -115,8 +112,7 @@ class DistributionMode(_model_base.Model):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -132,7 +128,6 @@ class DistributionMode(_model_base.Model):
 class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
     """Jobs are distributed to the worker with the strongest abilities available.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -178,8 +173,7 @@ class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
         bypass_selectors: Optional[bool] = None,
         scoring_rule: Optional["_models.RouterRule"] = None,
         scoring_rule_options: Optional["_models.ScoringRuleOptions"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -198,7 +192,6 @@ class ExceptionAction(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CancelExceptionAction, ManualReclassifyExceptionAction, ReclassifyExceptionAction
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -220,8 +213,7 @@ class ExceptionAction(_model_base.Model):
         *,
         kind: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -237,7 +229,6 @@ class ExceptionAction(_model_base.Model):
 class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     """An action that marks a job as cancelled.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -267,8 +258,7 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         note: Optional[str] = None,
         disposition_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -304,8 +294,7 @@ class CancelJobOptions(_model_base.Model):
         *,
         note: Optional[str] = None,
         disposition_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -327,7 +316,6 @@ class ClassificationPolicy(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -377,8 +365,7 @@ class ClassificationPolicy(_model_base.Model):
         queue_selector_attachments: Optional[List["_models.QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["_models.RouterRule"] = None,
         worker_selector_attachments: Optional[List["_models.WorkerSelectorAttachment"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -422,8 +409,7 @@ class CloseJobOptions(_model_base.Model):
         disposition_code: Optional[str] = None,
         close_at: Optional[datetime.datetime] = None,
         note: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -456,8 +442,7 @@ class CompleteJobOptions(_model_base.Model):
         self,
         *,
         note: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -482,7 +467,6 @@ class QueueSelectorAttachment(_model_base.Model):
     RuleEngineQueueSelectorAttachment, StaticQueueSelectorAttachment,
     WeightedAllocationQueueSelectorAttachment
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of QueueSelectorAttachment. Required.
      Known values are: "conditional", "passThrough", "ruleEngine", "static", and
@@ -500,8 +484,7 @@ class QueueSelectorAttachment(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -518,7 +501,6 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """Describes a set of queue selectors that will be attached if the given condition resolves to
     true.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar condition: The condition that must be true for the queue selectors to be attached.
      Required.
@@ -544,8 +526,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         *,
         condition: "_models.RouterRule",
         queue_selectors: List["_models.RouterQueueSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -566,7 +547,6 @@ class WorkerSelectorAttachment(_model_base.Model):
     RuleEngineWorkerSelectorAttachment, StaticWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of WorkerSelectorAttachment. Required.
      Known values are: "conditional", "passThrough", "ruleEngine", "static", and
@@ -585,8 +565,7 @@ class WorkerSelectorAttachment(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -603,7 +582,6 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """Describes a set of worker selectors that will be attached if the given condition resolves to
     true.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar condition: The condition that must be true for the worker selectors to be attached.
      Required.
@@ -629,8 +607,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         *,
         condition: "_models.RouterRule",
         worker_selectors: List["_models.RouterWorkerSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -665,8 +642,7 @@ class DeclineJobOfferOptions(_model_base.Model):
         self,
         *,
         retry_offer_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -697,7 +673,6 @@ class RouterRule(_model_base.Model):
     DirectMapRouterRule, ExpressionRouterRule, FunctionRouterRule, StaticRouterRule,
     WebhookRouterRule
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of RouterRule. Required. Known values
      are: "directMap", "expression", "function", "static", and "webhook".
@@ -714,8 +689,7 @@ class RouterRule(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -731,7 +705,6 @@ class RouterRule(_model_base.Model):
 class DirectMapRouterRule(RouterRule, discriminator="directMap"):
     """A rule that return the same labels as the input labels.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
      for DirectMapRouterRule.
@@ -742,13 +715,27 @@ class DirectMapRouterRule(RouterRule, discriminator="directMap"):
     """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
      DirectMapRouterRule."""
 
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RouterRuleKind.DIRECT_MAP, **kwargs)
+
 
 class DistributionPolicy(_model_base.Model):
     """Policy governing how jobs are distributed to workers.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -781,8 +768,7 @@ class DistributionPolicy(_model_base.Model):
         name: Optional[str] = None,
         offer_expires_after_seconds: Optional[float] = None,
         mode: Optional["_models.DistributionMode"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -800,7 +786,6 @@ class ExceptionPolicy(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -827,8 +812,7 @@ class ExceptionPolicy(_model_base.Model):
         *,
         name: Optional[str] = None,
         exception_rules: Optional[List["_models.ExceptionRule"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -844,7 +828,6 @@ class ExceptionPolicy(_model_base.Model):
 class ExceptionRule(_model_base.Model):
     """A rule that defines actions to execute upon a specific trigger.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of an exception rule. Required.
     :vartype id: str
@@ -868,8 +851,7 @@ class ExceptionRule(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         trigger: "_models.ExceptionTrigger",
         actions: List["_models.ExceptionAction"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -888,7 +870,6 @@ class ExceptionTrigger(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueLengthExceptionTrigger, WaitTimeExceptionTrigger
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Known
      values are: "queueLength" and "waitTime".
@@ -905,8 +886,7 @@ class ExceptionTrigger(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -922,7 +902,6 @@ class ExceptionTrigger(_model_base.Model):
 class ExpressionRouterRule(RouterRule, discriminator="expression"):
     """A rule providing inline expression rules.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar language: The expression language to compile to and execute. "powerFx"
     :vartype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
@@ -948,8 +927,7 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
         *,
         expression: str,
         language: Optional[Union[str, "_models.ExpressionRouterRuleLanguage"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -965,7 +943,6 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
 class FunctionRouterRule(RouterRule, discriminator="function"):
     """A rule providing a binding to an HTTP Triggered Azure Function.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar function_uri: URL for Azure Function. Required.
     :vartype function_uri: str
@@ -990,8 +967,7 @@ class FunctionRouterRule(RouterRule, discriminator="function"):
         *,
         function_uri: str,
         credential: Optional["_models.FunctionRouterRuleCredential"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1033,8 +1009,7 @@ class FunctionRouterRuleCredential(_model_base.Model):
         function_key: Optional[str] = None,
         app_key: Optional[str] = None,
         client_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1058,7 +1033,6 @@ class JobMatchingMode(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueAndMatchMode, ScheduleAndSuspendMode, SuspendMode
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of JobMatchingMode. Required. Known
      values are: "queueAndMatch", "scheduleAndSuspend", and "suspend".
@@ -1075,8 +1049,7 @@ class JobMatchingMode(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1092,7 +1065,6 @@ class JobMatchingMode(_model_base.Model):
 class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
     """Jobs are directed to the worker who has been idle longest.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -1121,8 +1093,7 @@ class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1139,7 +1110,6 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualRecl
     """An action that manually reclassifies a job by providing the queue, priority and worker
     selectors.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -1172,8 +1142,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualRecl
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
         worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1207,8 +1176,7 @@ class OAuth2WebhookClientCredential(_model_base.Model):
         *,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1225,7 +1193,6 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """Attaches a queue selector where the value is passed through from a job's label with the same
     key.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1254,8 +1221,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         *,
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1272,7 +1238,6 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """Attaches a worker selector where the value is passed through from a job's label with the same
     key.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1307,8 +1272,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
         expires_after_seconds: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1325,7 +1289,6 @@ class QueueAndMatchMode(JobMatchingMode, discriminator="queueAndMatch"):
     """Describes a matching mode where matching worker to a job is automatically started after job is
     queued successfully.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing QueueAndMatchMode. Required. Discriminator value
      for QueueAndMatchMode.
@@ -1336,11 +1299,25 @@ class QueueAndMatchMode(JobMatchingMode, discriminator="queueAndMatch"):
     """The type discriminator describing QueueAndMatchMode. Required. Discriminator value for
      QueueAndMatchMode."""
 
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=JobMatchingModeKind.QUEUE_AND_MATCH, **kwargs)
+
 
 class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength"):
     """Trigger for an exception action on exceeding queue length.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
      Required.
@@ -1361,8 +1338,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength")
         self,
         *,
         threshold: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1379,7 +1355,6 @@ class QueueWeightedAllocation(_model_base.Model):
     """Contains the weight percentage and queue selectors to be applied if selected for weighted
     distributions.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
@@ -1399,8 +1374,7 @@ class QueueWeightedAllocation(_model_base.Model):
         *,
         weight: float,
         queue_selectors: List["_models.RouterQueueSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1416,7 +1390,6 @@ class QueueWeightedAllocation(_model_base.Model):
 class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     """An action that modifies labels on a job and then reclassifies it.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -1447,8 +1420,7 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         classification_policy_id: Optional[str] = None,
         labels_to_upsert: Optional[Dict[str, Any]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1473,7 +1445,6 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
     """Jobs are distributed in order to workers, starting with the worker that is after the last
     worker to receive a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -1502,8 +1473,7 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1519,7 +1489,6 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
 class RouterChannel(_model_base.Model):
     """Represents the capacity a job in this channel will consume from a worker.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar channel_id: Id of a channel. Required.
     :vartype channel_id: str
@@ -1527,7 +1496,7 @@ class RouterChannel(_model_base.Model):
      will consume of the total worker capacity. Required.
     :vartype capacity_cost_per_job: int
     :ivar max_number_of_jobs: The maximum number of jobs that can be supported concurrently for
-     this channel.
+     this channel. Value must be greater than zero.
     :vartype max_number_of_jobs: int
     """
 
@@ -1537,7 +1506,8 @@ class RouterChannel(_model_base.Model):
     """The amount of capacity that an instance of a job of this channel will consume of the total
      worker capacity. Required."""
     max_number_of_jobs: Optional[int] = rest_field(name="maxNumberOfJobs")
-    """The maximum number of jobs that can be supported concurrently for this channel."""
+    """The maximum number of jobs that can be supported concurrently for this channel. Value must be
+     greater than zero."""
 
     @overload
     def __init__(
@@ -1546,8 +1516,7 @@ class RouterChannel(_model_base.Model):
         channel_id: str,
         capacity_cost_per_job: int,
         max_number_of_jobs: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1565,7 +1534,6 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -1585,7 +1553,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype classification_policy_id: str
     :ivar queue_id: Id of a queue that this job is queued to.
     :vartype queue_id: str
-    :ivar priority: Priority of this job.
+    :ivar priority: Priority of this job. Value must be between -100 to 100.
     :vartype priority: int
     :ivar disposition_code: Reason code for cancelled or closed jobs.
     :vartype disposition_code: str
@@ -1633,7 +1601,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     queue_id: Optional[str] = rest_field(name="queueId")
     """Id of a queue that this job is queued to."""
     priority: Optional[int] = rest_field()
-    """Priority of this job."""
+    """Priority of this job. Value must be between -100 to 100."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
     """Reason code for cancelled or closed jobs."""
     requested_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(
@@ -1677,8 +1645,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, Any]] = None,
         notes: Optional[List["_models.RouterJobNote"]] = None,
         matching_mode: Optional["_models.JobMatchingMode"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1696,7 +1663,6 @@ class RouterJobAssignment(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: Id of a job assignment. Required.
     :vartype assignment_id: str
@@ -1729,8 +1695,7 @@ class RouterJobAssignment(_model_base.Model):
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
         closed_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1746,7 +1711,6 @@ class RouterJobAssignment(_model_base.Model):
 class RouterJobNote(_model_base.Model):
     """A note attached to a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar message: The message contained in the note. Required.
     :vartype message: str
@@ -1766,8 +1730,7 @@ class RouterJobNote(_model_base.Model):
         *,
         message: str,
         added_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1785,7 +1748,6 @@ class RouterJobOffer(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar offer_id: Id of an offer. Required.
     :vartype offer_id: str
@@ -1818,8 +1780,7 @@ class RouterJobOffer(_model_base.Model):
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
         expires_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1835,7 +1796,6 @@ class RouterJobOffer(_model_base.Model):
 class RouterJobPositionDetails(_model_base.Model):
     """Position and estimated wait time for a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar job_id: Id of the job these details are about. Required.
     :vartype job_id: str
@@ -1870,8 +1830,7 @@ class RouterJobPositionDetails(_model_base.Model):
         queue_id: str,
         queue_length: int,
         estimated_wait_time_minutes: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1889,7 +1848,6 @@ class RouterQueue(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -1930,8 +1888,7 @@ class RouterQueue(_model_base.Model):
         distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
         exception_policy_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1947,7 +1904,6 @@ class RouterQueue(_model_base.Model):
 class RouterQueueSelector(_model_base.Model):
     """Describes a condition that must be met against a set of labels for queue selection.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1977,8 +1933,7 @@ class RouterQueueSelector(_model_base.Model):
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
         value: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1994,7 +1949,6 @@ class RouterQueueSelector(_model_base.Model):
 class RouterQueueStatistics(_model_base.Model):
     """Statistics for the queue.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar queue_id: Id of the queue these details are about. Required.
     :vartype queue_id: str
@@ -2026,8 +1980,7 @@ class RouterQueueStatistics(_model_base.Model):
         length: int,
         estimated_wait_time_minutes: Optional[Dict[str, float]] = None,
         longest_job_wait_time_minutes: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2045,7 +1998,6 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -2123,8 +2075,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
         channels: Optional[List["_models.RouterChannel"]] = None,
         available_for_offers: Optional[bool] = None,
         max_concurrent_offers: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2140,7 +2091,6 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 class RouterWorkerAssignment(_model_base.Model):
     """The assignment for a worker to a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: Id of the assignment. Required.
     :vartype assignment_id: str
@@ -2170,8 +2120,7 @@ class RouterWorkerAssignment(_model_base.Model):
         job_id: str,
         capacity_cost: int,
         assigned_at: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2189,7 +2138,6 @@ class RouterWorkerSelector(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -2237,8 +2185,7 @@ class RouterWorkerSelector(_model_base.Model):
         value: Optional[Any] = None,
         expires_after_seconds: Optional[float] = None,
         expedite: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2254,7 +2201,6 @@ class RouterWorkerSelector(_model_base.Model):
 class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="ruleEngine"):
     """Attaches queue selectors to a job when the RouterRule is resolved.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar rule: A RouterRule that resolves a collection of queue selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
@@ -2274,8 +2220,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
         self,
         *,
         rule: "_models.RouterRule",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2291,7 +2236,6 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
 class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="ruleEngine"):
     """Attaches worker selectors to a job when a RouterRule is resolved.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar rule: A RouterRule that resolves a collection of worker selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
@@ -2311,8 +2255,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
         self,
         *,
         rule: "_models.RouterRule",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2329,7 +2272,6 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
     """Describes a matching mode used for scheduling jobs to be queued at a future time. At the
     specified time, matching worker to a job will not start automatically.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar schedule_at: Requested schedule time. Required.
     :vartype schedule_at: ~datetime.datetime
@@ -2349,8 +2291,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
         self,
         *,
         schedule_at: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2370,9 +2311,9 @@ class ScoringRuleOptions(_model_base.Model):
      not configured.
     :vartype batch_size: int
     :ivar scoring_parameters: List of extra parameters from a job that will be sent as part of the
-     payload to scoring rule. If not set, a job's labels (sent in the payload as ``job``\ ) and a
-     job's worker selectors (sent in the payload as ``selectors``\ ) are added to the payload of the
-     scoring rule by default. Note: Worker labels are always sent with scoring payload.
+     payload to scoring rule. If not set, a job's labels (sent in the payload as ``job``\\ ) and a
+     job's worker selectors (sent in the payload as ``selectors``\\ ) are added to the payload of
+     the scoring rule by default. Note: Worker labels are always sent with scoring payload.
     :vartype scoring_parameters: list[str or
      ~azure.communication.jobrouter.models.ScoringRuleParameterSelector]
     :ivar is_batch_scoring_enabled: If set to true, will score workers in batches, and the
@@ -2408,8 +2349,7 @@ class ScoringRuleOptions(_model_base.Model):
         scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = None,
         is_batch_scoring_enabled: Optional[bool] = None,
         descending_order: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2425,7 +2365,6 @@ class ScoringRuleOptions(_model_base.Model):
 class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="static"):
     """Describes a queue selector that will be attached to a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar queue_selector: The queue selector to attach. Required.
     :vartype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
@@ -2445,8 +2384,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
         self,
         *,
         queue_selector: "_models.RouterQueueSelector",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2462,7 +2400,6 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
 class StaticRouterRule(RouterRule, discriminator="static"):
     """A rule providing static rules that always return the same result, regardless of input.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar value: The static value this rule always returns. Values must be primitive values -
      number, string, boolean.
@@ -2484,8 +2421,7 @@ class StaticRouterRule(RouterRule, discriminator="static"):
         self,
         *,
         value: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2501,7 +2437,6 @@ class StaticRouterRule(RouterRule, discriminator="static"):
 class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="static"):
     """Describes a worker selector that will be attached to a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar worker_selector: The worker selector to attach. Required.
     :vartype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
@@ -2521,8 +2456,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
         self,
         *,
         worker_selector: "_models.RouterWorkerSelector",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2538,7 +2472,6 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
 class SuspendMode(JobMatchingMode, discriminator="suspend"):
     """Describes a matching mode where matching worker to a job is suspended.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing SuspendMode. Required. Discriminator value for
      SuspendMode.
@@ -2547,6 +2480,21 @@ class SuspendMode(JobMatchingMode, discriminator="suspend"):
 
     kind: Literal[JobMatchingModeKind.SUSPEND] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing SuspendMode. Required. Discriminator value for SuspendMode."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=JobMatchingModeKind.SUSPEND, **kwargs)
 
 
 class UnassignJobOptions(_model_base.Model):
@@ -2565,8 +2513,7 @@ class UnassignJobOptions(_model_base.Model):
         self,
         *,
         suspend_matching: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2582,7 +2529,6 @@ class UnassignJobOptions(_model_base.Model):
 class UnassignJobResult(_model_base.Model):
     """Response payload after a job has been successfully unassigned.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar job_id: Id of an unassigned job. Required.
     :vartype job_id: str
@@ -2601,8 +2547,7 @@ class UnassignJobResult(_model_base.Model):
         *,
         job_id: str,
         unassignment_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2618,7 +2563,6 @@ class UnassignJobResult(_model_base.Model):
 class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
     """Trigger for an exception action on exceeding wait time.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar threshold_seconds: Threshold for wait time for this trigger. Required.
     :vartype threshold_seconds: float
@@ -2638,8 +2582,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
         self,
         *,
         threshold_seconds: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2655,7 +2598,6 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
 class WebhookRouterRule(RouterRule, discriminator="webhook"):
     """A rule providing a binding to an external web server.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar authorization_server_uri: Uri for Authorization Server.
     :vartype authorization_server_uri: str
@@ -2687,8 +2629,7 @@ class WebhookRouterRule(RouterRule, discriminator="webhook"):
         authorization_server_uri: Optional[str] = None,
         client_credential: Optional["_models.OAuth2WebhookClientCredential"] = None,
         webhook_uri: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2707,7 +2648,6 @@ class WeightedAllocationQueueSelectorAttachment(
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
@@ -2727,8 +2667,7 @@ class WeightedAllocationQueueSelectorAttachment(
         self,
         *,
         allocations: List["_models.QueueWeightedAllocation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2747,7 +2686,6 @@ class WeightedAllocationWorkerSelectorAttachment(
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
@@ -2767,8 +2705,7 @@ class WeightedAllocationWorkerSelectorAttachment(
         self,
         *,
         allocations: List["_models.WorkerWeightedAllocation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2785,7 +2722,6 @@ class WorkerWeightedAllocation(_model_base.Model):
     """Contains the weight percentage and worker selectors to be applied if selected for weighted
     distributions.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
@@ -2805,8 +2741,7 @@ class WorkerWeightedAllocation(_model_base.Model):
         *,
         weight: float,
         worker_selectors: List["_models.RouterWorkerSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

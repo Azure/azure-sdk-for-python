@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, arguments-differ, signature-differs, broad-except
 
+import copy
 import calendar
 import decimal
 import functools
@@ -440,6 +441,10 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return float(o)
     if isinstance(o, enum.Enum):
         return o.value
+    if isinstance(o, int):
+        if format == "str":
+            return str(o)
+        return o
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -475,6 +480,9 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
 
 class Model(_MyMutableMapping):
     _is_model = True
+    # label whether current class's _attr_to_rest_field has been calculated
+    # could not see _attr_to_rest_field directly because subclass inherits it from parent class
+    _calculated: typing.Set[str] = set()
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         class_name = self.__class__.__name__
@@ -507,24 +515,27 @@ class Model(_MyMutableMapping):
         return Model(self.__dict__)
 
     def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=unused-argument
-        # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        mros = cls.__mro__[:-3][::-1]  # ignore model, dict, and object parents, and reverse the mro order
-        attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
-            k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
-        }
-        annotations = {
-            k: v
-            for mro_class in mros
-            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
-            for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
-        }
-        for attr, rf in attr_to_rest_field.items():
-            rf._module = cls.__module__
-            if not rf._type:
-                rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
-            if not rf._rest_name_input:
-                rf._rest_name_input = attr
-        cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+        if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+            # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
+            # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
+            mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
+            attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
+                k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            }
+            annotations = {
+                k: v
+                for mro_class in mros
+                if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
+                for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
+            }
+            for attr, rf in attr_to_rest_field.items():
+                rf._module = cls.__module__
+                if not rf._type:
+                    rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
+                if not rf._rest_name_input:
+                    rf._rest_name_input = attr
+            cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+            cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)  # pylint: disable=no-value-for-parameter
 
@@ -562,6 +573,7 @@ class Model(_MyMutableMapping):
         """
 
         result = {}
+        readonly_props = []
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
@@ -639,12 +651,21 @@ def _deserialize_sequence(
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
+def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.Any]:
+    return sorted(
+        types,
+        key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
+    )
+
+
 def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,
 ) -> typing.Optional[typing.Callable[[typing.Any], typing.Any]]:
     if not annotation or annotation in [int, float]:
+        if annotation is int and rf and rf._format == "str":
+            return int
         return None
 
     # is it a type alias?
@@ -680,21 +701,25 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     # is it optional?
     try:
         if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
-            if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
-            )
+            if len(annotation.__args__) <= 2:  # pyright: ignore
+                if_obj_deserializer = _get_deserialize_callable_from_annotation(
+                    next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
+                )
 
-            return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+                return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+            # the type is Optional[Union[...]], we need to remove the None type from the Union
+            annotation_copy = copy.copy(annotation)
+            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != type(None)]  # pyright: ignore
+            return _get_deserialize_callable_from_annotation(annotation_copy, module, rf)
     except AttributeError:
         pass
 
+    # is it union?
     if getattr(annotation, "__origin__", None) is typing.Union:
         # initial ordering is we make `string` the last deserialization option, because it is often them most generic
         deserializers = [
             _get_deserialize_callable_from_annotation(arg, module, rf)
-            for arg in sorted(
-                annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
-            )
+            for arg in _sorted_annotations(annotation.__args__)  # pyright: ignore
         ]
 
         return functools.partial(_deserialize_with_union, deserializers)
@@ -871,5 +896,6 @@ def rest_discriminator(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
+    visibility: typing.Optional[typing.List[str]] = None,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, is_discriminator=True)
+    return _RestField(name=name, type=type, is_discriminator=True, visibility=visibility)

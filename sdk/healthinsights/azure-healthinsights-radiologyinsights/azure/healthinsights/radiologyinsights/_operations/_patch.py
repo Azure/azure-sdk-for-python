@@ -37,6 +37,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
     @overload  # type: ignore[override]
@@ -120,7 +121,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @distributed_trace # type: ignore[override]
+    @distributed_trace  # type: ignore[override]
     def begin_infer_radiology_insights(
         self,
         id: str,
@@ -163,25 +164,23 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read() # type: ignore
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            deserialized = _deserialize(
-                _models.RadiologyInsightsInferenceResult,
-                response.json().get("result")
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
             )
+            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
             if cls:
-                return cls(pipeline_response, deserialized, response_headers) # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -197,11 +196,12 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller[_models.RadiologyInsightsInferenceResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
 
 def patch_sdk():
     """Do not remove from this file.

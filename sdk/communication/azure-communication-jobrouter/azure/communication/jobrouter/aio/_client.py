@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -81,7 +82,7 @@ class JobRouterAdministrationClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -90,7 +91,7 @@ class JobRouterAdministrationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "JobRouterAdministrationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -159,7 +160,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -168,7 +169,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "JobRouterClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

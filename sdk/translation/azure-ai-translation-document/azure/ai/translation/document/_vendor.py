@@ -7,7 +7,7 @@
 
 from abc import ABC
 import json
-from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
+from typing import Any, Dict, IO, List, Mapping, Optional, TYPE_CHECKING, Tuple, Union
 
 from ._configuration import DocumentTranslationClientConfiguration, SingleDocumentTranslationClientConfiguration
 from ._model_base import Model, SdkJSONEncoder
@@ -48,8 +48,6 @@ FileType = Union[
     # (filename, file (or bytes), content_type)
     Tuple[Optional[str], FileContent, Optional[str]],
 ]
-
-FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 
 def serialize_multipart_data_entry(data_entry: Any) -> Any:

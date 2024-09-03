@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import EventGridPublisherClientOperationsMixin
-from ._patch import EventGridConsumerClientOperationsMixin
+from ._operations import EventGridPublisherClientOperationsMixin
+from ._operations import EventGridConsumerClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

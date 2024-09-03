@@ -117,7 +117,7 @@ class LocalAdministratorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Owners of Dev Boxes in the pool are not local administrators on the Dev Boxes."""
 
 
-class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
     NOT_STARTED = "NotStarted"
@@ -132,7 +132,7 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operating system type."""
 
     WINDOWS = "Windows"

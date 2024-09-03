@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -267,7 +269,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     def _send(  # pylint: disable=protected-access
         self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
     ) -> _models._models.PublishResult:
-        # pylint: disable=line-too-long
         """Publish a single Cloud Event to a namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -277,30 +278,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :return: PublishResult. The PublishResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models._models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                event = {
-                    "id": "str",  # An identifier for the event. The combination of id and source
-                      must be unique for each distinct event. Required.
-                    "source": "str",  # Identifies the context in which an event happened. The
-                      combination of id and source must be unique for each distinct event. Required.
-                    "specversion": "str",  # The version of the CloudEvents specification which
-                      the event uses. Required.
-                    "type": "str",  # Type of event related to the originating occurrence.
-                      Required.
-                    "data": {},  # Optional. Event data specific to the event type.
-                    "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event data
-                      specific to the event type, encoded as a base64 string.
-                    "datacontenttype": "str",  # Optional. Content type of data value.
-                    "dataschema": "str",  # Optional. Identifies the schema that data adheres to.
-                    "subject": "str",  # Optional. This describes the subject of the event in the
-                      context of the event producer (identified by source).
-                    "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the event was
-                      generated, in RFC3339 format.
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -342,7 +319,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -362,7 +342,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     def _send_events(  # pylint: disable=protected-access
         self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
     ) -> _models._models.PublishResult:
-        # pylint: disable=line-too-long
         """Publish a batch of Cloud Events to a namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -372,34 +351,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :return: PublishResult. The PublishResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models._models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                events = [
-                    {
-                        "id": "str",  # An identifier for the event. The combination of id
-                          and source must be unique for each distinct event. Required.
-                        "source": "str",  # Identifies the context in which an event
-                          happened. The combination of id and source must be unique for each distinct
-                          event. Required.
-                        "specversion": "str",  # The version of the CloudEvents specification
-                          which the event uses. Required.
-                        "type": "str",  # Type of event related to the originating
-                          occurrence. Required.
-                        "data": {},  # Optional. Event data specific to the event type.
-                        "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event
-                          data specific to the event type, encoded as a base64 string.
-                        "datacontenttype": "str",  # Optional. Content type of data value.
-                        "dataschema": "str",  # Optional. Identifies the schema that data
-                          adheres to.
-                        "subject": "str",  # Optional. This describes the subject of the
-                          event in the context of the event producer (identified by source).
-                        "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the
-                          event was generated, in RFC3339 format.
-                    }
-                ]
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -441,7 +392,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -470,7 +424,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         max_wait_time: Optional[int] = None,
         **kwargs: Any
     ) -> _models._models.ReceiveResult:
-        # pylint: disable=line-too-long
         """Receive a batch of Cloud Events from a subscription.
 
         :param topic_name: Topic Name. Required.
@@ -489,49 +442,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models._models.ReceiveResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "value": [
-                        {
-                            "brokerProperties": {
-                                "deliveryCount": 0,  # The attempt count for
-                                  delivering the event. Required.
-                                "lockToken": "str"  # The token of the lock on the
-                                  event. Required.
-                            },
-                            "event": {
-                                "id": "str",  # An identifier for the event. The
-                                  combination of id and source must be unique for each distinct event.
-                                  Required.
-                                "source": "str",  # Identifies the context in which
-                                  an event happened. The combination of id and source must be unique
-                                  for each distinct event. Required.
-                                "specversion": "str",  # The version of the
-                                  CloudEvents specification which the event uses. Required.
-                                "type": "str",  # Type of event related to the
-                                  originating occurrence. Required.
-                                "data": {},  # Optional. Event data specific to the
-                                  event type.
-                                "data_base64": bytes("bytes", encoding="utf-8"),  #
-                                  Optional. Event data specific to the event type, encoded as a base64
-                                  string.
-                                "datacontenttype": "str",  # Optional. Content type
-                                  of data value.
-                                "dataschema": "str",  # Optional. Identifies the
-                                  schema that data adheres to.
-                                "subject": "str",  # Optional. This describes the
-                                  subject of the event in the context of the event producer (identified
-                                  by source).
-                                "time": "2020-02-20 00:00:00"  # Optional. The time
-                                  (in UTC) the event was generated, in RFC3339 format.
-                            }
-                        }
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -569,7 +479,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -642,45 +555,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
-                          events. Required.
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -731,7 +605,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -746,9 +623,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     def _release(
         self,
         topic_name: str,
@@ -760,9 +634,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.ReleaseResult: ...
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     def _release(
         self,
         topic_name: str,
@@ -774,9 +645,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.ReleaseResult: ...
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     def _release(
         self,
         topic_name: str,
@@ -820,45 +688,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully released cloud
-                          events. Required.
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -910,7 +739,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -980,45 +812,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully rejected cloud
-                          events. Required.
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1069,7 +862,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1084,12 +880,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     def _renew_locks(
         self,
         topic_name: str,
@@ -1100,12 +890,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     def _renew_locks(
         self,
         topic_name: str,
@@ -1116,12 +900,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     def _renew_locks(
         self,
         topic_name: str,
@@ -1164,45 +942,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :return: RenewLocksResult. The RenewLocksResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully renewed locks.
-                          Required.
-                    ]
-                }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1253,7 +992,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
