@@ -1,7 +1,11 @@
 # Release History
 
-## 1.0.0b1 (2024-09-22)
+## 1.0.0b1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
-
-  - Initial version
