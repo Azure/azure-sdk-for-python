@@ -29,10 +29,12 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     if lastest_pypi_version:
         cmd += "--latest-pypi-version"
     try:
+        _LOGGER.info(f"Run breaking change detector with command: {cmd}")
         output = getoutput(cmd)
     except CalledProcessError as e:
         _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
+    _LOGGER.info(f"Breaking change detector output: {output}")
     result = [l for l in output.split("\n")]
     begin = result.index("===== changelog start =====")
     end = result.index("===== changelog end =====")
