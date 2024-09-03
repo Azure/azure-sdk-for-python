@@ -542,10 +542,10 @@ class HardwareProfile(_model_base.Model):
      "general_a_32c128gb512ssd_v2", "general_a_32c128gb1024ssd_v2", and
      "general_a_32c128gb2048ssd_v2".
     :vartype sku_name: str or ~azure.developer.devcenter.models.SkuName
-    :ivar v_c_p_us: The number of vCPUs available for the Dev Box.
-    :vartype v_c_p_us: int
-    :ivar memory_g_b: The amount of memory available for the Dev Box.
-    :vartype memory_g_b: int
+    :ivar v_cp_us: The number of vCPUs available for the Dev Box.
+    :vartype v_cp_us: int
+    :ivar memory_gb: The amount of memory available for the Dev Box.
+    :vartype memory_gb: int
     """
 
     sku_name: Optional[Union[str, "_models.SkuName"]] = rest_field(name="skuName", visibility=["read"])
@@ -559,9 +559,9 @@ class HardwareProfile(_model_base.Model):
      \"general_a_16c64gb512ssd_v2\", \"general_a_16c64gb1024ssd_v2\",
      \"general_a_16c64gb2048ssd_v2\", \"general_a_32c128gb512ssd_v2\",
      \"general_a_32c128gb1024ssd_v2\", and \"general_a_32c128gb2048ssd_v2\"."""
-    v_c_p_us: Optional[int] = rest_field(name="vCPUs", visibility=["read"])
+    v_cp_us: Optional[int] = rest_field(name="vCPUs", visibility=["read"])
     """The number of vCPUs available for the Dev Box."""
-    memory_g_b: Optional[int] = rest_field(name="memoryGB", visibility=["read"])
+    memory_gb: Optional[int] = rest_field(name="memoryGB", visibility=["read"])
     """The amount of memory available for the Dev Box."""
 
 
@@ -672,11 +672,11 @@ class OsDisk(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar disk_size_g_b: The size of the OS Disk in gigabytes.
-    :vartype disk_size_g_b: int
+    :ivar disk_size_gb: The size of the OS Disk in gigabytes.
+    :vartype disk_size_gb: int
     """
 
-    disk_size_g_b: Optional[int] = rest_field(name="diskSizeGB", visibility=["read"])
+    disk_size_gb: Optional[int] = rest_field(name="diskSizeGB", visibility=["read"])
     """The size of the OS Disk in gigabytes."""
 
 

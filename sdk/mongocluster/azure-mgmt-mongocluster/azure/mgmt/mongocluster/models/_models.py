@@ -711,13 +711,13 @@ class MongoClusterReplicaParameters(_model_base.Model):
 class MongoClusterRestoreParameters(_model_base.Model):
     """Parameters used for restore operations.
 
-    :ivar point_in_time_u_t_c: UTC point in time to restore a mongo cluster.
-    :vartype point_in_time_u_t_c: ~datetime.datetime
+    :ivar point_in_time_utc: UTC point in time to restore a mongo cluster.
+    :vartype point_in_time_utc: ~datetime.datetime
     :ivar source_resource_id: Resource ID to locate the source cluster to restore.
     :vartype source_resource_id: str
     """
 
-    point_in_time_u_t_c: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
+    point_in_time_utc: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
     """UTC point in time to restore a mongo cluster."""
     source_resource_id: Optional[str] = rest_field(name="sourceResourceId")
     """Resource ID to locate the source cluster to restore."""
@@ -726,7 +726,7 @@ class MongoClusterRestoreParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        point_in_time_u_t_c: Optional[datetime.datetime] = None,
+        point_in_time_utc: Optional[datetime.datetime] = None,
         source_resource_id: Optional[str] = None,
     ): ...
 

@@ -93,7 +93,7 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SCSI = "SCSI"
     """SCSI disk type"""
-    N_V_ME = "NVMe"
+    NV_ME = "NVMe"
     """NVMe disk type"""
 
 
@@ -368,13 +368,13 @@ class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     **Note:** It can be set for only Confidential VMs.
     """
 
-    V_M_GUEST_STATE_ONLY = "VMGuestStateOnly"
+    VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
     """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption
     of just the VMGuestState blob."""
-    DISK_WITH_V_M_GUEST_STATE = "DiskWithVMGuestState"
+    DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
     """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption
     of the managed disk along with VMGuestState blob."""
-    NON_PERSISTED_T_P_M = "NonPersistedTPM"
+    NON_PERSISTED_TPM = "NonPersistedTPM"
     """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting
     firmware state in the VMGuestState blob."""
 
@@ -387,7 +387,7 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "TrustedLaunch"
     """TrustedLaunch security type"""
-    CONFIDENTIAL_V_M = "ConfidentialVM"
+    CONFIDENTIAL_VM = "ConfidentialVM"
     """ConfidentialVM security type"""
 
 
@@ -428,19 +428,19 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     https://docs.microsoft.com/azure/virtual-machines/linux/disks-types.
     """
 
-    STANDARD_L_R_S = "Standard_LRS"
+    STANDARD_LRS = "Standard_LRS"
     """Standard_LRS option."""
-    PREMIUM_L_R_S = "Premium_LRS"
+    PREMIUM_LRS = "Premium_LRS"
     """Premium_LRS option."""
-    STANDARD_S_S_D_L_R_S = "StandardSSD_LRS"
+    STANDARD_SSD_LRS = "StandardSSD_LRS"
     """StandardSSD_LRS option."""
-    ULTRA_S_S_D_L_R_S = "UltraSSD_LRS"
+    ULTRA_SSD_LRS = "UltraSSD_LRS"
     """UltraSSD_LRS option."""
-    PREMIUM_Z_R_S = "Premium_ZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
     """Premium_ZRS option."""
-    STANDARD_S_S_D_Z_R_S = "StandardSSD_ZRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     """StandardSSD_ZRS option."""
-    PREMIUM_V2_L_R_S = "PremiumV2_LRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
     """PremiumV2_LRS option."""
 
 
@@ -478,7 +478,7 @@ class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     You do this by applying patches manually inside the VM. In this mode,
     automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
     must be false"""
-    AUTOMATIC_BY_O_S = "AutomaticByOS"
+    AUTOMATIC_BY_OS = "AutomaticByOS"
     """The virtual machine will automatically be updated by the OS.
     The property WindowsConfiguration.enableAutomaticUpdates must be true."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
