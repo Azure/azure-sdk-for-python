@@ -40,8 +40,8 @@ class ChangelogTracker(BreakingChangesTracker):
         "Client '{}' added operation group '{}'"
 
 
-    def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
-        super().__init__(stable, current, diff, package_name, **kwargs)
+    def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
+        super().__init__(stable, current, package_name, **kwargs)
         self.features_added = []
 
     def run_checks(self) -> None:
