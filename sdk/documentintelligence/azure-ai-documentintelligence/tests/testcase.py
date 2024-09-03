@@ -197,6 +197,9 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
     irs_classifier_document = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf")
     )
+    layout_sample = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/layout/layout-pageobject.pdf")
+    )
 
     def get_oauth_endpoint(self):
         return os.getenv("DOCUMENTINTELLIGENCE_ENDPOINT")
