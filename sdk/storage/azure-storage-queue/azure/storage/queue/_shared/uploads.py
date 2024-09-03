@@ -519,7 +519,6 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
             )
         finally:
             block_stream.close()
-        return None
 
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
