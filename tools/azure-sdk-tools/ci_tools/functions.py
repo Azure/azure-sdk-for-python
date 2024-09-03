@@ -42,6 +42,9 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 ]
 
 TEST_COMPATIBILITY_MAP = {}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
+    "azure-storage-blob": "pypy"
+}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -104,7 +107,12 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
         if pkg_specs_override:
             spec_set = SpecifierSet(pkg_specs_override)
 
-        if running_major_version in spec_set:
+        distro_compat = True
+        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        if distro_incompat and distro_incompat in platform.python_implementation().lower():
+            distro_compat = False
+
+        if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
     logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
